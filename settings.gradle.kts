@@ -20,5 +20,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "muzyakich"
-include(":app")
+include(":mobile")
  
