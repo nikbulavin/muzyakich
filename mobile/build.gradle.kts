@@ -1,46 +1,34 @@
+import ru.resodostudio.muzyakich.MuzBuildType
+
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.muzyakich.android.application)
+    alias(libs.plugins.muzyakich.android.application.compose)
 }
 
 android {
-    namespace = "ru.resodostudio.muzyakich"
-    compileSdk = 35
-
     defaultConfig {
         applicationId = "ru.resodostudio.muzyakich"
-        minSdk = 26
-        targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0-alpha01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
+        debug {
+            applicationIdSuffix = MuzBuildType.DEBUG.applicationIdSuffix
+        }
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isMinifyEnabled = true
+            isShrinkResources = true
+            applicationIdSuffix = MuzBuildType.RELEASE.applicationIdSuffix
+            signingConfig = signingConfigs.named("debug").get()
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
-    }
+    namespace = "ru.resodostudio.muzyakich"
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

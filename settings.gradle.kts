@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -20,5 +21,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "muzyakich"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include(":mobile")
- 
