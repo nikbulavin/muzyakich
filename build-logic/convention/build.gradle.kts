@@ -10,8 +10,10 @@ kotlin {
 
 dependencies {
     compileOnly(libs.android.gradlePlugin)
-    compileOnly(libs.compose.gradlePlugin)
+    compileOnly(libs.firebase.crashlytics.gradlePlugin)
+    compileOnly(libs.firebase.performance.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.kotlin.compose.gradlePlugin)
 }
 
 tasks {
@@ -23,25 +25,29 @@ tasks {
 
 gradlePlugin {
     plugins {
+        register("androidApplication") {
+            id = libs.plugins.muzyakich.android.application.asProvider().get().pluginId
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
         register("androidApplicationCompose") {
             id = libs.plugins.muzyakich.android.application.compose.get().pluginId
             implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
-        register("androidApplication") {
-            id = libs.plugins.muzyakich.android.application.asProvider().get().pluginId
-            implementationClass = "AndroidApplicationConventionPlugin"
+        register("androidApplicationFirebase") {
+            id = libs.plugins.muzyakich.android.application.firebase.get().pluginId
+            implementationClass = "AndroidApplicationFirebaseConventionPlugin"
         }
         register("androidApplicationFlavors") {
             id = libs.plugins.muzyakich.android.application.flavors.get().pluginId
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
         }
-        register("androidLibraryCompose") {
-            id = libs.plugins.muzyakich.android.library.compose.get().pluginId
-            implementationClass = "AndroidLibraryComposeConventionPlugin"
-        }
         register("androidLibrary") {
             id = libs.plugins.muzyakich.android.library.asProvider().get().pluginId
             implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("androidLibraryCompose") {
+            id = libs.plugins.muzyakich.android.library.compose.get().pluginId
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
     }
 }
