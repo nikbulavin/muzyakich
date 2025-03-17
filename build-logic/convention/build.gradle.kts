@@ -31,6 +31,10 @@ gradlePlugin {
             id = libs.plugins.muzyakich.android.application.asProvider().get().pluginId
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidApplicationFlavors") {
+            id = libs.plugins.muzyakich.android.application.flavors.get().pluginId
+            implementationClass = "AndroidApplicationFlavorsConventionPlugin"
+        }
         register("androidLibraryCompose") {
             id = libs.plugins.muzyakich.android.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposeConventionPlugin"

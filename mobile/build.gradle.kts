@@ -3,6 +3,7 @@ import ru.resodostudio.muzyakich.MuzBuildType
 plugins {
     alias(libs.plugins.muzyakich.android.application)
     alias(libs.plugins.muzyakich.android.application.compose)
+    alias(libs.plugins.muzyakich.android.application.flavors)
 }
 
 android {

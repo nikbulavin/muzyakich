@@ -27,5 +27,6 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 # Plugins defined by this project
 muzyakich-android-application = { id = "muzyakich.android.application" }
 muzyakich-android-application-compose = { id = "muzyakich.android.application.compose" }
+muzyakich-android-application-flavors = { id = "muzyakich.android.application.flavors" }
 muzyakich-android-library = { id = "muzyakich.android.library" }
 muzyakich-android-library-compose = { id = "muzyakich.android.library.compose" }
