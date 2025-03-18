@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Muzyakich" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="NightAdjusted.Theme.Muzyakich" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- The final theme we use -->
+    <style name="Theme.Muzyakich" parent="NightAdjusted.Theme.Muzyakich">
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
+    </style>
 </resources>
