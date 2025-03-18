@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.exclude
 import ru.resodostudio.muzyakich.MuzFlavor
 import ru.resodostudio.muzyakich.libs
 
