@@ -272,6 +272,7 @@ fun MuzTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = MuzTypography,
         content = content,
     )
 }
