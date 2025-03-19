@@ -13,6 +13,7 @@
         tools:node="remove" />
 
     <application
+        android:name=".MuzApplication"
         android:allowBackup="true"
         android:allowCrossUidActivitySwitchFromBelow="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
