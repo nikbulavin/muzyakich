@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.firebase.performance.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.kotlin.compose.gradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
 }
 
 tasks {
@@ -48,6 +49,10 @@ gradlePlugin {
         register("androidLibraryCompose") {
             id = libs.plugins.muzyakich.android.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("hilt") {
+            id = libs.plugins.muzyakich.hilt.get().pluginId
+            implementationClass = "HiltConventionPlugin"
         }
     }
 }

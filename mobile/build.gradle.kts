@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.muzyakich.android.application.compose)
     alias(libs.plugins.muzyakich.android.application.firebase)
     alias(libs.plugins.muzyakich.android.application.flavors)
+    alias(libs.plugins.muzyakich.hilt)
 }
 
 android {
