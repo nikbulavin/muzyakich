@@ -37,7 +37,7 @@ internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() 
         is KotlinJvmProjectExtension -> compilerOptions
         else -> TODO("Unsupported project extension $this ${T::class}")
     }.apply {
-        jvmToolchain(21)
+        jvmToolchain(17)
         allWarningsAsErrors = warningsAsErrors
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",

@@ -5,7 +5,7 @@ plugins {
 group = "ru.resodostudio.muzyakich.buildlogic"
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 dependencies {
