@@ -54,5 +54,9 @@ gradlePlugin {
             id = libs.plugins.muzyakich.hilt.get().pluginId
             implementationClass = "HiltConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = libs.plugins.muzyakich.jvm.library.get().pluginId
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
     }
 }

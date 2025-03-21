@@ -27,3 +27,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":mobile")
 
 include(":core:designsystem")
+include(":core:model")

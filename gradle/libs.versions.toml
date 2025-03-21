@@ -58,3 +58,4 @@ muzyakich-android-application-flavors = { id = "muzyakich.android.application.fl
 muzyakich-android-library = { id = "muzyakich.android.library" }
 muzyakich-android-library-compose = { id = "muzyakich.android.library.compose" }
 muzyakich-hilt = { id = "muzyakich.hilt" }
+muzyakich-jvm-library = { id = "muzyakich.jvm.library" }
