@@ -4,9 +4,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.kotlin
 import ru.resodostudio.muzyakich.configureFlavors
 import ru.resodostudio.muzyakich.configureKotlinAndroid
 import ru.resodostudio.muzyakich.disableUnnecessaryAndroidTests
+import ru.resodostudio.muzyakich.libs
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
 
@@ -22,6 +25,11 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
                 disableUnnecessaryAndroidTests(target)
+            }
+            dependencies {
+                "testImplementation"(kotlin("test"))
+
+                "implementation"(libs.findLibrary("androidx.tracing.ktx").get())
             }
         }
     }
