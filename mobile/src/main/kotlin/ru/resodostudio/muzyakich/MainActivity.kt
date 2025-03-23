@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.MainActivityUiState.Loading
 import ru.resodostudio.muzyakich.core.designsystem.theme.MuzTheme
+import ru.resodostudio.muzyakich.ui.MuzApp
 import ru.resodostudio.muzyakich.util.isSystemInDarkTheme
 
 @AndroidEntryPoint
@@ -75,8 +76,11 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
         setContent {
-            MuzTheme {
-
+            MuzTheme(
+                darkTheme = themeSettings.darkTheme,
+                dynamicTheme = themeSettings.dynamicTheme,
+            ) {
+                MuzApp()
             }
         }
     }
