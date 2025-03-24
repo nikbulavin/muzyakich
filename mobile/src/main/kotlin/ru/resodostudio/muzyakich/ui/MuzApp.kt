@@ -14,6 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.resodostudio.muzyakich.R
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
+import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.Search
+import ru.resodostudio.muzyakich.core.designsystem.icon.Settings
+import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun MuzApp() {
@@ -31,6 +35,10 @@ fun MuzApp() {
         ) {
             MuzTopAppBar(
                 titleRes = R.string.app_name,
+                navigationIcon = MuzIcons.Search,
+                navigationIconContentDescriptionRes = localesR.string.search,
+                actionIcon = MuzIcons.Settings,
+                actionIconContentDescriptionRes = localesR.string.settings,
             )
         }
     }

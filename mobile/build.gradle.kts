@@ -34,6 +34,7 @@ android {
 dependencies {
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
+    implementation(projects.core.locales)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
