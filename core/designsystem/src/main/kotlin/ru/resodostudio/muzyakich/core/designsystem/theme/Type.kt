@@ -2,7 +2,6 @@ package ru.resodostudio.muzyakich.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
@@ -20,17 +19,15 @@ internal val fontProvider = GoogleFont.Provider(
 )
 
 internal val aclonicaFont = GoogleFont("Aclonica")
-internal val winkySansFont = GoogleFont("Winky Sans")
+internal val rubikFont = GoogleFont("Rubik")
 
 internal val aclonicaFontFamily = FontFamily(
     Font(googleFont = aclonicaFont, fontProvider = fontProvider),
     Font(googleFont = aclonicaFont, fontProvider = fontProvider, weight = FontWeight.Bold),
 )
-internal val winkySansFontFamily = FontFamily(
-    Font(googleFont = winkySansFont, fontProvider = fontProvider),
-    Font(resId = R.font.winkysans_regular),
-    Font(googleFont = winkySansFont, fontProvider = fontProvider, weight = FontWeight.Medium),
-    Font(resId = R.font.winkysans_medium, weight = FontWeight.Medium),
+internal val rubikFontFamily = FontFamily(
+    Font(googleFont = rubikFont, fontProvider = fontProvider),
+    Font(googleFont = rubikFont, fontProvider = fontProvider, weight = FontWeight.Medium),
 )
 
 internal val MuzTypography = Typography(
@@ -92,21 +89,21 @@ internal val MuzTypography = Typography(
         fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
     ),
     titleSmall = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
     ),
     bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.None,
@@ -117,21 +114,21 @@ internal val MuzTypography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
     ),
     bodySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
     ),
     labelLarge = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
@@ -142,7 +139,7 @@ internal val MuzTypography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
@@ -153,7 +150,7 @@ internal val MuzTypography = Typography(
         fontSize = 10.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
-        fontFamily = winkySansFontFamily,
+        fontFamily = rubikFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
