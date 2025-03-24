@@ -2,6 +2,7 @@ package ru.resodostudio.muzyakich.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
@@ -19,15 +20,17 @@ internal val fontProvider = GoogleFont.Provider(
 )
 
 internal val aclonicaFont = GoogleFont("Aclonica")
-internal val latoFont = GoogleFont("Lato")
+internal val winkySansFont = GoogleFont("Winky Sans")
 
-internal val RobotoSlabFontFamily = FontFamily(
+internal val aclonicaFontFamily = FontFamily(
     Font(googleFont = aclonicaFont, fontProvider = fontProvider),
     Font(googleFont = aclonicaFont, fontProvider = fontProvider, weight = FontWeight.Bold),
 )
-internal val PoppinsFontFamily = FontFamily(
-    Font(googleFont = latoFont, fontProvider = fontProvider),
-    Font(googleFont = latoFont, fontProvider = fontProvider, weight = FontWeight.Medium),
+internal val winkySansFontFamily = FontFamily(
+    Font(googleFont = winkySansFont, fontProvider = fontProvider),
+    Font(resId = R.font.winkysans_regular),
+    Font(googleFont = winkySansFont, fontProvider = fontProvider, weight = FontWeight.Medium),
+    Font(resId = R.font.winkysans_medium, weight = FontWeight.Medium),
 )
 
 internal val MuzTypography = Typography(
@@ -36,49 +39,49 @@ internal val MuzTypography = Typography(
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
-        fontFamily = RobotoSlabFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     displayMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp,
-        fontFamily = RobotoSlabFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     displaySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 36.sp,
         lineHeight = 44.sp,
         letterSpacing = 0.sp,
-        fontFamily = RobotoSlabFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     headlineLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
-        fontFamily = RobotoSlabFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     headlineMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
-        fontFamily = RobotoSlabFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     headlineSmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
-        fontFamily = RobotoSlabFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     titleLarge = TextStyle(
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
-        fontFamily = RobotoSlabFontFamily,
+        fontFamily = aclonicaFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Bottom,
             trim = Trim.LastLineBottom,
@@ -89,21 +92,21 @@ internal val MuzTypography = Typography(
         fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
     ),
     titleSmall = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
     ),
     bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.None,
@@ -114,21 +117,21 @@ internal val MuzTypography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
     ),
     bodySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
     ),
     labelLarge = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
@@ -139,7 +142,7 @@ internal val MuzTypography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
@@ -150,7 +153,7 @@ internal val MuzTypography = Typography(
         fontSize = 10.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
-        fontFamily = PoppinsFontFamily,
+        fontFamily = winkySansFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
