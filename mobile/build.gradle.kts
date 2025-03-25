@@ -28,6 +28,14 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
+    androidResources {
+        generateLocaleConfig = true
+    }
+    packaging {
+        resources {
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        }
+    }
     namespace = "ru.resodostudio.muzyakich"
 }
 

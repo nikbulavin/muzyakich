@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="albums">Albums</string>
+    <string name="artists">Artists</string>
+    <string name="playlists">Playlists</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
+    <string name="songs">Songs</string>
 </resources>
