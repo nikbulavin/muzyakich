@@ -1,3 +1,7 @@
 plugins {
-    alias(libs.plugins.muzyakich.jvm.library)
+    alias(libs.plugins.muzyakich.android.library)
+}
+
+android {
+    namespace = "ru.resodostudio.muzyakich.core.model"
 }

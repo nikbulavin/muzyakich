@@ -2,7 +2,6 @@ package ru.resodostudio.muzyakich.core.mediastore
 
 import android.content.ContentUris
 import android.content.Context
-import android.net.Uri
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
@@ -12,6 +11,7 @@ import ru.resodostudio.muzyakich.core.mediastore.util.asFolder
 import ru.resodostudio.muzyakich.core.mediastore.util.getLong
 import ru.resodostudio.muzyakich.core.mediastore.util.getString
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
+import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 
 class MediaStoreDataSource @Inject constructor(
@@ -66,16 +66,3 @@ class MediaStoreDataSource @Inject constructor(
                 }
             }
 }
-
-data class Song(
-    val mediaId: String,
-    val artistId: Long,
-    val albumId: Long,
-    val mediaUri: Uri,
-    val artworkUri: Uri,
-    val title: String,
-    val artist: String,
-    val album: String,
-    val folder: String,
-    val duration: Long,
-)

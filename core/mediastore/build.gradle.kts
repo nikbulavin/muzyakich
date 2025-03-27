@@ -6,3 +6,7 @@ plugins {
 android {
     namespace = "ru.resodostudio.muzyakich.core.data"
 }
+
+dependencies {
+    implementation(projects.core.model)
+}
