@@ -10,4 +10,6 @@ android {
 dependencies {
     api(projects.core.common)
     api(projects.core.datastore)
+
+    implementation(projects.core.mediastore)
 }
