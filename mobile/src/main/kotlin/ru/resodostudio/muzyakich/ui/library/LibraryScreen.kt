@@ -75,7 +75,7 @@ private fun LibraryScreen(
     }
     when (libraryUiState) {
         LibraryUiState.Loading -> CircularProgressIndicator()
-        LibraryUiState.Empty -> Unit
+        LibraryUiState.Empty -> Text(text = "Empty")
         is LibraryUiState.Success -> {
             LazyColumn {
                 items(libraryUiState.songs) { song ->
