@@ -26,9 +26,9 @@ class MediaStoreDataSource @Inject constructor(
                     context.contentResolver.query(
                         MediaStoreConfig.Song.Collection,
                         MediaStoreConfig.Song.Projection,
-                        "${MediaStore.Audio.Media.IS_MUSIC} != 0",
+                        "${MediaStore.Audio.Media.IS_MUSIC} = ?",
                         arrayOf("1"),
-                        "${MediaStore.Audio.Media.TITLE} ASC",
+                        "${MediaStore.Audio.Media.DISPLAY_NAME} ASC",
                     )?.use { cursor ->
                         while (cursor.moveToNext()) {
                             val id = cursor.getLong(MediaStore.Audio.Media._ID)
