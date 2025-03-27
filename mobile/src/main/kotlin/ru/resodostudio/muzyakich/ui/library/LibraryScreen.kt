@@ -1,6 +1,9 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -14,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
@@ -22,7 +27,20 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun LibraryScreen() {
+fun LibraryScreen(
+    viewModel: LibraryViewModel = hiltViewModel(),
+) {
+    val libraryUiState by viewModel.libraryUiState.collectAsStateWithLifecycle()
+
+    LibraryScreen(
+        libraryUiState = libraryUiState,
+    )
+}
+
+@Composable
+private fun LibraryScreen(
+    libraryUiState: LibraryUiState,
+) {
     val tabs = listOf(
         TabItem(stringResource(localesR.string.playlists), MuzIcons.Rounded.LibraryMusic),
         TabItem(stringResource(localesR.string.songs), MuzIcons.Rounded.MusicNote),
@@ -53,6 +71,17 @@ fun LibraryScreen() {
                     )
                 },
             )
+        }
+    }
+    when (libraryUiState) {
+        LibraryUiState.Loading -> CircularProgressIndicator()
+        LibraryUiState.Empty -> Unit
+        is LibraryUiState.Success -> {
+            LazyColumn {
+                items(libraryUiState.songs) { song ->
+                    Text(text = song.title)
+                }
+            }
         }
     }
 }
