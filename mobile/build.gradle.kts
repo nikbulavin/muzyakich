@@ -44,6 +44,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.locales)
 
+    implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.hilt.navigation.compose)
