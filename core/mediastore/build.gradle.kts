@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudio.muzyakich.core.data"
+    namespace = "ru.resodostudio.muzyakich.core.data.mediastore"
 }
 
 dependencies {
