@@ -13,4 +13,5 @@ data class Song(
     val album: String,
     val folder: String,
     val duration: Long,
+    val bitrate: Int,
 )

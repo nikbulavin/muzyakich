@@ -20,7 +20,8 @@ internal object MediaStoreConfig {
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.DATE_ADDED,
             MediaStore.Audio.Media.DURATION,
-            MediaStore.Audio.Media.DATA
+            MediaStore.Audio.Media.DATA,
+            MediaStore.Audio.Media.BITRATE,
         )
     }
 }
