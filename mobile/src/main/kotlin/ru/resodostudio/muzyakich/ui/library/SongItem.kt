@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
@@ -20,12 +21,13 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun SongItem(
     song: Song,
     modifier: Modifier = Modifier,
-    onDetailsClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
 ) {
     ListItem(
         modifier = modifier,
@@ -67,11 +69,11 @@ fun SongItem(
         },
         trailingContent = {
             IconButton(
-                onClick = onDetailsClick,
+                onClick = onMenuClick,
             ) {
                 Icon(
                     imageVector = MuzIcons.Rounded.MoreVert,
-                    contentDescription = null,
+                    contentDescription = stringResource(localesR.string.open_menu),
                 )
             }
         },

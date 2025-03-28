@@ -2,6 +2,7 @@
 <resources>
     <string name="albums">Albums</string>
     <string name="artists">Artists</string>
+    <string name="open_menu">Open menu</string>
     <string name="playlists">Playlists</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
