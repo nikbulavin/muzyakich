@@ -29,7 +29,9 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 fun MuzApp(
     appState: MuzAppState,
 ) {
-    Scaffold { padding ->
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { padding ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -52,7 +54,7 @@ fun MuzApp(
             val permissionState = appState.permissionState
             when (permissionState.status) {
                 is Denied -> {
-                    LaunchedEffect(appState.permissionState) {
+                    LaunchedEffect(permissionState) {
                         val status = permissionState.status
                         if (status is Denied && !status.shouldShowRationale) {
                             permissionState.launchPermissionRequest()
