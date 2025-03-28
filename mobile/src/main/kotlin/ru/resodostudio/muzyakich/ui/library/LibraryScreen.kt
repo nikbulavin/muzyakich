@@ -95,6 +95,7 @@ private fun LibraryScreen(
                 items(libraryUiState.songs) { song ->
                     SongItem(
                         song = song,
+                        modifier = Modifier.animateItem(),
                     )
                 }
             }
