@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 
@@ -23,6 +25,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 fun SongItem(
     song: Song,
     modifier: Modifier = Modifier,
+    onDetailsClick: () -> Unit = {},
 ) {
     ListItem(
         modifier = modifier,
@@ -50,7 +53,7 @@ fun SongItem(
                 error = {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
                     ) {
                         Icon(
                             imageVector = MuzIcons.Rounded.MusicNote,
@@ -61,6 +64,16 @@ fun SongItem(
                     }
                 }
             )
-        }
+        },
+        trailingContent = {
+            IconButton(
+                onClick = onDetailsClick,
+            ) {
+                Icon(
+                    imageVector = MuzIcons.Rounded.MoreVert,
+                    contentDescription = null,
+                )
+            }
+        },
     )
 }
