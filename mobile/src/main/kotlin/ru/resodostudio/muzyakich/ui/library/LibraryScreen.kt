@@ -3,12 +3,14 @@ package ru.resodostudio.muzyakich.ui.library
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -30,6 +32,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.ui.component.EmptyState
+import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -80,8 +84,17 @@ private fun LibraryScreen(
         }
     }
     when (libraryUiState) {
-        LibraryUiState.Loading -> CircularProgressIndicator()
-        LibraryUiState.Empty -> Text(text = "Empty")
+        LibraryUiState.Loading -> LoadingState(Modifier.fillMaxSize())
+        LibraryUiState.Empty -> {
+            EmptyState(
+                messageRes = localesR.string.library_empty,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp)
+                    .navigationBarsPadding(),
+            )
+        }
+
         is LibraryUiState.Success -> {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(300.dp),

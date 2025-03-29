@@ -2,6 +2,7 @@
 <resources>
     <string name="albums">Альбомы</string>
     <string name="artists">Исполнители</string>
+    <string name="library_empty">У вас пока нет песен. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
     <string name="open_menu">Открыть меню</string>
     <string name="playlists">Плейлисты</string>
     <string name="search">Поиск</string>
