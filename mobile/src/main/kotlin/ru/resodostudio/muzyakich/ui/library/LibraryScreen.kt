@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.library
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -96,20 +97,31 @@ private fun LibraryScreen(
         }
 
         is LibraryUiState.Success -> {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(300.dp),
-                contentPadding = PaddingValues(
-                    top = 8.dp,
-                    bottom = WindowInsets.navigationBars
-                        .asPaddingValues()
-                        .calculateBottomPadding(),
-                ),
-            ) {
-                items(libraryUiState.songs) { song ->
-                    SongItem(
-                        song = song,
-                        modifier = Modifier.animateItem(),
-                    )
+            AnimatedContent(selectedTabIndex) { state ->
+                when (state) {
+                    0 -> Unit
+                    1 -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(300.dp),
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars
+                                    .asPaddingValues()
+                                    .calculateBottomPadding(),
+                            ),
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            items(libraryUiState.songs) { song ->
+                                SongItem(
+                                    song = song,
+                                    modifier = Modifier.animateItem(),
+                                )
+                            }
+                        }
+                    }
+
+                    2 -> Unit
+                    3 -> Unit
                 }
             }
         }
