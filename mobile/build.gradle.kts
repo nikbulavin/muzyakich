@@ -49,8 +49,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.tracing.ktx)
-    implementation(libs.coil.kt)
-    implementation(libs.coil.kt.compose)
+    implementation(platform(libs.coil.bom))
+    implementation(libs.coil.compose)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 }
