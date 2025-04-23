@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.core.network
+package ru.resodostudio.muzyakich.core.common
 
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.RUNTIME
@@ -10,4 +10,5 @@ annotation class Dispatcher(val muzDispatcher: MuzDispatchers)
 enum class MuzDispatchers {
     Default,
     IO,
+    Main,
 }

@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.core.network.di
+package ru.resodostudio.muzyakich.core.common.di
 
 import dagger.Module
 import dagger.Provides
@@ -7,8 +7,8 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import ru.resodostudio.muzyakich.core.network.MuzDispatchers.Default
-import ru.resodostudio.muzyakich.core.network.Dispatcher
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Default
+import ru.resodostudio.muzyakich.core.common.Dispatcher
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.RUNTIME

@@ -13,9 +13,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import ru.resodostudio.muzyakich.core.datastore.UserPreferences
 import ru.resodostudio.muzyakich.core.datastore.UserPreferencesSerializer
-import ru.resodostudio.muzyakich.core.network.MuzDispatchers.IO
-import ru.resodostudio.muzyakich.core.network.Dispatcher
-import ru.resodostudio.muzyakich.core.network.di.ApplicationScope
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
+import ru.resodostudio.muzyakich.core.common.Dispatcher
+import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
 import javax.inject.Singleton
 
 @Module
