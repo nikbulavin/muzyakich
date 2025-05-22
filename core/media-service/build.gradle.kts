@@ -7,6 +7,7 @@ android.namespace = "ru.resodostudio.muzyakich.core.media.service"
 
 dependencies {
     implementation(projects.core.common)
+    implementation(projects.core.data)
     implementation(projects.core.model)
 
     implementation(libs.androidx.media3.exoPlayer)
