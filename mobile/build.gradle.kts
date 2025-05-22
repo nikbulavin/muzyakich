@@ -43,6 +43,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
     implementation(projects.core.locales)
+    implementation(projects.core.mediaService)
 
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)

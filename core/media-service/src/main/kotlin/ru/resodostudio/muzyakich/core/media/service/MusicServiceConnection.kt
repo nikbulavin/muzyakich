@@ -9,22 +9,13 @@ import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
 import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.maximillianleonov.musicmax.core.domain.usecase.GetPlayingQueueIdsUseCase
-import com.maximillianleonov.musicmax.core.domain.usecase.GetPlayingQueueIndexUseCase
-import com.maximillianleonov.musicmax.core.domain.usecase.SetPlayingQueueIdsUseCase
-import com.maximillianleonov.musicmax.core.domain.usecase.SetPlayingQueueIndexUseCase
-import com.maximillianleonov.musicmax.core.model.MusicState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -34,8 +25,6 @@ import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
 import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
-import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
-import ru.resodostudio.muzyakich.core.media.service.util.orDefaultTimestamp
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,17 +34,9 @@ import kotlin.time.Duration.Companion.milliseconds
 class MusicServiceConnection @Inject constructor(
     @ApplicationContext context: Context,
     @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
-    private val mediaRepository: MediaRepository,
-    private val getPlayingQueueIdsUseCase: GetPlayingQueueIdsUseCase,
-    private val setPlayingQueueIdsUseCase: SetPlayingQueueIdsUseCase,
-    private val getPlayingQueueIndexUseCase: GetPlayingQueueIndexUseCase,
-    private val setPlayingQueueIndexUseCase: SetPlayingQueueIndexUseCase
 ) {
     private var mediaController: MediaController? = null
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
-
-    private val _musicState = MutableStateFlow(MusicState())
-    val musicState = _musicState.asStateFlow()
 
     val currentPosition = flow {
         while (currentCoroutineContext().isActive) {
@@ -108,7 +89,6 @@ class MusicServiceConnection @Inject constructor(
             prepare()
             play()
         }
-        coroutineScope.launch { setPlayingQueueIdsUseCase(playingQueueIds = songs.map(Song::mediaId)) }
     }
 
     fun shuffleSongs(
@@ -139,45 +119,14 @@ class MusicServiceConnection @Inject constructor(
     }
 
     private fun updateMusicState(player: Player) = with(player) {
-        _musicState.update {
-            it.copy(
-                currentMediaId = currentMediaItem?.mediaId.orEmpty(),
-                playbackState = playbackState.asPlaybackState(),
-                playWhenReady = playWhenReady,
-                duration = duration.orDefaultTimestamp()
-            )
-        }
+
     }
 
     private suspend fun updatePlayingQueue(startPositionMs: Long = DEFAULT_POSITION_MS) {
-        val songs = mediaRepository.songs.first()
-        if (songs.isEmpty()) return
 
-        val playingQueueSongs = getPlayingQueueIdsUseCase().first().mapNotNull { playingQueueId ->
-            songs.find { it.mediaId == playingQueueId }
-        }.ifEmpty {
-            setPlayingQueueIdsUseCase(playingQueueIds = songs.map(Song::mediaId))
-            songs
-        }
-
-        val startIndex = getPlayingQueueIndexUseCase().first().let { startIndex ->
-            if (startIndex < playingQueueSongs.size) {
-                startIndex
-            } else {
-                setPlayingQueueIndexUseCase(index = 0)
-                0
-            }
-        }
-
-        mediaController?.run {
-            setMediaItems(playingQueueSongs.map(Song::asMediaItem), startIndex, startPositionMs)
-            prepare()
-        }
     }
 
     private fun updatePlayingQueueIndex(player: Player) {
-        val index = player.currentMediaItemIndex
-        _musicState.update { it.copy(currentSongIndex = index) }
-        coroutineScope.launch { setPlayingQueueIndexUseCase(index) }
+
     }
 }

@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,10 +29,11 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 fun SongItem(
     song: Song,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
 ) {
     ListItem(
-        modifier = modifier,
+        modifier = modifier.clickable(onClick = onClick),
         headlineContent = {
             Text(
                 text = song.title,

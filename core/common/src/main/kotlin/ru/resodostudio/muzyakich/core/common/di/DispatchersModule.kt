@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Default
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
 import ru.resodostudio.muzyakich.core.common.Dispatcher
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -21,4 +22,8 @@ object DispatchersModule {
     @Provides
     @Dispatcher(Default)
     fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+    @Provides
+    @Dispatcher(Main)
+    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 }

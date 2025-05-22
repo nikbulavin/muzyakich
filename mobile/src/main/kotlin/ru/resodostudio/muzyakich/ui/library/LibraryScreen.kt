@@ -33,6 +33,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -45,12 +46,14 @@ fun LibraryScreen(
 
     LibraryScreen(
         libraryUiState = libraryUiState,
+        onPlayClick = viewModel::play,
     )
 }
 
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
+    onPlayClick: (List<Song>) -> Unit = {},
 ) {
     val tabs = listOf(
         TabItem(stringResource(localesR.string.playlists), MuzIcons.Rounded.LibraryMusic),
@@ -115,6 +118,7 @@ private fun LibraryScreen(
                                 SongItem(
                                     song = song,
                                     modifier = Modifier.animateItem(),
+                                    onClick = { onPlayClick(listOf(song)) },
                                 )
                             }
                         }
