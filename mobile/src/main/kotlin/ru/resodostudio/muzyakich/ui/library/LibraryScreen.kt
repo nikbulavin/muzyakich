@@ -53,7 +53,7 @@ fun LibraryScreen(
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
-    onPlayClick: (List<Song>) -> Unit = {},
+    onPlayClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
 ) {
     val tabs = listOf(
         TabItem(stringResource(localesR.string.playlists), MuzIcons.Rounded.LibraryMusic),
@@ -118,7 +118,7 @@ private fun LibraryScreen(
                                 SongItem(
                                     song = song,
                                     modifier = Modifier.animateItem(),
-                                    onClick = { onPlayClick(listOf(song)) },
+                                    onClick = { onPlayClick(libraryUiState.songs, libraryUiState.songs.indexOf(song)) },
                                 )
                             }
                         }

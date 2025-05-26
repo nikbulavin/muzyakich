@@ -82,7 +82,7 @@ class MusicServiceConnection @Inject constructor(
     fun playSongs(
         songs: List<Song>,
         startIndex: Int = DEFAULT_INDEX,
-        startPositionMs: Long = DEFAULT_POSITION_MS
+        startPositionMs: Long = DEFAULT_POSITION_MS,
     ) {
         mediaController?.run {
             setMediaItems(songs.map(Song::asMediaItem), startIndex, startPositionMs)
