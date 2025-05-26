@@ -15,7 +15,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -23,8 +26,10 @@ import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_POSITION_MS
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
 import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
+import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
+import ru.resodostudio.muzyakich.core.media.service.util.orDefaultTimestamp
+import ru.resodostudio.muzyakich.core.model.data.MusicState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,6 +42,9 @@ class MusicServiceConnection @Inject constructor(
 ) {
     private var mediaController: MediaController? = null
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
+
+    private val _musicState = MutableStateFlow(MusicState())
+    val musicState = _musicState.asStateFlow()
 
     val currentPosition = flow {
         while (currentCoroutineContext().isActive) {
@@ -106,7 +114,7 @@ class MusicServiceConnection @Inject constructor(
             if (events.containsAny(
                     EVENT_PLAYBACK_STATE_CHANGED,
                     EVENT_MEDIA_METADATA_CHANGED,
-                    EVENT_PLAY_WHEN_READY_CHANGED
+                    EVENT_PLAY_WHEN_READY_CHANGED,
                 )
             ) {
                 updateMusicState(player)
@@ -119,7 +127,14 @@ class MusicServiceConnection @Inject constructor(
     }
 
     private fun updateMusicState(player: Player) = with(player) {
-
+        _musicState.update {
+            it.copy(
+                currentMediaId = currentMediaItem?.mediaId.orEmpty(),
+                playbackState = playbackState.asPlaybackState(),
+                playWhenReady = playWhenReady,
+                duration = duration.orDefaultTimestamp(),
+            )
+        }
     }
 
     private suspend fun updatePlayingQueue(startPositionMs: Long = DEFAULT_POSITION_MS) {
