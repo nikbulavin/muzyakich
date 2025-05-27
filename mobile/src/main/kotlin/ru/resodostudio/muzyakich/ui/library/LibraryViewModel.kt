@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
+import ru.resodostudio.muzyakich.core.model.data.MusicState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 
@@ -18,14 +19,16 @@ class LibraryViewModel @Inject constructor(
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
-    val libraryUiState = mediaRepository.songs
-        .map {
-            if (it.isEmpty()) {
-                LibraryUiState.Empty
-            } else {
-                LibraryUiState.Success(it)
-            }
+    val libraryUiState = combine(
+        musicServiceConnection.musicState,
+        mediaRepository.songs,
+    ) { musicState, songs ->
+        if (songs.isEmpty()) {
+            LibraryUiState.Empty
+        } else {
+            LibraryUiState.Success(musicState, songs)
         }
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -39,11 +42,12 @@ class LibraryViewModel @Inject constructor(
 
 sealed interface LibraryUiState {
 
-    object Loading : LibraryUiState
+    data object Loading : LibraryUiState
 
-    object Empty : LibraryUiState
+    data object Empty : LibraryUiState
 
     data class Success(
+        val musicState: MusicState,
         val songs: List<Song>,
     ) : LibraryUiState
 }
