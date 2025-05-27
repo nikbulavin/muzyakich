@@ -39,6 +39,10 @@ class LibraryViewModel @Inject constructor(
     fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) =
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
 
+    fun play() = musicServiceConnection.play()
+
+    fun pause() = musicServiceConnection.pause()
+
 }
 
 sealed interface LibraryUiState {

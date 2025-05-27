@@ -9,6 +9,6 @@ data class NowPlayingState(
     val mediaId: String = DEFAULT_MEDIA_ID,
     val songIndex: Int = DEFAULT_INDEX,
     val playbackState: PlaybackState = IDLE,
-    val playWhenReady: Boolean = false,
+    val isPlaying: Boolean = false,
     val duration: Long = DEFAULT_DURATION_MS,
 )

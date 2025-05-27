@@ -48,14 +48,18 @@ fun LibraryScreen(
 
     LibraryScreen(
         libraryUiState = libraryUiState,
-        onPlayClick = viewModel::playSongs,
+        onSongItemClick = viewModel::playSongs,
+        onPlayClick = viewModel::play,
+        onPauseClick = viewModel::pause,
     )
 }
 
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
-    onPlayClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
+    onSongItemClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
+    onPlayClick: () -> Unit = {},
+    onPauseClick: () -> Unit = {},
 ) {
     val tabs = listOf(
         TabItem(stringResource(localesR.string.playlists), MuzIcons.Rounded.LibraryMusic),
@@ -122,7 +126,7 @@ private fun LibraryScreen(
                                     SongItem(
                                         song = song,
                                         modifier = Modifier.animateItem(),
-                                        onClick = { onPlayClick(songs, songs.indexOf(song)) },
+                                        onClick = { onSongItemClick(songs, songs.indexOf(song)) },
                                     )
                                 }
                             }
@@ -140,12 +144,15 @@ private fun LibraryScreen(
                 currentSong?.let { song ->
                     NowPlayingBar(
                         visible = visible,
+                        nowPlayingState = libraryUiState.nowPlayingState,
                         song = song,
                         currentPosition = libraryUiState.currentPosition,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .navigationBarsPadding()
                             .padding(16.dp),
+                        onPlayClick = onPlayClick,
+                        onPauseClick = onPauseClick,
                     )
                 }
             }
