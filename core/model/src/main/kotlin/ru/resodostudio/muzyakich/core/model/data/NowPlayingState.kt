@@ -5,9 +5,9 @@ import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_MEDIA_ID
 import ru.resodostudio.muzyakich.core.model.data.PlaybackState.IDLE
 
-data class MusicState(
-    val currentMediaId: String = DEFAULT_MEDIA_ID,
-    val currentSongIndex: Int = DEFAULT_INDEX,
+data class NowPlayingState(
+    val mediaId: String = DEFAULT_MEDIA_ID,
+    val songIndex: Int = DEFAULT_INDEX,
     val playbackState: PlaybackState = IDLE,
     val playWhenReady: Boolean = false,
     val duration: Long = DEFAULT_DURATION_MS,

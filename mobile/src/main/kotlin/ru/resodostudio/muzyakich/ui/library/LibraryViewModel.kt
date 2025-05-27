@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.data.MusicState
+import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class LibraryViewModel @Inject constructor(
 ) : ViewModel() {
 
     val libraryUiState = combine(
-        musicServiceConnection.musicState,
+        musicServiceConnection.nowPlayingState,
         mediaRepository.songs,
     ) { musicState, songs ->
         if (songs.isEmpty()) {
@@ -35,7 +35,7 @@ class LibraryViewModel @Inject constructor(
             initialValue = LibraryUiState.Loading,
         )
 
-    fun play(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) =
+    fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) =
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
 
 }
@@ -47,7 +47,7 @@ sealed interface LibraryUiState {
     data object Empty : LibraryUiState
 
     data class Success(
-        val musicState: MusicState,
+        val nowPlayingState: NowPlayingState,
         val songs: List<Song>,
     ) : LibraryUiState
 }

@@ -29,7 +29,7 @@ import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
 import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
 import ru.resodostudio.muzyakich.core.media.service.util.orDefaultTimestamp
-import ru.resodostudio.muzyakich.core.model.data.MusicState
+import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,8 +43,8 @@ class MusicServiceConnection @Inject constructor(
     private var mediaController: MediaController? = null
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
 
-    private val _musicState = MutableStateFlow(MusicState())
-    val musicState = _musicState.asStateFlow()
+    private val _nowPlayingState = MutableStateFlow(NowPlayingState())
+    val nowPlayingState = _nowPlayingState.asStateFlow()
 
     val currentPosition = flow {
         while (currentCoroutineContext().isActive) {
@@ -117,7 +117,7 @@ class MusicServiceConnection @Inject constructor(
                     EVENT_PLAY_WHEN_READY_CHANGED,
                 )
             ) {
-                updateMusicState(player)
+                updateNowPlayingState(player)
             }
 
             if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)) {
@@ -126,10 +126,10 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    private fun updateMusicState(player: Player) = with(player) {
-        _musicState.update {
+    private fun updateNowPlayingState(player: Player) = with(player) {
+        _nowPlayingState.update {
             it.copy(
-                currentMediaId = currentMediaItem?.mediaId.orEmpty(),
+                mediaId = currentMediaItem?.mediaId.orEmpty(),
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
                 duration = duration.orDefaultTimestamp(),

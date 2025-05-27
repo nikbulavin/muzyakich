@@ -59,7 +59,7 @@ fun LibraryScreen(
 
     LibraryScreen(
         libraryUiState = libraryUiState,
-        onPlayClick = viewModel::play,
+        onPlayClick = viewModel::playSongs,
     )
 }
 
@@ -145,7 +145,7 @@ private fun LibraryScreen(
                 }
 
                 AnimatedVisibility(
-                    visible = libraryUiState.musicState.currentMediaId.isNotBlank(),
+                    visible = libraryUiState.nowPlayingState.mediaId.isNotBlank(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
@@ -155,7 +155,7 @@ private fun LibraryScreen(
                         tonalElevation = 2.dp,
                         shape = RoundedCornerShape(18.dp),
                     ) {
-                        val currentSong = songs.find { it.mediaId == libraryUiState.musicState.currentMediaId }
+                        val currentSong = songs.find { it.mediaId == libraryUiState.nowPlayingState.mediaId }
                         currentSong?.let {
                             ListItem(
                                 modifier = Modifier.fillMaxWidth(),
