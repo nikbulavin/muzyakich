@@ -21,12 +21,13 @@ class LibraryViewModel @Inject constructor(
 
     val libraryUiState = combine(
         musicServiceConnection.nowPlayingState,
+        musicServiceConnection.currentPosition,
         mediaRepository.songs,
-    ) { musicState, songs ->
+    ) { musicState, currentPosition, songs ->
         if (songs.isEmpty()) {
             LibraryUiState.Empty
         } else {
-            LibraryUiState.Success(musicState, songs)
+            LibraryUiState.Success(musicState, currentPosition, songs)
         }
     }
         .stateIn(
@@ -48,6 +49,7 @@ sealed interface LibraryUiState {
 
     data class Success(
         val nowPlayingState: NowPlayingState,
+        val currentPosition: Long,
         val songs: List<Song>,
     ) : LibraryUiState
 }
