@@ -39,6 +39,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.data.PlaybackState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -150,14 +151,22 @@ internal fun NowPlayingBar(
                     ),
                     label = "ProgressAnimation",
                 )
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .height(3.dp),
-                )
+                val progressModifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(3.dp)
+
+                if (nowPlayingState.playbackState == PlaybackState.BUFFERING) {
+                    LinearProgressIndicator(
+                        modifier = progressModifier,
+                    )
+                } else {
+                    LinearProgressIndicator(
+                        progress = { progress },
+                        modifier = progressModifier,
+                    )
+                }
             }
         }
     }
