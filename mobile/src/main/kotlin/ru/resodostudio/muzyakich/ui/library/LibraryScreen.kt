@@ -51,6 +51,7 @@ fun LibraryScreen(
         onSongItemClick = viewModel::playSongs,
         onPlayClick = viewModel::play,
         onPauseClick = viewModel::pause,
+        onSkipNextClick = viewModel::skipNext,
     )
 }
 
@@ -60,6 +61,7 @@ private fun LibraryScreen(
     onSongItemClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
+    onSkipNextClick: () -> Unit = {},
 ) {
     val tabs = listOf(
         TabItem(stringResource(localesR.string.playlists), MuzIcons.Rounded.LibraryMusic),
@@ -153,6 +155,7 @@ private fun LibraryScreen(
                             .padding(16.dp),
                         onPlayClick = onPlayClick,
                         onPauseClick = onPauseClick,
+                        onSkipNextClick = onSkipNextClick,
                     )
                 }
             }

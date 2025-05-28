@@ -9,5 +9,6 @@
     <string name="playlists">Playlists</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
+    <string name="skip_next">Skip next</string>
     <string name="songs">Songs</string>
 </resources>

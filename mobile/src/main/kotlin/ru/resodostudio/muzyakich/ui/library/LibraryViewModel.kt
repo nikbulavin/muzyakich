@@ -43,6 +43,8 @@ class LibraryViewModel @Inject constructor(
 
     fun pause() = musicServiceConnection.pause()
 
+    fun skipNext() = musicServiceConnection.skipNext()
+
 }
 
 sealed interface LibraryUiState {

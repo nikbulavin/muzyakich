@@ -4,7 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LinearProgressIndicator
@@ -34,6 +37,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -48,6 +52,7 @@ internal fun NowPlayingBar(
     modifier: Modifier = Modifier,
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
+    onSkipNextClick: () -> Unit = {},
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -100,27 +105,41 @@ internal fun NowPlayingBar(
                         )
                     },
                     trailingContent = {
-                        val (icon, contentDescription) = if (!nowPlayingState.isPlaying) {
-                            MuzIcons.Rounded.PlayArrow to stringResource(localesR.string.play_audio)
-                        } else {
-                            MuzIcons.Rounded.Pause to stringResource(localesR.string.pause_audio)
-                        }
-                        FilledIconButton(
-                            onClick = {
-                                if (!nowPlayingState.isPlaying) {
-                                    onPlayClick()
-                                } else {
-                                    onPauseClick()
-                                }
-                            },
-                            shapes = IconButtonDefaults.shapes(),
-                            modifier = Modifier
-                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = contentDescription,
-                            )
+                            val (icon, contentDescription) = if (!nowPlayingState.isPlaying) {
+                                MuzIcons.Rounded.PlayArrow to stringResource(localesR.string.play_audio)
+                            } else {
+                                MuzIcons.Rounded.Pause to stringResource(localesR.string.pause_audio)
+                            }
+                            FilledIconButton(
+                                onClick = {
+                                    if (!nowPlayingState.isPlaying) {
+                                        onPlayClick()
+                                    } else {
+                                        onPauseClick()
+                                    }
+                                },
+                                shapes = IconButtonDefaults.shapes(),
+                                modifier = Modifier
+                                    .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = contentDescription,
+                                )
+                            }
+                            IconButton(
+                                onClick = onSkipNextClick,
+                                shapes = IconButtonDefaults.shapes(),
+                            ) {
+                                Icon(
+                                    imageVector = MuzIcons.Rounded.SkipNext,
+                                    contentDescription = stringResource(localesR.string.skip_next),
+                                )
+                            }
                         }
                     }
                 )
