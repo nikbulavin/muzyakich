@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.tracing)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
+    implementation(libs.lottie.compose)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 }

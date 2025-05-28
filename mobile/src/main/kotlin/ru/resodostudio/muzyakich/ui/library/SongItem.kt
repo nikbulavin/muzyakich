@@ -11,14 +11,26 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import coil3.compose.SubcomposeAsyncImage
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
+import ru.resodostudio.muzyakich.R
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
@@ -29,6 +41,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 fun SongItem(
     song: Song,
     modifier: Modifier = Modifier,
+    isPlaying: Boolean = false,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
 ) {
@@ -49,27 +62,63 @@ fun SongItem(
             )
         },
         leadingContent = {
-            SubcomposeAsyncImage(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                model = song.artworkUri,
-                contentDescription = null,
-                error = {
+            Box {
+                if (isPlaying) {
                     Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                        modifier = Modifier
+                            .zIndex(1f)
+                            .size(56.dp)
+                            .background(MaterialTheme.colorScheme.surface.copy(0.5f))
+                            .clip(RoundedCornerShape(8.dp)),
                     ) {
-                        Icon(
-                            imageVector = MuzIcons.Rounded.MusicNote,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        val dynamicProperties = rememberLottieDynamicProperties(
+                            rememberLottieDynamicProperty(
+                                property = LottieProperty.COLOR,
+                                value = MaterialTheme.colorScheme.secondary.toArgb(),
+                                keyPath = arrayOf("**"),
+                            )
+                        )
+                        val lottieComposition by rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(R.raw.equalizer_anim)
+                        )
+                        val progress by animateLottieCompositionAsState(
+                            composition = lottieComposition,
+                            iterations = LottieConstants.IterateForever,
+                            speed = 0.5f,
+                        )
+                        LottieAnimation(
+                            modifier = Modifier
+                                .zIndex(2f)
+                                .align(Alignment.Center)
+                                .size(40.dp),
+                            composition = lottieComposition,
+                            progress = { progress },
+                            dynamicProperties = dynamicProperties,
                         )
                     }
-                },
-                filterQuality = FilterQuality.Low,
-            )
+                }
+                SubcomposeAsyncImage(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    model = song.artworkUri,
+                    contentDescription = null,
+                    error = {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                        ) {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.MusicNote,
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    filterQuality = FilterQuality.Low,
+                )
+            }
         },
         trailingContent = {
             IconButton(

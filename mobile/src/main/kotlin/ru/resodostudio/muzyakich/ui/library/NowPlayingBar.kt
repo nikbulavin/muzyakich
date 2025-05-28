@@ -86,7 +86,7 @@ internal fun NowPlayingBar(
                         SubcomposeAsyncImage(
                             modifier = Modifier
                                 .size(42.dp)
-                                .clip(RoundedCornerShape(8.dp)),
+                                .clip(RoundedCornerShape(6.dp)),
                             model = song.artworkUri,
                             contentDescription = null,
                             error = {

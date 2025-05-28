@@ -109,6 +109,9 @@ private fun LibraryScreen(
 
         is LibraryUiState.Success -> {
             val songs = libraryUiState.songs
+            val currentSong = songs.find {
+                it.mediaId == libraryUiState.nowPlayingState.mediaId
+            }
             Box {
                 AnimatedContent(selectedTabIndex) { state ->
                     when (state) {
@@ -125,8 +128,12 @@ private fun LibraryScreen(
                                 modifier = Modifier.fillMaxSize(),
                             ) {
                                 items(songs) { song ->
+                                    val isPlaying = currentSong?.mediaId == song.mediaId &&
+                                            libraryUiState.nowPlayingState.isPlaying
+
                                     SongItem(
                                         song = song,
+                                        isPlaying = isPlaying,
                                         modifier = Modifier.animateItem(),
                                         onClick = { onSongItemClick(songs, songs.indexOf(song)) },
                                     )
@@ -140,9 +147,7 @@ private fun LibraryScreen(
                 }
 
                 val visible = libraryUiState.nowPlayingState.mediaId.isNotBlank()
-                val currentSong = songs.find {
-                    it.mediaId == libraryUiState.nowPlayingState.mediaId
-                }
+
                 currentSong?.let { song ->
                     NowPlayingBar(
                         visible = visible,
