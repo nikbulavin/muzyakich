@@ -68,7 +68,7 @@ fun SongItem(
                         modifier = Modifier
                             .zIndex(1f)
                             .size(56.dp)
-                            .background(MaterialTheme.colorScheme.surface.copy(0.5f))
+                            .background(MaterialTheme.colorScheme.surface.copy(0.6f))
                             .clip(RoundedCornerShape(8.dp)),
                     ) {
                         val dynamicProperties = rememberLottieDynamicProperties(
@@ -84,7 +84,7 @@ fun SongItem(
                         val progress by animateLottieCompositionAsState(
                             composition = lottieComposition,
                             iterations = LottieConstants.IterateForever,
-                            speed = 0.5f,
+                            speed = 0.4f,
                         )
                         LottieAnimation(
                             modifier = Modifier

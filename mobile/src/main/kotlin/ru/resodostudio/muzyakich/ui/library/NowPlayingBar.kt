@@ -1,7 +1,13 @@
 package ru.resodostudio.muzyakich.ui.library
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -110,11 +116,6 @@ internal fun NowPlayingBar(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
-                            val (icon, contentDescription) = if (!nowPlayingState.isPlaying) {
-                                MuzIcons.Rounded.PlayArrow to stringResource(localesR.string.play_audio)
-                            } else {
-                                MuzIcons.Rounded.Pause to stringResource(localesR.string.pause_audio)
-                            }
                             FilledIconButton(
                                 onClick = {
                                     if (!nowPlayingState.isPlaying) {
@@ -127,10 +128,26 @@ internal fun NowPlayingBar(
                                 modifier = Modifier
                                     .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
                             ) {
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = contentDescription,
-                                )
+                                val defaultEffectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+                                AnimatedContent(
+                                    targetState = !nowPlayingState.isPlaying,
+                                    label = "PlayPauseButton",
+                                    transitionSpec = {
+                                        fadeIn() + scaleIn(defaultEffectsSpec, 0.8f) togetherWith fadeOut(snap())
+                                    },
+                                ) { paused ->
+                                    if (paused) {
+                                        Icon(
+                                            imageVector = MuzIcons.Rounded.PlayArrow,
+                                            contentDescription = stringResource(localesR.string.play_audio),
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = MuzIcons.Rounded.Pause,
+                                            contentDescription = stringResource(localesR.string.pause_audio),
+                                        )
+                                    }
+                                }
                             }
                             IconButton(
                                 onClick = onSkipNextClick,
