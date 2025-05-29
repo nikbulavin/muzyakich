@@ -41,6 +41,7 @@ androidx-media3-session = { module = "androidx.media3:media3-session", version.r
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidxMedia3" }
 androidx-tracing = { group = "androidx.tracing", name = "tracing", version.ref = "androidxTracing" }
 coil-bom = { group = "io.coil-kt.coil3", name = "coil-bom", version.ref = "coilBom" }
+coil = { group = "io.coil-kt.coil3", name = "coil" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }

@@ -3,12 +3,15 @@ plugins {
     alias(libs.plugins.muzyakich.hilt)
 }
 
-android.namespace = "ru.resodostudio.muzyakich.core.media.service"
+android {
+    namespace = "ru.resodostudio.muzyakich.core.media.service"
+}
 
 dependencies {
     implementation(projects.core.common)
     implementation(projects.core.data)
     implementation(projects.core.model)
+    implementation(projects.core.mediaNotification)
 
     implementation(libs.androidx.media3.exoPlayer)
     implementation(libs.androidx.media3.session)
