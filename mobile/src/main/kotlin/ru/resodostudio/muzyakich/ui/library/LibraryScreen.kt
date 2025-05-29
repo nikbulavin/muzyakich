@@ -123,7 +123,7 @@ private fun LibraryScreen(
                                     top = 8.dp,
                                     bottom = WindowInsets.navigationBars
                                         .asPaddingValues()
-                                        .calculateBottomPadding(),
+                                        .calculateBottomPadding() + 88.dp,
                                 ),
                                 modifier = Modifier.fillMaxSize(),
                             ) {
