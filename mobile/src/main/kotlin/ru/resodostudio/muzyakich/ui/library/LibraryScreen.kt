@@ -121,9 +121,9 @@ private fun LibraryScreen(
                                 columns = GridCells.Adaptive(300.dp),
                                 contentPadding = PaddingValues(
                                     top = 8.dp,
-                                    bottom = WindowInsets.navigationBars
+                                    bottom = 104.dp + WindowInsets.navigationBars
                                         .asPaddingValues()
-                                        .calculateBottomPadding() + 88.dp,
+                                        .calculateBottomPadding(),
                                 ),
                                 modifier = Modifier.fillMaxSize(),
                             ) {
