@@ -2,7 +2,10 @@
 <resources>
     <string name="albums">Альбомы</string>
     <string name="artists">Исполнители</string>
+    <string name="disable_shuffle_mode">Выключить режим перетасовки</string>
+    <string name="enable_shuffle_mode">Включить режим перетасовки</string>
     <string name="library_empty">У вас пока нет песен. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
+    <string name="music_notification_channel_name">Сейчас играет</string>
     <string name="open_menu">Открыть меню</string>
     <string name="pause_audio">Поставить на паузу</string>
     <string name="play_audio">Воспроизвести</string>
@@ -10,5 +13,6 @@
     <string name="search">Поиск</string>
     <string name="settings">Настройки</string>
     <string name="skip_next">Перейти к следующему</string>
+    <string name="skip_previous">Перейти к предыдущему</string>
     <string name="songs">Песни</string>
 </resources>
