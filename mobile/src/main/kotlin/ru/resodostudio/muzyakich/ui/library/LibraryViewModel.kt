@@ -23,11 +23,20 @@ class LibraryViewModel @Inject constructor(
         musicServiceConnection.nowPlayingState,
         musicServiceConnection.currentPosition,
         mediaRepository.songs,
-    ) { musicState, currentPosition, songs ->
+    ) { nowPlayingState, currentPosition, songs ->
         if (songs.isEmpty()) {
             LibraryUiState.Empty
         } else {
-            LibraryUiState.Success(musicState, currentPosition, songs)
+            val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
+            val shouldShowNowPlayingBar = nowPlayingState.mediaId.isNotBlank() && currentSong != null
+
+            LibraryUiState.Success(
+                nowPlayingState = nowPlayingState,
+                currentPosition = currentPosition,
+                currentSong = currentSong,
+                songs = songs,
+                shouldShowNowPlayingBar = shouldShowNowPlayingBar,
+            )
         }
     }
         .stateIn(
@@ -56,6 +65,8 @@ sealed interface LibraryUiState {
     data class Success(
         val nowPlayingState: NowPlayingState,
         val currentPosition: Long,
+        val currentSong: Song?,
         val songs: List<Song>,
+        val shouldShowNowPlayingBar: Boolean,
     ) : LibraryUiState
 }

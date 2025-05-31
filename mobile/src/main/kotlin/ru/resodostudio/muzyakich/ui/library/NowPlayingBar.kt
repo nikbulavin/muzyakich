@@ -4,9 +4,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -37,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -54,16 +57,20 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 internal fun NowPlayingBar(
     visible: Boolean,
     nowPlayingState: NowPlayingState,
-    song: Song,
+    song: Song?,
     currentPosition: Long,
     modifier: Modifier = Modifier,
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
 ) {
+    val animationSpec = MaterialTheme.motionScheme.slowSpatialSpec<IntSize>()
     AnimatedVisibility(
         visible = visible,
         modifier = modifier,
+        label = "NowPlayingBar",
+        enter = fadeIn() + expandIn(animationSpec, Alignment.BottomCenter),
+        exit = shrinkOut(animationSpec, Alignment.BottomCenter) + fadeOut(),
     ) {
         Surface(
             tonalElevation = 3.dp,
@@ -74,7 +81,7 @@ internal fun NowPlayingBar(
                     modifier = Modifier.fillMaxWidth(),
                     headlineContent = {
                         Text(
-                            text = song.title,
+                            text = song?.title.toString(),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.basicMarquee(),
@@ -82,7 +89,7 @@ internal fun NowPlayingBar(
                     },
                     supportingContent = {
                         Text(
-                            text = song.artist,
+                            text = song?.artist.toString(),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.basicMarquee(),
@@ -93,7 +100,7 @@ internal fun NowPlayingBar(
                             modifier = Modifier
                                 .size(42.dp)
                                 .clip(RoundedCornerShape(6.dp)),
-                            model = song.artworkUri,
+                            model = song?.artworkUri,
                             contentDescription = null,
                             error = {
                                 Box(
@@ -128,12 +135,16 @@ internal fun NowPlayingBar(
                                 modifier = Modifier
                                     .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
                             ) {
-                                val defaultEffectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+                                val defaultEffectsSpec =
+                                    MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
                                 AnimatedContent(
                                     targetState = !nowPlayingState.isPlaying,
                                     label = "PlayPauseButton",
                                     transitionSpec = {
-                                        fadeIn() + scaleIn(defaultEffectsSpec, 0.8f) togetherWith fadeOut(snap())
+                                        fadeIn() + scaleIn(
+                                            defaultEffectsSpec,
+                                            0.8f
+                                        ) togetherWith fadeOut(snap())
                                     },
                                 ) { paused ->
                                     if (paused) {
@@ -164,7 +175,7 @@ internal fun NowPlayingBar(
                 val progress by animateFloatAsState(
                     targetValue = convertToProgress(
                         count = currentPosition,
-                        total = song.duration,
+                        total = song?.duration ?: 0L,
                     ),
                     label = "ProgressAnimation",
                 )
@@ -189,8 +200,6 @@ internal fun NowPlayingBar(
     }
 }
 
-private fun convertToProgress(count: Long, total: Long) =
-    ((count * ProgressDivider) / total / ProgressDivider).takeIf(Float::isFinite) ?: ZeroProgress
-
-private const val ProgressDivider = 100f
-private const val ZeroProgress = 0f
+private fun convertToProgress(count: Long, total: Long): Float {
+    return (count * 100f / total / 100f).takeIf(Float::isFinite) ?: 0f
+}

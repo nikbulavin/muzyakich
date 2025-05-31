@@ -109,9 +109,6 @@ private fun LibraryScreen(
 
         is LibraryUiState.Success -> {
             val songs = libraryUiState.songs
-            val currentSong = songs.find {
-                it.mediaId == libraryUiState.nowPlayingState.mediaId
-            }
             Box {
                 AnimatedContent(selectedTabIndex) { state ->
                     when (state) {
@@ -128,8 +125,9 @@ private fun LibraryScreen(
                                 modifier = Modifier.fillMaxSize(),
                             ) {
                                 items(songs) { song ->
-                                    val isPlaying = currentSong?.mediaId == song.mediaId &&
-                                            libraryUiState.nowPlayingState.isPlaying
+                                    val isPlaying =
+                                        libraryUiState.nowPlayingState.mediaId == song.mediaId &&
+                                                libraryUiState.nowPlayingState.isPlaying
 
                                     SongItem(
                                         song = song,
@@ -146,23 +144,19 @@ private fun LibraryScreen(
                     }
                 }
 
-                val visible = libraryUiState.nowPlayingState.mediaId.isNotBlank()
-
-                currentSong?.let { song ->
-                    NowPlayingBar(
-                        visible = visible,
-                        nowPlayingState = libraryUiState.nowPlayingState,
-                        song = song,
-                        currentPosition = libraryUiState.currentPosition,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .navigationBarsPadding()
-                            .padding(16.dp),
-                        onPlayClick = onPlayClick,
-                        onPauseClick = onPauseClick,
-                        onSkipNextClick = onSkipNextClick,
-                    )
-                }
+                NowPlayingBar(
+                    visible = libraryUiState.shouldShowNowPlayingBar,
+                    nowPlayingState = libraryUiState.nowPlayingState,
+                    song = libraryUiState.currentSong,
+                    currentPosition = libraryUiState.currentPosition,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(16.dp),
+                    onPlayClick = onPlayClick,
+                    onPauseClick = onPauseClick,
+                    onSkipNextClick = onSkipNextClick,
+                )
             }
         }
     }
