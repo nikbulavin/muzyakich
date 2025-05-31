@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.core.media.service
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Intent
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.common.C.USAGE_MEDIA
@@ -19,9 +20,10 @@ import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
 import javax.inject.Inject
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 @AndroidEntryPoint
 class MusicService : MediaSessionService() {
+
     private var mediaSession: MediaSession? = null
 
     @Inject lateinit var musicNotificationProvider: MusicNotificationProvider
@@ -64,10 +66,9 @@ class MusicService : MediaSessionService() {
         mediaSession?.run {
             player.release()
             release()
+            clearListener()
             mediaSession = null
         }
-        musicSessionCallback.cancelCoroutineScope()
-        musicNotificationProvider.cancelCoroutineScope()
         super.onDestroy()
     }
 
