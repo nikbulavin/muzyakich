@@ -10,4 +10,6 @@ message UserPreferences {
     DarkThemeConfigProto dark_theme_config = 1;
 
     bool use_dynamic_color = 2;
+
+    bool shuffle_mode_enabled = 3;
 }

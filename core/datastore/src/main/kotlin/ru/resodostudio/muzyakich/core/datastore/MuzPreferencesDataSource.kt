@@ -2,7 +2,6 @@ package ru.resodostudio.muzyakich.core.datastore
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.IOException
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
@@ -33,21 +32,20 @@ class MuzPreferencesDataSource @Inject constructor(
                     DarkThemeConfigProto.DARK_THEME_CONFIG_DARK -> DARK
                 },
                 useDynamicColor = it.useDynamicColor,
+                shuffleModeEnabled = it.shuffleModeEnabled,
             )
         }
 
     suspend fun setDynamicColorPreference(useDynamicColor: Boolean) {
-        try {
+        runCatching {
             userPreferences.updateData {
                 it.copy { this.useDynamicColor = useDynamicColor }
             }
-        } catch (e: IOException) {
-            Log.e(TAG, "Failed to update dynamic color.", e)
         }
     }
 
     suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
-        try {
+        runCatching {
             userPreferences.updateData {
                 it.copy {
                     this.darkThemeConfig = when (darkThemeConfig) {
@@ -57,8 +55,14 @@ class MuzPreferencesDataSource @Inject constructor(
                     }
                 }
             }
-        } catch (e: IOException) {
-            Log.e(TAG, "Failed to update theme config.", e)
+        }
+    }
+
+    suspend fun setShuffleModePreference(shuffleModeEnabled: Boolean) {
+        runCatching {
+            userPreferences.updateData {
+                it.copy { this.shuffleModeEnabled = shuffleModeEnabled }
+            }
         }
     }
 }
