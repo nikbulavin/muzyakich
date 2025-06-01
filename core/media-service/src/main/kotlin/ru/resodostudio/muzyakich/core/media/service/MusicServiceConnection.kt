@@ -127,7 +127,7 @@ class MusicServiceConnection @Inject constructor(
             it.copy(
                 mediaId = currentMediaItem?.mediaId.orEmpty(),
                 playbackState = playbackState.asPlaybackState(),
-                isPlaying = playWhenReady,
+                playWhenReady = playWhenReady,
                 duration = duration.orDefaultTimestamp(),
             )
         }

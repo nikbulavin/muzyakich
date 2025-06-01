@@ -125,7 +125,7 @@ internal fun NowPlayingBar(
                         ) {
                             FilledIconButton(
                                 onClick = {
-                                    if (!nowPlayingState.isPlaying) {
+                                    if (!nowPlayingState.playWhenReady) {
                                         onPlayClick()
                                     } else {
                                         onPauseClick()
@@ -138,7 +138,7 @@ internal fun NowPlayingBar(
                                 val defaultEffectsSpec =
                                     MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
                                 AnimatedContent(
-                                    targetState = !nowPlayingState.isPlaying,
+                                    targetState = !nowPlayingState.playWhenReady,
                                     label = "PlayPauseButton",
                                     transitionSpec = {
                                         fadeIn() + scaleIn(

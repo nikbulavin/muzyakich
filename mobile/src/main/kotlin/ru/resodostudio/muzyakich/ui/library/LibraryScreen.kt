@@ -127,7 +127,7 @@ private fun LibraryScreen(
                                 items(songs) { song ->
                                     val isPlaying =
                                         libraryUiState.nowPlayingState.mediaId == song.mediaId &&
-                                                libraryUiState.nowPlayingState.isPlaying
+                                                libraryUiState.nowPlayingState.playWhenReady
 
                                     SongItem(
                                         song = song,
