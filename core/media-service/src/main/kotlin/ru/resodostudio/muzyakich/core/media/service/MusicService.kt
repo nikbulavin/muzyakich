@@ -23,12 +23,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudio.muzyakich.core.common.Dispatcher
-import ru.resodostudio.muzyakich.core.common.MuzDispatchers
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
 import ru.resodostudio.muzyakich.core.media.service.util.unsafeLazy
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import javax.inject.Inject
 
 @OptIn(UnstableApi::class)
@@ -100,6 +101,11 @@ class MusicService : MediaSessionService() {
         userDataRepository.userData.collectLatest { userData ->
             val playbackConfig = userData.playbackConfig
             mediaSession?.player?.run {
+                repeatMode = when (playbackConfig.repeatMode) {
+                    REPEAT_OFF -> Player.REPEAT_MODE_OFF
+                    REPEAT_ALL -> Player.REPEAT_MODE_ALL
+                    REPEAT_ONE -> Player.REPEAT_MODE_ONE
+                }
                 shuffleModeEnabled = playbackConfig.shuffleModeEnabled
             }
         }
