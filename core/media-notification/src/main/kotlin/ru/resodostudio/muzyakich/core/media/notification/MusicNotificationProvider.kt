@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.media3.common.util.UnstableApi
@@ -18,24 +17,27 @@ import com.google.common.collect.ImmutableList
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
-import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.media.notification.common.MusicActions
 import ru.resodostudio.muzyakich.core.media.notification.util.asArtworkBitmap
 import javax.inject.Inject
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(UnstableApi::class)
+@UnstableApi
 class MusicNotificationProvider @Inject constructor(
-    @ApplicationScope private val appScope: CoroutineScope,
+    @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
     @ApplicationContext private val context: Context,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : MediaNotification.Provider {
 
     private val notificationManager = checkNotNull(context.getSystemService<NotificationManager>())
+    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
 
     override fun createNotification(
         mediaSession: MediaSession,
@@ -76,6 +78,8 @@ class MusicNotificationProvider @Inject constructor(
 
     override fun handleCustomCommand(session: MediaSession, action: String, extras: Bundle) = false
 
+    fun cancelCoroutineScope() = coroutineScope.cancel()
+
     private fun ensureNotificationChannelExists() {
 
         if (notificationManager.getNotificationChannel(MUSIC_NOTIFICATION_CHANNEL_ID) != null) return
@@ -103,7 +107,7 @@ class MusicNotificationProvider @Inject constructor(
         uri: Uri?,
         setLargeIcon: (Bitmap?) -> Unit,
         updateNotification: () -> Unit
-    ) = appScope.launch {
+    ) = coroutineScope.launch {
         val bitmap = loadArtworkBitmap(uri)
         setLargeIcon(bitmap)
         updateNotification()

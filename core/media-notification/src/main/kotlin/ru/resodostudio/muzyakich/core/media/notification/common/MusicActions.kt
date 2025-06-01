@@ -50,14 +50,4 @@ internal object MusicActions {
         titleResource = localesR.string.skip_next,
         command = Player.COMMAND_SEEK_TO_NEXT,
     ).asNotificationAction(context, mediaSession, actionFactory)
-
-    internal fun getShuffleAction(
-        context: Context,
-        mediaSession: MediaSession,
-        actionFactory: MediaNotification.ActionFactory,
-    ) = MusicAction(
-        iconResource = R.drawable.ic_outlined_shuffle,
-        titleResource = localesR.string.enable_shuffle_mode,
-        command = Player.COMMAND_SET_SHUFFLE_MODE,
-    ).asNotificationAction(context, mediaSession, actionFactory)
 }

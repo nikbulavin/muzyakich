@@ -10,7 +10,9 @@ import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +24,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_POSITION_MS
-import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
+import ru.resodostudio.muzyakich.core.common.Dispatcher
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
 import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
 import ru.resodostudio.muzyakich.core.media.service.util.orDefaultTimestamp
@@ -35,9 +38,10 @@ import kotlin.time.Duration.Companion.milliseconds
 @Singleton
 class MusicServiceConnection @Inject constructor(
     @ApplicationContext context: Context,
-    @ApplicationScope private val appScope: CoroutineScope,
+    @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
 ) {
     private var mediaController: MediaController? = null
+    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
 
     private val _nowPlayingState = MutableStateFlow(NowPlayingState())
     val nowPlayingState = _nowPlayingState.asStateFlow()
@@ -51,7 +55,7 @@ class MusicServiceConnection @Inject constructor(
     }
 
     init {
-        appScope.launch {
+        coroutineScope.launch {
             mediaController = MediaController.Builder(
                 context,
                 SessionToken(context, ComponentName(context, MusicService::class.java))

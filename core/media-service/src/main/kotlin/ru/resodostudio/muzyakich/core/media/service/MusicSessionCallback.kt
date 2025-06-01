@@ -8,12 +8,21 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import ru.resodostudio.muzyakich.core.common.Dispatcher
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
 import javax.inject.Inject
 
 class MusicSessionCallback @Inject constructor(
+    @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
     private val musicActionHandler: MusicActionHandler,
 ) : MediaLibrarySession.Callback {
+
+    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
 
     fun setPlaybackModeAction(playbackConfig: PlaybackConfig) {
 
@@ -57,5 +66,10 @@ class MusicSessionCallback @Inject constructor(
         musicActionHandler.onCustomCommand(mediaSession = session, customCommand = customCommand)
         session.setCustomLayout(musicActionHandler.customLayout)
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+    }
+
+    fun cancelCoroutineScope() {
+        coroutineScope.cancel()
+        musicActionHandler.cancelCoroutineScope()
     }
 }

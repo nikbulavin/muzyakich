@@ -14,15 +14,21 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudio.muzyakich.core.common.Dispatcher
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
+import ru.resodostudio.muzyakich.core.media.service.util.unsafeLazy
 import javax.inject.Inject
 
 @OptIn(UnstableApi::class)
@@ -30,8 +36,8 @@ import javax.inject.Inject
 class MusicService : MediaSessionService() {
 
     @Inject
-    @ApplicationScope
-    lateinit var appScope: CoroutineScope
+    @Dispatcher(Main)
+    lateinit var mainDispatcher: CoroutineDispatcher
 
     @Inject
     lateinit var userDataRepository: UserDataRepository
@@ -43,6 +49,8 @@ class MusicService : MediaSessionService() {
     lateinit var musicSessionCallback: MusicSessionCallback
 
     private var mediaSession: MediaSession? = null
+
+    private val coroutineScope by unsafeLazy { CoroutineScope(mainDispatcher + SupervisorJob()) }
 
     private val _currentMediaId = MutableStateFlow("")
 
@@ -81,13 +89,14 @@ class MusicService : MediaSessionService() {
         mediaSession?.run {
             player.release()
             release()
-            clearListener()
             mediaSession = null
         }
+        musicSessionCallback.cancelCoroutineScope()
+        musicNotificationProvider.cancelCoroutineScope()
         super.onDestroy()
     }
 
-    private fun startPlaybackModeSync() = appScope.launch {
+    private fun startPlaybackModeSync() = coroutineScope.launch {
         userDataRepository.userData.collectLatest { userData ->
             val playbackConfig = userData.playbackConfig
             mediaSession?.player?.run {
