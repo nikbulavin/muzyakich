@@ -8,23 +8,15 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import ru.resodostudio.muzyakich.core.common.Constants.PLAYBACK_MODE_REPEAT
-import ru.resodostudio.muzyakich.core.common.Constants.PLAYBACK_MODE_REPEAT_ONE
-import ru.resodostudio.muzyakich.core.common.Constants.PLAYBACK_MODE_SHUFFLE
-import ru.resodostudio.muzyakich.core.model.data.PlaybackMode
+import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
 import javax.inject.Inject
 
 class MusicSessionCallback @Inject constructor(
     private val musicActionHandler: MusicActionHandler,
 ) : MediaLibrarySession.Callback {
 
-    fun setPlaybackModeAction(playbackMode: PlaybackMode) {
-        val actionsMap = mapOf(
-            PlaybackMode.REPEAT to PLAYBACK_MODE_REPEAT,
-            PlaybackMode.REPEAT_ONE to PLAYBACK_MODE_REPEAT_ONE,
-            PlaybackMode.SHUFFLE to PLAYBACK_MODE_SHUFFLE
-        )
-        musicActionHandler.setRepeatShuffleCommand(actionsMap.getValue(playbackMode))
+    fun setPlaybackModeAction(playbackConfig: PlaybackConfig) {
+
     }
 
     override fun onAddMediaItems(

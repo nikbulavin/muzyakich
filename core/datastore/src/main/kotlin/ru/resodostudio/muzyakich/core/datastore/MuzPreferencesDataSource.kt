@@ -8,6 +8,7 @@ import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.DARK
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.LIGHT
+import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
 import ru.resodostudio.muzyakich.core.model.data.UserData
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class MuzPreferencesDataSource @Inject constructor(
                     DarkThemeConfigProto.DARK_THEME_CONFIG_DARK -> DARK
                 },
                 useDynamicColor = it.useDynamicColor,
-                shuffleModeEnabled = it.shuffleModeEnabled,
+                playbackConfig = PlaybackConfig(false, it.shuffleModeEnabled),
             )
         }
 

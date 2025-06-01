@@ -14,9 +14,14 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
+import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
 import javax.inject.Inject
 
@@ -24,10 +29,20 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MusicService : MediaSessionService() {
 
-    private var mediaSession: MediaSession? = null
+    @Inject
+    @ApplicationScope
+    lateinit var appScope: CoroutineScope
 
-    @Inject lateinit var musicNotificationProvider: MusicNotificationProvider
-    @Inject lateinit var musicSessionCallback: MusicSessionCallback
+    @Inject
+    lateinit var userDataRepository: UserDataRepository
+
+    @Inject
+    lateinit var musicNotificationProvider: MusicNotificationProvider
+
+    @Inject
+    lateinit var musicSessionCallback: MusicSessionCallback
+
+    private var mediaSession: MediaSession? = null
 
     private val _currentMediaId = MutableStateFlow("")
 
@@ -72,8 +87,13 @@ class MusicService : MediaSessionService() {
         super.onDestroy()
     }
 
-    private fun startPlaybackModeSync() {
-
+    private fun startPlaybackModeSync() = appScope.launch {
+        userDataRepository.userData.collectLatest { userData ->
+            val playbackConfig = userData.playbackConfig
+            mediaSession?.player?.run {
+                shuffleModeEnabled = playbackConfig.shuffleModeEnabled
+            }
+        }
     }
 
     private inner class PlayerListener : Player.Listener {
