@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "ru/resodostudio/muzyakich/data/dark_theme_config.proto";
+import "ru/resodostudio/muzyakich/data/repeat_mode.proto";
 
 option java_package = "ru.resodostudio.muzyakich.core.datastore";
 option java_multiple_files = true;
@@ -12,4 +13,6 @@ message UserPreferences {
     bool use_dynamic_color = 2;
 
     bool shuffle_mode_enabled = 3;
+
+    RepeatModeProto repeat_mode = 4;
 }

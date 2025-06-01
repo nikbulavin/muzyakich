@@ -1,6 +1,6 @@
 package ru.resodostudio.muzyakich.core.model.data
 
 data class PlaybackConfig(
-    val repeatOne: Boolean,
+    val repeatMode: RepeatMode,
     val shuffleModeEnabled: Boolean,
 )
