@@ -8,15 +8,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import ru.resodostudio.muzyakich.core.common.Constants.PLAYBACK_MODE_REPEAT
-import ru.resodostudio.muzyakich.core.common.Constants.PLAYBACK_MODE_REPEAT_ONE
-import ru.resodostudio.muzyakich.core.common.Constants.PLAYBACK_MODE_SHUFFLE
+import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ALL
+import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ONE
+import ru.resodostudio.muzyakich.core.common.Constants.SHUFFLE_MODE
 import ru.resodostudio.muzyakich.core.common.Dispatcher
-import ru.resodostudio.muzyakich.core.common.MuzDispatchers
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import javax.inject.Inject
 
 class MusicActionHandler @Inject constructor(
-    @Dispatcher(MuzDispatchers.Main) mainDispatcher: CoroutineDispatcher,
+    @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
 ) {
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
 
@@ -26,7 +26,7 @@ class MusicActionHandler @Inject constructor(
 
     fun onCustomCommand(mediaSession: MediaSession, customCommand: SessionCommand) {
         when (customCommand.customAction) {
-            PLAYBACK_MODE_REPEAT, PLAYBACK_MODE_REPEAT_ONE, PLAYBACK_MODE_SHUFFLE -> {
+            REPEAT_MODE_ALL, REPEAT_MODE_ONE, SHUFFLE_MODE -> {
                 handleRepeatShuffleCommand(action = customCommand.customAction)
             }
         }
@@ -40,9 +40,9 @@ class MusicActionHandler @Inject constructor(
 
     private fun handleRepeatShuffleCommand(action: String) = coroutineScope.launch {
         when (action) {
-            PLAYBACK_MODE_REPEAT -> {}
-            PLAYBACK_MODE_REPEAT_ONE -> {}
-            PLAYBACK_MODE_SHUFFLE -> {}
+            REPEAT_MODE_ALL -> {}
+            REPEAT_MODE_ONE -> {}
+            SHUFFLE_MODE -> {}
         }
     }
 

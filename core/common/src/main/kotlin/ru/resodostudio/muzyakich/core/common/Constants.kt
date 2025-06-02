@@ -8,8 +8,7 @@ object Constants {
     const val DEFAULT_POSITION_MS = 0L
     const val DEFAULT_DURATION_MS = 0L
 
-    const val PLAYBACK_MODE = "playback_mode"
-    const val PLAYBACK_MODE_REPEAT = "playback_mode_repeat"
-    const val PLAYBACK_MODE_REPEAT_ONE = "playback_mode_repeat_one"
-    const val PLAYBACK_MODE_SHUFFLE = "playback_mode_shuffle"
+    const val REPEAT_MODE_ALL = "repeat_mode_all"
+    const val REPEAT_MODE_ONE = "repeat_mode_one"
+    const val SHUFFLE_MODE = "shuffle_mode"
 }

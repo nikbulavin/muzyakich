@@ -14,12 +14,6 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @UnstableApi
 internal object MusicActions {
 
-    internal fun getRepeatShuffleAction(
-        mediaSession: MediaSession,
-        customLayout: ImmutableList<CommandButton>,
-        actionFactory: MediaNotification.ActionFactory,
-    ) = actionFactory.createCustomActionFromCustomCommandButton(mediaSession, customLayout.first())
-
     internal fun getSkipPreviousAction(
         context: Context,
         mediaSession: MediaSession,
@@ -50,4 +44,10 @@ internal object MusicActions {
         titleResource = localesR.string.skip_next,
         command = Player.COMMAND_SEEK_TO_NEXT,
     ).asNotificationAction(context, mediaSession, actionFactory)
+
+    internal fun getShuffleAction(
+        mediaSession: MediaSession,
+        customLayout: ImmutableList<CommandButton>,
+        actionFactory: MediaNotification.ActionFactory,
+    ) = actionFactory.createCustomActionFromCustomCommandButton(mediaSession, customLayout.first())
 }
