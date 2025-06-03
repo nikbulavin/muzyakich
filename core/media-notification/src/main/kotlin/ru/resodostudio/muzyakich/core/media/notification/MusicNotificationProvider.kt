@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.media3.common.util.UnstableApi
@@ -29,7 +30,7 @@ import ru.resodostudio.muzyakich.core.media.notification.util.asArtworkBitmap
 import javax.inject.Inject
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 class MusicNotificationProvider @Inject constructor(
     @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
     @ApplicationContext private val context: Context,
@@ -53,7 +54,7 @@ class MusicNotificationProvider @Inject constructor(
         val builder = NotificationCompat.Builder(context, MUSIC_NOTIFICATION_CHANNEL_ID)
             .setContentTitle(metadata.title)
             .setContentText(metadata.artist)
-            .setSmallIcon(R.drawable.ic_outlined_play_arrow)
+            .setSmallIcon(R.drawable.ic_music_note)
             .setStyle(MediaStyle(mediaSession))
             .setContentIntent(mediaSession.sessionActivity)
 
