@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.PermissionStatus.Denied
-import ru.resodostudio.muzyakich.R
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Search
@@ -44,7 +43,7 @@ fun MuzApp(
                 ),
         ) {
             MuzTopAppBar(
-                titleRes = R.string.app_name,
+                titleRes = localesR.string.app_name,
                 navigationIcon = MuzIcons.Rounded.Search,
                 navigationIconContentDescriptionRes = localesR.string.search,
                 actionIcon = MuzIcons.Rounded.Settings,

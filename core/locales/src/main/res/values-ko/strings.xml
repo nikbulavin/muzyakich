@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">뮤지큥</string>
+
+    <string name="albums">앨범</string>
+    <string name="artists">아티스트</string>
+    <string name="disable_shuffle_mode">셔플 모드 비활성화</string>
+    <string name="enable_shuffle_mode">셔플 모드 활성화</string>
+    <string name="library_empty">아직 노래가 없습니다. 좋아하는 음악을 추가하고 감상하세요!</string>
+    <string name="music_notification_channel_name">현재 재생 중</string>
+    <string name="open_menu">메뉴 열기</string>
+    <string name="pause_audio">일시 정지</string>
+    <string name="play_audio">재생</string>
+    <string name="playlists">재생 목록</string>
+    <string name="search">검색</string>
+    <string name="settings">설정</string>
+    <string name="skip_next">다음 곡</string>
+    <string name="skip_previous">이전 곡</string>
+    <string name="songs">노래</string>
+</resources>
