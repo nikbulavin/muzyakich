@@ -18,7 +18,7 @@ kotlin = "2.1.21"
 kotlinxCoroutines = "1.10.2"
 ksp = "2.1.21-2.0.1"
 lottie = "6.6.6"
-protobuf = "4.31.0"
+protobuf = "4.31.1"
 protobufPlugin = "0.9.5"
 
 [libraries]
