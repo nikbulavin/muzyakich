@@ -18,12 +18,12 @@ internal val fontProvider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs,
 )
 
-internal val aclonicaFont = GoogleFont("Aclonica")
+internal val rubikBubblesFont = GoogleFont("Rubik Bubbles")
 internal val rubikFont = GoogleFont("Rubik")
 
 internal val aclonicaFontFamily = FontFamily(
-    Font(googleFont = aclonicaFont, fontProvider = fontProvider),
-    Font(googleFont = aclonicaFont, fontProvider = fontProvider, weight = FontWeight.Bold),
+    Font(googleFont = rubikBubblesFont, fontProvider = fontProvider),
+    Font(googleFont = rubikBubblesFont, fontProvider = fontProvider, weight = FontWeight.Bold),
 )
 internal val rubikFontFamily = FontFamily(
     Font(googleFont = rubikFont, fontProvider = fontProvider),
@@ -89,14 +89,14 @@ internal val MuzTypography = Typography(
         fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = rubikFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     titleSmall = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = rubikFontFamily,
+        fontFamily = aclonicaFontFamily,
     ),
     bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
