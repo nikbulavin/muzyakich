@@ -17,9 +17,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.PermissionStatus.Denied
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
-import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Search
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Settings
 import ru.resodostudio.muzyakich.ui.library.LibraryScreen
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -44,10 +41,6 @@ fun MuzApp(
         ) {
             MuzTopAppBar(
                 titleRes = localesR.string.app_name,
-                navigationIcon = MuzIcons.Rounded.Search,
-                navigationIconContentDescriptionRes = localesR.string.search,
-                actionIcon = MuzIcons.Rounded.Settings,
-                actionIconContentDescriptionRes = localesR.string.settings,
             )
 
             val permissionState = appState.permissionState
