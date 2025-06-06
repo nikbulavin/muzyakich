@@ -20,4 +20,8 @@ internal class OfflineUserDataRepository @Inject constructor(
     override suspend fun setDynamicColorPreference(useDynamicColor: Boolean) {
         return muzPreferencesDataSource.setDynamicColorPreference(useDynamicColor)
     }
+
+    override suspend fun setShuffleModePreference(shuffleModeEnabled: Boolean) {
+        return muzPreferencesDataSource.setShuffleModePreference(shuffleModeEnabled)
+    }
 }
