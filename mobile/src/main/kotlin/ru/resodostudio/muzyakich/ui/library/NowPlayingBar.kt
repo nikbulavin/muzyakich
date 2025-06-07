@@ -115,7 +115,6 @@ internal fun NowPlayingBar(
                                     )
                                 }
                             },
-                            filterQuality = FilterQuality.Low,
                         )
                     },
                     trailingContent = {

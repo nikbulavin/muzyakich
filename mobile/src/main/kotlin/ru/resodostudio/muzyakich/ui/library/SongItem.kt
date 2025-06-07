@@ -116,7 +116,6 @@ fun SongItem(
                             )
                         }
                     },
-                    filterQuality = FilterQuality.Low,
                 )
             }
         },
