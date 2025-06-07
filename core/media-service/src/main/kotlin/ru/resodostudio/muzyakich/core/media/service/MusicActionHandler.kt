@@ -2,7 +2,6 @@ package ru.resodostudio.muzyakich.core.media.service
 
 import android.content.Context
 import android.os.Bundle
-import androidx.annotation.DrawableRes
 import androidx.media3.session.CommandButton
 import androidx.media3.session.SessionCommand
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,14 +55,14 @@ class MusicActionHandler @Inject constructor(
 
     private fun getAvailableCustomCommands() = mapOf(
         SHUFFLE_MODE_OFF to buildCustomCommand(
-            action = SHUFFLE_MODE_OFF,
+            action = SHUFFLE_MODE_ON,
             displayName = context.getString(localesR.string.enable_shuffle_mode),
-            iconResource = R.drawable.ic_shuffle,
+            icon = CommandButton.ICON_SHUFFLE_OFF,
         ),
         SHUFFLE_MODE_ON to buildCustomCommand(
-            action = SHUFFLE_MODE_ON,
+            action = SHUFFLE_MODE_OFF,
             displayName = context.getString(localesR.string.disable_shuffle_mode),
-            iconResource = R.drawable.ic_shuffle_on,
+            icon = CommandButton.ICON_SHUFFLE_ON,
         ),
     )
 }
@@ -71,8 +70,8 @@ class MusicActionHandler @Inject constructor(
 private fun buildCustomCommand(
     action: String,
     displayName: String,
-    @DrawableRes iconResource: Int,
-) = CommandButton.Builder(iconResource)
-    .setSessionCommand(SessionCommand(action, Bundle.EMPTY))
+    icon: Int,
+) = CommandButton.Builder(icon)
     .setDisplayName(displayName)
+    .setSessionCommand(SessionCommand(action, Bundle.EMPTY))
     .build()

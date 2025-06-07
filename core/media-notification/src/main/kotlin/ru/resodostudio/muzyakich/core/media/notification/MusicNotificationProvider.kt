@@ -88,7 +88,7 @@ class MusicNotificationProvider @Inject constructor(
         val notificationChannel = NotificationChannel(
             MUSIC_NOTIFICATION_CHANNEL_ID,
             context.getString(localesR.string.music_notification_channel_name),
-            NotificationManager.IMPORTANCE_LOW,
+            NotificationManager.IMPORTANCE_DEFAULT,
         )
         notificationManager.createNotificationChannel(notificationChannel)
     }
@@ -102,6 +102,7 @@ class MusicNotificationProvider @Inject constructor(
         MusicActions.getSkipPreviousAction(context, mediaSession, actionFactory),
         MusicActions.getPlayPauseAction(context, mediaSession, actionFactory, playWhenReady),
         MusicActions.getSkipNextAction(context, mediaSession, actionFactory),
+        MusicActions.getShuffleAction(mediaSession, customLayout, actionFactory),
     )
 
     private fun setupArtwork(

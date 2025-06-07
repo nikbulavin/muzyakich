@@ -108,6 +108,8 @@ class MusicService : MediaSessionService() {
                 }
                 shuffleModeEnabled = playbackConfig.shuffleModeEnabled
             }
+            musicSessionCallback.setShuffleModeAction(playbackConfig.shuffleModeEnabled)
+            mediaSession?.setCustomLayout(musicSessionCallback.customLayout)
         }
     }
 

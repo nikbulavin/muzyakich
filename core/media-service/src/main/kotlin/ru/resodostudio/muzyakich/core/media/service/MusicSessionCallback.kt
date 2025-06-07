@@ -1,11 +1,15 @@
 package ru.resodostudio.muzyakich.core.media.service
 
 import android.os.Bundle
+import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
+import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,7 +18,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
+import ru.resodostudio.muzyakich.core.media.notification.common.MusicCommands.SHUFFLE_MODE_OFF
+import ru.resodostudio.muzyakich.core.media.notification.common.MusicCommands.SHUFFLE_MODE_ON
 import javax.inject.Inject
 
 class MusicSessionCallback @Inject constructor(
@@ -23,34 +28,48 @@ class MusicSessionCallback @Inject constructor(
 ) : MediaLibrarySession.Callback {
 
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
+    val customLayout: List<CommandButton> get() = musicActionHandler.customLayout
 
-    fun setPlaybackModeAction(playbackConfig: PlaybackConfig) {
-
+    fun setShuffleModeAction(shuffleModeEnabled: Boolean) {
+        val action = if (shuffleModeEnabled) SHUFFLE_MODE_ON else SHUFFLE_MODE_OFF
+        musicActionHandler.setShuffleCommand(action)
     }
 
     override fun onAddMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
-        mediaItems: List<MediaItem>
+        mediaItems: List<MediaItem>,
     ): ListenableFuture<List<MediaItem>> = Futures.immediateFuture(
         mediaItems.map { mediaItem ->
             mediaItem.buildUpon()
+                .setMediaMetadata(mediaItem.mediaMetadata)
                 .setUri(mediaItem.requestMetadata.mediaUri)
                 .build()
         }
     )
 
+    @OptIn(UnstableApi::class)
     override fun onConnect(
         session: MediaSession,
-        controller: MediaSession.ControllerInfo
+        controller: MediaSession.ControllerInfo,
     ): MediaSession.ConnectionResult {
-        val connectionResult = super.onConnect(session, controller)
-        val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
-
-        return MediaSession.ConnectionResult.accept(
-            availableSessionCommands.build(),
-            connectionResult.availablePlayerCommands
-        )
+        if (
+            session.isMediaNotificationController(controller) ||
+            session.isAutomotiveController(controller) ||
+            session.isAutoCompanionController(controller)
+        ) {
+            val connectionResult = super.onConnect(session, controller)
+            val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
+            musicActionHandler.customCommands.values.forEach { commandButton ->
+                commandButton.sessionCommand?.let(availableSessionCommands::add)
+            }
+            val customButton = musicActionHandler.customCommands.map { it.value }[if (session.player.shuffleModeEnabled) 1 else 0]
+            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                .setAvailableSessionCommands(availableSessionCommands.build())
+                .setMediaButtonPreferences(ImmutableList.of(customButton))
+                .build()
+        }
+        return MediaSession.ConnectionResult.AcceptedResultBuilder(session).build()
     }
 
     override fun onPostConnect(session: MediaSession, controller: MediaSession.ControllerInfo) {
@@ -61,9 +80,9 @@ class MusicSessionCallback @Inject constructor(
         session: MediaSession,
         controller: MediaSession.ControllerInfo,
         customCommand: SessionCommand,
-        args: Bundle
+        args: Bundle,
     ): ListenableFuture<SessionResult> {
-        musicActionHandler.onCustomCommand(mediaSession = session, customCommand = customCommand)
+        musicActionHandler.onCustomCommand(customCommand)
         session.setCustomLayout(musicActionHandler.customLayout)
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
     }
