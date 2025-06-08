@@ -14,6 +14,7 @@
     <string name="playlists">Плейлисты</string>
     <string name="search">Поиск</string>
     <string name="settings">Настройки</string>
+    <string name="shuffle">Перемешать</string>
     <string name="skip_next">Перейти к следующему</string>
     <string name="skip_previous">Перейти к предыдущему</string>
     <string name="songs">Песни</string>

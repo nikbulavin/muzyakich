@@ -28,7 +28,8 @@ class LibraryViewModel @Inject constructor(
             LibraryUiState.Empty
         } else {
             val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
-            val shouldShowNowPlayingBar = nowPlayingState.mediaId.isNotBlank() && currentSong != null
+            val shouldShowNowPlayingBar =
+                nowPlayingState.mediaId.isNotBlank() && currentSong != null
 
             LibraryUiState.Success(
                 nowPlayingState = nowPlayingState,
@@ -45,8 +46,13 @@ class LibraryViewModel @Inject constructor(
             initialValue = LibraryUiState.Loading,
         )
 
-    fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) =
+    fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
+    }
+
+    fun shuffleSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
+        musicServiceConnection.shuffleSongs(songs = songs, startIndex = startIndex)
+    }
 
     fun play() = musicServiceConnection.play()
 

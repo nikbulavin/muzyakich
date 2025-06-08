@@ -14,6 +14,7 @@
     <string name="playlists">재생 목록</string>
     <string name="search">검색</string>
     <string name="settings">설정</string>
+    <string name="shuffle">셔플</string>
     <string name="skip_next">다음 곡</string>
     <string name="skip_previous">이전 곡</string>
     <string name="songs">노래</string>

@@ -102,11 +102,11 @@ class MusicServiceConnection @Inject constructor(
     fun shuffleSongs(
         songs: List<Song>,
         startIndex: Int = DEFAULT_INDEX,
-        startPositionMs: Long = DEFAULT_POSITION_MS
+        startPositionMs: Long = DEFAULT_POSITION_MS,
     ) = playSongs(
         songs = songs.shuffled(),
         startIndex = startIndex,
-        startPositionMs = startPositionMs
+        startPositionMs = startPositionMs,
     )
 
     private inner class PlayerListener : Player.Listener {

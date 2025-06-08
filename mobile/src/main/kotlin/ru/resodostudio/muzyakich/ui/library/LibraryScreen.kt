@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
+import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -20,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,17 +54,20 @@ fun LibraryScreen(
 
     LibraryScreen(
         libraryUiState = libraryUiState,
-        onSongItemClick = viewModel::playSongs,
+        onPlaySongsClick = viewModel::playSongs,
+        onShuffleSongsClick = viewModel::shuffleSongs,
         onPlayClick = viewModel::play,
         onPauseClick = viewModel::pause,
         onSkipNextClick = viewModel::skipNext,
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
-    onSongItemClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
+    onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
+    onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
@@ -109,6 +118,8 @@ private fun LibraryScreen(
 
         is LibraryUiState.Success -> {
             val songs = libraryUiState.songs
+            var expanded by rememberSaveable { mutableStateOf(true) }
+
             Box {
                 AnimatedContent(selectedTabIndex) { state ->
                     when (state) {
@@ -122,7 +133,13 @@ private fun LibraryScreen(
                                         .asPaddingValues()
                                         .calculateBottomPadding(),
                                 ),
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .floatingToolbarVerticalNestedScroll(
+                                        expanded = expanded,
+                                        onExpand = { expanded = true },
+                                        onCollapse = { expanded = false },
+                                    ),
                             ) {
                                 items(songs) { song ->
                                     val isPlaying =
@@ -133,7 +150,7 @@ private fun LibraryScreen(
                                         song = song,
                                         isPlaying = isPlaying,
                                         modifier = Modifier.animateItem(),
-                                        onClick = { onSongItemClick(songs, songs.indexOf(song)) },
+                                        onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
                                     )
                                 }
                             }
@@ -144,19 +161,32 @@ private fun LibraryScreen(
                     }
                 }
 
-                NowPlayingBar(
-                    visible = libraryUiState.shouldShowNowPlayingBar,
-                    nowPlayingState = libraryUiState.nowPlayingState,
-                    song = libraryUiState.currentSong,
-                    currentPosition = libraryUiState.currentPosition,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
-                        .padding(16.dp),
-                    onPlayClick = onPlayClick,
-                    onPauseClick = onPauseClick,
-                    onSkipNextClick = onSkipNextClick,
-                )
+                if (libraryUiState.shouldShowNowPlayingBar) {
+                    NowPlayingBar(
+                        visible = libraryUiState.shouldShowNowPlayingBar,
+                        nowPlayingState = libraryUiState.nowPlayingState,
+                        song = libraryUiState.currentSong,
+                        currentPosition = libraryUiState.currentPosition,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
+                            .padding(16.dp),
+                        onPlayClick = onPlayClick,
+                        onPauseClick = onPauseClick,
+                        onSkipNextClick = onSkipNextClick,
+                    )
+                } else {
+                    LibraryToolbar(
+                        expanded = expanded,
+                        onPlaySongsClick = onPlaySongsClick,
+                        onShuffleSongsClick = onShuffleSongsClick,
+                        songs = songs,
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .align(Alignment.BottomCenter)
+                            .offset(y = -ScreenOffset),
+                    )
+                }
             }
         }
     }
