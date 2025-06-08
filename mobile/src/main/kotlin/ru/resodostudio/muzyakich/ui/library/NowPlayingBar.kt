@@ -6,11 +6,13 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -64,126 +66,177 @@ internal fun NowPlayingBar(
         modifier = modifier,
     ) {
         Box {
-            ListItem(
-                modifier = Modifier.fillMaxWidth(),
-                headlineContent = {
-                    Text(
-                        text = song.title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee(),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            ) {
+                val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+                AnimatedContent(
+                    targetState = song,
+                    transitionSpec = {
+                        fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith fadeOut(snap())
+                    },
+                    modifier = Modifier.weight(1f),
+                ) { songState ->
+                    SongInfo(
+                        song = songState,
                     )
-                },
-                supportingContent = {
-                    Text(
-                        text = song.artist,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee(),
-                    )
-                },
-                leadingContent = {
-                    SubcomposeAsyncImage(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(6.dp)),
-                        model = song.artworkUri,
-                        contentDescription = null,
-                        error = {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                            ) {
-                                Icon(
-                                    imageVector = MuzIcons.Rounded.MusicNote,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        },
-                    )
-                },
-                trailingContent = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        FilledIconButton(
-                            onClick = {
-                                if (!nowPlayingState.playWhenReady) {
-                                    onPlayClick()
-                                } else {
-                                    onPauseClick()
-                                }
-                            },
-                            shapes = IconButtonDefaults.shapes(),
-                            modifier = Modifier
-                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-                        ) {
-                            val defaultEffectsSpec =
-                                MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-                            AnimatedContent(
-                                targetState = !nowPlayingState.playWhenReady,
-                                label = "PlayPauseButton",
-                                transitionSpec = {
-                                    fadeIn() + scaleIn(
-                                        defaultEffectsSpec,
-                                        0.8f
-                                    ) togetherWith fadeOut(snap())
-                                },
-                            ) { paused ->
-                                if (paused) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.PlayArrow,
-                                        contentDescription = stringResource(localesR.string.play_audio),
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.Pause,
-                                        contentDescription = stringResource(localesR.string.pause_audio),
-                                    )
-                                }
-                            }
-                        }
-                        IconButton(
-                            onClick = onSkipNextClick,
-                            shapes = IconButtonDefaults.shapes(),
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.SkipNext,
-                                contentDescription = stringResource(localesR.string.skip_next),
-                            )
-                        }
-                    }
                 }
-            )
+                ActionButtons(
+                    nowPlayingState = nowPlayingState,
+                    onPlayClick = onPlayClick,
+                    onPauseClick = onPauseClick,
+                    onSkipNextClick = onSkipNextClick,
+                )
+            }
 
-            val progress by animateFloatAsState(
-                targetValue = convertToProgress(
-                    count = currentPosition,
-                    total = song.duration,
-                ),
-                label = "ProgressAnimation",
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+            SongProgressIndicator(
+                currentPosition = currentPosition,
+                song = song,
+                nowPlayingState = nowPlayingState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(3.dp),
             )
-            val progressModifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(3.dp)
+        }
+    }
+}
 
-            if (nowPlayingState.playbackState == PlaybackState.BUFFERING) {
-                LinearProgressIndicator(
-                    modifier = progressModifier,
+@Composable
+private fun SongInfo(
+    song: Song,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        SubcomposeAsyncImage(
+            modifier = Modifier
+                .size(42.dp)
+                .clip(RoundedCornerShape(6.dp)),
+            model = song.artworkUri,
+            contentDescription = null,
+            error = {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.MusicNote,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier.padding(bottom = 2.dp, end = 12.dp),
+        ) {
+            Text(
+                text = song.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(),
+            )
+            Text(
+                text = song.artist,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun SongProgressIndicator(
+    currentPosition: Long,
+    song: Song,
+    nowPlayingState: NowPlayingState,
+    modifier: Modifier = Modifier,
+) {
+    val progress by animateFloatAsState(
+        targetValue = convertToProgress(
+            count = currentPosition,
+            total = song.duration,
+        ),
+        label = "ProgressAnimation",
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+    )
+
+    if (nowPlayingState.playbackState == PlaybackState.BUFFERING) {
+        LinearProgressIndicator(
+            modifier = modifier,
+        )
+    } else {
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun ActionButtons(
+    nowPlayingState: NowPlayingState,
+    onPlayClick: () -> Unit,
+    onPauseClick: () -> Unit,
+    onSkipNextClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FilledIconButton(
+        onClick = {
+            if (!nowPlayingState.playWhenReady) {
+                onPlayClick()
+            } else {
+                onPauseClick()
+            }
+        },
+        shapes = IconButtonDefaults.shapes(),
+        modifier = modifier
+            .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+    ) {
+        val defaultEffectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+        AnimatedContent(
+            targetState = !nowPlayingState.playWhenReady,
+            label = "PlayPauseButton",
+            transitionSpec = {
+                fadeIn() + scaleIn(defaultEffectsSpec, 0.8f) togetherWith fadeOut(snap())
+            },
+        ) { paused ->
+            if (paused) {
+                Icon(
+                    imageVector = MuzIcons.Rounded.PlayArrow,
+                    contentDescription = stringResource(localesR.string.play_audio),
                 )
             } else {
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = progressModifier,
+                Icon(
+                    imageVector = MuzIcons.Rounded.Pause,
+                    contentDescription = stringResource(localesR.string.pause_audio),
                 )
             }
         }
+    }
+    IconButton(
+        onClick = onSkipNextClick,
+        shapes = IconButtonDefaults.shapes(),
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = MuzIcons.Rounded.SkipNext,
+            contentDescription = stringResource(localesR.string.skip_next),
+        )
     }
 }
 
