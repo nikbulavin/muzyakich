@@ -232,6 +232,7 @@ private fun ActionButtons(
         onClick = onSkipNextClick,
         shapes = IconButtonDefaults.shapes(),
         modifier = modifier,
+        enabled = nowPlayingState.hasNextMediaItem,
     ) {
         Icon(
             imageVector = MuzIcons.Rounded.SkipNext,

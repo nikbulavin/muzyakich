@@ -133,6 +133,7 @@ class MusicServiceConnection @Inject constructor(
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
                 duration = duration.orDefaultTimestamp(),
+                hasNextMediaItem = hasNextMediaItem(),
             )
         }
     }

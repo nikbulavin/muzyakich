@@ -11,4 +11,5 @@ data class NowPlayingState(
     val playbackState: PlaybackState = IDLE,
     val playWhenReady: Boolean = false,
     val duration: Long = DEFAULT_DURATION_MS,
+    val hasNextMediaItem: Boolean = false,
 )
