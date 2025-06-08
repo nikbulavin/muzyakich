@@ -158,12 +158,14 @@ internal fun NowPlayingBar(
                     }
                 }
             )
+
             val progress by animateFloatAsState(
                 targetValue = convertToProgress(
                     count = currentPosition,
                     total = song.duration,
                 ),
                 label = "ProgressAnimation",
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             )
             val progressModifier = Modifier
                 .align(Alignment.BottomCenter)

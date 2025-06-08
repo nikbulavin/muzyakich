@@ -50,7 +50,7 @@ class MusicServiceConnection @Inject constructor(
         while (currentCoroutineContext().isActive) {
             val currentPosition = mediaController?.currentPosition ?: DEFAULT_POSITION_MS
             emit(currentPosition)
-            delay(1.milliseconds)
+            delay(100.milliseconds)
         }
     }
 

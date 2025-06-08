@@ -176,7 +176,7 @@ private fun LibraryScreen(
                     contentAlignment = Alignment.Center,
                     transitionSpec = {
                         fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
-                    }
+                    },
                 ) { isPlaying ->
                     if (libraryUiState.currentSong != null && isPlaying) {
                         NowPlayingBar(
