@@ -1,6 +1,11 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -18,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -161,31 +167,36 @@ private fun LibraryScreen(
                     }
                 }
 
-                if (libraryUiState.shouldShowNowPlayingBar) {
-                    NowPlayingBar(
-                        visible = libraryUiState.shouldShowNowPlayingBar,
-                        nowPlayingState = libraryUiState.nowPlayingState,
-                        song = libraryUiState.currentSong,
-                        currentPosition = libraryUiState.currentPosition,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .navigationBarsPadding()
-                            .padding(16.dp),
-                        onPlayClick = onPlayClick,
-                        onPauseClick = onPauseClick,
-                        onSkipNextClick = onSkipNextClick,
-                    )
-                } else {
-                    LibraryToolbar(
-                        expanded = expanded,
-                        onPlaySongsClick = onPlaySongsClick,
-                        onShuffleSongsClick = onShuffleSongsClick,
-                        songs = songs,
-                        modifier = Modifier
-                            .navigationBarsPadding()
-                            .align(Alignment.BottomCenter)
-                            .offset(y = -ScreenOffset),
-                    )
+                val fastAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+                AnimatedContent(
+                    targetState = libraryUiState.nowPlayingState.mediaId.isNotBlank(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding(),
+                    contentAlignment = Alignment.Center,
+                    transitionSpec = {
+                        fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
+                    }
+                ) { isPlaying ->
+                    if (libraryUiState.currentSong != null && isPlaying) {
+                        NowPlayingBar(
+                            nowPlayingState = libraryUiState.nowPlayingState,
+                            song = libraryUiState.currentSong,
+                            currentPosition = libraryUiState.currentPosition,
+                            modifier = Modifier.padding(16.dp),
+                            onPlayClick = onPlayClick,
+                            onPauseClick = onPauseClick,
+                            onSkipNextClick = onSkipNextClick,
+                        )
+                    } else {
+                        LibraryToolbar(
+                            expanded = expanded,
+                            onPlaySongsClick = onPlaySongsClick,
+                            onShuffleSongsClick = onShuffleSongsClick,
+                            songs = songs,
+                            modifier = Modifier.offset(y = -ScreenOffset),
+                        )
+                    }
                 }
             }
         }

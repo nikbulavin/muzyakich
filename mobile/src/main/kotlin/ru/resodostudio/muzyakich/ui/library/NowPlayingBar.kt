@@ -1,14 +1,11 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -36,10 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -55,145 +50,136 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun NowPlayingBar(
-    visible: Boolean,
     nowPlayingState: NowPlayingState,
-    song: Song?,
+    song: Song,
     currentPosition: Long,
     modifier: Modifier = Modifier,
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
 ) {
-    val animationSpec = MaterialTheme.motionScheme.slowSpatialSpec<IntSize>()
-    AnimatedVisibility(
-        visible = visible,
+    Surface(
+        tonalElevation = 3.dp,
+        shape = RoundedCornerShape(14.dp),
         modifier = modifier,
-        label = "NowPlayingBar",
-        enter = fadeIn() + expandIn(animationSpec, Alignment.BottomCenter),
-        exit = shrinkOut(animationSpec, Alignment.BottomCenter) + fadeOut(),
     ) {
-        Surface(
-            tonalElevation = 3.dp,
-            shape = RoundedCornerShape(14.dp),
-        ) {
-            Box {
-                ListItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    headlineContent = {
-                        Text(
-                            text = song?.title.toString(),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.basicMarquee(),
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            text = song?.artist.toString(),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.basicMarquee(),
-                        )
-                    },
-                    leadingContent = {
-                        SubcomposeAsyncImage(
-                            modifier = Modifier
-                                .size(42.dp)
-                                .clip(RoundedCornerShape(6.dp)),
-                            model = song?.artworkUri,
-                            contentDescription = null,
-                            error = {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                                ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.MusicNote,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            },
-                        )
-                    },
-                    trailingContent = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        ) {
-                            FilledIconButton(
-                                onClick = {
-                                    if (!nowPlayingState.playWhenReady) {
-                                        onPlayClick()
-                                    } else {
-                                        onPauseClick()
-                                    }
-                                },
-                                shapes = IconButtonDefaults.shapes(),
-                                modifier = Modifier
-                                    .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-                            ) {
-                                val defaultEffectsSpec =
-                                    MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-                                AnimatedContent(
-                                    targetState = !nowPlayingState.playWhenReady,
-                                    label = "PlayPauseButton",
-                                    transitionSpec = {
-                                        fadeIn() + scaleIn(
-                                            defaultEffectsSpec,
-                                            0.8f
-                                        ) togetherWith fadeOut(snap())
-                                    },
-                                ) { paused ->
-                                    if (paused) {
-                                        Icon(
-                                            imageVector = MuzIcons.Rounded.PlayArrow,
-                                            contentDescription = stringResource(localesR.string.play_audio),
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = MuzIcons.Rounded.Pause,
-                                            contentDescription = stringResource(localesR.string.pause_audio),
-                                        )
-                                    }
-                                }
-                            }
-                            IconButton(
-                                onClick = onSkipNextClick,
-                                shapes = IconButtonDefaults.shapes(),
+        Box {
+            ListItem(
+                modifier = Modifier.fillMaxWidth(),
+                headlineContent = {
+                    Text(
+                        text = song.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(),
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        text = song.artist,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(),
+                    )
+                },
+                leadingContent = {
+                    SubcomposeAsyncImage(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(RoundedCornerShape(6.dp)),
+                        model = song.artworkUri,
+                        contentDescription = null,
+                        error = {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
                             ) {
                                 Icon(
-                                    imageVector = MuzIcons.Rounded.SkipNext,
-                                    contentDescription = stringResource(localesR.string.skip_next),
+                                    imageVector = MuzIcons.Rounded.MusicNote,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
+                        },
+                    )
+                },
+                trailingContent = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        FilledIconButton(
+                            onClick = {
+                                if (!nowPlayingState.playWhenReady) {
+                                    onPlayClick()
+                                } else {
+                                    onPauseClick()
+                                }
+                            },
+                            shapes = IconButtonDefaults.shapes(),
+                            modifier = Modifier
+                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+                        ) {
+                            val defaultEffectsSpec =
+                                MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+                            AnimatedContent(
+                                targetState = !nowPlayingState.playWhenReady,
+                                label = "PlayPauseButton",
+                                transitionSpec = {
+                                    fadeIn() + scaleIn(
+                                        defaultEffectsSpec,
+                                        0.8f
+                                    ) togetherWith fadeOut(snap())
+                                },
+                            ) { paused ->
+                                if (paused) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.PlayArrow,
+                                        contentDescription = stringResource(localesR.string.play_audio),
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.Pause,
+                                        contentDescription = stringResource(localesR.string.pause_audio),
+                                    )
+                                }
+                            }
+                        }
+                        IconButton(
+                            onClick = onSkipNextClick,
+                            shapes = IconButtonDefaults.shapes(),
+                        ) {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.SkipNext,
+                                contentDescription = stringResource(localesR.string.skip_next),
+                            )
                         }
                     }
-                )
-                val progress by animateFloatAsState(
-                    targetValue = convertToProgress(
-                        count = currentPosition,
-                        total = song?.duration ?: 0L,
-                    ),
-                    label = "ProgressAnimation",
-                )
-                val progressModifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(3.dp)
-
-                if (nowPlayingState.playbackState == PlaybackState.BUFFERING) {
-                    LinearProgressIndicator(
-                        modifier = progressModifier,
-                    )
-                } else {
-                    LinearProgressIndicator(
-                        progress = { progress },
-                        modifier = progressModifier,
-                    )
                 }
+            )
+            val progress by animateFloatAsState(
+                targetValue = convertToProgress(
+                    count = currentPosition,
+                    total = song.duration,
+                ),
+                label = "ProgressAnimation",
+            )
+            val progressModifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .height(3.dp)
+
+            if (nowPlayingState.playbackState == PlaybackState.BUFFERING) {
+                LinearProgressIndicator(
+                    modifier = progressModifier,
+                )
+            } else {
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = progressModifier,
+                )
             }
         }
     }

@@ -28,15 +28,12 @@ class LibraryViewModel @Inject constructor(
             LibraryUiState.Empty
         } else {
             val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
-            val shouldShowNowPlayingBar =
-                nowPlayingState.mediaId.isNotBlank() && currentSong != null
 
             LibraryUiState.Success(
                 nowPlayingState = nowPlayingState,
                 currentPosition = currentPosition,
                 currentSong = currentSong,
                 songs = songs,
-                shouldShowNowPlayingBar = shouldShowNowPlayingBar,
             )
         }
     }
@@ -73,6 +70,5 @@ sealed interface LibraryUiState {
         val currentPosition: Long,
         val currentSong: Song?,
         val songs: List<Song>,
-        val shouldShowNowPlayingBar: Boolean,
     ) : LibraryUiState
 }
