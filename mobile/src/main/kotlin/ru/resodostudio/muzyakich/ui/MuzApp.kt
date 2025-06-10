@@ -15,7 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.PermissionStatus.Denied
+import com.google.accompanist.permissions.shouldShowRationale
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.ui.library.LibraryScreen
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -45,14 +45,14 @@ fun MuzApp(
 
             val permissionState = appState.permissionState
             when (permissionState.status) {
-                is Denied -> {
+                is PermissionStatus.Denied -> {
                     LaunchedEffect(permissionState) {
-                        val status = permissionState.status
-                        if (status is Denied && !status.shouldShowRationale) {
+                        if (!permissionState.status.shouldShowRationale) {
                             permissionState.launchPermissionRequest()
                         }
                     }
                 }
+
                 PermissionStatus.Granted -> LibraryScreen()
             }
         }
