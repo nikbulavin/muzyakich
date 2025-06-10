@@ -2,14 +2,21 @@ package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,44 +52,74 @@ fun PlayerScreen(
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
 ) {
+    val animatedVisibilityScope = LocalNavAnimatedContentScope.current
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+
     Surface(
         modifier = Modifier.fillMaxSize(),
     ) {
-
         when (playerUiState) {
             PlayerUiState.Error -> LoadingState()
             PlayerUiState.Loading -> LoadingState()
             is PlayerUiState.Success -> {
                 val song = playerUiState.currentSong
-                val animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                val sharedTransitionScope = LocalSharedTransitionScope.current
-
-                with(sharedTransitionScope) {
-                    SubcomposeAsyncImage(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .sharedBounds(
-                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                sharedContentState = rememberSharedContentState(song.artworkUri),
-                                animatedVisibilityScope = animatedVisibilityScope,
-                            ),
-                        model = song.artworkUri,
-                        contentDescription = null,
-                        error = {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                            ) {
-                                Icon(
-                                    imageVector = MuzIcons.Rounded.MusicNote,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        },
-                    )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.statusBarsPadding(),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    with(sharedTransitionScope) {
+                        SubcomposeAsyncImage(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                                .sharedBounds(
+                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                    sharedContentState = rememberSharedContentState(song.artworkUri),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                ),
+                            model = song.artworkUri,
+                            contentDescription = null,
+                            error = {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.MusicNote,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            },
+                        )
+                        Text(
+                            text = song.title,
+                            maxLines = 1,
+                            modifier = Modifier
+                                .basicMarquee()
+                                .sharedBounds(
+                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                    sharedContentState = rememberSharedContentState(song.title),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                ),
+                        )
+                        Text(
+                            text = song.artist,
+                            maxLines = 1,
+                            modifier = Modifier
+                                .basicMarquee()
+                                .sharedBounds(
+                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                    sharedContentState = rememberSharedContentState(song.artist),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
         }

@@ -162,13 +162,25 @@ private fun SongInfo(
                     text = song.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.basicMarquee(),
+                    modifier = Modifier
+                        .basicMarquee()
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(song.title),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        ),
                 )
                 Text(
                     text = song.artist,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.basicMarquee(),
+                    modifier = Modifier
+                        .basicMarquee()
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(song.artist),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
