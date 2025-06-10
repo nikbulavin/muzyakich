@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
@@ -10,6 +11,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,12 +40,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
+import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackState
 import ru.resodostudio.muzyakich.core.model.data.Song
@@ -59,11 +64,12 @@ internal fun NowPlayingBar(
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
+    onClick: () -> Unit = {},
 ) {
     Surface(
         tonalElevation = 3.dp,
         shape = RoundedCornerShape(14.dp),
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
     ) {
         Box {
             Row(
@@ -105,54 +111,68 @@ internal fun NowPlayingBar(
     }
 }
 
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun SongInfo(
     song: Song,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        SubcomposeAsyncImage(
-            modifier = Modifier
-                .size(42.dp)
-                .clip(RoundedCornerShape(6.dp)),
-            model = song.artworkUri,
-            contentDescription = null,
-            error = {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.MusicNote,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            },
-        )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier.padding(bottom = 2.dp, end = 12.dp),
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedVisibilityScope = LocalNavAnimatedContentScope.current
+
+    with(sharedTransitionScope) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = song.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee(),
+            SubcomposeAsyncImage(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .sharedBounds(
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        sharedContentState = rememberSharedContentState(song.artworkUri),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    ),
+                model = song.artworkUri,
+                contentDescription = null,
+                error = {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                    ) {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.MusicNote,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                },
             )
-            Text(
-                text = song.artist,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                modifier = Modifier.padding(bottom = 2.dp, end = 12.dp),
+            ) {
+                Text(
+                    text = song.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee(),
+                )
+                Text(
+                    text = song.artist,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
