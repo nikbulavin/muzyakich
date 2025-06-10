@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.muzyakich.android.application.firebase)
     alias(libs.plugins.muzyakich.android.application.flavors)
     alias(libs.plugins.muzyakich.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -50,6 +51,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.tracing)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
