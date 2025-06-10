@@ -17,7 +17,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.shouldShowRationale
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
-import ru.resodostudio.muzyakich.ui.library.LibraryScreen
+import ru.resodostudio.muzyakich.navigation.MuzNavDisplay
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -39,10 +39,6 @@ fun MuzApp(
                     ),
                 ),
         ) {
-            MuzTopAppBar(
-                titleRes = localesR.string.app_name,
-            )
-
             val permissionState = appState.permissionState
             when (permissionState.status) {
                 is PermissionStatus.Denied -> {
@@ -53,7 +49,7 @@ fun MuzApp(
                     }
                 }
 
-                PermissionStatus.Granted -> LibraryScreen()
+                PermissionStatus.Granted -> MuzNavDisplay()
             }
         }
     }
