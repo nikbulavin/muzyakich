@@ -55,30 +55,30 @@ private fun PlayerScreen(
     val animatedVisibilityScope = LocalNavAnimatedContentScope.current
     val sharedTransitionScope = LocalSharedTransitionScope.current
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        when (playerUiState) {
-            PlayerUiState.Error -> LoadingState()
-            PlayerUiState.Loading -> LoadingState()
-            is PlayerUiState.Success -> {
-                val song = playerUiState.currentSong
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.statusBarsPadding(),
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    with(sharedTransitionScope) {
+    with(sharedTransitionScope) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            when (playerUiState) {
+                PlayerUiState.Error -> LoadingState()
+                PlayerUiState.Loading -> LoadingState()
+                is PlayerUiState.Success -> {
+                    val song = playerUiState.currentSong
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.statusBarsPadding(),
+                        verticalArrangement = Arrangement.Center,
+                    ) {
                         SubcomposeAsyncImage(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 24.dp)
-                                .clip(RoundedCornerShape(18.dp))
                                 .sharedBounds(
                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                     sharedContentState = rememberSharedContentState(song.artworkUri),
                                     animatedVisibilityScope = animatedVisibilityScope,
-                                ),
+                                )
+                                .clip(RoundedCornerShape(18.dp)),
                             model = song.artworkUri,
                             contentDescription = null,
                             error = {
@@ -99,23 +99,23 @@ private fun PlayerScreen(
                             text = song.title,
                             maxLines = 1,
                             modifier = Modifier
-                                .basicMarquee()
                                 .sharedBounds(
                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                     sharedContentState = rememberSharedContentState(song.title),
                                     animatedVisibilityScope = animatedVisibilityScope,
-                                ),
+                                )
+                                .basicMarquee(),
                         )
                         Text(
                             text = song.artist,
                             maxLines = 1,
                             modifier = Modifier
-                                .basicMarquee()
                                 .sharedBounds(
                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                     sharedContentState = rememberSharedContentState(song.artist),
                                     animatedVisibilityScope = animatedVisibilityScope,
-                                ),
+                                )
+                                .basicMarquee(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -123,6 +123,5 @@ private fun PlayerScreen(
                 }
             }
         }
-
     }
 }

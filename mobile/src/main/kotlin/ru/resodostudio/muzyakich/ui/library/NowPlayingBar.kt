@@ -132,12 +132,12 @@ private fun SongInfo(
             SubcomposeAsyncImage(
                 modifier = Modifier
                     .size(42.dp)
-                    .clip(RoundedCornerShape(6.dp))
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(song.artworkUri),
                         animatedVisibilityScope = animatedVisibilityScope,
-                    ),
+                    )
+                    .clip(RoundedCornerShape(6.dp)),
                 model = song.artworkUri,
                 contentDescription = null,
                 error = {
@@ -163,24 +163,24 @@ private fun SongInfo(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .basicMarquee()
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(song.title),
                             animatedVisibilityScope = animatedVisibilityScope,
-                        ),
+                        )
+                        .basicMarquee(),
                 )
                 Text(
                     text = song.artist,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .basicMarquee()
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(song.artist),
                             animatedVisibilityScope = animatedVisibilityScope,
-                        ),
+                        )
+                        .basicMarquee(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
