@@ -7,6 +7,7 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
@@ -254,12 +255,12 @@ private fun ActionButtons(
         modifier = modifier
             .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
     ) {
-        val defaultEffectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+        val animSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
         AnimatedContent(
             targetState = !nowPlayingState.playWhenReady,
             label = "PlayPauseButton",
             transitionSpec = {
-                fadeIn() + scaleIn(defaultEffectsSpec, 0.8f) togetherWith fadeOut(snap())
+                fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(animSpec) + scaleOut(targetScale = 0.3f)
             },
         ) { paused ->
             if (paused) {
