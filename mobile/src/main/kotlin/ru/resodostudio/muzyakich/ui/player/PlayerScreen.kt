@@ -66,13 +66,14 @@ private fun PlayerScreen(
                     val song = playerUiState.currentSong
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.statusBarsPadding(),
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .padding(horizontal = 24.dp),
                         verticalArrangement = Arrangement.Center,
                     ) {
                         SubcomposeAsyncImage(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 24.dp)
                                 .sharedBounds(
                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                     sharedContentState = rememberSharedContentState(song.artworkUri),
@@ -95,30 +96,38 @@ private fun PlayerScreen(
                                 }
                             },
                         )
-                        Text(
-                            text = song.title,
-                            maxLines = 1,
+                        Column(
+                            horizontalAlignment = Alignment.Start,
                             modifier = Modifier
-                                .sharedBounds(
-                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                    sharedContentState = rememberSharedContentState(song.title),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                )
-                                .basicMarquee(),
-                        )
-                        Text(
-                            text = song.artist,
-                            maxLines = 1,
-                            modifier = Modifier
-                                .sharedBounds(
-                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                    sharedContentState = rememberSharedContentState(song.artist),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                )
-                                .basicMarquee(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 32.dp),
+                        ) {
+                            Text(
+                                text = song.title,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .sharedBounds(
+                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                        sharedContentState = rememberSharedContentState(song.title),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                    )
+                                    .basicMarquee(),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Text(
+                                text = song.artist,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .sharedBounds(
+                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                        sharedContentState = rememberSharedContentState(song.artist),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                    )
+                                    .basicMarquee(),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             }
