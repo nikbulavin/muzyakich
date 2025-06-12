@@ -54,7 +54,10 @@ import ru.resodostudio.muzyakich.core.model.data.PlaybackState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalSharedTransitionApi::class,
+)
 @Composable
 internal fun NowPlayingBar(
     nowPlayingState: NowPlayingState,
@@ -81,7 +84,9 @@ internal fun NowPlayingBar(
                 AnimatedContent(
                     targetState = song,
                     transitionSpec = {
-                        fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith fadeOut(snap())
+                        fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith fadeOut(
+                            snap()
+                        )
                     },
                     modifier = Modifier.weight(1f),
                 ) { songState ->
@@ -97,16 +102,26 @@ internal fun NowPlayingBar(
                 )
             }
 
-            SongProgressIndicator(
-                currentPosition = currentPosition,
-                song = song,
-                nowPlayingState = nowPlayingState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(3.dp),
-            )
+            val animatedVisibilityScope = LocalNavAnimatedContentScope.current
+            val sharedTransitionScope = LocalSharedTransitionScope.current
+
+            with(sharedTransitionScope) {
+                SongProgressIndicator(
+                    currentPosition = currentPosition,
+                    song = song,
+                    nowPlayingState = nowPlayingState,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(3.dp)
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(song.mediaId),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        ),
+                )
+            }
         }
     }
 }
@@ -273,6 +288,6 @@ private fun ActionButtons(
     }
 }
 
-private fun convertToProgress(count: Long, total: Long): Float {
+internal fun convertToProgress(count: Long, total: Long): Float {
     return (count * 100f / total / 100f).takeIf(Float::isFinite) ?: 0f
 }

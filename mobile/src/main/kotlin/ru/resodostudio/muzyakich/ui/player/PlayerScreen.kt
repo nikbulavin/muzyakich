@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +35,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.ui.component.LoadingState
+import ru.resodostudio.muzyakich.ui.library.convertToProgress
 
 @Composable
 fun PlayerScreen(
@@ -47,6 +51,7 @@ fun PlayerScreen(
 @OptIn(
     ExperimentalSharedTransitionApi::class,
     ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class,
 )
 @Composable
 private fun PlayerScreen(
@@ -118,6 +123,7 @@ private fun PlayerScreen(
                                 text = song.artist,
                                 maxLines = 1,
                                 modifier = Modifier
+                                    .padding(bottom = 16.dp)
                                     .sharedBounds(
                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                         sharedContentState = rememberSharedContentState(song.artist),
@@ -126,6 +132,25 @@ private fun PlayerScreen(
                                     .basicMarquee(),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            val progress by animateFloatAsState(
+                                targetValue = convertToProgress(
+                                    count = playerUiState.currentPosition,
+                                    total = song.duration,
+                                ),
+                                label = "ProgressAnimation",
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+                            )
+                            Slider(
+                                value = progress,
+                                onValueChange = {},
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .sharedBounds(
+                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                        sharedContentState = rememberSharedContentState(song.mediaId),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                    ),
                             )
                         }
                     }
