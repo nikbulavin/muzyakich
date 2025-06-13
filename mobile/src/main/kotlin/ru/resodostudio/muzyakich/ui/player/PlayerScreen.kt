@@ -6,6 +6,7 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,10 +21,12 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +41,11 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.ui.component.LoadingState
+import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @Composable
 fun PlayerScreen(
@@ -167,6 +174,32 @@ private fun PlayerScreen(
                                         animatedVisibilityScope = animatedVisibilityScope,
                                     ),
                             )
+
+                            val timeMillis by rememberSaveable(playerUiState.currentPosition) {
+                                derivedStateOf {
+                                    val current = playerUiState.currentPosition.seconds
+                                    val total = playerUiState.nowPlayingState.duration.seconds
+                                    val remaining = (total - current).coerceAtLeast(Duration.ZERO)
+                                    TimeMillis(
+                                        current.toLong(DurationUnit.SECONDS).asFormattedString(),
+                                        remaining.toLong(DurationUnit.SECONDS).asFormattedString(),
+                                    )
+                                }
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(
+                                    text = timeMillis.current,
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                                Text(
+                                    text = "-${timeMillis.remaining}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
                         }
                     }
                 }
@@ -174,3 +207,5 @@ private fun PlayerScreen(
         }
     }
 }
+
+private data class TimeMillis(val current: String, val remaining: String)
