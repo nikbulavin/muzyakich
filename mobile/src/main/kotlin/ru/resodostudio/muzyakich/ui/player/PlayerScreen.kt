@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +21,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +38,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.ui.component.LoadingState
-import ru.resodostudio.muzyakich.ui.library.convertToProgress
+import ru.resodostudio.muzyakich.ui.util.convertToProgress
 
 @Composable
 fun PlayerScreen(
@@ -45,6 +48,8 @@ fun PlayerScreen(
 
     PlayerScreen(
         playerUiState = playerUiState,
+        onSeekTo = viewModel::seekTo,
+        onPlay = viewModel::play,
     )
 }
 
@@ -56,6 +61,8 @@ fun PlayerScreen(
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
+    onSeekTo: (Float) -> Unit = {},
+    onPlay: () -> Unit = {},
 ) {
     val animatedVisibilityScope = LocalNavAnimatedContentScope.current
     val sharedTransitionScope = LocalSharedTransitionScope.current
@@ -133,17 +140,25 @@ private fun PlayerScreen(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
-                            val progress by animateFloatAsState(
-                                targetValue = convertToProgress(
-                                    count = playerUiState.currentPosition,
-                                    total = song.duration,
-                                ),
-                                label = "ProgressAnimation",
-                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+
+                            val progress = convertToProgress(
+                                count = playerUiState.currentPosition,
+                                total = song.duration,
                             )
+                            var sliderPosition by remember { mutableFloatStateOf(0f) }
+                            var isSeeking by remember { mutableStateOf(false) }
+                            if (!isSeeking) sliderPosition = progress
                             Slider(
-                                value = progress,
-                                onValueChange = {},
+                                value = sliderPosition,
+                                onValueChange = {
+                                    isSeeking = true
+                                    sliderPosition = it
+                                    onSeekTo(it)
+                                },
+                                onValueChangeFinished = {
+                                    onSeekTo(sliderPosition)
+                                    isSeeking = false
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .sharedBounds(

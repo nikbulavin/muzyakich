@@ -53,6 +53,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransition
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackState
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(
@@ -287,8 +288,4 @@ private fun ActionButtons(
             contentDescription = stringResource(localesR.string.skip_next),
         )
     }
-}
-
-internal fun convertToProgress(count: Long, total: Long): Float {
-    return (count * 100f / total / 100f).takeIf(Float::isFinite) ?: 0f
 }

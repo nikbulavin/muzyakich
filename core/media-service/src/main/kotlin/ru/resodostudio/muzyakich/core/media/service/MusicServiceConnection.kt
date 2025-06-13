@@ -50,7 +50,7 @@ class MusicServiceConnection @Inject constructor(
         while (currentCoroutineContext().isActive) {
             val currentPosition = mediaController?.currentPosition ?: DEFAULT_POSITION_MS
             emit(currentPosition)
-            delay(100.milliseconds)
+            delay(25.milliseconds)
         }
     }
 
@@ -77,7 +77,7 @@ class MusicServiceConnection @Inject constructor(
         play()
     }
 
-    fun skipTo(position: Long) = mediaController?.run {
+    fun seekTo(position: Long) = mediaController?.run {
         seekTo(position)
         play()
     }

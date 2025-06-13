@@ -10,6 +10,7 @@ import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.util.convertToPosition
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,6 +42,17 @@ class PlayerViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = PlayerUiState.Loading,
         )
+
+    fun seekTo(position: Float) {
+        musicServiceConnection.seekTo(
+            convertToPosition(
+                position,
+                musicServiceConnection.nowPlayingState.value.duration,
+            )
+        )
+    }
+
+    fun play() = musicServiceConnection.play()
 }
 
 sealed interface PlayerUiState {
