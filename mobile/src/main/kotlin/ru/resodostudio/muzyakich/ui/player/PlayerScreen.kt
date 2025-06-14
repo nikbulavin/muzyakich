@@ -1,7 +1,9 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -54,6 +56,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipPrevious
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
+import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
@@ -169,135 +173,172 @@ private fun PlayerScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
 
-                            val progress = convertToProgress(
-                                count = playerUiState.currentPosition,
-                                total = song.duration,
-                            )
-                            var sliderPosition by remember { mutableFloatStateOf(0f) }
-                            var isSeeking by remember { mutableStateOf(false) }
-                            if (!isSeeking) sliderPosition = progress
-                            Slider(
-                                value = sliderPosition,
-                                onValueChange = {
-                                    isSeeking = true
-                                    sliderPosition = it
-                                    onSeekTo(it)
-                                },
-                                onValueChangeFinished = {
-                                    onSeekTo(sliderPosition)
-                                    isSeeking = false
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 8.dp)
-                                    .sharedBounds(
-                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                        sharedContentState = rememberSharedContentState(song.mediaId),
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                    ),
+                            ProgressSlider(
+                                playerUiState = playerUiState,
+                                song = song,
+                                onSeekTo = onSeekTo,
+                                animatedVisibilityScope = animatedVisibilityScope,
                             )
 
-                            val timeMillis by remember(playerUiState.currentPosition) {
-                                derivedStateOf {
-                                    val current = playerUiState.currentPosition.seconds
-                                    val total = playerUiState.nowPlayingState.duration.seconds
-                                    val remaining = (total - current).coerceAtLeast(Duration.ZERO)
-                                    TimeMillis(
-                                        current.toLong(DurationUnit.SECONDS).asFormattedString(),
-                                        remaining.toLong(DurationUnit.SECONDS).asFormattedString(),
-                                    )
-                                }
-                            }
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 32.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(
-                                    text = timeMillis.current,
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                                Text(
-                                    text = "-${timeMillis.remaining}",
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                FilledTonalIconButton(
-                                    onClick = onSkipPreviousClick,
-                                    shapes = IconButtonDefaults.shapes(),
-                                    modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                                ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.SkipPrevious,
-                                        contentDescription = stringResource(localesR.string.skip_previous),
-                                        modifier = Modifier.size(32.dp),
-                                    )
-                                }
-                                FilledIconButton(
-                                    onClick = {
-                                        if (!playerUiState.nowPlayingState.playWhenReady) {
-                                            onPlayClick()
-                                        } else {
-                                            onPauseClick()
-                                        }
-                                    },
-                                    shapes = IconButtonDefaults.shapes(),
-                                    modifier = Modifier
-                                        .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-                                        .padding(horizontal = 8.dp),
-                                ) {
-                                    val animSpec =
-                                        MaterialTheme.motionScheme.slowEffectsSpec<Float>()
-                                    AnimatedContent(
-                                        targetState = !playerUiState.nowPlayingState.playWhenReady,
-                                        label = "PlayPauseButton",
-                                        transitionSpec = {
-                                            fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(
-                                                animSpec
-                                            ) + scaleOut(targetScale = 0.3f)
-                                        },
-                                    ) { paused ->
-                                        if (paused) {
-                                            Icon(
-                                                imageVector = MuzIcons.Rounded.PlayArrow,
-                                                contentDescription = stringResource(localesR.string.play_audio),
-                                                modifier = Modifier.size(32.dp),
-                                            )
-                                        } else {
-                                            Icon(
-                                                imageVector = MuzIcons.Rounded.Pause,
-                                                contentDescription = stringResource(localesR.string.pause_audio),
-                                                modifier = Modifier.size(32.dp),
-                                            )
-                                        }
-                                    }
-                                }
-                                FilledTonalIconButton(
-                                    onClick = onSkipNextClick,
-                                    shapes = IconButtonDefaults.shapes(),
-                                    enabled = playerUiState.nowPlayingState.hasNextMediaItem,
-                                    modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                                ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.SkipNext,
-                                        contentDescription = stringResource(localesR.string.skip_next),
-                                        modifier = Modifier.size(32.dp),
-                                    )
-                                }
-                            }
+                            PlayerActionButtons(
+                                nowPlayingState = playerUiState.nowPlayingState,
+                                onSkipPreviousClick = onSkipPreviousClick,
+                                onPlayClick = onPlayClick,
+                                onPauseClick = onPauseClick,
+                                onSkipNextClick = onSkipNextClick,
+                            )
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun PlayerActionButtons(
+    nowPlayingState: NowPlayingState,
+    onSkipPreviousClick: () -> Unit,
+    onPlayClick: () -> Unit,
+    onPauseClick: () -> Unit,
+    onSkipNextClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FilledTonalIconButton(
+            onClick = onSkipPreviousClick,
+            shapes = IconButtonDefaults.shapes(),
+            modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+        ) {
+            Icon(
+                imageVector = MuzIcons.Rounded.SkipPrevious,
+                contentDescription = stringResource(localesR.string.skip_previous),
+                modifier = Modifier.size(32.dp),
+            )
+        }
+        FilledIconButton(
+            onClick = {
+                if (!nowPlayingState.playWhenReady) {
+                    onPlayClick()
+                } else {
+                    onPauseClick()
+                }
+            },
+            shapes = IconButtonDefaults.shapes(),
+            modifier = Modifier
+                .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+                .padding(horizontal = 8.dp),
+        ) {
+            val animSpec =
+                MaterialTheme.motionScheme.slowEffectsSpec<Float>()
+            AnimatedContent(
+                targetState = !nowPlayingState.playWhenReady,
+                label = "PlayPauseButton",
+                transitionSpec = {
+                    fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(
+                        animSpec
+                    ) + scaleOut(targetScale = 0.3f)
+                },
+            ) { paused ->
+                if (paused) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.PlayArrow,
+                        contentDescription = stringResource(localesR.string.play_audio),
+                        modifier = Modifier.size(32.dp),
+                    )
+                } else {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.Pause,
+                        contentDescription = stringResource(localesR.string.pause_audio),
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
+            }
+        }
+        FilledTonalIconButton(
+            onClick = onSkipNextClick,
+            shapes = IconButtonDefaults.shapes(),
+            enabled = nowPlayingState.hasNextMediaItem,
+            modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+        ) {
+            Icon(
+                imageVector = MuzIcons.Rounded.SkipNext,
+                contentDescription = stringResource(localesR.string.skip_next),
+                modifier = Modifier.size(32.dp),
+            )
+        }
+    }
+}
+
+@Composable
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
+private fun SharedTransitionScope.ProgressSlider(
+    playerUiState: PlayerUiState.Success,
+    song: Song,
+    onSeekTo: (Float) -> Unit,
+    animatedVisibilityScope: AnimatedContentScope,
+) {
+    val progress = convertToProgress(
+        count = playerUiState.currentPosition,
+        total = song.duration,
+    )
+    var sliderPosition by remember { mutableFloatStateOf(0f) }
+    var isSeeking by remember { mutableStateOf(false) }
+    if (!isSeeking) sliderPosition = progress
+    Slider(
+        value = sliderPosition,
+        onValueChange = {
+            isSeeking = true
+            sliderPosition = it
+            onSeekTo(it)
+        },
+        onValueChangeFinished = {
+            onSeekTo(sliderPosition)
+            isSeeking = false
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+            .sharedBounds(
+                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                sharedContentState = rememberSharedContentState(song.mediaId),
+                animatedVisibilityScope = animatedVisibilityScope,
+            ),
+    )
+
+    val timeMillis by remember(playerUiState.currentPosition) {
+        derivedStateOf {
+            val current = playerUiState.currentPosition.seconds
+            val total = playerUiState.nowPlayingState.duration.seconds
+            val remaining = (total - current).coerceAtLeast(Duration.ZERO)
+            TimeMillis(
+                current.toLong(DurationUnit.SECONDS).asFormattedString(),
+                remaining.toLong(DurationUnit.SECONDS).asFormattedString(),
+            )
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 32.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = timeMillis.current,
+            style = MaterialTheme.typography.labelMedium,
+        )
+        Text(
+            text = "-${timeMillis.remaining}",
+            style = MaterialTheme.typography.labelMedium,
+        )
     }
 }
 
