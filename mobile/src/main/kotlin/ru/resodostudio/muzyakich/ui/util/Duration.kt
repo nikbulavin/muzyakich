@@ -4,10 +4,7 @@ import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
 fun Long.asFormattedString() = milliseconds.toComponents { minutes, seconds, _ ->
-    val displayMinutes = String.format(locale = Locale.US, format = "%d", minutes)
-    val displaySeconds = String.format(locale = Locale.US, format = "%02d", seconds)
-
-    "$displayMinutes:$displaySeconds"
+    String.format(locale = Locale.US, format = "%d:%02d", minutes, seconds)
 }
 
 fun convertToProgress(count: Long, total: Long): Float {
