@@ -1,9 +1,7 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -67,7 +65,6 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
-import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
@@ -188,10 +185,17 @@ private fun PlayerScreen(
                             )
 
                             ProgressSlider(
-                                playerUiState = playerUiState,
-                                song = song,
+                                currentPosition = playerUiState.currentPosition,
+                                duration = playerUiState.currentSong.duration,
                                 onSeekTo = onSeekTo,
-                                animatedVisibilityScope = animatedVisibilityScope,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 4.dp)
+                                    .sharedBounds(
+                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                        sharedContentState = rememberSharedContentState(song.mediaId),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                    ),
                             )
 
                             PlayerActionButtons(
@@ -347,19 +351,16 @@ private fun PlayerActionButtons(
 }
 
 @Composable
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-)
-private fun SharedTransitionScope.ProgressSlider(
-    playerUiState: PlayerUiState.Success,
-    song: Song,
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun ProgressSlider(
+    currentPosition: Long,
+    duration: Long,
     onSeekTo: (Float) -> Unit,
-    animatedVisibilityScope: AnimatedContentScope,
+    modifier: Modifier = Modifier,
 ) {
     val progress = convertToProgress(
-        count = playerUiState.currentPosition,
-        total = song.duration,
+        count = currentPosition,
+        total = duration,
     )
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     var isSeeking by remember { mutableStateOf(false) }
@@ -375,20 +376,13 @@ private fun SharedTransitionScope.ProgressSlider(
             onSeekTo(sliderPosition)
             isSeeking = false
         },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)
-            .sharedBounds(
-                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                sharedContentState = rememberSharedContentState(song.mediaId),
-                animatedVisibilityScope = animatedVisibilityScope,
-            ),
+        modifier = modifier,
     )
 
-    val timeMillis by remember(playerUiState.currentPosition) {
+    val timeMillis by remember(currentPosition) {
         derivedStateOf {
-            val current = playerUiState.currentPosition.seconds
-            val total = playerUiState.nowPlayingState.duration.seconds
+            val current = currentPosition.seconds
+            val total = duration.seconds
             val remaining = (total - current).coerceAtLeast(Duration.ZERO)
             TimeMillis(
                 current.toLong(DurationUnit.SECONDS).asFormattedString(),
