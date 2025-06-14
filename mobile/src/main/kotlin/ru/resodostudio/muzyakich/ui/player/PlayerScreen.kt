@@ -1,6 +1,12 @@
 package ru.resodostudio.muzyakich.ui.player
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +21,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -26,11 +36,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,6 +48,10 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipPrevious
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.ui.component.LoadingState
@@ -46,6 +60,7 @@ import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
+import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun PlayerScreen(
@@ -56,7 +71,10 @@ fun PlayerScreen(
     PlayerScreen(
         playerUiState = playerUiState,
         onSeekTo = viewModel::seekTo,
-        onPlay = viewModel::play,
+        onPlayClick = viewModel::play,
+        onPauseClick = viewModel::pause,
+        onSkipNextClick = viewModel::skipToNext,
+        onSkipPreviousClick = viewModel::skipToPrevious,
     )
 }
 
@@ -69,7 +87,10 @@ fun PlayerScreen(
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
     onSeekTo: (Float) -> Unit = {},
-    onPlay: () -> Unit = {},
+    onPlayClick: () -> Unit = {},
+    onPauseClick: () -> Unit = {},
+    onSkipNextClick: () -> Unit = {},
+    onSkipPreviousClick: () -> Unit = {},
 ) {
     val animatedVisibilityScope = LocalNavAnimatedContentScope.current
     val sharedTransitionScope = LocalSharedTransitionScope.current
@@ -168,6 +189,7 @@ private fun PlayerScreen(
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(bottom = 8.dp)
                                     .sharedBounds(
                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                         sharedContentState = rememberSharedContentState(song.mediaId),
@@ -175,7 +197,7 @@ private fun PlayerScreen(
                                     ),
                             )
 
-                            val timeMillis by rememberSaveable(playerUiState.currentPosition) {
+                            val timeMillis by remember(playerUiState.currentPosition) {
                                 derivedStateOf {
                                     val current = playerUiState.currentPosition.seconds
                                     val total = playerUiState.nowPlayingState.duration.seconds
@@ -188,7 +210,9 @@ private fun PlayerScreen(
                             }
 
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 32.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Text(
@@ -199,6 +223,75 @@ private fun PlayerScreen(
                                     text = "-${timeMillis.remaining}",
                                     style = MaterialTheme.typography.labelMedium,
                                 )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                FilledTonalIconButton(
+                                    onClick = onSkipPreviousClick,
+                                    shapes = IconButtonDefaults.shapes(),
+                                    modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.SkipPrevious,
+                                        contentDescription = stringResource(localesR.string.skip_previous),
+                                        modifier = Modifier.size(32.dp),
+                                    )
+                                }
+                                FilledIconButton(
+                                    onClick = {
+                                        if (!playerUiState.nowPlayingState.playWhenReady) {
+                                            onPlayClick()
+                                        } else {
+                                            onPauseClick()
+                                        }
+                                    },
+                                    shapes = IconButtonDefaults.shapes(),
+                                    modifier = Modifier
+                                        .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+                                        .padding(horizontal = 8.dp),
+                                ) {
+                                    val animSpec =
+                                        MaterialTheme.motionScheme.slowEffectsSpec<Float>()
+                                    AnimatedContent(
+                                        targetState = !playerUiState.nowPlayingState.playWhenReady,
+                                        label = "PlayPauseButton",
+                                        transitionSpec = {
+                                            fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(
+                                                animSpec
+                                            ) + scaleOut(targetScale = 0.3f)
+                                        },
+                                    ) { paused ->
+                                        if (paused) {
+                                            Icon(
+                                                imageVector = MuzIcons.Rounded.PlayArrow,
+                                                contentDescription = stringResource(localesR.string.play_audio),
+                                                modifier = Modifier.size(32.dp),
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = MuzIcons.Rounded.Pause,
+                                                contentDescription = stringResource(localesR.string.pause_audio),
+                                                modifier = Modifier.size(32.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                                FilledTonalIconButton(
+                                    onClick = onSkipNextClick,
+                                    shapes = IconButtonDefaults.shapes(),
+                                    enabled = playerUiState.nowPlayingState.hasNextMediaItem,
+                                    modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.SkipNext,
+                                        contentDescription = stringResource(localesR.string.skip_next),
+                                        modifier = Modifier.size(32.dp),
+                                    )
+                                }
                             }
                         }
                     }

@@ -64,7 +64,7 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    fun skipPrevious() = mediaController?.run {
+    fun skipToPrevious() = mediaController?.run {
         seekToPrevious()
         play()
     }
@@ -72,7 +72,7 @@ class MusicServiceConnection @Inject constructor(
     fun play() = mediaController?.play()
     fun pause() = mediaController?.pause()
 
-    fun skipNext() = mediaController?.run {
+    fun skipToNext() = mediaController?.run {
         seekToNext()
         play()
     }

@@ -55,7 +55,7 @@ class LibraryViewModel @Inject constructor(
 
     fun pause() = musicServiceConnection.pause()
 
-    fun skipNext() = musicServiceConnection.skipNext()
+    fun skipNext() = musicServiceConnection.skipToNext()
 
 }
 

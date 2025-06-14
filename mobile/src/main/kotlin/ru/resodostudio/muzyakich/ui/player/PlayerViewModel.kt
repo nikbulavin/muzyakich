@@ -53,6 +53,12 @@ class PlayerViewModel @Inject constructor(
     }
 
     fun play() = musicServiceConnection.play()
+
+    fun pause() = musicServiceConnection.pause()
+
+    fun skipToNext() = musicServiceConnection.skipToNext()
+
+    fun skipToPrevious() = musicServiceConnection.skipToPrevious()
 }
 
 sealed interface PlayerUiState {
