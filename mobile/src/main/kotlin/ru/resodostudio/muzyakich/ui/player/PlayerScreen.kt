@@ -28,7 +28,9 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.largeContainerSize
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,11 +54,19 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Repeat
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.RepeatOne
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipPrevious
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
@@ -79,6 +89,8 @@ fun PlayerScreen(
         onPauseClick = viewModel::pause,
         onSkipNextClick = viewModel::skipToNext,
         onSkipPreviousClick = viewModel::skipToPrevious,
+        onShuffleToggle = viewModel::setShuffleModeEnabled,
+        onRepeatToggle = viewModel::setRepeatMode,
     )
 }
 
@@ -95,6 +107,8 @@ private fun PlayerScreen(
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
     onSkipPreviousClick: () -> Unit = {},
+    onShuffleToggle: (Boolean) -> Unit = {},
+    onRepeatToggle: (RepeatMode) -> Unit = {},
 ) {
     val animatedVisibilityScope = LocalNavAnimatedContentScope.current
     val sharedTransitionScope = LocalSharedTransitionScope.current
@@ -186,11 +200,68 @@ private fun PlayerScreen(
                                 onPlayClick = onPlayClick,
                                 onPauseClick = onPauseClick,
                                 onSkipNextClick = onSkipNextClick,
+                                modifier = Modifier.padding(bottom = 48.dp),
+                            )
+
+                            PlaybackActionButtons(
+                                playbackConfig = playerUiState.playbackConfig,
+                                onRepeatToggle = onRepeatToggle,
+                                onShuffleToggle = onShuffleToggle,
                             )
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun PlaybackActionButtons(
+    playbackConfig: PlaybackConfig,
+    onRepeatToggle: (RepeatMode) -> Unit,
+    onShuffleToggle: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val repeatMode = playbackConfig.repeatMode
+        OutlinedIconToggleButton(
+            checked = repeatMode != REPEAT_OFF,
+            onCheckedChange = { checked ->
+                val newRepeatMode = when (repeatMode) {
+                    REPEAT_OFF -> REPEAT_ALL
+                    REPEAT_ALL -> REPEAT_ONE
+                    REPEAT_ONE -> REPEAT_OFF
+                }
+                onRepeatToggle(newRepeatMode)
+            },
+            shape = IconButtonDefaults.smallSquareShape,
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+        ) {
+            Icon(
+                imageVector = if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat,
+                contentDescription = stringResource(localesR.string.shuffle),
+            )
+        }
+
+        OutlinedIconToggleButton(
+            checked = playbackConfig.shuffleModeEnabled,
+            onCheckedChange = onShuffleToggle,
+            shape = IconButtonDefaults.smallSquareShape,
+            modifier = Modifier
+                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+        ) {
+            Icon(
+                imageVector = MuzIcons.Rounded.Shuffle,
+                contentDescription = stringResource(localesR.string.shuffle),
+            )
         }
     }
 }
@@ -203,9 +274,10 @@ private fun PlayerActionButtons(
     onPlayClick: () -> Unit,
     onPauseClick: () -> Unit,
     onSkipNextClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -230,8 +302,8 @@ private fun PlayerActionButtons(
             },
             shapes = IconButtonDefaults.shapes(),
             modifier = Modifier
-                .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 8.dp)
+                .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             val animSpec =
                 MaterialTheme.motionScheme.slowEffectsSpec<Float>()

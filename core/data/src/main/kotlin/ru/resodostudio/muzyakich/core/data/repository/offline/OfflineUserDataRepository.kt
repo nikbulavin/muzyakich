@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.datastore.MuzPreferencesDataSource
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.UserData
 import javax.inject.Inject
 
@@ -23,5 +24,9 @@ internal class OfflineUserDataRepository @Inject constructor(
 
     override suspend fun setShuffleModePreference(shuffleModeEnabled: Boolean) {
         return muzPreferencesDataSource.setShuffleModePreference(shuffleModeEnabled)
+    }
+
+    override suspend fun setRepeatModePreference(repeatMode: RepeatMode) {
+        return muzPreferencesDataSource.setRepeatModePreference(repeatMode)
     }
 }

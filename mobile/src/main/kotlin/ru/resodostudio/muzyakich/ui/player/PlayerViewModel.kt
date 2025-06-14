@@ -6,9 +6,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
+import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.convertToPosition
 import javax.inject.Inject
@@ -16,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     mediaRepository: MediaRepository,
+    private val userDataRepository: UserDataRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
@@ -23,7 +28,8 @@ class PlayerViewModel @Inject constructor(
         musicServiceConnection.nowPlayingState,
         musicServiceConnection.currentPosition,
         mediaRepository.songs,
-    ) { nowPlayingState, currentPosition, songs ->
+        userDataRepository.userData,
+    ) { nowPlayingState, currentPosition, songs, userData ->
         val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
 
         if (currentSong == null) {
@@ -34,6 +40,7 @@ class PlayerViewModel @Inject constructor(
                 currentPosition = currentPosition,
                 currentSong = currentSong,
                 songs = songs,
+                playbackConfig = userData.playbackConfig,
             )
         }
     }
@@ -59,6 +66,18 @@ class PlayerViewModel @Inject constructor(
     fun skipToNext() = musicServiceConnection.skipToNext()
 
     fun skipToPrevious() = musicServiceConnection.skipToPrevious()
+
+    fun setShuffleModeEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            userDataRepository.setShuffleModePreference(enabled)
+        }
+    }
+
+    fun setRepeatMode(repeatMode: RepeatMode) {
+        viewModelScope.launch {
+            userDataRepository.setRepeatModePreference(repeatMode)
+        }
+    }
 }
 
 sealed interface PlayerUiState {
@@ -72,5 +91,6 @@ sealed interface PlayerUiState {
         val currentPosition: Long,
         val currentSong: Song,
         val songs: List<Song>,
+        val playbackConfig: PlaybackConfig,
     ) : PlayerUiState
 }
