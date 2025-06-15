@@ -12,6 +12,7 @@
     <string name="pause_audio">일시 정지</string>
     <string name="play_audio">재생</string>
     <string name="playlists">재생 목록</string>
+    <string name="queue">대기열</string>
     <string name="search">검색</string>
     <string name="settings">설정</string>
     <string name="shuffle">셔플</string>

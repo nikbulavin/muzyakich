@@ -12,6 +12,7 @@
     <string name="pause_audio">Поставить на паузу</string>
     <string name="play_audio">Воспроизвести</string>
     <string name="playlists">Плейлисты</string>
+    <string name="queue">Очередь</string>
     <string name="search">Поиск</string>
     <string name="settings">Настройки</string>
     <string name="shuffle">Перемешать</string>

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -29,9 +30,11 @@ import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconToggleButton
+import androidx.compose.material3.OutlinedToggleButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -52,6 +55,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.QueueMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Repeat
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.RepeatOne
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
@@ -245,13 +249,11 @@ private fun PlaybackActionButtons(
                 onRepeatToggle(newRepeatMode)
             },
             shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             Icon(
                 imageVector = if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat,
-                contentDescription = stringResource(localesR.string.shuffle),
+                contentDescription = null,
             )
         }
 
@@ -260,12 +262,31 @@ private fun PlaybackActionButtons(
             onCheckedChange = onShuffleToggle,
             shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
             modifier = Modifier
+                .padding(horizontal = 8.dp)
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             Icon(
                 imageVector = MuzIcons.Rounded.Shuffle,
                 contentDescription = stringResource(localesR.string.shuffle),
             )
+        }
+
+        var queueOpened by remember { mutableStateOf(false) }
+
+        OutlinedToggleButton(
+            checked = queueOpened,
+            onCheckedChange = { queueOpened = it },
+            shapes = ToggleButtonDefaults.shapes(ToggleButtonDefaults.squareShape),
+            modifier = Modifier.height(40.dp),
+        ) {
+            Icon(
+                imageVector = MuzIcons.Rounded.QueueMusic,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = ToggleButtonDefaults.IconSpacing)
+                    .size(20.dp),
+            )
+            Text(stringResource(localesR.string.queue))
         }
     }
 }
