@@ -1,5 +1,7 @@
 package ru.resodostudio.muzyakich.ui.library
 
+import android.os.Build
+import android.util.Size
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -37,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -146,6 +149,17 @@ private fun SongInfo(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val model = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                runCatching {
+                    LocalContext.current.contentResolver.loadThumbnail(
+                        song.mediaUri,
+                        Size(128, 128),
+                        null,
+                    )
+                }.getOrNull()
+            } else {
+                song.artworkUri
+            }
             SubcomposeAsyncImage(
                 modifier = Modifier
                     .size(42.dp)
@@ -155,7 +169,7 @@ private fun SongInfo(
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
                     .clip(RoundedCornerShape(6.dp)),
-                model = song.artworkUri,
+                model = model,
                 contentDescription = null,
                 error = {
                     Box(
