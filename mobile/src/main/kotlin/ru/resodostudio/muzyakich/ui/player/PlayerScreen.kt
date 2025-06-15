@@ -421,10 +421,12 @@ private fun ProgressSlider(
         Text(
             text = timeMillis.current,
             style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
             text = "-${timeMillis.remaining}",
             style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
