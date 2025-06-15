@@ -22,6 +22,7 @@ internal object MediaStoreConfig {
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.BITRATE,
+            MediaStore.Audio.Media.IS_FAVORITE,
         )
     }
 }

@@ -14,4 +14,5 @@ data class Song(
     val folder: String,
     val duration: Long,
     val bitrate: Int,
+    val isFavorite: Boolean,
 )
