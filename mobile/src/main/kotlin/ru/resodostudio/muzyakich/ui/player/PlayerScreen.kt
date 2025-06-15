@@ -244,7 +244,7 @@ private fun PlaybackActionButtons(
                 }
                 onRepeatToggle(newRepeatMode)
             },
-            shape = IconButtonDefaults.smallSquareShape,
+            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
             modifier = Modifier
                 .padding(end = 8.dp)
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
@@ -258,7 +258,7 @@ private fun PlaybackActionButtons(
         OutlinedIconToggleButton(
             checked = playbackConfig.shuffleModeEnabled,
             onCheckedChange = onShuffleToggle,
-            shape = IconButtonDefaults.smallSquareShape,
+            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
             modifier = Modifier
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
