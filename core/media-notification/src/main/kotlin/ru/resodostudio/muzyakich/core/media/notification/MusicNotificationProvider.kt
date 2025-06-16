@@ -57,6 +57,7 @@ class MusicNotificationProvider @Inject constructor(
             .setSmallIcon(R.drawable.ic_music_note)
             .setStyle(MediaStyle(mediaSession))
             .setContentIntent(mediaSession.sessionActivity)
+            .setSilent(true)
 
         getNotificationActions(
             mediaSession = mediaSession,
@@ -88,7 +89,7 @@ class MusicNotificationProvider @Inject constructor(
         val notificationChannel = NotificationChannel(
             MUSIC_NOTIFICATION_CHANNEL_ID,
             context.getString(localesR.string.music_notification_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT,
+            NotificationManager.IMPORTANCE_LOW,
         )
         notificationManager.createNotificationChannel(notificationChannel)
     }
