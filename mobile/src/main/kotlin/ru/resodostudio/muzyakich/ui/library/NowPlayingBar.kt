@@ -76,8 +76,9 @@ internal fun NowPlayingBar(
 ) {
     Surface(
         tonalElevation = 3.dp,
-        shape = RoundedCornerShape(14.dp),
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .clickable { onClick() },
     ) {
         Box {
             Row(
