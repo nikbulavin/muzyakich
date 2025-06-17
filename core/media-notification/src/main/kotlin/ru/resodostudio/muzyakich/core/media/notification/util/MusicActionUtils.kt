@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.core.media.notification.util
 
 import android.content.Context
-import androidx.annotation.OptIn
 import androidx.core.graphics.drawable.IconCompat
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaNotification

@@ -8,7 +8,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.exclude
 import ru.resodostudio.muzyakich.MuzFlavor
 import ru.resodostudio.muzyakich.libs
-import kotlin.text.get
 
 class AndroidApplicationFirebaseConventionPlugin : Plugin<Project> {
 

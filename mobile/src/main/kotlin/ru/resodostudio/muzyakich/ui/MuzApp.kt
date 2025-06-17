@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.shouldShowRationale
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.navigation.MuzNavDisplay
-import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
