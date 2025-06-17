@@ -2,7 +2,8 @@ package ru.resodostudio.muzyakich.ui.library
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -34,9 +35,28 @@ internal fun LibraryToolbar(
     HorizontalFloatingToolbar(
         modifier = modifier,
         expanded = expanded,
+        content = {
+            if (expanded) Spacer(Modifier.width(4.dp))
+            Button(
+                shapes = ButtonDefaults.shapes(ButtonDefaults.filledTonalShape, ButtonDefaults.filledTonalShape),
+                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX) },
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.PlayArrow,
+                        contentDescription = null,
+                    )
+                    Text(text = stringResource(localesR.string.play_audio))
+                }
+            }
+            if (expanded) Spacer(Modifier.width(8.dp))
+        },
         trailingContent = {
             TextButton(
-                shapes = ButtonDefaults.shapes(),
+                shapes = ButtonDefaults.shapes(ButtonDefaults.textShape, ButtonDefaults.textShape),
                 onClick = { onShuffleSongsClick(songs, DEFAULT_INDEX) },
             ) {
                 Row(
@@ -50,24 +70,7 @@ internal fun LibraryToolbar(
                     Text(text = stringResource(localesR.string.shuffle))
                 }
             }
-        },
-        content = {
-            Button(
-                shapes = ButtonDefaults.shapes(),
-                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX) },
-                modifier = Modifier.padding(end = if (expanded) 8.dp else 0.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.PlayArrow,
-                        contentDescription = null,
-                    )
-                    Text(text = stringResource(localesR.string.play_audio))
-                }
-            }
+            if (expanded) Spacer(Modifier.width(4.dp))
         },
     )
 }
