@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.ui.library
 
-import android.util.Size
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -45,6 +44,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
@@ -148,13 +149,6 @@ private fun SongInfo(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val model = runCatching {
-                LocalContext.current.contentResolver.loadThumbnail(
-                    song.mediaUri,
-                    Size(128, 128),
-                    null,
-                )
-            }.getOrNull()
             SubcomposeAsyncImage(
                 modifier = Modifier
                     .size(42.dp)
@@ -164,7 +158,11 @@ private fun SongInfo(
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
                     .clip(RoundedCornerShape(6.dp)),
-                model = model,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(song.artworkUri)
+                    .crossfade(true)
+                    .size(128)
+                    .build(),
                 contentDescription = null,
                 error = {
                     Box(

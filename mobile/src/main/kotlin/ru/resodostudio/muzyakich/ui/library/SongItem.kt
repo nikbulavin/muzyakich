@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.ui.library
 
-import android.util.Size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,6 +22,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -98,18 +99,15 @@ fun SongItem(
                         )
                     }
                 }
-                val model = runCatching {
-                    LocalContext.current.contentResolver.loadThumbnail(
-                        song.mediaUri,
-                        Size(128, 128),
-                        null,
-                    )
-                }.getOrNull()
                 SubcomposeAsyncImage(
                     modifier = Modifier
                         .size(56.dp)
                         .clip(RoundedCornerShape(8.dp)),
-                    model = model,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(song.artworkUri)
+                        .crossfade(true)
+                        .size(128)
+                        .build(),
                     contentDescription = null,
                     error = {
                         Box(
