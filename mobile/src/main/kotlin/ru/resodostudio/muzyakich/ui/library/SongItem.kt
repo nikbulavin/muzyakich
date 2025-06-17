@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.ui.library
 
-import android.os.Build
 import android.util.Size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -99,17 +98,13 @@ fun SongItem(
                         )
                     }
                 }
-                val model = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    runCatching {
-                        LocalContext.current.contentResolver.loadThumbnail(
-                            song.mediaUri,
-                            Size(128, 128),
-                            null,
-                        )
-                    }.getOrNull()
-                } else {
-                    song.artworkUri
-                }
+                val model = runCatching {
+                    LocalContext.current.contentResolver.loadThumbnail(
+                        song.mediaUri,
+                        Size(128, 128),
+                        null,
+                    )
+                }.getOrNull()
                 SubcomposeAsyncImage(
                     modifier = Modifier
                         .size(56.dp)

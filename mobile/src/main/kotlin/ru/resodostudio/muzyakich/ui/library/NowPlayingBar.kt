@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.ui.library
 
-import android.os.Build
 import android.util.Size
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -149,17 +148,13 @@ private fun SongInfo(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val model = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                runCatching {
-                    LocalContext.current.contentResolver.loadThumbnail(
-                        song.mediaUri,
-                        Size(128, 128),
-                        null,
-                    )
-                }.getOrNull()
-            } else {
-                song.artworkUri
-            }
+            val model = runCatching {
+                LocalContext.current.contentResolver.loadThumbnail(
+                    song.mediaUri,
+                    Size(128, 128),
+                    null,
+                )
+            }.getOrNull()
             SubcomposeAsyncImage(
                 modifier = Modifier
                     .size(42.dp)
@@ -275,7 +270,9 @@ private fun ActionButtons(
             targetState = !nowPlayingState.playWhenReady,
             label = "PlayPauseButton",
             transitionSpec = {
-                fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(animSpec) + scaleOut(targetScale = 0.3f)
+                fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(animSpec) + scaleOut(
+                    targetScale = 0.3f
+                )
             },
         ) { paused ->
             if (paused) {
