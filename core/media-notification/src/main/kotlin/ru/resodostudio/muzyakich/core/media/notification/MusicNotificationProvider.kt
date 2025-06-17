@@ -57,7 +57,6 @@ class MusicNotificationProvider @Inject constructor(
             .setSmallIcon(R.drawable.ic_music_note)
             .setStyle(MediaStyle(mediaSession))
             .setContentIntent(mediaSession.sessionActivity)
-            .setSilent(true)
 
         getNotificationActions(
             mediaSession = mediaSession,
