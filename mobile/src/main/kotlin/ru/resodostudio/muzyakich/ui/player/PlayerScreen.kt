@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -126,9 +126,9 @@ private fun PlayerScreen(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .statusBarsPadding()
-                            .padding(horizontal = 24.dp),
-                        verticalArrangement = Arrangement.Center,
+                            .systemBarsPadding()
+                            .padding(horizontal = 24.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.Bottom,
                     ) {
                         SubcomposeAsyncImage(
                             modifier = Modifier
@@ -157,36 +157,38 @@ private fun PlayerScreen(
                         )
                         Column(
                             horizontalAlignment = Alignment.Start,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp, vertical = 32.dp),
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceAround,
                         ) {
-                            Text(
-                                text = song.title,
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .sharedBounds(
-                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                        sharedContentState = rememberSharedContentState(song.title),
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                    )
-                                    .basicMarquee(),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Text(
-                                text = song.artist,
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .padding(bottom = 16.dp)
-                                    .sharedBounds(
-                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                        sharedContentState = rememberSharedContentState(song.artist),
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                    )
-                                    .basicMarquee(),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                Text(
+                                    text = song.title,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .sharedBounds(
+                                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                            sharedContentState = rememberSharedContentState(song.title),
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                        )
+                                        .basicMarquee(),
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                                Text(
+                                    text = song.artist,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .sharedBounds(
+                                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                            sharedContentState = rememberSharedContentState(song.artist),
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                        )
+                                        .basicMarquee(),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
 
                             ProgressSlider(
                                 currentPosition = playerUiState.currentPosition,
@@ -194,7 +196,6 @@ private fun PlayerScreen(
                                 onSeekTo = onSeekTo,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 4.dp)
                                     .sharedBounds(
                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                         sharedContentState = rememberSharedContentState(song.mediaId),
@@ -208,7 +209,6 @@ private fun PlayerScreen(
                                 onPlayClick = onPlayClick,
                                 onPauseClick = onPauseClick,
                                 onSkipNextClick = onSkipNextClick,
-                                modifier = Modifier.padding(bottom = 48.dp),
                             )
 
                             PlaybackActionButtons(
@@ -379,55 +379,57 @@ private fun ProgressSlider(
     onSeekTo: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val progress = convertToProgress(
-        count = currentPosition,
-        total = duration,
-    )
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
-    var isSeeking by remember { mutableStateOf(false) }
-    if (!isSeeking) sliderPosition = progress
-    Slider(
-        value = sliderPosition,
-        onValueChange = {
-            isSeeking = true
-            sliderPosition = it
-            onSeekTo(it)
-        },
-        onValueChangeFinished = {
-            onSeekTo(sliderPosition)
-            isSeeking = false
-        },
-        modifier = modifier,
-    )
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        val progress = convertToProgress(
+            count = currentPosition,
+            total = duration,
+        )
+        var sliderPosition by remember { mutableFloatStateOf(0f) }
+        var isSeeking by remember { mutableStateOf(false) }
+        if (!isSeeking) sliderPosition = progress
+        Slider(
+            value = sliderPosition,
+            onValueChange = {
+                isSeeking = true
+                sliderPosition = it
+                onSeekTo(it)
+            },
+            onValueChangeFinished = {
+                onSeekTo(sliderPosition)
+                isSeeking = false
+            },
+            modifier = modifier,
+        )
 
-    val timeMillis by remember(currentPosition) {
-        derivedStateOf {
-            val current = currentPosition.seconds
-            val total = duration.seconds
-            val remaining = (total - current).coerceAtLeast(Duration.ZERO)
-            TimeMillis(
-                current.toLong(DurationUnit.SECONDS).asFormattedString(),
-                remaining.toLong(DurationUnit.SECONDS).asFormattedString(),
+        val timeMillis by remember(currentPosition) {
+            derivedStateOf {
+                val current = currentPosition.seconds
+                val total = duration.seconds
+                val remaining = (total - current).coerceAtLeast(Duration.ZERO)
+                TimeMillis(
+                    current.toLong(DurationUnit.SECONDS).asFormattedString(),
+                    remaining.toLong(DurationUnit.SECONDS).asFormattedString(),
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = timeMillis.current,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = "-${timeMillis.remaining}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 32.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
-            text = timeMillis.current,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = "-${timeMillis.remaining}",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 
