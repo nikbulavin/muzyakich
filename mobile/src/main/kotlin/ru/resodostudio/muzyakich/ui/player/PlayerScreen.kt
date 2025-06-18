@@ -26,6 +26,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.extraSmallContainerSize
 import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
@@ -79,12 +81,14 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun PlayerScreen(
+    onBackClick: () -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
 
     PlayerScreen(
         playerUiState = playerUiState,
+        onBackClick = onBackClick,
         onSeekTo = viewModel::seekTo,
         onPlayClick = viewModel::play,
         onPauseClick = viewModel::pause,
@@ -103,6 +107,7 @@ fun PlayerScreen(
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
+    onBackClick: () -> Unit = {},
     onSeekTo: (Float) -> Unit = {},
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
@@ -127,39 +132,53 @@ private fun PlayerScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .systemBarsPadding()
-                            .padding(horizontal = 24.dp, vertical = 16.dp),
-                        verticalArrangement = Arrangement.Bottom,
+                            .padding(horizontal = 24.dp),
+                        verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
-                        SubcomposeAsyncImage(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .sharedBounds(
-                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                    sharedContentState = rememberSharedContentState(song.artworkUri),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                )
-                                .clip(RoundedCornerShape(18.dp)),
-                            model = song.artworkUri,
-                            contentDescription = null,
-                            error = {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                                ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.MusicNote,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            },
-                        )
+                        FilledTonalIconButton(
+                            onClick = onBackClick,
+                            modifier = Modifier.size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+                            shapes = IconButtonDefaults.shapes(IconButtonDefaults.extraSmallRoundShape),
+                        ) {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.KeyboardArrowDown,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+
                         Column(
                             horizontalAlignment = Alignment.Start,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 8.dp),
                             verticalArrangement = Arrangement.SpaceAround,
                         ) {
+                            SubcomposeAsyncImage(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .sharedBounds(
+                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                        sharedContentState = rememberSharedContentState(song.artworkUri),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                    )
+                                    .clip(RoundedCornerShape(18.dp)),
+                                model = song.artworkUri,
+                                contentDescription = null,
+                                error = {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                    ) {
+                                        Icon(
+                                            imageVector = MuzIcons.Rounded.MusicNote,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(24.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                },
+                            )
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(2.dp),
                             ) {
@@ -189,7 +208,6 @@ private fun PlayerScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-
                             ProgressSlider(
                                 currentPosition = playerUiState.currentPosition,
                                 duration = playerUiState.currentSong.duration,
@@ -202,7 +220,6 @@ private fun PlayerScreen(
                                         animatedVisibilityScope = animatedVisibilityScope,
                                     ),
                             )
-
                             PlayerActionButtons(
                                 nowPlayingState = playerUiState.nowPlayingState,
                                 onSkipPreviousClick = onSkipPreviousClick,
@@ -210,7 +227,6 @@ private fun PlayerScreen(
                                 onPauseClick = onPauseClick,
                                 onSkipNextClick = onSkipNextClick,
                             )
-
                             PlaybackActionButtons(
                                 playbackConfig = playerUiState.playbackConfig,
                                 onRepeatToggle = onRepeatToggle,

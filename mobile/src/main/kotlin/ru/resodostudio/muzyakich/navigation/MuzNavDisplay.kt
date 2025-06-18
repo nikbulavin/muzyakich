@@ -54,7 +54,11 @@ fun MuzNavDisplay() {
                 )
             }
             entry<PlayerRoute> {
-                PlayerScreen()
+                PlayerScreen(
+                    onBackClick = {
+                        backStack.removeLastOrNull()
+                    },
+                )
             }
         },
     )
