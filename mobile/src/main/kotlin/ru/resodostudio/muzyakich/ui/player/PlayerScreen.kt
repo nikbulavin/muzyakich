@@ -1,5 +1,9 @@
 package ru.resodostudio.muzyakich.ui.player
 
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
@@ -25,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.extraSmallContainerSize
@@ -47,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,6 +60,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
@@ -64,6 +71,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.RepeatOne
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipPrevious
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
@@ -183,34 +191,71 @@ private fun PlayerScreen(
                                     }
                                 },
                             )
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Text(
-                                    text = song.title,
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .sharedBounds(
-                                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                            sharedContentState = rememberSharedContentState(song.title),
-                                            animatedVisibilityScope = animatedVisibilityScope,
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                                    modifier = Modifier.weight(1f),
+                                ) {
+                                    Text(
+                                        text = song.title,
+                                        maxLines = 1,
+                                        modifier = Modifier
+                                            .sharedBounds(
+                                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                                sharedContentState = rememberSharedContentState(song.title),
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                            )
+                                            .basicMarquee(),
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+                                    Text(
+                                        text = song.artist,
+                                        maxLines = 1,
+                                        modifier = Modifier
+                                            .sharedBounds(
+                                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                                sharedContentState = rememberSharedContentState(song.artist),
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                            )
+                                            .basicMarquee(),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                val (icon, contentDescription) = if (song.isFavorite) {
+                                    MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
+                                } else {
+                                    MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
+                                }
+                                val context = LocalContext.current
+                                val launcher = rememberLauncherForActivityResult(
+                                    contract = ActivityResultContracts.StartIntentSenderForResult(),
+                                ) { result ->
+
+                                }
+                                FilledTonalIconToggleButton(
+                                    checked = song.isFavorite,
+                                    onCheckedChange = { checked ->
+                                        val pendingIntent = MediaStore.createFavoriteRequest(
+                                            context.contentResolver,
+                                            listOf(song.mediaUri),
+                                            checked,
                                         )
-                                        .basicMarquee(),
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-                                Text(
-                                    text = song.artist,
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .sharedBounds(
-                                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                            sharedContentState = rememberSharedContentState(song.artist),
-                                            animatedVisibilityScope = animatedVisibilityScope,
+                                        launcher.launch(
+                                            IntentSenderRequest.Builder(pendingIntent.intentSender).build()
                                         )
-                                        .basicMarquee(),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
+                                    },
+                                    shapes = IconButtonDefaults.toggleableShapes(),
+                                ) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = contentDescription,
+                                    )
+                                }
                             }
                             ProgressSlider(
                                 currentPosition = playerUiState.currentPosition,
