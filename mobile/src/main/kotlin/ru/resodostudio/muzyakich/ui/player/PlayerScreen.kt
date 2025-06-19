@@ -65,6 +65,7 @@ import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
@@ -152,7 +153,9 @@ private fun PlayerScreen(
                     ) {
                         FilledTonalIconButton(
                             onClick = onBackClick,
-                            modifier = Modifier.size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                                .size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
                             shapes = IconButtonDefaults.shapes(IconButtonDefaults.extraSmallRoundShape),
                         ) {
                             Icon(
@@ -198,7 +201,7 @@ private fun PlayerScreen(
                                 },
                             )
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
@@ -277,6 +280,16 @@ private fun PlayerScreen(
                                     Icon(
                                         imageVector = icon,
                                         contentDescription = contentDescription,
+                                    )
+                                }
+                                FilledTonalIconButton(
+                                    onClick = {},
+                                    shapes = IconButtonDefaults.shapes(),
+                                    modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.MoreVert,
+                                        contentDescription = null,
                                     )
                                 }
                             }
