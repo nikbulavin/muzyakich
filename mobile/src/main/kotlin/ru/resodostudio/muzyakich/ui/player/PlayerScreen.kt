@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -168,12 +169,15 @@ private fun PlayerScreen(
                                 error = {
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                        modifier = Modifier
+                                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                                            .fillMaxWidth()
+                                            .aspectRatio(1f),
                                     ) {
                                         Icon(
                                             imageVector = MuzIcons.Rounded.MusicNote,
                                             contentDescription = null,
-                                            modifier = Modifier.size(24.dp),
+                                            modifier = Modifier.size(128.dp),
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
