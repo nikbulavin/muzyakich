@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -38,11 +37,9 @@ import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconToggleButton
-import androidx.compose.material3.OutlinedToggleButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -275,7 +272,10 @@ private fun PlayerScreen(
                                             )
                                         }
                                     },
-                                    shapes = IconButtonDefaults.toggleableShapes(),
+                                    shapes = IconButtonDefaults.toggleableShapes(
+                                        shape = IconButtonDefaults.smallRoundShape,
+                                        checkedShape = IconButtonDefaults.smallRoundShape,
+                                    ),
                                 ) {
                                     Icon(
                                         imageVector = icon,
@@ -363,7 +363,7 @@ private fun PlaybackActionButtons(
             onCheckedChange = onShuffleToggle,
             shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
             modifier = Modifier
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 12.dp)
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             Icon(
@@ -374,20 +374,16 @@ private fun PlaybackActionButtons(
 
         var queueOpened by remember { mutableStateOf(false) }
 
-        OutlinedToggleButton(
+        OutlinedIconToggleButton(
             checked = queueOpened,
             onCheckedChange = { queueOpened = it },
-            shapes = ToggleButtonDefaults.shapes(ToggleButtonDefaults.squareShape),
-            modifier = Modifier.height(40.dp),
+            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
+            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             Icon(
                 imageVector = MuzIcons.Rounded.QueueMusic,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = ToggleButtonDefaults.IconSpacing)
-                    .size(20.dp),
+                contentDescription = stringResource(localesR.string.queue),
             )
-            Text(stringResource(localesR.string.queue))
         }
     }
 }
