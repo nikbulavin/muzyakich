@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.player
 
+import android.app.Activity
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -48,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +61,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
@@ -91,6 +94,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun PlayerScreen(
     onBackClick: () -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean = { _, _ -> false },
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
@@ -98,6 +102,7 @@ fun PlayerScreen(
     PlayerScreen(
         playerUiState = playerUiState,
         onBackClick = onBackClick,
+        onShowSnackbar = onShowSnackbar,
         onSeekTo = viewModel::seekTo,
         onPlayClick = viewModel::play,
         onPauseClick = viewModel::pause,
@@ -117,6 +122,7 @@ fun PlayerScreen(
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
     onBackClick: () -> Unit = {},
+    onShowSnackbar: suspend (String, String?) -> Boolean = { _, _ -> false },
     onSeekTo: (Float) -> Unit = {},
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
@@ -232,22 +238,39 @@ private fun PlayerScreen(
                                     MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
                                 }
                                 val context = LocalContext.current
+                                val coroutineScope = rememberCoroutineScope()
+
+                                val addedToFavoritesMessage = stringResource(localesR.string.added_to_favorites)
+                                val removedFromFavoritesMessage = stringResource(localesR.string.removed_from_favorites)
+
                                 val launcher = rememberLauncherForActivityResult(
                                     contract = ActivityResultContracts.StartIntentSenderForResult(),
                                 ) { result ->
-
+                                    var snackBarMessage = "ERROR :("
+                                    if (result.resultCode == Activity.RESULT_OK) {
+                                        snackBarMessage = if (song.isFavorite) {
+                                            addedToFavoritesMessage
+                                        } else {
+                                            removedFromFavoritesMessage
+                                        }
+                                    }
+                                    coroutineScope.launch {
+                                        onShowSnackbar(snackBarMessage, null)
+                                    }
                                 }
                                 FilledTonalIconToggleButton(
                                     checked = song.isFavorite,
                                     onCheckedChange = { checked ->
-                                        val pendingIntent = MediaStore.createFavoriteRequest(
-                                            context.contentResolver,
-                                            listOf(song.mediaUri),
-                                            checked,
-                                        )
-                                        launcher.launch(
-                                            IntentSenderRequest.Builder(pendingIntent.intentSender).build()
-                                        )
+                                        runCatching {
+                                            val pendingIntent = MediaStore.createFavoriteRequest(
+                                                context.contentResolver,
+                                                listOf(song.mediaUri),
+                                                checked,
+                                            )
+                                            launcher.launch(
+                                                IntentSenderRequest.Builder(pendingIntent.intentSender).build()
+                                            )
+                                        }
                                     },
                                     shapes = IconButtonDefaults.toggleableShapes(),
                                 ) {
