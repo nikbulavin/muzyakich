@@ -108,6 +108,7 @@ class MusicService : MediaSessionService() {
                 }
                 shuffleModeEnabled = playbackConfig.shuffleModeEnabled
             }
+            musicSessionCallback.setRepeatModeAction(playbackConfig.repeatMode)
             musicSessionCallback.setShuffleModeAction(playbackConfig.shuffleModeEnabled)
             mediaSession?.setCustomLayout(musicSessionCallback.customLayout)
         }

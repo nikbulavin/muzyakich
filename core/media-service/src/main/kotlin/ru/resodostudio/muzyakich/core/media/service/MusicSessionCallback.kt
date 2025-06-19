@@ -15,10 +15,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ALL
+import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_OFF
+import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ONE
+import ru.resodostudio.muzyakich.core.common.Constants.SHUFFLE_MODE_OFF
+import ru.resodostudio.muzyakich.core.common.Constants.SHUFFLE_MODE_ON
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.media.notification.common.MusicCommands.SHUFFLE_MODE_OFF
-import ru.resodostudio.muzyakich.core.media.notification.common.MusicCommands.SHUFFLE_MODE_ON
+import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import javax.inject.Inject
 
 class MusicSessionCallback @Inject constructor(
@@ -28,6 +32,15 @@ class MusicSessionCallback @Inject constructor(
 
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
     val customLayout: List<CommandButton> get() = musicActionHandler.customLayout
+
+    fun setRepeatModeAction(repeatMode: RepeatMode) {
+        val action = when (repeatMode) {
+            RepeatMode.REPEAT_OFF -> REPEAT_MODE_OFF
+            RepeatMode.REPEAT_ALL -> REPEAT_MODE_ALL
+            RepeatMode.REPEAT_ONE -> REPEAT_MODE_ONE
+        }
+        musicActionHandler.setRepeatCommand(action)
+    }
 
     fun setShuffleModeAction(shuffleModeEnabled: Boolean) {
         val action = if (shuffleModeEnabled) SHUFFLE_MODE_ON else SHUFFLE_MODE_OFF

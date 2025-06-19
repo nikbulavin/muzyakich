@@ -7,6 +7,9 @@
     <string name="albums">Альбомы</string>
     <string name="artists">Исполнители</string>
     <string name="disable_shuffle_mode">Выключить режим перетасовки</string>
+    <string name="disable_repeat_mode">Выключить режим повтора</string>
+    <string name="enable_repeat_mode_all">Включить режим повтора для всех песен</string>
+    <string name="enable_repeat_mode_one">Включить режим повтора для одной песни</string>
     <string name="enable_shuffle_mode">Включить режим перетасовки</string>
     <string name="library_empty">У вас пока нет песен. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
     <string name="music_notification_channel_name">Сейчас играет</string>

@@ -15,6 +15,12 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(UnstableApi::class)
 internal object MusicActions {
 
+    internal fun getRepeatAction(
+        mediaSession: MediaSession,
+        customLayout: ImmutableList<CommandButton>,
+        actionFactory: MediaNotification.ActionFactory,
+    ) = actionFactory.createCustomActionFromCustomCommandButton(mediaSession, customLayout.first())
+
     internal fun getSkipPreviousAction(
         context: Context,
         mediaSession: MediaSession,
@@ -50,5 +56,5 @@ internal object MusicActions {
         mediaSession: MediaSession,
         customLayout: ImmutableList<CommandButton>,
         actionFactory: MediaNotification.ActionFactory,
-    ) = actionFactory.createCustomActionFromCustomCommandButton(mediaSession, customLayout.first())
+    ) = actionFactory.createCustomActionFromCustomCommandButton(mediaSession, customLayout.last())
 }
