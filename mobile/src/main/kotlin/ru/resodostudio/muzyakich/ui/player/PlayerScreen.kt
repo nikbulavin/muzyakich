@@ -62,8 +62,8 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
@@ -204,7 +204,7 @@ private fun PlayerScreen(
                                 },
                             )
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
@@ -540,7 +540,7 @@ private fun ProgressSlider(
             }
             if (bitrate >= 256) {
                 Icon(
-                    imageVector = MuzIcons.Rounded.HighQuality,
+                    imageVector = MuzIcons.Filled.HighQuality,
                     contentDescription = stringResource(localesR.string.high_quality),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,

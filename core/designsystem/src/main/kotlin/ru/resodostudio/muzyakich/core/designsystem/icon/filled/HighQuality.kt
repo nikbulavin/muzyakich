@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.core.designsystem.icon.rounded
+package ru.resodostudio.muzyakich.core.designsystem.icon.filled
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -7,13 +7,13 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 
-val MuzIcons.Rounded.HighQuality: ImageVector
+val MuzIcons.Filled.HighQuality: ImageVector
     get() {
         if (_HighQuality != null) {
             return _HighQuality!!
         }
         _HighQuality = ImageVector.Builder(
-            name = "Rounded.HighQuality",
+            name = "Filled.HighQuality",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
@@ -94,6 +94,33 @@ val MuzIcons.Rounded.HighQuality: ImageVector
                 quadTo(880f, 753f, 856.5f, 776.5f)
                 quadTo(833f, 800f, 800f, 800f)
                 lineTo(160f, 800f)
+                close()
+                moveTo(160f, 720f)
+                lineTo(800f, 720f)
+                quadTo(800f, 720f, 800f, 720f)
+                quadTo(800f, 720f, 800f, 720f)
+                lineTo(800f, 240f)
+                quadTo(800f, 240f, 800f, 240f)
+                quadTo(800f, 240f, 800f, 240f)
+                lineTo(160f, 240f)
+                quadTo(160f, 240f, 160f, 240f)
+                quadTo(160f, 240f, 160f, 240f)
+                lineTo(160f, 720f)
+                quadTo(160f, 720f, 160f, 720f)
+                quadTo(160f, 720f, 160f, 720f)
+                close()
+                moveTo(160f, 720f)
+                quadTo(160f, 720f, 160f, 720f)
+                quadTo(160f, 720f, 160f, 720f)
+                lineTo(160f, 240f)
+                quadTo(160f, 240f, 160f, 240f)
+                quadTo(160f, 240f, 160f, 240f)
+                lineTo(160f, 240f)
+                quadTo(160f, 240f, 160f, 240f)
+                quadTo(160f, 240f, 160f, 240f)
+                lineTo(160f, 720f)
+                quadTo(160f, 720f, 160f, 720f)
+                quadTo(160f, 720f, 160f, 720f)
                 close()
             }
         }.build()
