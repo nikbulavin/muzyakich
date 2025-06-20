@@ -61,6 +61,7 @@ import coil3.compose.SubcomposeAsyncImage
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
@@ -296,6 +297,7 @@ private fun PlayerScreen(
                             ProgressSlider(
                                 currentPosition = playerUiState.currentPosition,
                                 duration = playerUiState.currentSong.duration,
+                                bitrate = playerUiState.currentSong.bitrate,
                                 onSeekTo = onSeekTo,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -473,12 +475,11 @@ private fun PlayerActionButtons(
 private fun ProgressSlider(
     currentPosition: Long,
     duration: Long,
+    bitrate: Int,
     onSeekTo: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
+    Column {
         val progress = convertToProgress(
             count = currentPosition,
             total = duration,
@@ -512,20 +513,34 @@ private fun ProgressSlider(
             }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Box(
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = timeMillis.current,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                text = "-${timeMillis.remaining}",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = timeMillis.current,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                Text(
+                    text = "-${timeMillis.remaining}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (bitrate >= 256) {
+                Icon(
+                    imageVector = MuzIcons.Rounded.HighQuality,
+                    contentDescription = stringResource(localesR.string.high_quality),
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

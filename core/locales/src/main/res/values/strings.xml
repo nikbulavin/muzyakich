@@ -11,6 +11,7 @@
     <string name="enable_repeat_mode_all">Enable repeat mode for all songs</string>
     <string name="enable_repeat_mode_one">Enable single song repeat mode</string>
     <string name="enable_shuffle_mode">Enable shuffle mode</string>
+    <string name="high_quality">High quality</string>
     <string name="library_empty">You don\'t have any songs yet. Add your favorite music and enjoy listening!</string>
     <string name="music_notification_channel_name">Now playing</string>
     <string name="open_menu">Open menu</string>

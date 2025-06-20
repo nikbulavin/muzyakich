@@ -62,7 +62,7 @@ class MediaStoreDataSource @Inject constructor(
                                     album = album,
                                     folder = folder,
                                     duration = duration,
-                                    bitrate = bitrate,
+                                    bitrate = bitrate / 1000,
                                     isFavorite = isFavorite == 1,
                                 )
                             )
