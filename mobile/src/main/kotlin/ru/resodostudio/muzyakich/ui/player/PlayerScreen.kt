@@ -36,6 +36,7 @@ import androidx.compose.material3.IconButtonDefaults.extraSmallContainerSize
 import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -51,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -149,16 +151,19 @@ private fun PlayerScreen(
                             .padding(horizontal = 24.dp),
                         verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
-                        FilledTonalIconButton(
+                        OutlinedIconButton(
                             onClick = onBackClick,
                             modifier = Modifier
                                 .padding(top = 8.dp)
                                 .size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
                             shapes = IconButtonDefaults.shapes(IconButtonDefaults.extraSmallRoundShape),
+                            border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
+                                brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
+                            ),
                         ) {
                             Icon(
                                 imageVector = MuzIcons.Rounded.KeyboardArrowDown,
-                                contentDescription = null,
+                                contentDescription = stringResource(localesR.string.back),
                                 modifier = Modifier.size(20.dp),
                             )
                         }

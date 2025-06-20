@@ -6,6 +6,7 @@
     <string name="added_to_favorites">Добавлено в избранное</string>
     <string name="albums">Альбомы</string>
     <string name="artists">Исполнители</string>
+    <string name="back">Назад</string>
     <string name="disable_shuffle_mode">Выключить режим перетасовки</string>
     <string name="disable_repeat_mode">Выключить режим повтора</string>
     <string name="enable_repeat_mode_all">Включить режим повтора для всех песен</string>
