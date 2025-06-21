@@ -36,7 +36,7 @@ internal fun LibraryToolbar(
         modifier = modifier,
         expanded = expanded,
         content = {
-            if (expanded) Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(4.dp))
             Button(
                 shapes = ButtonDefaults.shapes(ButtonDefaults.filledTonalShape, ButtonDefaults.filledTonalShape),
                 onClick = { onPlaySongsClick(songs, DEFAULT_INDEX) },
@@ -52,7 +52,7 @@ internal fun LibraryToolbar(
                     Text(text = stringResource(localesR.string.play_audio))
                 }
             }
-            if (expanded) Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(if (expanded) 8.dp else 4.dp))
         },
         trailingContent = {
             TextButton(
