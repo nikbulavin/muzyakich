@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.library
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
@@ -33,8 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,6 +56,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
+import ru.resodostudio.muzyakich.ui.library.LibraryTab.*
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -106,21 +108,17 @@ private fun LibraryScreen(
         Column(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
         ) {
-            val tabs = listOf(
-                TabItem(stringResource(localesR.string.playlists), MuzIcons.Rounded.LibraryMusic),
-                TabItem(stringResource(localesR.string.songs), MuzIcons.Rounded.MusicNote),
-                TabItem(stringResource(localesR.string.albums), MuzIcons.Rounded.Album),
-                TabItem(stringResource(localesR.string.artists), MuzIcons.Rounded.Artist),
-            )
-            var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+            val libraryTabs = remember { LibraryTab.entries }
+            var selectedTab by rememberSaveable { mutableStateOf(libraryTabs.first()) }
+
             PrimaryScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
+                selectedTabIndex = selectedTab.ordinal,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                tabs.forEachIndexed { index, tab ->
+                libraryTabs.forEach { tab ->
                     Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
+                        selected = selectedTab == tab,
+                        onClick = { selectedTab = tab },
                         icon = {
                             Icon(
                                 imageVector = tab.icon,
@@ -129,7 +127,7 @@ private fun LibraryScreen(
                         },
                         text = {
                             Text(
-                                text = tab.title,
+                                text = stringResource(tab.titleRes),
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -154,10 +152,17 @@ private fun LibraryScreen(
                     var expanded by rememberSaveable { mutableStateOf(true) }
 
                     Box {
-                        AnimatedContent(selectedTabIndex) { state ->
-                            when (state) {
-                                0 -> Unit
-                                1 -> {
+                        AnimatedContent(selectedTab) { currentTab ->
+                            when (currentTab) {
+                                PLAYLISTS -> {
+                                    LoadingState(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .navigationBarsPadding(),
+                                    )
+                                }
+
+                                SONGS -> {
                                     LazyVerticalGrid(
                                         columns = GridCells.Adaptive(300.dp),
                                         contentPadding = PaddingValues(
@@ -183,14 +188,32 @@ private fun LibraryScreen(
                                                 song = song,
                                                 isPlaying = isPlaying,
                                                 modifier = Modifier.animateItem(),
-                                                onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
+                                                onClick = {
+                                                    onPlaySongsClick(
+                                                        songs,
+                                                        songs.indexOf(song)
+                                                    )
+                                                },
                                             )
                                         }
                                     }
                                 }
 
-                                2 -> Unit
-                                3 -> Unit
+                                ALBUMS -> {
+                                    LoadingState(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .navigationBarsPadding(),
+                                    )
+                                }
+
+                                ARTISTS -> {
+                                    LoadingState(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .navigationBarsPadding(),
+                                    )
+                                }
                             }
                         }
 
@@ -233,7 +256,12 @@ private fun LibraryScreen(
     }
 }
 
-data class TabItem(
-    val title: String,
+enum class LibraryTab(
+    @StringRes val titleRes: Int,
     val icon: ImageVector,
-)
+) {
+    PLAYLISTS(localesR.string.playlists, MuzIcons.Rounded.LibraryMusic),
+    SONGS(localesR.string.songs, MuzIcons.Rounded.MusicNote),
+    ALBUMS(localesR.string.albums, MuzIcons.Rounded.Album),
+    ARTISTS(localesR.string.artists, MuzIcons.Rounded.Artist),
+}
