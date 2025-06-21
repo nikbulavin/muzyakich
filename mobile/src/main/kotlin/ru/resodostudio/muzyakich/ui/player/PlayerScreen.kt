@@ -135,7 +135,14 @@ private fun PlayerScreen(
         ) {
             when (playerUiState) {
                 PlayerUiState.Error -> onBackClick()
-                PlayerUiState.Loading -> LoadingState()
+                PlayerUiState.Loading -> {
+                    LoadingState(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .systemBarsPadding(),
+                    )
+                }
+
                 is PlayerUiState.Success -> {
                     val song = playerUiState.currentSong
                     Column(
