@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="NightAdjusted.Theme.Muz" parent="android:Theme.Material.Light.NoActionBar" />
 
     <!-- The final theme we use -->
     <style name="Theme.Muz" parent="NightAdjusted.Theme.Muz">
-        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 
     <style name="NightAdjusted.Theme.Splash" parent="Theme.SplashScreen">
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="Theme.Muz.Splash" parent="NightAdjusted.Theme.Splash">

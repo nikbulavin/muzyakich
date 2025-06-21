@@ -24,12 +24,12 @@ fun configureFlavors(
     flavorConfigurationBlock: ProductFlavor.(flavor: MuzFlavor) -> Unit = {},
 ) {
     commonExtension.apply {
-        FlavorDimension.values().forEach { flavorDimension ->
+        FlavorDimension.entries.forEach { flavorDimension ->
             flavorDimensions += flavorDimension.name
         }
 
         productFlavors {
-            MuzFlavor.values().forEach { csFlavor ->
+            MuzFlavor.entries.forEach { csFlavor ->
                 register(csFlavor.name) {
                     dimension = csFlavor.dimension.name
                     flavorConfigurationBlock(this, csFlavor)
