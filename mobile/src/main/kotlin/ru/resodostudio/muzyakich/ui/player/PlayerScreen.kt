@@ -134,7 +134,7 @@ private fun PlayerScreen(
             modifier = Modifier.fillMaxSize(),
         ) {
             when (playerUiState) {
-                PlayerUiState.Error -> LoadingState()
+                PlayerUiState.Error -> onBackClick()
                 PlayerUiState.Loading -> LoadingState()
                 is PlayerUiState.Success -> {
                     val song = playerUiState.currentSong
