@@ -61,8 +61,8 @@ fun LibraryScreen(
     val libraryUiState by viewModel.libraryUiState.collectAsStateWithLifecycle()
 
     LibraryScreen(
-        onNowPlayingBarClick = onNowPlayingBarClick,
         libraryUiState = libraryUiState,
+        onNowPlayingBarClick = onNowPlayingBarClick,
         onPlaySongsClick = viewModel::playSongs,
         onShuffleSongsClick = viewModel::shuffleSongs,
         onPlayClick = viewModel::play,
@@ -74,8 +74,8 @@ fun LibraryScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun LibraryScreen(
-    onNowPlayingBarClick: () -> Unit,
     libraryUiState: LibraryUiState,
+    onNowPlayingBarClick: () -> Unit,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onPlayClick: () -> Unit = {},

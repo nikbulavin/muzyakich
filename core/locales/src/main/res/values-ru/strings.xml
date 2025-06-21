@@ -3,7 +3,6 @@
     <string name="app_name">Музякич</string>
 
     <string name="add_to_favorites">Добавить в избранное</string>
-    <string name="added_to_favorites">Добавлено в избранное</string>
     <string name="albums">Альбомы</string>
     <string name="artists">Исполнители</string>
     <string name="back">Назад</string>
@@ -21,7 +20,6 @@
     <string name="playlists">Плейлисты</string>
     <string name="queue">Очередь</string>
     <string name="remove_from_favorites">Удалить из избранного</string>
-    <string name="removed_from_favorites">Удалено из избранного</string>
     <string name="search">Поиск</string>
     <string name="settings">Настройки</string>
     <string name="shuffle">Перемешать</string>

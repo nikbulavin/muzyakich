@@ -1,12 +1,22 @@
 package ru.resodostudio.muzyakich.ui.library
 
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,11 +44,14 @@ import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import ru.resodostudio.muzyakich.R
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SongItem(
     song: Song,
@@ -126,13 +139,51 @@ fun SongItem(
             }
         },
         trailingContent = {
-            IconButton(
-                onClick = onMenuClick,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.MoreVert,
-                    contentDescription = stringResource(localesR.string.open_menu),
-                )
+                val (icon, contentDescription) = if (song.isFavorite) {
+                    MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
+                } else {
+                    MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
+                }
+
+                val context = LocalContext.current
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartIntentSenderForResult(),
+                ) {}
+                IconToggleButton(
+                    checked = song.isFavorite,
+                    onCheckedChange = { checked ->
+                        runCatching {
+                            val pendingIntent = MediaStore.createFavoriteRequest(
+                                context.contentResolver,
+                                listOf(song.mediaUri),
+                                checked,
+                            )
+                            launcher.launch(
+                                IntentSenderRequest.Builder(pendingIntent.intentSender).build()
+                            )
+                        }
+                    },
+                    shapes = IconButtonDefaults.toggleableShapes(),
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = contentDescription,
+                    )
+                }
+                IconButton(
+                    onClick = onMenuClick,
+                    shapes = IconButtonDefaults.shapes(),
+                    modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.MoreVert,
+                        contentDescription = stringResource(localesR.string.open_menu),
+                    )
+                }
             }
         },
     )

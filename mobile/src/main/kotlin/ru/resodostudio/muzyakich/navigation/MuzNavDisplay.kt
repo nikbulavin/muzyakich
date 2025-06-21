@@ -20,9 +20,7 @@ import ru.resodostudio.muzyakich.ui.player.PlayerScreen
     ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
-fun MuzNavDisplay(
-    onShowSnackbar: suspend (String, String?) -> Boolean,
-) {
+fun MuzNavDisplay() {
     val backStack = rememberNavBackStack(LibraryRoute)
     val motionScheme = MaterialTheme.motionScheme
 
@@ -60,7 +58,6 @@ fun MuzNavDisplay(
                     onBackClick = {
                         backStack.removeLastOrNull()
                     },
-                    onShowSnackbar = onShowSnackbar,
                 )
             }
         },
