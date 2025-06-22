@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -176,34 +177,40 @@ private fun PlayerScreen(
                                 .padding(vertical = 8.dp),
                             verticalArrangement = Arrangement.SpaceAround,
                         ) {
-                            SubcomposeAsyncImage(
+                            Crossfade(
+                                targetState = song.artworkUri,
                                 modifier = Modifier
-                                    .fillMaxWidth()
                                     .sharedBounds(
                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                         sharedContentState = rememberSharedContentState(song.artworkUri),
                                         animatedVisibilityScope = animatedVisibilityScope,
                                     )
                                     .clip(RoundedCornerShape(18.dp)),
-                                model = song.artworkUri,
-                                contentDescription = null,
-                                error = {
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier
-                                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                                            .fillMaxWidth()
-                                            .aspectRatio(1f),
-                                    ) {
-                                        Icon(
-                                            imageVector = MuzIcons.Rounded.MusicNote,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(128.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
-                                },
-                            )
+                                animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+                            ) { artworkUri ->
+                                SubcomposeAsyncImage(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    model = artworkUri,
+                                    contentDescription = null,
+                                    error = {
+                                        Box(
+                                            contentAlignment = Alignment.Center,
+                                            modifier = Modifier
+                                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                                .fillMaxWidth()
+                                                .aspectRatio(1f),
+                                        ) {
+                                            Icon(
+                                                imageVector = MuzIcons.Rounded.MusicNote,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(128.dp),
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    },
+                                )
+                            }
+
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 modifier = Modifier.fillMaxWidth(),
