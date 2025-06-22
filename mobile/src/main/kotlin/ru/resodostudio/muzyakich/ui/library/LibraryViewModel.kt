@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.ui.library
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -19,21 +20,29 @@ class LibraryViewModel @Inject constructor(
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
+    private val shouldFilterFavoritesState = MutableStateFlow(false)
+
     val libraryUiState = combine(
         musicServiceConnection.nowPlayingState,
         musicServiceConnection.currentPosition,
         mediaRepository.songs,
-    ) { nowPlayingState, currentPosition, songs ->
+        shouldFilterFavoritesState,
+    ) { nowPlayingState, currentPosition, songs, shouldFilterFavorites ->
         if (songs.isEmpty()) {
             LibraryUiState.Empty
         } else {
             val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
+            val filteredSongs = songs
+                .run {
+                    if (shouldFilterFavorites) filter { it.isFavorite } else this
+                }
 
             LibraryUiState.Success(
                 nowPlayingState = nowPlayingState,
                 currentPosition = currentPosition,
                 currentSong = currentSong,
-                songs = songs,
+                songs = filteredSongs,
+                shouldFilterFavorites = shouldFilterFavorites,
             )
         }
     }
@@ -57,6 +66,9 @@ class LibraryViewModel @Inject constructor(
 
     fun skipNext() = musicServiceConnection.skipToNext()
 
+    fun toggleFilterFavorites() {
+        shouldFilterFavoritesState.value = !shouldFilterFavoritesState.value
+    }
 }
 
 sealed interface LibraryUiState {
@@ -70,5 +82,6 @@ sealed interface LibraryUiState {
         val currentPosition: Long,
         val currentSong: Song?,
         val songs: List<Song>,
+        val shouldFilterFavorites: Boolean,
     ) : LibraryUiState
 }

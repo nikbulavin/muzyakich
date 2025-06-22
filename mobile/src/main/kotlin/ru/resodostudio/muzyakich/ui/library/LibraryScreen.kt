@@ -7,9 +7,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,10 +21,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.Icon
@@ -51,12 +55,17 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
-import ru.resodostudio.muzyakich.ui.library.LibraryTab.*
+import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
+import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
+import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
+import ru.resodostudio.muzyakich.ui.library.LibraryTab.SONGS
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -74,6 +83,7 @@ fun LibraryScreen(
         onPlayClick = viewModel::play,
         onPauseClick = viewModel::pause,
         onSkipNextClick = viewModel::skipNext,
+        onToggleFilterFavorites = viewModel::toggleFilterFavorites,
     )
 }
 
@@ -90,6 +100,7 @@ private fun LibraryScreen(
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
+    onToggleFilterFavorites: () -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -179,7 +190,38 @@ private fun LibraryScreen(
                                                 onCollapse = { expanded = false },
                                             ),
                                     ) {
-                                        items(songs) { song ->
+                                        item(
+                                            span = { GridItemSpan(maxLineSpan) },
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            ) {
+                                                FilterChip(
+                                                    selected = libraryUiState.shouldFilterFavorites,
+                                                    onClick = onToggleFilterFavorites,
+                                                    label = { Text(stringResource(localesR.string.favorites)) },
+                                                    modifier = Modifier.padding(start = 16.dp),
+                                                    leadingIcon = {
+                                                        val icon = if (libraryUiState.shouldFilterFavorites) {
+                                                            MuzIcons.Rounded.Check
+                                                        } else {
+                                                            MuzIcons.Rounded.Star
+                                                        }
+                                                        Icon(
+                                                            imageVector = icon,
+                                                            contentDescription = null,
+                                                        )
+                                                    },
+                                                )
+                                            }
+                                        }
+                                        items(
+                                            items = songs,
+                                            key = { it.mediaId },
+                                            contentType = { "Song" },
+                                        ) { song ->
                                             val isPlaying =
                                                 libraryUiState.nowPlayingState.mediaId == song.mediaId &&
                                                         libraryUiState.nowPlayingState.playWhenReady
