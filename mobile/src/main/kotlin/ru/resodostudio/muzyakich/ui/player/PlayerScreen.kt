@@ -16,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -193,7 +194,7 @@ private fun PlayerScreen(
                                     model = artworkUri,
                                     contentDescription = null,
                                     error = {
-                                        Box(
+                                        BoxWithConstraints(
                                             contentAlignment = Alignment.Center,
                                             modifier = Modifier
                                                 .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -203,7 +204,7 @@ private fun PlayerScreen(
                                             Icon(
                                                 imageVector = MuzIcons.Rounded.MusicNote,
                                                 contentDescription = null,
-                                                modifier = Modifier.size(128.dp),
+                                                modifier = Modifier.size(maxWidth / 2),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                             )
                                         }
