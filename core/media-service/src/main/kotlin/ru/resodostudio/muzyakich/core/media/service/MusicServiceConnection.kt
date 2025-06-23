@@ -66,7 +66,7 @@ class MusicServiceConnection @Inject constructor(
 
     fun skipToPrevious() = mediaController?.run {
         seekToPrevious()
-        play()
+        if (_nowPlayingState.value.playWhenReady) play()
     }
 
     fun play() = mediaController?.play()
@@ -74,17 +74,17 @@ class MusicServiceConnection @Inject constructor(
 
     fun skipToNext() = mediaController?.run {
         seekToNext()
-        play()
+        if (_nowPlayingState.value.playWhenReady) play()
     }
 
     fun seekTo(position: Long) = mediaController?.run {
         seekTo(position)
-        play()
+        if (_nowPlayingState.value.playWhenReady) play()
     }
 
     fun skipToIndex(index: Int, position: Long = DEFAULT_POSITION_MS) = mediaController?.run {
         seekTo(index, position)
-        play()
+        if (_nowPlayingState.value.playWhenReady) play()
     }
 
     fun playSongs(
