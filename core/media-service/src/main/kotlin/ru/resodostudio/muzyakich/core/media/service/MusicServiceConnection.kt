@@ -7,6 +7,8 @@ import androidx.media3.common.Player.EVENT_MEDIA_ITEM_TRANSITION
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
 import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
 import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
+import androidx.media3.common.Player.EVENT_REPEAT_MODE_CHANGED
+import androidx.media3.common.Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -115,6 +117,8 @@ class MusicServiceConnection @Inject constructor(
                     EVENT_PLAYBACK_STATE_CHANGED,
                     EVENT_MEDIA_METADATA_CHANGED,
                     EVENT_PLAY_WHEN_READY_CHANGED,
+                    EVENT_REPEAT_MODE_CHANGED,
+                    EVENT_SHUFFLE_MODE_ENABLED_CHANGED,
                 )
             ) {
                 updateNowPlayingState(player)
