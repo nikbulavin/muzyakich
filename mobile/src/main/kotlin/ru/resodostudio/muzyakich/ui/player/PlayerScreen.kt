@@ -224,25 +224,13 @@ private fun PlayerScreen(
                                     Text(
                                         text = song.title,
                                         maxLines = 1,
-                                        modifier = Modifier
-                                            .sharedBounds(
-                                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                sharedContentState = rememberSharedContentState(song.title),
-                                                animatedVisibilityScope = animatedVisibilityScope,
-                                            )
-                                            .basicMarquee(),
+                                        modifier = Modifier.basicMarquee(),
                                         style = MaterialTheme.typography.titleLarge,
                                     )
                                     Text(
                                         text = song.artist,
                                         maxLines = 1,
-                                        modifier = Modifier
-                                            .sharedBounds(
-                                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                sharedContentState = rememberSharedContentState(song.artist),
-                                                animatedVisibilityScope = animatedVisibilityScope,
-                                            )
-                                            .basicMarquee(),
+                                        modifier = Modifier.basicMarquee(),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
@@ -267,7 +255,8 @@ private fun PlayerScreen(
                                                 checked,
                                             )
                                             launcher.launch(
-                                                IntentSenderRequest.Builder(pendingIntent.intentSender).build()
+                                                IntentSenderRequest.Builder(pendingIntent.intentSender)
+                                                    .build()
                                             )
                                         }
                                     },
@@ -297,13 +286,7 @@ private fun PlayerScreen(
                                 duration = playerUiState.currentSong.duration,
                                 bitrate = playerUiState.currentSong.bitrate,
                                 onSeekTo = onSeekTo,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .sharedBounds(
-                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                        sharedContentState = rememberSharedContentState(song.mediaId),
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                    ),
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             PlayerActionButtons(
                                 nowPlayingState = playerUiState.nowPlayingState,

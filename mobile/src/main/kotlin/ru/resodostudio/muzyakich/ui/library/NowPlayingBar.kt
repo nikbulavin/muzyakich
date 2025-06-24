@@ -108,26 +108,16 @@ internal fun NowPlayingBar(
                 )
             }
 
-            val animatedVisibilityScope = LocalNavAnimatedContentScope.current
-            val sharedTransitionScope = LocalSharedTransitionScope.current
-
-            with(sharedTransitionScope) {
-                SongProgressIndicator(
-                    currentPosition = currentPosition,
-                    song = song,
-                    nowPlayingState = nowPlayingState,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .height(3.dp)
-                        .sharedBounds(
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            sharedContentState = rememberSharedContentState(song.mediaId),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        ),
-                )
-            }
+            SongProgressIndicator(
+                currentPosition = currentPosition,
+                song = song,
+                nowPlayingState = nowPlayingState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(3.dp),
+            )
         }
     }
 }
@@ -187,25 +177,13 @@ private fun SongInfo(
                     text = song.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .sharedBounds(
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            sharedContentState = rememberSharedContentState(song.title),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        )
-                        .basicMarquee(),
+                    modifier = Modifier.basicMarquee(),
                 )
                 Text(
                     text = song.artist,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .sharedBounds(
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            sharedContentState = rememberSharedContentState(song.artist),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        )
-                        .basicMarquee(),
+                    modifier = Modifier.basicMarquee(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
