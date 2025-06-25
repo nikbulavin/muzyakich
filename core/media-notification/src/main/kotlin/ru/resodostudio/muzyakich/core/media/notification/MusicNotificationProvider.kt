@@ -109,7 +109,7 @@ class MusicNotificationProvider @Inject constructor(
     private fun setupArtwork(
         uri: Uri?,
         setLargeIcon: (Bitmap?) -> Unit,
-        updateNotification: () -> Unit
+        updateNotification: () -> Unit,
     ) = coroutineScope.launch {
         val bitmap = loadArtworkBitmap(uri)
         setLargeIcon(bitmap)

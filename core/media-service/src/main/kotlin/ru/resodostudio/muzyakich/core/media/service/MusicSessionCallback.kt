@@ -75,7 +75,6 @@ class MusicSessionCallback @Inject constructor(
             availableSessionCommands.build(),
             connectionResult.availablePlayerCommands,
         )
-        return MediaSession.ConnectionResult.AcceptedResultBuilder(session).build()
     }
 
     override fun onPostConnect(session: MediaSession, controller: MediaSession.ControllerInfo) {
