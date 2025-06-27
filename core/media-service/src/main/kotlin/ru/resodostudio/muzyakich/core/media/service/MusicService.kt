@@ -89,14 +89,20 @@ class MusicService : MediaSessionService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
+        super.onDestroy()
         mediaSession?.run {
             player.release()
             release()
+            clearListener()
             mediaSession = null
         }
         musicSessionCallback.cancelCoroutineScope()
         musicNotificationProvider.cancelCoroutineScope()
-        super.onDestroy()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        pauseAllPlayersAndStopSelf()
     }
 
     private fun startPlaybackModeSync() = coroutineScope.launch {
