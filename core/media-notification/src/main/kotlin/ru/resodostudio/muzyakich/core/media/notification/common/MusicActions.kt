@@ -15,7 +15,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(UnstableApi::class)
 internal object MusicActions {
 
-    internal fun getRepeatAction(
+    internal fun getShuffleAction(
         mediaSession: MediaSession,
         customLayout: ImmutableList<CommandButton>,
         actionFactory: MediaNotification.ActionFactory,
@@ -52,7 +52,7 @@ internal object MusicActions {
         command = Player.COMMAND_SEEK_TO_NEXT,
     ).asNotificationAction(context, mediaSession, actionFactory)
 
-    internal fun getShuffleAction(
+    internal fun getRepeatAction(
         mediaSession: MediaSession,
         customLayout: ImmutableList<CommandButton>,
         actionFactory: MediaNotification.ActionFactory,

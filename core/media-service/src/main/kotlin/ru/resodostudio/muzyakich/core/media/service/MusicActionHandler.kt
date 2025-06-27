@@ -33,8 +33,8 @@ class MusicActionHandler @Inject constructor(
 
     val customCommands = getAvailableCustomCommands()
     private val customLayoutMap = mutableMapOf<String, CommandButton>().apply {
-        this[REPEAT_MODE] = customCommands.getValue(REPEAT_MODE_OFF)
         this[SHUFFLE_MODE] = customCommands.getValue(SHUFFLE_MODE_OFF)
+        this[REPEAT_MODE] = customCommands.getValue(REPEAT_MODE_OFF)
     }
     val customLayout: List<CommandButton> get() = customLayoutMap.values.toList()
 

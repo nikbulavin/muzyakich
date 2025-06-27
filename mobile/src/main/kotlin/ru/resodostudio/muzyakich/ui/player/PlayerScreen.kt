@@ -321,6 +321,18 @@ private fun PlaybackActionButtons(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        OutlinedIconToggleButton(
+            checked = playbackConfig.shuffleModeEnabled,
+            onCheckedChange = onShuffleToggle,
+            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
+            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+        ) {
+            Icon(
+                imageVector = MuzIcons.Rounded.Shuffle,
+                contentDescription = stringResource(localesR.string.shuffle),
+            )
+        }
+
         val repeatMode = playbackConfig.repeatMode
         OutlinedIconToggleButton(
             checked = repeatMode != REPEAT_OFF,
@@ -333,25 +345,13 @@ private fun PlaybackActionButtons(
                 onRepeatToggle(newRepeatMode)
             },
             shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
-            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-        ) {
-            Icon(
-                imageVector = if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat,
-                contentDescription = null,
-            )
-        }
-
-        OutlinedIconToggleButton(
-            checked = playbackConfig.shuffleModeEnabled,
-            onCheckedChange = onShuffleToggle,
-            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             Icon(
-                imageVector = MuzIcons.Rounded.Shuffle,
-                contentDescription = stringResource(localesR.string.shuffle),
+                imageVector = if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat,
+                contentDescription = null,
             )
         }
 

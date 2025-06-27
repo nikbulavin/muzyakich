@@ -99,11 +99,11 @@ class MusicNotificationProvider @Inject constructor(
         actionFactory: MediaNotification.ActionFactory,
         playWhenReady: Boolean,
     ) = listOf(
-        MusicActions.getRepeatAction(mediaSession, customLayout, actionFactory),
+        MusicActions.getShuffleAction(mediaSession, customLayout, actionFactory),
         MusicActions.getSkipPreviousAction(context, mediaSession, actionFactory),
         MusicActions.getPlayPauseAction(context, mediaSession, actionFactory, playWhenReady),
         MusicActions.getSkipNextAction(context, mediaSession, actionFactory),
-        MusicActions.getShuffleAction(mediaSession, customLayout, actionFactory),
+        MusicActions.getRepeatAction(mediaSession, customLayout, actionFactory),
     )
 
     private fun setupArtwork(
