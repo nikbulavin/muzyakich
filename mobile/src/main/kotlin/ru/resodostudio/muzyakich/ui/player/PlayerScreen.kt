@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
@@ -514,7 +515,11 @@ private fun ProgressSlider(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            if (bitrate >= 256) {
+            this@Column.AnimatedVisibility(
+                visible = bitrate >= 256,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+            ) {
                 Icon(
                     imageVector = MuzIcons.Filled.HighQuality,
                     contentDescription = stringResource(localesR.string.high_quality),
