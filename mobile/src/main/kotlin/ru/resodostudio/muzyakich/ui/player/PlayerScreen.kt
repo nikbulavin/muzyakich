@@ -213,82 +213,87 @@ private fun PlayerScreen(
                                 )
                             }
 
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                                    modifier = Modifier.weight(1f),
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    Text(
-                                        text = song.title,
-                                        maxLines = 1,
-                                        modifier = Modifier.basicMarquee(),
-                                        style = MaterialTheme.typography.titleLarge,
-                                    )
-                                    Text(
-                                        text = song.artist,
-                                        maxLines = 1,
-                                        modifier = Modifier.basicMarquee(),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                                val (icon, contentDescription) = if (song.isFavorite) {
-                                    MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
-                                } else {
-                                    MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
-                                }
-                                val context = LocalContext.current
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                                        modifier = Modifier.weight(1f),
+                                    ) {
+                                        Text(
+                                            text = song.title,
+                                            maxLines = 1,
+                                            modifier = Modifier.basicMarquee(),
+                                            style = MaterialTheme.typography.titleLarge,
+                                        )
+                                        Text(
+                                            text = song.artist,
+                                            maxLines = 1,
+                                            modifier = Modifier.basicMarquee(),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    val (icon, contentDescription) = if (song.isFavorite) {
+                                        MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
+                                    } else {
+                                        MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
+                                    }
+                                    val context = LocalContext.current
 
-                                val launcher = rememberLauncherForActivityResult(
-                                    contract = ActivityResultContracts.StartIntentSenderForResult(),
-                                ) {}
-                                FilledTonalIconToggleButton(
-                                    checked = song.isFavorite,
-                                    onCheckedChange = { checked ->
-                                        runCatching {
-                                            val pendingIntent = MediaStore.createFavoriteRequest(
-                                                context.contentResolver,
-                                                listOf(song.mediaUri),
-                                                checked,
-                                            )
-                                            launcher.launch(
-                                                IntentSenderRequest.Builder(pendingIntent.intentSender)
-                                                    .build()
-                                            )
-                                        }
-                                    },
-                                    shapes = IconButtonDefaults.toggleableShapes(
-                                        shape = IconButtonDefaults.smallRoundShape,
-                                        checkedShape = IconButtonDefaults.smallRoundShape,
-                                    ),
-                                ) {
-                                    Icon(
-                                        imageVector = icon,
-                                        contentDescription = contentDescription,
-                                    )
+                                    val launcher = rememberLauncherForActivityResult(
+                                        contract = ActivityResultContracts.StartIntentSenderForResult(),
+                                    ) {}
+                                    FilledTonalIconToggleButton(
+                                        checked = song.isFavorite,
+                                        onCheckedChange = { checked ->
+                                            runCatching {
+                                                val pendingIntent = MediaStore.createFavoriteRequest(
+                                                    context.contentResolver,
+                                                    listOf(song.mediaUri),
+                                                    checked,
+                                                )
+                                                launcher.launch(
+                                                    IntentSenderRequest.Builder(pendingIntent.intentSender)
+                                                        .build()
+                                                )
+                                            }
+                                        },
+                                        shapes = IconButtonDefaults.toggleableShapes(
+                                            shape = IconButtonDefaults.smallRoundShape,
+                                            checkedShape = IconButtonDefaults.smallRoundShape,
+                                        ),
+                                    ) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = contentDescription,
+                                        )
+                                    }
+                                    FilledTonalIconButton(
+                                        onClick = {},
+                                        shapes = IconButtonDefaults.shapes(),
+                                        modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                    ) {
+                                        Icon(
+                                            imageVector = MuzIcons.Rounded.MoreVert,
+                                            contentDescription = null,
+                                        )
+                                    }
                                 }
-                                FilledTonalIconButton(
-                                    onClick = {},
-                                    shapes = IconButtonDefaults.shapes(),
-                                    modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                                ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.MoreVert,
-                                        contentDescription = null,
-                                    )
-                                }
+                                ProgressSlider(
+                                    currentPosition = playerUiState.currentPosition,
+                                    duration = playerUiState.currentSong.duration,
+                                    bitrate = playerUiState.currentSong.bitrate,
+                                    onSeekTo = onSeekTo,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
                             }
-                            ProgressSlider(
-                                currentPosition = playerUiState.currentPosition,
-                                duration = playerUiState.currentSong.duration,
-                                bitrate = playerUiState.currentSong.bitrate,
-                                onSeekTo = onSeekTo,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
                             PlayerActionButtons(
                                 nowPlayingState = playerUiState.nowPlayingState,
                                 onSkipPreviousClick = onSkipPreviousClick,
