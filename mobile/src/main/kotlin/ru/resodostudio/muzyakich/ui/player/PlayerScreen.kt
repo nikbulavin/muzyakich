@@ -87,9 +87,6 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -490,12 +487,12 @@ private fun ProgressSlider(
 
         val timeMillis by remember(currentPosition) {
             derivedStateOf {
-                val current = currentPosition.seconds
-                val total = duration.seconds
-                val remaining = (total - current).coerceAtLeast(Duration.ZERO)
+                val current = currentPosition / 1000
+                val total = duration / 1000
+                val remaining = (total - current).coerceAtLeast(0)
                 TimeMillis(
-                    current.toLong(DurationUnit.SECONDS).asFormattedString(),
-                    remaining.toLong(DurationUnit.SECONDS).asFormattedString(),
+                    current = current.asFormattedString(),
+                    remaining = remaining.asFormattedString(),
                 )
             }
         }
