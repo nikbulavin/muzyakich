@@ -262,10 +262,7 @@ private fun PlayerScreen(
                                                 )
                                             }
                                         },
-                                        shapes = IconButtonDefaults.toggleableShapes(
-                                            shape = IconButtonDefaults.smallRoundShape,
-                                            checkedShape = IconButtonDefaults.smallRoundShape,
-                                        ),
+                                        shapes = IconButtonDefaults.toggleableShapes(),
                                     ) {
                                         Icon(
                                             imageVector = icon,
