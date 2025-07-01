@@ -3,12 +3,12 @@ package ru.resodostudio.muzyakich.core.media.service
 import android.content.ComponentName
 import android.content.Context
 import androidx.media3.common.Player
-import androidx.media3.common.Player.EVENT_MEDIA_ITEM_TRANSITION
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
 import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
 import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
 import androidx.media3.common.Player.EVENT_REPEAT_MODE_CHANGED
 import androidx.media3.common.Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED
+import androidx.media3.common.Player.EVENT_TIMELINE_CHANGED
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,6 +29,7 @@ import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_POSITION_MS
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
+import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
 import ru.resodostudio.muzyakich.core.media.service.util.orDefaultTimestamp
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
@@ -62,7 +63,6 @@ class MusicServiceConnection @Inject constructor(
                 context,
                 SessionToken(context, ComponentName(context, MusicService::class.java))
             ).buildAsync().await().apply { addListener(PlayerListener()) }
-            updatePlayingQueue()
         }
     }
 
@@ -124,8 +124,12 @@ class MusicServiceConnection @Inject constructor(
                 updateNowPlayingState(player)
             }
 
-            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)) {
-                updatePlayingQueueIndex(player)
+            if (events.contains(EVENT_TIMELINE_CHANGED)) {
+                _nowPlayingState.update {
+                    it.copy(
+                        playingQueue = getCurrentPlayingQueue(),
+                    )
+                }
             }
         }
     }
@@ -142,11 +146,13 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    private suspend fun updatePlayingQueue(startPositionMs: Long = DEFAULT_POSITION_MS) {
+    private fun getCurrentPlayingQueue(): List<Song> {
+        val controller = mediaController ?: return emptyList()
+        val count = controller.mediaItemCount
+        if (count == 0) return emptyList()
 
-    }
-
-    private fun updatePlayingQueueIndex(player: Player) {
-
+        return List(count) { index ->
+            controller.getMediaItemAt(index).asSong()
+        }.filterNotNull()
     }
 }
