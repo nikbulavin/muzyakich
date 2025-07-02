@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.player
 
+import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -27,7 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -85,6 +85,7 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
+import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
@@ -110,11 +111,7 @@ fun PlayerScreen(
     )
 }
 
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
@@ -127,189 +124,216 @@ private fun PlayerScreen(
     onShuffleToggle: (Boolean) -> Unit = {},
     onRepeatToggle: (RepeatMode) -> Unit = {},
 ) {
-    val animatedVisibilityScope = LocalNavAnimatedContentScope.current
-    val sharedTransitionScope = LocalSharedTransitionScope.current
-
     var queueOpened by rememberSaveable { mutableStateOf(false) }
 
-    with(sharedTransitionScope) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            when (playerUiState) {
-                PlayerUiState.Error -> onBackClick()
-                PlayerUiState.Loading -> {
-                    LoadingState(
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        when (playerUiState) {
+            PlayerUiState.Error -> onBackClick()
+            PlayerUiState.Loading -> {
+                LoadingState(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding(),
+                )
+            }
+
+            is PlayerUiState.Success -> {
+                val song = playerUiState.currentSong
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .systemBarsPadding()
+                        .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    BackButton(onBackClick = onBackClick)
+
+                    Column(
+                        horizontalAlignment = Alignment.Start,
                         modifier = Modifier
                             .fillMaxSize()
-                            .systemBarsPadding(),
-                    )
-                }
-
-                is PlayerUiState.Success -> {
-                    val song = playerUiState.currentSong
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .systemBarsPadding()
-                            .padding(horizontal = 24.dp),
-                        verticalArrangement = Arrangement.SpaceEvenly,
+                            .padding(vertical = 8.dp),
+                        verticalArrangement = Arrangement.SpaceAround,
                     ) {
-                        OutlinedIconButton(
-                            onClick = onBackClick,
-                            modifier = Modifier
-                                .padding(top = 8.dp)
-                                .size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-                            shapes = IconButtonDefaults.shapes(IconButtonDefaults.extraSmallRoundShape),
-                            border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
-                                brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
-                            ),
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.KeyboardArrowDown,
-                                contentDescription = stringResource(localesR.string.back),
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
+                        SongArtwork(artworkUri = song.artworkUri)
 
                         Column(
-                            horizontalAlignment = Alignment.Start,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(vertical = 8.dp),
-                            verticalArrangement = Arrangement.SpaceAround,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            Crossfade(
-                                targetState = song.artworkUri,
-                                modifier = Modifier
-                                    .sharedBounds(
-                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                        sharedContentState = rememberSharedContentState(song.artworkUri),
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                    )
-                                    .clip(RoundedCornerShape(18.dp)),
-                                animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
-                            ) { artworkUri ->
-                                SubcomposeAsyncImage(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    model = artworkUri,
-                                    contentDescription = null,
-                                    error = {
-                                        BoxWithConstraints(
-                                            contentAlignment = Alignment.Center,
-                                            modifier = Modifier
-                                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                                .fillMaxWidth()
-                                                .aspectRatio(1f),
-                                        ) {
-                                            Icon(
-                                                imageVector = MuzIcons.Rounded.MusicNote,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(maxWidth / 2),
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            )
-                                        }
-                                    },
-                                )
-                            }
-
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                                    modifier = Modifier.weight(1f),
                                 ) {
-                                    Column(
-                                        verticalArrangement = Arrangement.spacedBy(2.dp),
-                                        modifier = Modifier.weight(1f),
-                                    ) {
-                                        Text(
-                                            text = song.title,
-                                            maxLines = 1,
-                                            modifier = Modifier.basicMarquee(),
-                                            style = MaterialTheme.typography.titleLarge,
-                                        )
-                                        Text(
-                                            text = song.artist,
-                                            maxLines = 1,
-                                            modifier = Modifier.basicMarquee(),
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
-                                    val (icon, contentDescription) = if (song.isFavorite) {
-                                        MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
-                                    } else {
-                                        MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
-                                    }
-                                    val context = LocalContext.current
-
-                                    val launcher = rememberLauncherForActivityResult(
-                                        contract = ActivityResultContracts.StartIntentSenderForResult(),
-                                    ) {}
-                                    FilledTonalIconToggleButton(
-                                        checked = song.isFavorite,
-                                        onCheckedChange = { checked ->
-                                            runCatching {
-                                                val pendingIntent = MediaStore.createFavoriteRequest(
-                                                    context.contentResolver,
-                                                    listOf(song.mediaUri),
-                                                    checked,
-                                                )
-                                                launcher.launch(
-                                                    IntentSenderRequest.Builder(pendingIntent.intentSender)
-                                                        .build()
-                                                )
-                                            }
-                                        },
-                                        shapes = IconButtonDefaults.toggleableShapes(),
-                                    ) {
-                                        Icon(
-                                            imageVector = icon,
-                                            contentDescription = contentDescription,
-                                        )
-                                    }
-                                    FilledTonalIconButton(
-                                        onClick = {},
-                                        shapes = IconButtonDefaults.shapes(),
-                                        modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                                    ) {
-                                        Icon(
-                                            imageVector = MuzIcons.Rounded.MoreVert,
-                                            contentDescription = null,
-                                        )
-                                    }
+                                    Text(
+                                        text = song.title,
+                                        maxLines = 1,
+                                        modifier = Modifier.basicMarquee(),
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+                                    Text(
+                                        text = song.artist,
+                                        maxLines = 1,
+                                        modifier = Modifier.basicMarquee(),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
                                 }
-                                ProgressSlider(
-                                    currentPosition = playerUiState.currentPosition,
-                                    duration = playerUiState.currentSong.duration,
-                                    bitrate = playerUiState.currentSong.bitrate,
-                                    onSeekTo = onSeekTo,
-                                    modifier = Modifier.fillMaxWidth(),
-                                )
+                                FavoriteToggleButton(song = song)
+                                FilledTonalIconButton(
+                                    onClick = {},
+                                    shapes = IconButtonDefaults.shapes(),
+                                    modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.MoreVert,
+                                        contentDescription = null,
+                                    )
+                                }
                             }
-                            PlayerActionButtons(
-                                nowPlayingState = playerUiState.nowPlayingState,
-                                onSkipPreviousClick = onSkipPreviousClick,
-                                onPlayClick = onPlayClick,
-                                onPauseClick = onPauseClick,
-                                onSkipNextClick = onSkipNextClick,
-                            )
-                            PlaybackActionButtons(
-                                playbackConfig = playerUiState.playbackConfig,
-                                onRepeatToggle = onRepeatToggle,
-                                onShuffleToggle = onShuffleToggle,
-                                queueOpened = queueOpened,
-                                onQueueClick = { queueOpened = it },
+                            ProgressSlider(
+                                currentPosition = playerUiState.currentPosition,
+                                duration = playerUiState.currentSong.duration,
+                                bitrate = playerUiState.currentSong.bitrate,
+                                onSeekTo = onSeekTo,
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
+                        PlayerActionButtons(
+                            nowPlayingState = playerUiState.nowPlayingState,
+                            onSkipPreviousClick = onSkipPreviousClick,
+                            onPlayClick = onPlayClick,
+                            onPauseClick = onPauseClick,
+                            onSkipNextClick = onSkipNextClick,
+                        )
+                        PlaybackActionButtons(
+                            playbackConfig = playerUiState.playbackConfig,
+                            onRepeatToggle = onRepeatToggle,
+                            onShuffleToggle = onShuffleToggle,
+                            queueOpened = queueOpened,
+                            onQueueClick = { queueOpened = it },
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun FavoriteToggleButton(
+    song: Song,
+    modifier: Modifier = Modifier,
+) {
+    val (icon, contentDescription) = if (song.isFavorite) {
+        MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
+    } else {
+        MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
+    }
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+    ) {}
+    FilledTonalIconToggleButton(
+        checked = song.isFavorite,
+        onCheckedChange = { checked ->
+            runCatching {
+                val pendingIntent = MediaStore.createFavoriteRequest(
+                    context.contentResolver,
+                    listOf(song.mediaUri),
+                    checked,
+                )
+                launcher.launch(
+                    IntentSenderRequest.Builder(pendingIntent.intentSender)
+                        .build()
+                )
+            }
+        },
+        shapes = IconButtonDefaults.toggleableShapes(),
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+        )
+    }
+}
+
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
+@Composable
+private fun SongArtwork(
+    artworkUri: Uri,
+) {
+    val animatedVisibilityScope = LocalNavAnimatedContentScope.current
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+
+    with(sharedTransitionScope) {
+        Crossfade(
+            targetState = artworkUri,
+            modifier = Modifier
+                .sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    sharedContentState = rememberSharedContentState(artworkUri),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                )
+                .clip(RoundedCornerShape(18.dp)),
+            animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+        ) { artworkUriState ->
+            SubcomposeAsyncImage(
+                modifier = Modifier.fillMaxWidth(),
+                model = artworkUriState,
+                contentDescription = null,
+                error = {
+                    BoxWithConstraints(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .fillMaxWidth()
+                            .aspectRatio(1f),
+                    ) {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.MusicNote,
+                            contentDescription = null,
+                            modifier = Modifier.size(maxWidth / 2),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                },
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun BackButton(onBackClick: () -> Unit) {
+    OutlinedIconButton(
+        onClick = onBackClick,
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+        shapes = IconButtonDefaults.shapes(IconButtonDefaults.extraSmallRoundShape),
+        border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
+            brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
+        ),
+    ) {
+        Icon(
+            imageVector = MuzIcons.Rounded.KeyboardArrowDown,
+            contentDescription = stringResource(localesR.string.back),
+            modifier = Modifier.size(20.dp),
+        )
     }
 }
 
