@@ -49,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -128,6 +129,8 @@ private fun PlayerScreen(
 ) {
     val animatedVisibilityScope = LocalNavAnimatedContentScope.current
     val sharedTransitionScope = LocalSharedTransitionScope.current
+
+    var queueOpened by rememberSaveable { mutableStateOf(false) }
 
     with(sharedTransitionScope) {
         Surface(
@@ -299,6 +302,8 @@ private fun PlayerScreen(
                                 playbackConfig = playerUiState.playbackConfig,
                                 onRepeatToggle = onRepeatToggle,
                                 onShuffleToggle = onShuffleToggle,
+                                queueOpened = queueOpened,
+                                onQueueClick = { queueOpened = it },
                             )
                         }
                     }
@@ -315,6 +320,8 @@ private fun PlaybackActionButtons(
     onRepeatToggle: (RepeatMode) -> Unit,
     onShuffleToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    queueOpened: Boolean = false,
+    onQueueClick: (Boolean) -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -355,11 +362,9 @@ private fun PlaybackActionButtons(
             )
         }
 
-        var queueOpened by remember { mutableStateOf(false) }
-
         OutlinedIconToggleButton(
             checked = queueOpened,
-            onCheckedChange = { queueOpened = it },
+            onCheckedChange = onQueueClick,
             shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
             modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
