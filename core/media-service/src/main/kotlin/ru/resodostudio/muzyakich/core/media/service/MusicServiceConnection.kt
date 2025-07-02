@@ -2,6 +2,7 @@ package ru.resodostudio.muzyakich.core.media.service
 
 import android.content.ComponentName
 import android.content.Context
+import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
 import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
@@ -9,6 +10,7 @@ import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
 import androidx.media3.common.Player.EVENT_REPEAT_MODE_CHANGED
 import androidx.media3.common.Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED
 import androidx.media3.common.Player.EVENT_TIMELINE_CHANGED
+import androidx.media3.common.Timeline
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -119,17 +121,10 @@ class MusicServiceConnection @Inject constructor(
                     EVENT_PLAY_WHEN_READY_CHANGED,
                     EVENT_REPEAT_MODE_CHANGED,
                     EVENT_SHUFFLE_MODE_ENABLED_CHANGED,
+                    EVENT_TIMELINE_CHANGED,
                 )
             ) {
                 updateNowPlayingState(player)
-            }
-
-            if (events.contains(EVENT_TIMELINE_CHANGED)) {
-                _nowPlayingState.update {
-                    it.copy(
-                        playingQueue = getCurrentPlayingQueue(),
-                    )
-                }
             }
         }
     }
@@ -142,17 +137,31 @@ class MusicServiceConnection @Inject constructor(
                 playWhenReady = playWhenReady,
                 duration = duration.orDefaultTimestamp(),
                 hasNextMediaItem = hasNextMediaItem(),
+                playingQueue = getCurrentPlayingQueue(this),
             )
         }
     }
 
-    private fun getCurrentPlayingQueue(): List<Song> {
-        val controller = mediaController ?: return emptyList()
-        val count = controller.mediaItemCount
-        if (count == 0) return emptyList()
+    private fun getCurrentPlayingQueue(player: Player): List<Song> {
+        val timeline = player.currentTimeline
+        if (timeline.isEmpty) return emptyList()
 
-        return List(count) { index ->
-            controller.getMediaItemAt(index).asSong()
-        }.filterNotNull()
+        val result = mutableListOf<Song>()
+        val window = Timeline.Window()
+        var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
+
+        while (windowIndex != C.INDEX_UNSET) {
+            timeline.getWindow(windowIndex, window)
+            val song = window.mediaItem.asSong()
+            result.add(song)
+
+            windowIndex = timeline.getNextWindowIndex(
+                windowIndex,
+                player.repeatMode,
+                player.shuffleModeEnabled
+            )
+        }
+
+        return result
     }
 }

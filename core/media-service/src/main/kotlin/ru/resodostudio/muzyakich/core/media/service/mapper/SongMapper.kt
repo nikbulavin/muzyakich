@@ -20,9 +20,7 @@ internal fun Song.asMediaItem() = buildPlayableMediaItem(
     duration = duration,
 )
 
-internal fun MediaItem?.asSong(): Song? {
-    if (this == null) return null
-
+internal fun MediaItem.asSong(): Song {
     return Song(
         mediaId = mediaId,
         artist = mediaMetadata.artist?.toString() ?: "Unknown",
