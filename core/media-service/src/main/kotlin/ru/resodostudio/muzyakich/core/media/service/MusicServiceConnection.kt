@@ -158,14 +158,15 @@ class MusicServiceConnection @Inject constructor(
             val mediaItem = window.mediaItem
 
             if (foundCurrent) {
-                result.add(mediaItem.asSong())
+                val song = runCatching { mediaItem.asSong() }.getOrNull()
+                if (song != null) result.add(song)
             } else if (mediaItem.mediaId == currentMediaItem.mediaId) {
                 foundCurrent = true
             }
 
             windowIndex = timeline.getNextWindowIndex(
                 windowIndex,
-                player.repeatMode,
+                Player.REPEAT_MODE_OFF,
                 player.shuffleModeEnabled,
             )
         }
