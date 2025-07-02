@@ -148,17 +148,25 @@ class MusicServiceConnection @Inject constructor(
 
         val result = mutableListOf<Song>()
         val window = Timeline.Window()
+        val currentMediaItem = player.currentMediaItem ?: return emptyList()
+        var foundCurrent = false
+
         var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
 
         while (windowIndex != C.INDEX_UNSET) {
             timeline.getWindow(windowIndex, window)
-            val song = window.mediaItem.asSong()
-            result.add(song)
+            val mediaItem = window.mediaItem
+
+            if (foundCurrent) {
+                result.add(mediaItem.asSong())
+            } else if (mediaItem.mediaId == currentMediaItem.mediaId) {
+                foundCurrent = true
+            }
 
             windowIndex = timeline.getNextWindowIndex(
                 windowIndex,
                 player.repeatMode,
-                player.shuffleModeEnabled
+                player.shuffleModeEnabled,
             )
         }
 
