@@ -40,10 +40,8 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExt" }
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "androidxLifecycleViewmodelNavigation3" }
-androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidxMedia3" }
 androidx-media3-exoPlayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "androidxMedia3" }
-androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidxMedia3" }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidxNavigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidxNavigation3" }
 androidx-tracing = { group = "androidx.tracing", name = "tracing", version.ref = "androidxTracing" }
