@@ -162,6 +162,7 @@ private fun PlayerScreen(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(horizontal = 8.dp),
                         ) {
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -212,6 +213,7 @@ private fun PlayerScreen(
                             onPlayClick = onPlayClick,
                             onPauseClick = onPauseClick,
                             onSkipNextClick = onSkipNextClick,
+                            modifier = Modifier.padding(horizontal = 8.dp),
                         )
                         PlaybackActionButtons(
                             playbackConfig = playerUiState.playbackConfig,
@@ -219,6 +221,7 @@ private fun PlayerScreen(
                             onShuffleToggle = onShuffleToggle,
                             queueOpened = queueOpened,
                             onQueueClick = { queueOpened = it },
+                            modifier = Modifier.padding(horizontal = 8.dp),
                         )
                     }
                 }
