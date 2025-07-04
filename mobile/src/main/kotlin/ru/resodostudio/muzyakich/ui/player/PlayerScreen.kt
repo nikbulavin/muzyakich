@@ -20,13 +20,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -87,6 +91,7 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
+import ru.resodostudio.muzyakich.ui.library.SongItem
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -143,86 +148,130 @@ private fun PlayerScreen(
                 val song = playerUiState.currentSong
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .systemBarsPadding()
-                        .padding(horizontal = 24.dp),
+                    modifier = Modifier.systemBarsPadding(),
                     verticalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     BackButton(onBackClick = onBackClick)
 
-                    Column(
-                        horizontalAlignment = Alignment.Start,
+                    BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(vertical = 8.dp),
-                        verticalArrangement = Arrangement.SpaceAround,
                     ) {
-                        SongArtwork(artworkUri = song.artworkUri)
-
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                                    modifier = Modifier.weight(1f),
-                                ) {
-                                    Text(
-                                        text = song.title,
-                                        maxLines = 1,
-                                        modifier = Modifier.basicMarquee(),
-                                        style = MaterialTheme.typography.titleLarge,
-                                    )
-                                    Text(
-                                        text = song.artist,
-                                        maxLines = 1,
-                                        modifier = Modifier.basicMarquee(),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
+                        Crossfade(
+                            targetState = queueOpened,
+                            animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+                        ) { queueOpenedState ->
+                            if (queueOpenedState) {
+                                Column {
+                                    LazyColumn(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentPadding = PaddingValues(14.dp)
+                                    ) {
+                                        items(
+                                            items = playerUiState.nowPlayingState.playingQueue,
+                                            key = { it.mediaId },
+                                        ) { song ->
+                                            SongItem(
+                                                song = song,
+                                                isPlaying = false,
+                                                modifier = Modifier.animateItem(),
+                                            )
+                                        }
+                                    }
                                 }
-                                FavoriteToggleButton(song = song)
-                                FilledTonalIconButton(
-                                    onClick = {},
-                                    shapes = IconButtonDefaults.shapes(),
-                                    modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                            } else {
+                                Column(
+                                    modifier = Modifier.requiredHeight(maxHeight / 2 + 88.dp),
                                 ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.MoreVert,
-                                        contentDescription = null,
-                                    )
+                                    Box(
+                                        modifier = Modifier.weight(1f),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        SongArtwork(
+                                            artworkUri = song.artworkUri,
+                                            modifier = Modifier.padding(horizontal = 24.dp),
+                                        )
+                                    }
+
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.padding(horizontal = 32.dp),
+                                    ) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Column(
+                                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                                                modifier = Modifier.weight(1f),
+                                            ) {
+                                                Text(
+                                                    text = song.title,
+                                                    maxLines = 1,
+                                                    modifier = Modifier.basicMarquee(),
+                                                    style = MaterialTheme.typography.titleLarge,
+                                                )
+                                                Text(
+                                                    text = song.artist,
+                                                    maxLines = 1,
+                                                    modifier = Modifier.basicMarquee(),
+                                                    style = MaterialTheme.typography.bodyLarge,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                )
+                                            }
+                                            FavoriteToggleButton(song = song)
+                                            FilledTonalIconButton(
+                                                onClick = {},
+                                                shapes = IconButtonDefaults.shapes(),
+                                                modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                            ) {
+                                                Icon(
+                                                    imageVector = MuzIcons.Rounded.MoreVert,
+                                                    contentDescription = null,
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                            ProgressSlider(
-                                currentPosition = playerUiState.currentPosition,
-                                duration = playerUiState.currentSong.duration,
-                                bitrate = playerUiState.currentSong.bitrate,
-                                onSeekTo = onSeekTo,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
                         }
-                        PlayerActionButtons(
-                            nowPlayingState = playerUiState.nowPlayingState,
-                            onSkipPreviousClick = onSkipPreviousClick,
-                            onPlayClick = onPlayClick,
-                            onPauseClick = onPauseClick,
-                            onSkipNextClick = onSkipNextClick,
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                        )
-                        PlaybackActionButtons(
-                            playbackConfig = playerUiState.playbackConfig,
-                            onRepeatToggle = onRepeatToggle,
-                            onShuffleToggle = onShuffleToggle,
-                            queueOpened = queueOpened,
-                            onQueueClick = { queueOpened = it },
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                        )
+
+                        Surface(
+                            modifier = Modifier
+                                .requiredHeight(maxHeight / 2 - 88.dp)
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter),
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
+                                verticalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                ProgressSlider(
+                                    currentPosition = playerUiState.currentPosition,
+                                    duration = playerUiState.currentSong.duration,
+                                    bitrate = playerUiState.currentSong.bitrate,
+                                    onSeekTo = onSeekTo,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                                PlayerActionButtons(
+                                    nowPlayingState = playerUiState.nowPlayingState,
+                                    onSkipPreviousClick = onSkipPreviousClick,
+                                    onPlayClick = onPlayClick,
+                                    onPauseClick = onPauseClick,
+                                    onSkipNextClick = onSkipNextClick,
+                                )
+                                PlaybackActionButtons(
+                                    playbackConfig = playerUiState.playbackConfig,
+                                    onRepeatToggle = onRepeatToggle,
+                                    onShuffleToggle = onShuffleToggle,
+                                    queueOpened = queueOpened,
+                                    onQueueClick = { queueOpened = it },
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -278,6 +327,7 @@ private fun FavoriteToggleButton(
 @Composable
 private fun SongArtwork(
     artworkUri: Uri,
+    modifier: Modifier = Modifier,
 ) {
     val animatedVisibilityScope = LocalNavAnimatedContentScope.current
     val sharedTransitionScope = LocalSharedTransitionScope.current
@@ -285,7 +335,7 @@ private fun SongArtwork(
     with(sharedTransitionScope) {
         Crossfade(
             targetState = artworkUri,
-            modifier = Modifier
+            modifier = modifier
                 .sharedBounds(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(artworkUri),
