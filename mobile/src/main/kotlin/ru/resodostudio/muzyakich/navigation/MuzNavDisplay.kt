@@ -37,8 +37,8 @@ fun MuzNavDisplay() {
         },
         popTransitionSpec = {
             ContentTransform(
-                fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { it / 2 },
-                fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.slowSpatialSpec()) { it / 2 },
+                fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()),
+                fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.slowSpatialSpec()),
             )
         },
         predictivePopTransitionSpec = {
