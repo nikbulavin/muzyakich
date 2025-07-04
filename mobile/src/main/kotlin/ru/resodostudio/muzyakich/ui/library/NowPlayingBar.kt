@@ -10,7 +10,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,25 +36,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import coil3.compose.SubcomposeAsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
-import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
-import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackState
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -122,72 +114,38 @@ internal fun NowPlayingBar(
     }
 }
 
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-)
 @Composable
 private fun SongInfo(
     song: Song,
     modifier: Modifier = Modifier,
 ) {
-    val sharedTransitionScope = LocalSharedTransitionScope.current
-    val animatedVisibilityScope = LocalNavAnimatedContentScope.current
-
-    with(sharedTransitionScope) {
-        Row(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        SongArtworkMini(
+            artworkUri = song.artworkUri,
+            size = 42.dp,
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier.padding(bottom = 2.dp, end = 12.dp),
         ) {
-            SubcomposeAsyncImage(
-                modifier = Modifier
-                    .size(42.dp)
-                    .sharedBounds(
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(song.artworkUri),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                    .clip(RoundedCornerShape(6.dp)),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(song.artworkUri)
-                    .crossfade(true)
-                    .size(128)
-                    .build(),
-                contentDescription = null,
-                error = {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                    ) {
-                        Icon(
-                            imageVector = MuzIcons.Rounded.MusicNote,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
+            Text(
+                text = song.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(),
             )
-            Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                modifier = Modifier.padding(bottom = 2.dp, end = 12.dp),
-            ) {
-                Text(
-                    text = song.title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.basicMarquee(),
-                )
-                Text(
-                    text = song.artist,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.basicMarquee(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            Text(
+                text = song.artist,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

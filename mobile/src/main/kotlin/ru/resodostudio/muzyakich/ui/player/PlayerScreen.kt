@@ -91,6 +91,7 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
+import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
 import ru.resodostudio.muzyakich.ui.library.SongItem
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
@@ -145,7 +146,7 @@ private fun PlayerScreen(
             }
 
             is PlayerUiState.Success -> {
-                val song = playerUiState.currentSong
+                val currentSong = playerUiState.currentSong
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.systemBarsPadding(),
@@ -164,9 +165,54 @@ private fun PlayerScreen(
                         ) { queueOpenedState ->
                             if (queueOpenedState) {
                                 Column {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 32.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        SongArtworkMini(
+                                            artworkUri = currentSong.artworkUri,
+                                            size = 64.dp,
+                                        )
+                                        Column(
+                                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                                            modifier = Modifier.weight(1f),
+                                        ) {
+                                            Text(
+                                                text = currentSong.title,
+                                                maxLines = 1,
+                                                modifier = Modifier.basicMarquee(),
+                                                style = MaterialTheme.typography.titleMedium,
+                                            )
+                                            Text(
+                                                text = currentSong.artist,
+                                                maxLines = 1,
+                                                modifier = Modifier.basicMarquee(),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                        FavoriteToggleButton(song = currentSong)
+                                        FilledTonalIconButton(
+                                            onClick = {},
+                                            shapes = IconButtonDefaults.shapes(),
+                                            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                        ) {
+                                            Icon(
+                                                imageVector = MuzIcons.Rounded.MoreVert,
+                                                contentDescription = null,
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = "Next in Queue",
+                                        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+                                    )
                                     LazyColumn(
                                         modifier = Modifier.fillMaxSize(),
-                                        contentPadding = PaddingValues(14.dp)
+                                        contentPadding = PaddingValues(horizontal = 14.dp)
                                     ) {
                                         items(
                                             items = playerUiState.nowPlayingState.playingQueue,
@@ -189,50 +235,46 @@ private fun PlayerScreen(
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         SongArtwork(
-                                            artworkUri = song.artworkUri,
+                                            artworkUri = currentSong.artworkUri,
                                             modifier = Modifier.padding(horizontal = 24.dp),
                                         )
                                     }
 
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                                        modifier = Modifier.padding(horizontal = 32.dp),
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 32.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
                                     ) {
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
+                                        Column(
+                                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                                            modifier = Modifier.weight(1f),
                                         ) {
-                                            Column(
-                                                verticalArrangement = Arrangement.spacedBy(2.dp),
-                                                modifier = Modifier.weight(1f),
-                                            ) {
-                                                Text(
-                                                    text = song.title,
-                                                    maxLines = 1,
-                                                    modifier = Modifier.basicMarquee(),
-                                                    style = MaterialTheme.typography.titleLarge,
-                                                )
-                                                Text(
-                                                    text = song.artist,
-                                                    maxLines = 1,
-                                                    modifier = Modifier.basicMarquee(),
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                )
-                                            }
-                                            FavoriteToggleButton(song = song)
-                                            FilledTonalIconButton(
-                                                onClick = {},
-                                                shapes = IconButtonDefaults.shapes(),
-                                                modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                                            ) {
-                                                Icon(
-                                                    imageVector = MuzIcons.Rounded.MoreVert,
-                                                    contentDescription = null,
-                                                )
-                                            }
+                                            Text(
+                                                text = currentSong.title,
+                                                maxLines = 1,
+                                                modifier = Modifier.basicMarquee(),
+                                                style = MaterialTheme.typography.titleLarge,
+                                            )
+                                            Text(
+                                                text = currentSong.artist,
+                                                maxLines = 1,
+                                                modifier = Modifier.basicMarquee(),
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                        FavoriteToggleButton(song = currentSong)
+                                        FilledTonalIconButton(
+                                            onClick = {},
+                                            shapes = IconButtonDefaults.shapes(),
+                                            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                        ) {
+                                            Icon(
+                                                imageVector = MuzIcons.Rounded.MoreVert,
+                                                contentDescription = null,
+                                            )
                                         }
                                     }
                                 }
@@ -329,17 +371,14 @@ private fun SongArtwork(
     artworkUri: Uri,
     modifier: Modifier = Modifier,
 ) {
-    val animatedVisibilityScope = LocalNavAnimatedContentScope.current
-    val sharedTransitionScope = LocalSharedTransitionScope.current
-
-    with(sharedTransitionScope) {
+    with(LocalSharedTransitionScope.current) {
         Crossfade(
             targetState = artworkUri,
             modifier = modifier
                 .sharedBounds(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(artworkUri),
-                    animatedVisibilityScope = animatedVisibilityScope,
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                 )
                 .clip(RoundedCornerShape(18.dp)),
             animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
@@ -359,7 +398,7 @@ private fun SongArtwork(
                         Icon(
                             imageVector = MuzIcons.Rounded.MusicNote,
                             contentDescription = null,
-                            modifier = Modifier.size(maxWidth / 2),
+                            modifier = Modifier.size((maxWidth.value / 1.75).dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
