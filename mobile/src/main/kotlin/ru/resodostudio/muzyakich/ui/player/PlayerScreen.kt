@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
@@ -90,9 +91,7 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
-import ru.resodostudio.muzyakich.ui.library.SongItem
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -137,14 +136,7 @@ private fun PlayerScreen(
     ) {
         when (playerUiState) {
             PlayerUiState.Error -> onBackClick()
-            PlayerUiState.Loading -> {
-                LoadingState(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding(),
-                )
-            }
-
+            PlayerUiState.Loading -> Unit
             is PlayerUiState.Success -> {
                 val currentSong = playerUiState.currentSong
                 Column(
@@ -198,7 +190,11 @@ private fun PlayerScreen(
                                         FilledTonalIconButton(
                                             onClick = {},
                                             shapes = IconButtonDefaults.shapes(),
-                                            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                            modifier = Modifier.size(
+                                                smallContainerSize(
+                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
+                                                )
+                                            ),
                                         ) {
                                             Icon(
                                                 imageVector = MuzIcons.Rounded.MoreVert,
@@ -207,8 +203,11 @@ private fun PlayerScreen(
                                         }
                                     }
                                     Text(
-                                        text = "Next in Queue",
-                                        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+                                        text = "Next in queue",
+                                        modifier = Modifier.padding(
+                                            horizontal = 32.dp,
+                                            vertical = 16.dp
+                                        ),
                                     )
                                     LazyColumn(
                                         modifier = Modifier.fillMaxSize(),
@@ -218,9 +217,8 @@ private fun PlayerScreen(
                                             items = playerUiState.nowPlayingState.playingQueue,
                                             key = { it.mediaId },
                                         ) { song ->
-                                            SongItem(
+                                            QueueItem(
                                                 song = song,
-                                                isPlaying = false,
                                                 modifier = Modifier.animateItem(),
                                             )
                                         }
@@ -228,7 +226,7 @@ private fun PlayerScreen(
                                 }
                             } else {
                                 Column(
-                                    modifier = Modifier.requiredHeight(maxHeight / 2 + 88.dp),
+                                    modifier = Modifier.requiredHeight(maxHeight / 2 + 96.dp),
                                 ) {
                                     Box(
                                         modifier = Modifier.weight(1f),
@@ -269,7 +267,11 @@ private fun PlayerScreen(
                                         FilledTonalIconButton(
                                             onClick = {},
                                             shapes = IconButtonDefaults.shapes(),
-                                            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                                            modifier = Modifier.size(
+                                                smallContainerSize(
+                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
+                                                )
+                                            ),
                                         ) {
                                             Icon(
                                                 imageVector = MuzIcons.Rounded.MoreVert,
@@ -283,7 +285,7 @@ private fun PlayerScreen(
 
                         Surface(
                             modifier = Modifier
-                                .requiredHeight(maxHeight / 2 - 88.dp)
+                                .requiredHeight(maxHeight / 2 - 96.dp)
                                 .fillMaxWidth()
                                 .align(Alignment.BottomCenter),
                         ) {
@@ -346,10 +348,7 @@ private fun FavoriteToggleButton(
                     listOf(song.mediaUri),
                     checked,
                 )
-                launcher.launch(
-                    IntentSenderRequest.Builder(pendingIntent.intentSender)
-                        .build()
-                )
+                launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
             }
         },
         shapes = IconButtonDefaults.toggleableShapes(),
@@ -531,8 +530,7 @@ private fun PlayerActionButtons(
                 .padding(horizontal = 8.dp)
                 .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
-            val animSpec =
-                MaterialTheme.motionScheme.slowEffectsSpec<Float>()
+            val animSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
             AnimatedContent(
                 targetState = !nowPlayingState.playWhenReady,
                 label = "PlayPauseButton",
@@ -581,7 +579,10 @@ private fun ProgressSlider(
     onSeekTo: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         val progress = convertToProgress(
             count = currentPosition,
             total = duration,
@@ -600,7 +601,7 @@ private fun ProgressSlider(
                 onSeekTo(sliderPosition)
                 isSeeking = false
             },
-            modifier = modifier,
+            modifier = Modifier.height(32.dp),
         )
 
         val timeMillis by remember(currentPosition) {
