@@ -28,10 +28,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -146,15 +147,13 @@ private fun PlayerScreen(
                 val currentSong = playerUiState.currentSong
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.systemBarsPadding(),
+                    modifier = Modifier.statusBarsPadding(),
                     verticalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     BackButton(onBackClick = onBackClick)
 
                     BoxWithConstraints(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 8.dp),
+                        modifier = Modifier.fillMaxSize(),
                     ) {
                         val lazyListState = rememberLazyListState()
                         val isPlayerActionsVisible by remember {
@@ -172,7 +171,7 @@ private fun PlayerScreen(
                                 )
                             } else {
                                 Column(
-                                    modifier = Modifier.requiredHeight(maxHeight / 2 + 96.dp),
+                                    modifier = Modifier.requiredHeight(maxHeight / 2 + 80.dp),
                                 ) {
                                     Box(
                                         modifier = Modifier.weight(1f),
@@ -236,7 +235,7 @@ private fun PlayerScreen(
                             exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
                         ) {
                             Column(
-                                modifier = Modifier.requiredHeight(maxHeight / 2 - 96.dp),
+                                modifier = Modifier.requiredHeight(maxHeight / 2 - 80.dp),
                             ) {
                                 Spacer(
                                     modifier = Modifier
@@ -252,10 +251,12 @@ private fun PlayerScreen(
                                     modifier = Modifier.fillMaxSize(),
                                 ) {
                                     Column(
-                                        modifier = Modifier.padding(horizontal = 32.dp),
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                                            .navigationBarsPadding(),
                                         verticalArrangement = Arrangement.SpaceBetween,
                                     ) {
-
                                         ProgressSlider(
                                             currentPosition = playerUiState.currentPosition,
                                             duration = playerUiState.currentSong.duration,
@@ -378,10 +379,13 @@ private fun SongArtwork(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun BackButton(onBackClick: () -> Unit) {
+private fun BackButton(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     OutlinedIconButton(
         onClick = onBackClick,
-        modifier = Modifier
+        modifier = modifier
             .padding(top = 8.dp)
             .size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         shapes = IconButtonDefaults.shapes(IconButtonDefaults.extraSmallRoundShape),

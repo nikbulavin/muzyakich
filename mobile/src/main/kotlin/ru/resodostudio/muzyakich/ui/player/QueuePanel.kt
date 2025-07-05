@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -89,15 +92,18 @@ fun QueuePanel(
         }
         Text(
             text = stringResource(localesR.string.next_in_queue),
-            modifier = Modifier
-                .padding(horizontal = 32.dp, vertical = 16.dp),
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         LazyColumn(
             state = lazyListState,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 14.dp)
+            contentPadding = PaddingValues(
+                start = 14.dp,
+                end = 14.dp,
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+            )
         ) {
             items(
                 items = playingQueue,
