@@ -1,0 +1,109 @@
+package ru.resodostudio.muzyakich.ui.player
+
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
+import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
+import ru.resodostudio.muzyakich.core.locales.R as localesR
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun QueuePanel(
+    currentSong: Song,
+    playingQueue: List<Song>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SongArtworkMini(
+                artworkUri = currentSong.artworkUri,
+                size = 64.dp,
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    text = currentSong.title,
+                    maxLines = 1,
+                    modifier = Modifier.basicMarquee(),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = currentSong.artist,
+                    maxLines = 1,
+                    modifier = Modifier.basicMarquee(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            FavoriteToggleButton(song = currentSong)
+            FilledTonalIconButton(
+                onClick = {},
+                shapes = IconButtonDefaults.shapes(),
+                modifier = Modifier
+                    .size(
+                        smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                    ),
+            ) {
+                Icon(
+                    imageVector = MuzIcons.Rounded.MoreVert,
+                    contentDescription = null,
+                )
+            }
+        }
+        Text(
+            text = stringResource(localesR.string.next_in_queue),
+            modifier = Modifier
+                .padding(horizontal = 32.dp, vertical = 16.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 14.dp)
+        ) {
+            items(
+                items = playingQueue,
+                key = { it.mediaId },
+            ) { song ->
+                QueueItem(
+                    song = song,
+                    modifier = Modifier.animateItem(),
+                )
+            }
+        }
+    }
+}

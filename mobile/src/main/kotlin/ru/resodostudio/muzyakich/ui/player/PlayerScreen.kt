@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,8 +29,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -63,7 +60,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -94,7 +90,6 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -159,73 +154,10 @@ private fun PlayerScreen(
                             animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
                         ) { queueOpenedState ->
                             if (queueOpenedState) {
-                                Column {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 32.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        SongArtworkMini(
-                                            artworkUri = currentSong.artworkUri,
-                                            size = 64.dp,
-                                        )
-                                        Column(
-                                            verticalArrangement = Arrangement.spacedBy(2.dp),
-                                            modifier = Modifier.weight(1f),
-                                        ) {
-                                            Text(
-                                                text = currentSong.title,
-                                                maxLines = 1,
-                                                modifier = Modifier.basicMarquee(),
-                                                style = MaterialTheme.typography.titleMedium,
-                                            )
-                                            Text(
-                                                text = currentSong.artist,
-                                                maxLines = 1,
-                                                modifier = Modifier.basicMarquee(),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            )
-                                        }
-                                        FavoriteToggleButton(song = currentSong)
-                                        FilledTonalIconButton(
-                                            onClick = {},
-                                            shapes = IconButtonDefaults.shapes(),
-                                            modifier = Modifier
-                                                .size(
-                                                    smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
-                                                ),
-                                        ) {
-                                            Icon(
-                                                imageVector = MuzIcons.Rounded.MoreVert,
-                                                contentDescription = null,
-                                            )
-                                        }
-                                    }
-                                    Text(
-                                        text = stringResource(localesR.string.next_in_queue),
-                                        modifier = Modifier
-                                            .padding(horizontal = 32.dp, vertical = 16.dp),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                    LazyColumn(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentPadding = PaddingValues(horizontal = 14.dp)
-                                    ) {
-                                        items(
-                                            items = playerUiState.nowPlayingState.playingQueue,
-                                            key = { it.mediaId },
-                                        ) { song ->
-                                            QueueItem(
-                                                song = song,
-                                                modifier = Modifier.animateItem(),
-                                            )
-                                        }
-                                    }
-                                }
+                                QueuePanel(
+                                    currentSong = currentSong,
+                                    playingQueue = playerUiState.nowPlayingState.playingQueue,
+                                )
                             } else {
                                 Column(
                                     modifier = Modifier.requiredHeight(maxHeight / 2 + 96.dp),
@@ -325,7 +257,7 @@ private fun PlayerScreen(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun FavoriteToggleButton(
+fun FavoriteToggleButton(
     song: Song,
     modifier: Modifier = Modifier,
 ) {
