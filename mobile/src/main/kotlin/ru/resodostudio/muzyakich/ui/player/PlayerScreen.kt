@@ -44,7 +44,6 @@ import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
-import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -60,13 +59,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzOutlinedIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
@@ -443,51 +445,60 @@ private fun PlaybackActionButtons(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        OutlinedIconToggleButton(
+        MuzOutlinedIconToggleButton(
+            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
             checked = playbackConfig.shuffleModeEnabled,
             onCheckedChange = onShuffleToggle,
-            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
-            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-        ) {
-            Icon(
-                imageVector = MuzIcons.Rounded.Shuffle,
-                contentDescription = stringResource(localesR.string.shuffle),
-            )
-        }
+            shape = IconButtonDefaults.smallSquareShape,
+            icon = MuzIcons.Rounded.Shuffle,
+            contentDescriptionRes = localesR.string.shuffle,
+        )
 
         val repeatMode = playbackConfig.repeatMode
-        OutlinedIconToggleButton(
-            checked = repeatMode != REPEAT_OFF,
-            onCheckedChange = { checked ->
-                val newRepeatMode = when (repeatMode) {
-                    REPEAT_OFF -> REPEAT_ALL
-                    REPEAT_ALL -> REPEAT_ONE
-                    REPEAT_ONE -> REPEAT_OFF
-                }
-                onRepeatToggle(newRepeatMode)
-            },
-            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
+        val icon = if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat
+        val contentDescriptionRes = when (repeatMode) {
+            REPEAT_OFF -> localesR.string.enable_repeat_mode_all
+            REPEAT_ALL -> localesR.string.enable_repeat_mode_one
+            REPEAT_ONE -> localesR.string.disable_repeat_mode
+        }
+        val hapticFeedback = LocalHapticFeedback.current
+        MuzOutlinedIconToggleButton(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-        ) {
-            Icon(
-                imageVector = if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat,
-                contentDescription = null,
-            )
-        }
+            checked = repeatMode != REPEAT_OFF,
+            icon = icon,
+            contentDescriptionRes = contentDescriptionRes,
+            onCustomCheckedChange = {
+                val newRepeatMode = when (repeatMode) {
+                    REPEAT_OFF -> {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        REPEAT_ALL
+                    }
 
-        OutlinedIconToggleButton(
-            checked = queueOpened,
-            onCheckedChange = onQueueClick,
-            shapes = IconButtonDefaults.toggleableShapes(IconButtonDefaults.smallSquareShape),
+                    REPEAT_ALL -> {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        REPEAT_ONE
+                    }
+
+                    REPEAT_ONE -> {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                        REPEAT_OFF
+                    }
+                }
+                onRepeatToggle(newRepeatMode)
+            },
+            shape = IconButtonDefaults.smallSquareShape,
+        )
+
+        MuzOutlinedIconToggleButton(
             modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-        ) {
-            Icon(
-                imageVector = MuzIcons.Rounded.QueueMusic,
-                contentDescription = stringResource(localesR.string.queue),
-            )
-        }
+            checked = queueOpened,
+            icon = MuzIcons.Rounded.QueueMusic,
+            contentDescriptionRes = localesR.string.queue,
+            onCheckedChange = onQueueClick,
+            shape = IconButtonDefaults.smallSquareShape,
+        )
     }
 }
 
