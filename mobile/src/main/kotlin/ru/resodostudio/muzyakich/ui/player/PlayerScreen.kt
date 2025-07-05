@@ -9,10 +9,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -29,6 +31,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -149,12 +152,17 @@ private fun PlayerScreen(
                             .fillMaxSize()
                             .padding(vertical = 8.dp),
                     ) {
+                        val lazyListState = rememberLazyListState()
+                        val isPlayerActionsVisible by remember {
+                            derivedStateOf { lazyListState.firstVisibleItemIndex <= 5 }
+                        }
                         Crossfade(
                             targetState = queueOpened,
                             animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
                         ) { queueOpenedState ->
                             if (queueOpenedState) {
                                 QueuePanel(
+                                    lazyListState = lazyListState,
                                     currentSong = currentSong,
                                     playingQueue = playerUiState.nowPlayingState.playingQueue,
                                 )
@@ -215,37 +223,44 @@ private fun PlayerScreen(
                             }
                         }
 
-                        Surface(
-                            modifier = Modifier
-                                .requiredHeight(maxHeight / 2 - 96.dp)
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter),
+                        val motionScheme = MaterialTheme.motionScheme
+                        this@Column.AnimatedVisibility(
+                            visible = isPlayerActionsVisible || !queueOpened,
+                            modifier = Modifier.align(Alignment.BottomCenter),
+                            enter = fadeIn(motionScheme.defaultEffectsSpec()) + expandVertically(motionScheme.defaultSpatialSpec()),
+                            exit = fadeOut(motionScheme.defaultEffectsSpec()) + shrinkVertically(motionScheme.defaultSpatialSpec()),
                         ) {
-                            Column(
-                                modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
-                                verticalArrangement = Arrangement.SpaceBetween,
+                            Surface(
+                                modifier = Modifier
+                                    .requiredHeight(maxHeight / 2 - 96.dp)
+                                    .fillMaxWidth(),
                             ) {
-                                ProgressSlider(
-                                    currentPosition = playerUiState.currentPosition,
-                                    duration = playerUiState.currentSong.duration,
-                                    bitrate = playerUiState.currentSong.bitrate,
-                                    onSeekTo = onSeekTo,
-                                    modifier = Modifier.fillMaxWidth(),
-                                )
-                                PlayerActionButtons(
-                                    nowPlayingState = playerUiState.nowPlayingState,
-                                    onSkipPreviousClick = onSkipPreviousClick,
-                                    onPlayClick = onPlayClick,
-                                    onPauseClick = onPauseClick,
-                                    onSkipNextClick = onSkipNextClick,
-                                )
-                                PlaybackActionButtons(
-                                    playbackConfig = playerUiState.playbackConfig,
-                                    onRepeatToggle = onRepeatToggle,
-                                    onShuffleToggle = onShuffleToggle,
-                                    queueOpened = queueOpened,
-                                    onQueueClick = { queueOpened = it },
-                                )
+                                Column(
+                                    modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
+                                    verticalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    ProgressSlider(
+                                        currentPosition = playerUiState.currentPosition,
+                                        duration = playerUiState.currentSong.duration,
+                                        bitrate = playerUiState.currentSong.bitrate,
+                                        onSeekTo = onSeekTo,
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                    PlayerActionButtons(
+                                        nowPlayingState = playerUiState.nowPlayingState,
+                                        onSkipPreviousClick = onSkipPreviousClick,
+                                        onPlayClick = onPlayClick,
+                                        onPauseClick = onPauseClick,
+                                        onSkipNextClick = onSkipNextClick,
+                                    )
+                                    PlaybackActionButtons(
+                                        playbackConfig = playerUiState.playbackConfig,
+                                        onRepeatToggle = onRepeatToggle,
+                                        onShuffleToggle = onShuffleToggle,
+                                        queueOpened = queueOpened,
+                                        onQueueClick = { queueOpened = it },
+                                    )
+                                }
                             }
                         }
                     }
