@@ -15,6 +15,7 @@
     <string name="high_quality">Высокое качество</string>
     <string name="library_empty">У вас пока нет песен. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
     <string name="music_notification_channel_name">Сейчас играет</string>
+    <string name="next_in_queue">Следующие в очереди</string>
     <string name="open_menu">Открыть меню</string>
     <string name="pause_audio">Поставить на паузу</string>
     <string name="play_audio">Воспроизвести</string>

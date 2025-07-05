@@ -63,6 +63,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -192,11 +193,10 @@ private fun PlayerScreen(
                                         FilledTonalIconButton(
                                             onClick = {},
                                             shapes = IconButtonDefaults.shapes(),
-                                            modifier = Modifier.size(
-                                                smallContainerSize(
-                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                                                )
-                                            ),
+                                            modifier = Modifier
+                                                .size(
+                                                    smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                                                ),
                                         ) {
                                             Icon(
                                                 imageVector = MuzIcons.Rounded.MoreVert,
@@ -205,11 +205,11 @@ private fun PlayerScreen(
                                         }
                                     }
                                     Text(
-                                        text = "Next in queue",
-                                        modifier = Modifier.padding(
-                                            horizontal = 32.dp,
-                                            vertical = 16.dp
-                                        ),
+                                        text = stringResource(localesR.string.next_in_queue),
+                                        modifier = Modifier
+                                            .padding(horizontal = 32.dp, vertical = 16.dp),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
                                     )
                                     LazyColumn(
                                         modifier = Modifier.fillMaxSize(),
@@ -269,10 +269,8 @@ private fun PlayerScreen(
                                         FilledTonalIconButton(
                                             onClick = {},
                                             shapes = IconButtonDefaults.shapes(),
-                                            modifier = Modifier.size(
-                                                smallContainerSize(
-                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                                                )
+                                            modifier = Modifier
+                                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
                                             ),
                                         ) {
                                             Icon(
@@ -455,7 +453,8 @@ private fun PlaybackActionButtons(
         )
 
         val repeatMode = playbackConfig.repeatMode
-        val icon = if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat
+        val icon =
+            if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat
         val contentDescriptionRes = when (repeatMode) {
             REPEAT_OFF -> localesR.string.enable_repeat_mode_all
             REPEAT_ALL -> localesR.string.enable_repeat_mode_one

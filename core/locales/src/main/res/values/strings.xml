@@ -15,6 +15,7 @@
     <string name="high_quality">High quality</string>
     <string name="library_empty">You don\'t have any songs yet. Add your favorite music and enjoy listening!</string>
     <string name="music_notification_channel_name">Now playing</string>
+    <string name="next_in_queue">Next in queue</string>
     <string name="open_menu">Open menu</string>
     <string name="pause_audio">Pause</string>
     <string name="play_audio">Play</string>
