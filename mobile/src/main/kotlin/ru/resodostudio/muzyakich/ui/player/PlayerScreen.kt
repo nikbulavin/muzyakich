@@ -63,6 +63,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -223,12 +224,13 @@ private fun PlayerScreen(
                             }
                         }
 
-                        val motionScheme = MaterialTheme.motionScheme
+                        val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+                        val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
                         this@Column.AnimatedVisibility(
                             visible = isPlayerActionsVisible || !queueOpened,
                             modifier = Modifier.align(Alignment.BottomCenter),
-                            enter = fadeIn(motionScheme.defaultEffectsSpec()) + expandVertically(motionScheme.defaultSpatialSpec()),
-                            exit = fadeOut(motionScheme.defaultEffectsSpec()) + shrinkVertically(motionScheme.defaultSpatialSpec()),
+                            enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
+                            exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
                         ) {
                             Surface(
                                 modifier = Modifier
