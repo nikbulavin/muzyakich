@@ -286,9 +286,13 @@ fun FavoriteToggleButton(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
     ) {}
+    val hapticFeedback = LocalHapticFeedback.current
     FilledTonalIconToggleButton(
         checked = song.isFavorite,
         onCheckedChange = { checked ->
+            hapticFeedback.performHapticFeedback(
+                if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+            )
             runCatching {
                 val pendingIntent = MediaStore.createFavoriteRequest(
                     context.contentResolver,

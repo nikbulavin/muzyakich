@@ -26,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -153,9 +155,13 @@ fun SongItem(
                 val launcher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartIntentSenderForResult(),
                 ) {}
+                val hapticFeedback = LocalHapticFeedback.current
                 IconToggleButton(
                     checked = song.isFavorite,
                     onCheckedChange = { checked ->
+                        hapticFeedback.performHapticFeedback(
+                            if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                        )
                         runCatching {
                             val pendingIntent = MediaStore.createFavoriteRequest(
                                 context.contentResolver,

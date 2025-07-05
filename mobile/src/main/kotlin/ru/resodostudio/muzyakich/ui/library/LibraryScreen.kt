@@ -47,7 +47,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -200,17 +202,25 @@ private fun LibraryScreen(
                                                 verticalAlignment = Alignment.CenterVertically,
                                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                             ) {
+                                                val hapticFeedback = LocalHapticFeedback.current
+                                                val selected = libraryUiState.shouldFilterFavorites
                                                 FilterChip(
                                                     selected = libraryUiState.shouldFilterFavorites,
-                                                    onClick = onToggleFilterFavorites,
+                                                    onClick = {
+                                                        hapticFeedback.performHapticFeedback(
+                                                            if (!selected) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                                                        )
+                                                        onToggleFilterFavorites()
+                                                    },
                                                     label = { Text(stringResource(localesR.string.favorites)) },
                                                     modifier = Modifier.padding(start = 16.dp),
                                                     leadingIcon = {
-                                                        val icon = if (libraryUiState.shouldFilterFavorites) {
-                                                            MuzIcons.Rounded.Check
-                                                        } else {
-                                                            MuzIcons.Filled.Star
-                                                        }
+                                                        val icon =
+                                                            if (libraryUiState.shouldFilterFavorites) {
+                                                                MuzIcons.Rounded.Check
+                                                            } else {
+                                                                MuzIcons.Filled.Star
+                                                            }
                                                         Icon(
                                                             imageVector = icon,
                                                             contentDescription = null,
@@ -262,7 +272,7 @@ private fun LibraryScreen(
                             }
                         }
 
-                        val fastAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+                        val animSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
                         AnimatedContent(
                             targetState = libraryUiState.nowPlayingState.mediaId.isNotBlank(),
                             modifier = Modifier
@@ -270,7 +280,7 @@ private fun LibraryScreen(
                                 .navigationBarsPadding(),
                             contentAlignment = Alignment.Center,
                             transitionSpec = {
-                                fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
+                                fadeIn() + scaleIn(animSpec, 0.92f) togetherWith fadeOut(snap())
                             },
                         ) { isPlaying ->
                             if (libraryUiState.currentSong != null && isPlaying) {
