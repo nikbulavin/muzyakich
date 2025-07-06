@@ -168,6 +168,7 @@ private fun PlayerScreen(
                                     lazyListState = lazyListState,
                                     currentSong = currentSong,
                                     playingQueue = playerUiState.nowPlayingState.playingQueue,
+                                    modifier = Modifier.padding(top = 16.dp),
                                 )
                             } else {
                                 Column(
