@@ -86,6 +86,7 @@ internal fun NowPlayingBar(
                             snap()
                         )
                     },
+                    contentKey = { it.mediaId },
                     modifier = Modifier.weight(1f),
                 ) { songState ->
                     SongInfo(
