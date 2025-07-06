@@ -11,16 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -76,19 +69,7 @@ fun QueuePanel(
                 )
             }
             FavoriteToggleButton(song = currentSong)
-            FilledTonalIconButton(
-                onClick = {},
-                shapes = IconButtonDefaults.shapes(),
-                modifier = Modifier
-                    .size(
-                        smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
-                    ),
-            ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.MoreVert,
-                    contentDescription = null,
-                )
-            }
+            MoreIconButton()
         }
         Text(
             text = stringResource(localesR.string.next_in_queue),

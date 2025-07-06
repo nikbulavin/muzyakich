@@ -210,18 +210,7 @@ private fun PlayerScreen(
                                             )
                                         }
                                         FavoriteToggleButton(song = currentSong)
-                                        FilledTonalIconButton(
-                                            onClick = {},
-                                            shapes = IconButtonDefaults.shapes(),
-                                            modifier = Modifier
-                                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
-                                            ),
-                                        ) {
-                                            Icon(
-                                                imageVector = MuzIcons.Rounded.MoreVert,
-                                                contentDescription = null,
-                                            )
-                                        }
+                                        MoreIconButton()
                                     }
                                 }
                             }
@@ -287,6 +276,24 @@ private fun PlayerScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+fun MoreIconButton() {
+    FilledTonalIconButton(
+        onClick = {},
+        shapes = IconButtonDefaults.shapes(),
+        modifier = Modifier
+            .size(
+                smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+            ),
+    ) {
+        Icon(
+            imageVector = MuzIcons.Rounded.MoreVert,
+            contentDescription = null,
+        )
     }
 }
 
