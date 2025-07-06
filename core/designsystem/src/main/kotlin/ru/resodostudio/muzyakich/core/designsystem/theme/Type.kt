@@ -11,12 +11,13 @@ import androidx.compose.ui.text.style.LineHeightStyle.Trim
 import androidx.compose.ui.unit.sp
 import ru.resodostudio.muzyakich.core.designsystem.R
 
-internal val RubikBubblesFontFamily = FontFamily(
-    Font(resId = R.font.rubik_bubbles_regular),
+internal val ShantellSansFontFamily = FontFamily(
+    Font(resId = R.font.shantell_sans_regular),
+    Font(resId = R.font.shantell_sans_bold, weight = FontWeight.Bold),
 )
-internal val RubikFontFamily = FontFamily(
-    Font(resId = R.font.rubik_regular),
-    Font(resId = R.font.rubik_medium, weight = FontWeight.Medium),
+internal val NunitoFontFamily = FontFamily(
+    Font(resId = R.font.nunito_bold, weight = FontWeight.Bold),
+    Font(resId = R.font.nunito_extra_bold, weight = FontWeight.ExtraBold),
 )
 
 internal val MuzTypography = Typography(
@@ -25,49 +26,49 @@ internal val MuzTypography = Typography(
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     displayMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     displaySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 36.sp,
         lineHeight = 44.sp,
         letterSpacing = 0.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     headlineLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     headlineMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     headlineSmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     titleLarge = TextStyle(
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Bottom,
             trim = Trim.LastLineBottom,
@@ -78,68 +79,68 @@ internal val MuzTypography = Typography(
         fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     titleSmall = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = RubikBubblesFontFamily,
+        fontFamily = ShantellSansFontFamily,
     ),
     bodyLarge = TextStyle(
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = RubikFontFamily,
+        fontFamily = NunitoFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.None,
         ),
     ),
     bodyMedium = TextStyle(
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
-        fontFamily = RubikFontFamily,
+        fontFamily = NunitoFontFamily,
     ),
     bodySmall = TextStyle(
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
-        fontFamily = RubikFontFamily,
+        fontFamily = NunitoFontFamily,
     ),
     labelLarge = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = RubikFontFamily,
+        fontFamily = NunitoFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
         ),
     ),
     labelMedium = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = RubikFontFamily,
+        fontFamily = NunitoFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
         ),
     ),
     labelSmall = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 10.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
-        fontFamily = RubikFontFamily,
+        fontFamily = NunitoFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.LastLineBottom,
