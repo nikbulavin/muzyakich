@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui.component
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
@@ -18,7 +19,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -37,16 +37,23 @@ fun SongArtworkMini(
     size: Dp,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(6.dp),
+    animatedVisibilityScope: AnimatedVisibilityScope? = null,
 ) {
     with(LocalSharedTransitionScope.current) {
         Crossfade(
             targetState = artworkUri,
             modifier = modifier
                 .size(size)
-                .sharedBounds(
-                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    sharedContentState = rememberSharedContentState(artworkUri),
-                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                .then(
+                    if (animatedVisibilityScope != null) {
+                        Modifier.sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(artworkUri),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        )
+                    } else {
+                        Modifier
+                    }
                 )
                 .clip(shape),
             animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),

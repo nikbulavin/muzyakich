@@ -1,5 +1,7 @@
 package ru.resodostudio.muzyakich.ui.player
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,15 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalSharedTransitionApi::class,
+)
 @Composable
 fun QueuePanel(
     currentSong: Song,
     playingQueue: List<Song>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
 ) {
@@ -46,30 +54,60 @@ fun QueuePanel(
                 .padding(horizontal = 32.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SongArtworkMini(
-                artworkUri = currentSong.artworkUri,
-                size = 64.dp,
-            )
-            Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                modifier = Modifier.weight(1f),
-            ) {
-                Text(
-                    text = currentSong.title,
-                    maxLines = 1,
-                    modifier = Modifier.basicMarquee(),
-                    style = MaterialTheme.typography.titleMedium,
+            with(LocalSharedTransitionScope.current) {
+                SongArtworkMini(
+                    artworkUri = currentSong.artworkUri,
+                    size = 64.dp,
+                    animatedVisibilityScope = animatedVisibilityScope,
                 )
-                Text(
-                    text = currentSong.artist,
-                    maxLines = 1,
-                    modifier = Modifier.basicMarquee(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(
+                        text = currentSong.title,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .sharedBounds(
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                sharedContentState = rememberSharedContentState(currentSong.title),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                            )
+                            .basicMarquee(),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = currentSong.artist,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .sharedBounds(
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                sharedContentState = rememberSharedContentState(currentSong.artist),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                            )
+                            .basicMarquee(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                FavoriteToggleButton(
+                    song = currentSong,
+                    modifier = Modifier
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(localesR.string.favorites),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        ),
+                )
+                MoreIconButton(
+                    modifier = Modifier
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(localesR.string.more_options),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        ),
                 )
             }
-            FavoriteToggleButton(song = currentSong)
-            MoreIconButton()
         }
         Text(
             text = stringResource(localesR.string.next_in_queue),
