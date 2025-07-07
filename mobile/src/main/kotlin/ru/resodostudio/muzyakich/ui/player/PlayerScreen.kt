@@ -281,18 +281,17 @@ private fun PlayerScreen(
 
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun MoreIconButton() {
+fun MoreIconButton(
+    modifier: Modifier = Modifier,
+) {
     FilledTonalIconButton(
         onClick = {},
         shapes = IconButtonDefaults.shapes(),
-        modifier = Modifier
-            .size(
-                smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
-            ),
+        modifier = modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
     ) {
         Icon(
             imageVector = MuzIcons.Rounded.MoreVert,
-            contentDescription = null,
+            contentDescription = stringResource(localesR.string.more_options),
         )
     }
 }
