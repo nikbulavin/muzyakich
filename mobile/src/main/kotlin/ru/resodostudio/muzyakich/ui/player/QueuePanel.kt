@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,6 +60,7 @@ fun QueuePanel(
                     artworkUri = currentSong.artworkUri,
                     size = 64.dp,
                     animatedVisibilityScope = animatedVisibilityScope,
+                    shape = RoundedCornerShape(8.dp),
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),

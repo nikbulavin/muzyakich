@@ -35,7 +35,9 @@ fun QueueItem(
     onClick: () -> Unit = {},
 ) {
     ListItem(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick),
         headlineContent = {
             Text(
                 text = song.title,
