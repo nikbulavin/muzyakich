@@ -65,6 +65,8 @@ class PlayerViewModel @Inject constructor(
 
     fun skipToNext() = musicServiceConnection.skipToNext()
 
+    fun skipToSong(mediaId: String) = musicServiceConnection.skipToSong(mediaId)
+
     fun skipToPrevious() = musicServiceConnection.skipToPrevious()
 
     fun setShuffleModeEnabled(enabled: Boolean) {

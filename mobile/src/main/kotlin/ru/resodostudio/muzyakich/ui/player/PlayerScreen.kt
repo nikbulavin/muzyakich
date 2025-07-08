@@ -117,6 +117,7 @@ fun PlayerScreen(
         onPauseClick = viewModel::pause,
         onSkipNextClick = viewModel::skipToNext,
         onSkipPreviousClick = viewModel::skipToPrevious,
+        onSkipToSongClick = viewModel::skipToSong,
         onShuffleToggle = viewModel::setShuffleModeEnabled,
         onRepeatToggle = viewModel::setRepeatMode,
     )
@@ -135,6 +136,7 @@ private fun PlayerScreen(
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
     onSkipPreviousClick: () -> Unit = {},
+    onSkipToSongClick: (mediaId: String) -> Unit = {},
     onShuffleToggle: (Boolean) -> Unit = {},
     onRepeatToggle: (RepeatMode) -> Unit = {},
 ) {
@@ -171,9 +173,10 @@ private fun PlayerScreen(
                                 QueuePanel(
                                     lazyListState = lazyListState,
                                     currentSong = currentSong,
-                                    playingQueue = playerUiState.nowPlayingState.playingQueue,
+                                    currentPlayingQueue = playerUiState.nowPlayingState.currentPlayingQueue,
                                     modifier = Modifier.padding(top = 16.dp),
                                     animatedVisibilityScope = this,
+                                    onQueueItemClick = onSkipToSongClick,
                                 )
                             } else {
                                 Column(
@@ -208,7 +211,9 @@ private fun PlayerScreen(
                                                     modifier = Modifier
                                                         .sharedBounds(
                                                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                            sharedContentState = rememberSharedContentState(currentSong.title),
+                                                            sharedContentState = rememberSharedContentState(
+                                                                currentSong.title
+                                                            ),
                                                             animatedVisibilityScope = this@AnimatedContent,
                                                         )
                                                         .basicMarquee(),
@@ -220,7 +225,9 @@ private fun PlayerScreen(
                                                     modifier = Modifier
                                                         .sharedBounds(
                                                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                            sharedContentState = rememberSharedContentState(currentSong.artist),
+                                                            sharedContentState = rememberSharedContentState(
+                                                                currentSong.artist
+                                                            ),
                                                             animatedVisibilityScope = this@AnimatedContent,
                                                         )
                                                         .basicMarquee(),
@@ -233,7 +240,9 @@ private fun PlayerScreen(
                                                 modifier = Modifier
                                                     .sharedBounds(
                                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                        sharedContentState = rememberSharedContentState(localesR.string.favorites),
+                                                        sharedContentState = rememberSharedContentState(
+                                                            localesR.string.favorites
+                                                        ),
                                                         animatedVisibilityScope = this@AnimatedContent,
                                                     ),
                                             )
@@ -241,7 +250,9 @@ private fun PlayerScreen(
                                                 modifier = Modifier
                                                     .sharedBounds(
                                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                        sharedContentState = rememberSharedContentState(localesR.string.more_options),
+                                                        sharedContentState = rememberSharedContentState(
+                                                            localesR.string.more_options
+                                                        ),
                                                         animatedVisibilityScope = this@AnimatedContent,
                                                     ),
                                             )
@@ -268,7 +279,10 @@ private fun PlayerScreen(
                                         .height(8.dp)
                                         .background(
                                             brush = Brush.verticalGradient(
-                                                listOf(Color.Transparent, MaterialTheme.colorScheme.surface),
+                                                listOf(
+                                                    Color.Transparent,
+                                                    MaterialTheme.colorScheme.surface
+                                                ),
                                             )
                                         ),
                                 )

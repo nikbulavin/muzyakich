@@ -40,10 +40,11 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun QueuePanel(
     currentSong: Song,
-    playingQueue: List<Song>,
+    currentPlayingQueue: List<Song>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
+    onQueueItemClick: (String) -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -127,12 +128,13 @@ fun QueuePanel(
             )
         ) {
             items(
-                items = playingQueue,
+                items = currentPlayingQueue,
                 key = { it.mediaId },
             ) { song ->
                 QueueItem(
                     song = song,
                     modifier = Modifier.animateItem(),
+                    onClick = { onQueueItemClick(song.mediaId) },
                 )
             }
         }

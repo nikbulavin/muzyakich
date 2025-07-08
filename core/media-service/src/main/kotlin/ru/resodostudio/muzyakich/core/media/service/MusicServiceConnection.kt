@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.core.media.service
 import android.content.ComponentName
 import android.content.Context
 import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
 import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
@@ -86,9 +87,26 @@ class MusicServiceConnection @Inject constructor(
         if (_nowPlayingState.value.playWhenReady) play()
     }
 
-    fun skipToIndex(index: Int, position: Long = DEFAULT_POSITION_MS) = mediaController?.run {
-        seekTo(index, position)
-        if (_nowPlayingState.value.playWhenReady) play()
+    fun skipToSong(mediaId: String, position: Long = C.TIME_UNSET) {
+        mediaController?.run {
+            val timeline = currentTimeline
+            if (timeline.isEmpty) return
+
+            val window = Timeline.Window()
+            var targetWindowIndex = C.INDEX_UNSET
+
+            for (i in 0 until timeline.windowCount) {
+                timeline.getWindow(i, window)
+                if (window.mediaItem.mediaId == mediaId) {
+                    targetWindowIndex = i
+                    break
+                }
+            }
+            if (targetWindowIndex != C.INDEX_UNSET) {
+                seekTo(targetWindowIndex, position)
+            }
+            if (_nowPlayingState.value.playWhenReady) play()
+        }
     }
 
     fun playSongs(
@@ -131,37 +149,34 @@ class MusicServiceConnection @Inject constructor(
 
     private fun updateNowPlayingState(player: Player) = with(player) {
         _nowPlayingState.update {
+            val fullPlayingQueue = getFullPlayingQueue(this)
             it.copy(
                 mediaId = currentMediaItem?.mediaId.orEmpty(),
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
                 duration = duration.orDefaultTimestamp(),
                 hasNextMediaItem = hasNextMediaItem(),
-                playingQueue = getCurrentPlayingQueue(this),
+                currentPlayingQueue = getCurrentPlayingQueue(currentMediaItem, fullPlayingQueue),
+                fullPlayingQueue = fullPlayingQueue,
             )
         }
     }
 
-    private fun getCurrentPlayingQueue(player: Player): List<Song> {
+    private fun getFullPlayingQueue(player: Player): List<Song> {
         val timeline = player.currentTimeline
         if (timeline.isEmpty) return emptyList()
 
         val result = mutableListOf<Song>()
         val window = Timeline.Window()
-        val currentMediaItem = player.currentMediaItem ?: return emptyList()
-        var foundCurrent = false
 
         var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
 
         while (windowIndex != C.INDEX_UNSET) {
             timeline.getWindow(windowIndex, window)
             val mediaItem = window.mediaItem
-
-            if (foundCurrent) {
-                val song = runCatching { mediaItem.asSong() }.getOrNull()
-                if (song != null) result.add(song)
-            } else if (mediaItem.mediaId == currentMediaItem.mediaId) {
-                foundCurrent = true
+            val song = runCatching { mediaItem.asSong() }.getOrNull()
+            if (song != null) {
+                result.add(song)
             }
 
             windowIndex = timeline.getNextWindowIndex(
@@ -170,7 +185,22 @@ class MusicServiceConnection @Inject constructor(
                 player.shuffleModeEnabled,
             )
         }
-
         return result
+    }
+
+    private fun getCurrentPlayingQueue(
+        currentMediaItem: MediaItem?,
+        fullPlayingQueue: List<Song>,
+    ): List<Song> {
+        if (fullPlayingQueue.isEmpty()) return emptyList()
+
+        val currentMediaId = currentMediaItem?.mediaId ?: return emptyList()
+        val currentIndex = fullPlayingQueue.indexOfFirst { it.mediaId == currentMediaId }
+
+        return if (currentIndex != -1 && currentIndex + 1 < fullPlayingQueue.size) {
+            fullPlayingQueue.subList(currentIndex + 1, fullPlayingQueue.size)
+        } else {
+            emptyList()
+        }
     }
 }
