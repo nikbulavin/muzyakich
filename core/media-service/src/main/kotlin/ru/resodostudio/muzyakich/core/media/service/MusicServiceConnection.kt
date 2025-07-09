@@ -3,7 +3,6 @@ package ru.resodostudio.muzyakich.core.media.service
 import android.content.ComponentName
 import android.content.Context
 import androidx.media3.common.C
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
 import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
@@ -149,34 +148,37 @@ class MusicServiceConnection @Inject constructor(
 
     private fun updateNowPlayingState(player: Player) = with(player) {
         _nowPlayingState.update {
-            val fullPlayingQueue = getFullPlayingQueue(this)
             it.copy(
                 mediaId = currentMediaItem?.mediaId.orEmpty(),
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
                 duration = duration.orDefaultTimestamp(),
                 hasNextMediaItem = hasNextMediaItem(),
-                currentPlayingQueue = getCurrentPlayingQueue(currentMediaItem, fullPlayingQueue),
-                fullPlayingQueue = fullPlayingQueue,
+                playingQueue = getCurrentPlayingQueue(this),
             )
         }
     }
 
-    private fun getFullPlayingQueue(player: Player): List<Song> {
+    private fun getCurrentPlayingQueue(player: Player): List<Song> {
         val timeline = player.currentTimeline
         if (timeline.isEmpty) return emptyList()
 
         val result = mutableListOf<Song>()
         val window = Timeline.Window()
+        val currentMediaItem = player.currentMediaItem ?: return emptyList()
+        var foundCurrent = false
 
         var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
 
         while (windowIndex != C.INDEX_UNSET) {
             timeline.getWindow(windowIndex, window)
             val mediaItem = window.mediaItem
-            val song = runCatching { mediaItem.asSong() }.getOrNull()
-            if (song != null) {
-                result.add(song)
+
+            if (foundCurrent) {
+                val song = runCatching { mediaItem.asSong() }.getOrNull()
+                if (song != null) result.add(song)
+            } else if (mediaItem.mediaId == currentMediaItem.mediaId) {
+                foundCurrent = true
             }
 
             windowIndex = timeline.getNextWindowIndex(
@@ -186,21 +188,5 @@ class MusicServiceConnection @Inject constructor(
             )
         }
         return result
-    }
-
-    private fun getCurrentPlayingQueue(
-        currentMediaItem: MediaItem?,
-        fullPlayingQueue: List<Song>,
-    ): List<Song> {
-        if (fullPlayingQueue.isEmpty()) return emptyList()
-
-        val currentMediaId = currentMediaItem?.mediaId ?: return emptyList()
-        val currentIndex = fullPlayingQueue.indexOfFirst { it.mediaId == currentMediaId }
-
-        return if (currentIndex != -1 && currentIndex + 1 < fullPlayingQueue.size) {
-            fullPlayingQueue.subList(currentIndex + 1, fullPlayingQueue.size)
-        } else {
-            emptyList()
-        }
     }
 }

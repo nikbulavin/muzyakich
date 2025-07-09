@@ -173,7 +173,7 @@ private fun PlayerScreen(
                                 QueuePanel(
                                     lazyListState = lazyListState,
                                     currentSong = currentSong,
-                                    currentPlayingQueue = playerUiState.nowPlayingState.currentPlayingQueue,
+                                    playingQueue = playerUiState.nowPlayingState.playingQueue,
                                     modifier = Modifier.padding(top = 16.dp),
                                     animatedVisibilityScope = this,
                                     onQueueItemClick = onSkipToSongClick,
