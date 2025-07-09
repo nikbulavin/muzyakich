@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -406,7 +405,7 @@ private fun SongArtwork(
                     sharedContentState = rememberSharedContentState(artworkUri),
                     animatedVisibilityScope = animatedVisibilityScope,
                 )
-                .clip(RoundedCornerShape(18.dp)),
+                .clip(MaterialTheme.shapes.large),
             animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
         ) { artworkUriState ->
             SubcomposeAsyncImage(

@@ -7,7 +7,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,7 +35,7 @@ fun SongArtworkMini(
     artworkUri: Uri,
     size: Dp,
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(6.dp),
+    shape: Shape = MaterialTheme.shapes.small,
     animatedVisibilityScope: AnimatedVisibilityScope? = null,
 ) {
     with(LocalSharedTransitionScope.current) {

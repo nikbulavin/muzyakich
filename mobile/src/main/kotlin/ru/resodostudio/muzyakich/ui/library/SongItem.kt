@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -86,7 +85,7 @@ fun SongItem(
                             .zIndex(1f)
                             .size(56.dp)
                             .background(MaterialTheme.colorScheme.surface.copy(0.6f))
-                            .clip(RoundedCornerShape(8.dp)),
+                            .clip(MaterialTheme.shapes.small),
                     ) {
                         val dynamicProperties = rememberLottieDynamicProperties(
                             rememberLottieDynamicProperty(
@@ -117,7 +116,7 @@ fun SongItem(
                 SubcomposeAsyncImage(
                     modifier = Modifier
                         .size(56.dp)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .clip(MaterialTheme.shapes.small),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(song.artworkUri)
                         .crossfade(true)
