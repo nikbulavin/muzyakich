@@ -72,11 +72,13 @@ internal fun NowPlayingBar(
             .clip(RoundedCornerShape(14.dp))
             .clickable { onClick() },
     ) {
-        Box {
+        Box(
+            modifier = Modifier.padding(horizontal = 14.dp),
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.padding(vertical = 12.dp),
             ) {
                 val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
                 AnimatedContent(
@@ -108,7 +110,6 @@ internal fun NowPlayingBar(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
                     .height(3.dp),
             )
         }
@@ -122,12 +123,12 @@ private fun SongInfo(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SongArtworkMini(
             artworkUri = song.artworkUri,
-            size = 42.dp,
+            size = 46.dp,
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(2.dp),

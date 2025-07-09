@@ -62,7 +62,7 @@ fun SongArtworkMini(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(artworkUriState)
                     .crossfade(true)
-                    .size(128)
+                    .size(256)
                     .build(),
                 contentDescription = null,
                 error = {
