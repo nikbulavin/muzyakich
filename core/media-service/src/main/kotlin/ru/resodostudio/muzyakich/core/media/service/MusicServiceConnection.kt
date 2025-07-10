@@ -92,19 +92,15 @@ class MusicServiceConnection @Inject constructor(
             if (timeline.isEmpty) return
 
             val window = Timeline.Window()
-            var targetWindowIndex = C.INDEX_UNSET
 
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
                 if (window.mediaItem.mediaId == mediaId) {
-                    targetWindowIndex = i
+                    seekTo(i, position)
+                    if (_nowPlayingState.value.playWhenReady) play()
                     break
                 }
             }
-            if (targetWindowIndex != C.INDEX_UNSET) {
-                seekTo(targetWindowIndex, position)
-            }
-            if (_nowPlayingState.value.playWhenReady) play()
         }
     }
 
