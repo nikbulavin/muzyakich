@@ -26,7 +26,10 @@ android {
             isShrinkResources = true
             applicationIdSuffix = MuzBuildType.RELEASE.applicationIdSuffix
             signingConfig = signingConfigs.named("debug").get()
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
     androidResources {
