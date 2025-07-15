@@ -9,7 +9,6 @@ import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.common.C.USAGE_MEDIA
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
@@ -81,7 +80,6 @@ class MusicService : MediaSessionService() {
             .apply { player.addListener(PlayerListener()) }
 
         setMediaNotificationProvider(musicNotificationProvider)
-        setAudioOffloadPreferences(player)
 
         startPlaybackModeSync()
     }
@@ -120,19 +118,6 @@ class MusicService : MediaSessionService() {
             musicSessionCallback.setShuffleModeAction(playbackConfig.shuffleModeEnabled)
             mediaSession?.setCustomLayout(musicSessionCallback.customLayout)
         }
-    }
-
-    private fun setAudioOffloadPreferences(player: ExoPlayer) {
-        val audioOffloadPreferences =
-            TrackSelectionParameters.AudioOffloadPreferences.Builder()
-                .setAudioOffloadMode(TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED)
-                .setIsGaplessSupportRequired(true)
-                .build()
-        player.trackSelectionParameters =
-            player.trackSelectionParameters
-                .buildUpon()
-                .setAudioOffloadPreferences(audioOffloadPreferences)
-                .build()
     }
 
     private inner class PlayerListener : Player.Listener {
