@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
@@ -29,10 +30,13 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
+import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,8 +53,7 @@ fun SongDetailsBottomSheet(
         sheetState = sheetState,
     ) {
         Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
@@ -107,10 +110,21 @@ fun SongDetailsBottomSheet(
             }
             FlowRow(
                 modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 MuzTag(
                     text = (song.duration / 1000).asFormattedString(),
                     icon = MuzIcons.Filled.Schedule,
+                )
+                val bitrateIcon = if (song.bitrate >= 256) {
+                    MuzIcons.Filled.HighQuality
+                } else {
+                    MuzIcons.Filled.BarChart
+                }
+                MuzTag(
+                    text = "${song.bitrate} ${stringResource(localesR.string.kbps)}",
+                    icon = bitrateIcon,
                 )
             }
             HorizontalDivider()
