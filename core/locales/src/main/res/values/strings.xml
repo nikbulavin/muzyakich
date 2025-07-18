@@ -5,6 +5,7 @@
     <string name="add_to_favorites">Add to favorites</string>
     <string name="albums">Albums</string>
     <string name="artists">Artists</string>
+    <string name="audio_quality_format">%1$d-bit %2$.1f kHz</string>
     <string name="back">Back</string>
     <string name="disable_shuffle_mode">Disable shuffle mode</string>
     <string name="disable_repeat_mode">Disable repeat mode</string>
@@ -13,7 +14,7 @@
     <string name="enable_shuffle_mode">Enable shuffle mode</string>
     <string name="favorites">Favorites</string>
     <string name="high_quality">High quality</string>
-    <string name="kbps_format">%1$d kbps</string>
+    <string name="bitrate_format">%1$d kbps</string>
     <string name="library_empty">You don\'t have any songs yet. Add your favorite music and enjoy listening!</string>
     <string name="more_options">More options</string>
     <string name="music_notification_channel_name">Now playing</string>

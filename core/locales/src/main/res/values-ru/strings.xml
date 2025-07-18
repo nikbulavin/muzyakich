@@ -5,6 +5,7 @@
     <string name="add_to_favorites">Добавить в избранное</string>
     <string name="albums">Альбомы</string>
     <string name="artists">Исполнители</string>
+    <string name="audio_quality_format">%1$d бит %2$.1f кГц</string>
     <string name="back">Назад</string>
     <string name="disable_shuffle_mode">Выключить режим перетасовки</string>
     <string name="disable_repeat_mode">Выключить режим повтора</string>
@@ -13,7 +14,7 @@
     <string name="enable_shuffle_mode">Включить режим перетасовки</string>
     <string name="favorites">Избранное</string>
     <string name="high_quality">Высокое качество</string>
-    <string name="kbps_format">%1$d кбит/с</string>
+    <string name="bitrate_format">%1$d кбит/с</string>
     <string name="library_empty">У вас пока нет песен. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
     <string name="more_options">Дополнительно</string>
     <string name="music_notification_channel_name">Сейчас играет</string>

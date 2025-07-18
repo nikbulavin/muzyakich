@@ -5,6 +5,7 @@
     <string name="add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="albums">앨범</string>
     <string name="artists">아티스트</string>
+    <string name="audio_quality_format">%1$d비트 %2$.1fkHz</string>
     <string name="back">뒤로</string>
     <string name="disable_shuffle_mode">셔플 모드 비활성화</string>
     <string name="disable_repeat_mode">반복 안함</string>
@@ -13,7 +14,7 @@
     <string name="enable_shuffle_mode">셔플 모드 활성화</string>
     <string name="favorites">즐겨찾기</string>
     <string name="high_quality">고화질</string>
-    <string name="kbps_format">%1$dkbps</string>
+    <string name="bitrate_format">%1$dkbps</string>
     <string name="library_empty">아직 노래가 없습니다. 좋아하는 음악을 추가하고 감상하세요!</string>
     <string name="more_options">추가 옵션</string>
     <string name="music_notification_channel_name">현재 재생 중</string>

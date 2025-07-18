@@ -7,10 +7,19 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
 import ru.resodostudio.muzyakich.core.mediastore.util.MediaStoreConfig
 import ru.resodostudio.muzyakich.core.mediastore.util.asArtworkUri
-import ru.resodostudio.muzyakich.core.mediastore.util.asFolder
-import ru.resodostudio.muzyakich.core.mediastore.util.getInt
-import ru.resodostudio.muzyakich.core.mediastore.util.getLong
-import ru.resodostudio.muzyakich.core.mediastore.util.getString
+import ru.resodostudio.muzyakich.core.mediastore.util.getAlbum
+import ru.resodostudio.muzyakich.core.mediastore.util.getAlbumId
+import ru.resodostudio.muzyakich.core.mediastore.util.getArtist
+import ru.resodostudio.muzyakich.core.mediastore.util.getArtistId
+import ru.resodostudio.muzyakich.core.mediastore.util.getBitrate
+import ru.resodostudio.muzyakich.core.mediastore.util.getBitsPerSample
+import ru.resodostudio.muzyakich.core.mediastore.util.getDuration
+import ru.resodostudio.muzyakich.core.mediastore.util.getDataFolder
+import ru.resodostudio.muzyakich.core.mediastore.util.getIsFavorite
+import ru.resodostudio.muzyakich.core.mediastore.util.getMediaId
+import ru.resodostudio.muzyakich.core.mediastore.util.getSampleRate
+import ru.resodostudio.muzyakich.core.mediastore.util.getSize
+import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
@@ -26,22 +35,24 @@ class MediaStoreDataSource @Inject constructor(
                 buildList {
                     context.contentResolver.query(
                         MediaStoreConfig.Song.Collection,
-                        MediaStoreConfig.Song.Projection,
+                        MediaStoreConfig.Song.Projection.toTypedArray(),
                         "${MediaStore.Audio.Media.IS_MUSIC} = ?",
                         arrayOf("1"),
                         "${MediaStore.Audio.Media.ARTIST} ASC",
                     )?.use { cursor ->
                         while (cursor.moveToNext()) {
-                            val id = cursor.getLong(MediaStore.Audio.Media._ID)
-                            val artistId = cursor.getLong(MediaStore.Audio.Media.ARTIST_ID)
-                            val albumId = cursor.getLong(MediaStore.Audio.Media.ALBUM_ID)
-                            val title = cursor.getString(MediaStore.Audio.Media.TITLE)
-                            val artist = cursor.getString(MediaStore.Audio.Media.ARTIST)
-                            val album = cursor.getString(MediaStore.Audio.Media.ALBUM)
-                            val duration = cursor.getLong(MediaStore.Audio.Media.DURATION)
-                            val bitrate = cursor.getInt(MediaStore.Audio.Media.BITRATE)
-                            val isFavorite = cursor.getInt(MediaStore.Audio.Media.IS_FAVORITE)
-                            val size = cursor.getInt(MediaStore.Audio.Media.SIZE)
+                            val id = cursor.getMediaId()
+                            val artistId = cursor.getArtistId()
+                            val albumId = cursor.getAlbumId()
+                            val title = cursor.getTitle()
+                            val artist = cursor.getArtist()
+                            val album = cursor.getAlbum()
+                            val duration = cursor.getDuration()
+                            val bitrate = cursor.getBitrate()
+                            val isFavorite = cursor.getIsFavorite()
+                            val size = cursor.getSize()
+                            val bitsPerSample = cursor.getBitsPerSample()
+                            val sampleRate = cursor.getSampleRate()
 
                             val mediaId = id.toString()
                             val mediaUri = ContentUris.withAppendedId(
@@ -49,7 +60,7 @@ class MediaStoreDataSource @Inject constructor(
                                 id,
                             )
 
-                            val folder = cursor.getString(MediaStore.Audio.Media.DATA).asFolder()
+                            val folder = cursor.getDataFolder()
 
                             add(
                                 Song(
@@ -66,6 +77,8 @@ class MediaStoreDataSource @Inject constructor(
                                     bitrate = bitrate / 1000,
                                     isFavorite = isFavorite == 1,
                                     size = size,
+                                    bitsPerSample = bitsPerSample,
+                                    sampleRate = sampleRate,
                                 )
                             )
                         }

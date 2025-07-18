@@ -32,6 +32,7 @@ import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Cadence
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
@@ -120,9 +121,19 @@ fun SongDetailsBottomSheet(
                     icon = MuzIcons.Filled.Schedule,
                 )
                 MuzTag(
-                    text = stringResource(localesR.string.kbps_format, song.bitrate),
+                    text = stringResource(localesR.string.bitrate_format, song.bitrate),
                     icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
                 )
+                if (song.bitsPerSample != 0 && song.sampleRate != 0) {
+                    MuzTag(
+                        text = stringResource(
+                            localesR.string.audio_quality_format,
+                            song.bitsPerSample,
+                            song.sampleRate / 1000f,
+                        ),
+                        icon = MuzIcons.Filled.Cadence,
+                    )
+                }
                 MuzTag(
                     text = Formatter.formatFileSize(LocalContext.current, song.size.toLong()),
                     icon = MuzIcons.Filled.HardDrive,

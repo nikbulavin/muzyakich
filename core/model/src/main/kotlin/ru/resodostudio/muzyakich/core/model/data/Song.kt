@@ -16,4 +16,6 @@ data class Song(
     val bitrate: Int,
     val isFavorite: Boolean,
     val size: Int,
+    val bitsPerSample: Int,
+    val sampleRate: Int,
 )

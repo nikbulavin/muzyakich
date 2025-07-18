@@ -35,5 +35,7 @@ internal fun MediaItem.asSong(): Song {
         album = mediaMetadata.albumTitle?.toString() ?: "Unknown",
         isFavorite = false,
         size = 0,
+        bitsPerSample = 0,
+        sampleRate = 0,
     )
 }
