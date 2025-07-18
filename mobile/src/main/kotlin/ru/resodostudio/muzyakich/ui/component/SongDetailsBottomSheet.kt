@@ -114,29 +114,40 @@ fun SongDetailsBottomSheet(
                     )
                 }
             }
-            FlowRow(
+            TagSection(
+                song = song,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                MuzTag(
-                    text = (song.duration / 1000).asFormattedString(),
-                    icon = MuzIcons.Filled.Schedule,
-                )
-                MuzTag(
-                    text = stringResource(localesR.string.bitrate_format, song.bitrate),
-                    icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
-                )
-                AudioQualityTag(
-                    song = song,
-                )
-                MuzTag(
-                    text = Formatter.formatFileSize(LocalContext.current, song.size.toLong()),
-                    icon = MuzIcons.Filled.HardDrive,
-                )
-            }
+            )
             HorizontalDivider()
         }
+    }
+}
+
+@Composable
+private fun TagSection(
+    song: Song,
+    modifier: Modifier = Modifier,
+) {
+    FlowRow(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        MuzTag(
+            text = (song.duration / 1000).asFormattedString(),
+            icon = MuzIcons.Filled.Schedule,
+        )
+        MuzTag(
+            text = stringResource(localesR.string.bitrate_format, song.bitrate),
+            icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
+        )
+        AudioQualityTag(
+            song = song,
+        )
+        MuzTag(
+            text = Formatter.formatFileSize(LocalContext.current, song.size.toLong()),
+            icon = MuzIcons.Filled.HardDrive,
+        )
     }
 }
 
