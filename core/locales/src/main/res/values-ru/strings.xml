@@ -5,8 +5,8 @@
     <string name="add_to_favorites">Добавить в избранное</string>
     <string name="albums">Альбомы</string>
     <string name="artists">Исполнители</string>
-    <string name="audio_quality_format">%1$d бит %2$.1f кГц</string>
     <string name="back">Назад</string>
+    <string name="bit_depth_format">%1$d бит</string>
     <string name="disable_shuffle_mode">Выключить режим перетасовки</string>
     <string name="disable_repeat_mode">Выключить режим повтора</string>
     <string name="enable_repeat_mode_all">Включить режим повтора для всех песен</string>
@@ -25,6 +25,7 @@
     <string name="playlists">Плейлисты</string>
     <string name="queue">Очередь</string>
     <string name="remove_from_favorites">Удалить из избранного</string>
+    <string name="sample_rate_format">%s кГц</string>
     <string name="search">Поиск</string>
     <string name="settings">Настройки</string>
     <string name="shuffle">Перемешать</string>

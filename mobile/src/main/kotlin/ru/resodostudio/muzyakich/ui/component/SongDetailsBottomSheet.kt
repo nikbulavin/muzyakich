@@ -1,5 +1,7 @@
 package ru.resodostudio.muzyakich.ui.component
 
+import android.os.Build
+import android.os.ext.SdkExtensions
 import android.text.format.Formatter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +41,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
+import ru.resodostudio.muzyakich.ui.util.formatSampleRate
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,16 +127,9 @@ fun SongDetailsBottomSheet(
                     text = stringResource(localesR.string.bitrate_format, song.bitrate),
                     icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
                 )
-                if (song.bitsPerSample != 0 && song.sampleRate != 0) {
-                    MuzTag(
-                        text = stringResource(
-                            localesR.string.audio_quality_format,
-                            song.bitsPerSample,
-                            song.sampleRate / 1000f,
-                        ),
-                        icon = MuzIcons.Filled.Cadence,
-                    )
-                }
+                AudioQualityTag(
+                    song = song,
+                )
                 MuzTag(
                     text = Formatter.formatFileSize(LocalContext.current, song.size.toLong()),
                     icon = MuzIcons.Filled.HardDrive,
@@ -141,5 +137,30 @@ fun SongDetailsBottomSheet(
             }
             HorizontalDivider()
         }
+    }
+}
+
+@Composable
+private fun AudioQualityTag(
+    song: Song,
+    modifier: Modifier = Modifier,
+) {
+    if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
+        val audioQualityText = buildString {
+            if (song.bitsPerSample > 0) {
+                append(stringResource(localesR.string.bit_depth_format, song.bitsPerSample))
+            }
+            if (song.bitsPerSample > 0 && song.sampleRate > 0) {
+                append(" ")
+            }
+            if (song.sampleRate > 0) {
+                append(formatSampleRate(song.sampleRate / 1000f))
+            }
+        }
+        MuzTag(
+            text = audioQualityText,
+            icon = MuzIcons.Filled.Cadence,
+            modifier = modifier,
+        )
     }
 }

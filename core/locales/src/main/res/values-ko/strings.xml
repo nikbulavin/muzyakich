@@ -5,8 +5,8 @@
     <string name="add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="albums">앨범</string>
     <string name="artists">아티스트</string>
-    <string name="audio_quality_format">%1$d비트 %2$.1fkHz</string>
     <string name="back">뒤로</string>
+    <string name="bit_depth_format">%1$d비트</string>
     <string name="disable_shuffle_mode">셔플 모드 비활성화</string>
     <string name="disable_repeat_mode">반복 안함</string>
     <string name="enable_repeat_mode_all">전체 반복</string>
@@ -25,6 +25,7 @@
     <string name="playlists">재생 목록</string>
     <string name="queue">대기열</string>
     <string name="remove_from_favorites">즐겨찾기에서 제거</string>
+    <string name="sample_rate_format">%skHz</string>
     <string name="search">검색</string>
     <string name="settings">설정</string>
     <string name="shuffle">셔플</string>
