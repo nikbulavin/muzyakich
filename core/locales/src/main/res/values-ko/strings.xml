@@ -13,8 +13,9 @@
     <string name="enable_shuffle_mode">셔플 모드 활성화</string>
     <string name="favorites">즐겨찾기</string>
     <string name="high_quality">고화질</string>
-    <string name="kbps">킬로비트/초</string>
+    <string name="kbps_format">%.2f 킬로비트/초</string>
     <string name="library_empty">아직 노래가 없습니다. 좋아하는 음악을 추가하고 감상하세요!</string>
+    <string name="megabytes_format">%1$.2f 엠비</string>
     <string name="more_options">추가 옵션</string>
     <string name="music_notification_channel_name">현재 재생 중</string>
     <string name="next_in_queue">다음 재생</string>

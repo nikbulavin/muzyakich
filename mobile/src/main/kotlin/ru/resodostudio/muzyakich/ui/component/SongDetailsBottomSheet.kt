@@ -31,11 +31,13 @@ import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
+import ru.resodostudio.muzyakich.ui.util.toMegabytesString
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,14 +119,13 @@ fun SongDetailsBottomSheet(
                     text = (song.duration / 1000).asFormattedString(),
                     icon = MuzIcons.Filled.Schedule,
                 )
-                val bitrateIcon = if (song.bitrate >= 256) {
-                    MuzIcons.Filled.HighQuality
-                } else {
-                    MuzIcons.Filled.BarChart
-                }
                 MuzTag(
-                    text = "${song.bitrate} ${stringResource(localesR.string.kbps)}",
-                    icon = bitrateIcon,
+                    text = stringResource(localesR.string.kbps_format, song.bitrate),
+                    icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
+                )
+                MuzTag(
+                    text = song.size.toMegabytesString(),
+                    icon = MuzIcons.Filled.HardDrive,
                 )
             }
             HorizontalDivider()

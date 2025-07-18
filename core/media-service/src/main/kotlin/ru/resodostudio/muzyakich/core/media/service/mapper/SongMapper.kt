@@ -34,5 +34,6 @@ internal fun MediaItem.asSong(): Song {
         artistId = mediaMetadata.extras?.getLong(ARTIST_ID) ?: 0L,
         album = mediaMetadata.albumTitle?.toString() ?: "Unknown",
         isFavorite = false,
+        size = 0,
     )
 }

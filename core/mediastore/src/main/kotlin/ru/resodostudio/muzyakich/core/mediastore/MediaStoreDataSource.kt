@@ -41,6 +41,7 @@ class MediaStoreDataSource @Inject constructor(
                             val duration = cursor.getLong(MediaStore.Audio.Media.DURATION)
                             val bitrate = cursor.getInt(MediaStore.Audio.Media.BITRATE)
                             val isFavorite = cursor.getInt(MediaStore.Audio.Media.IS_FAVORITE)
+                            val size = cursor.getInt(MediaStore.Audio.Media.SIZE)
 
                             val mediaId = id.toString()
                             val mediaUri = ContentUris.withAppendedId(
@@ -64,6 +65,7 @@ class MediaStoreDataSource @Inject constructor(
                                     duration = duration,
                                     bitrate = bitrate / 1000,
                                     isFavorite = isFavorite == 1,
+                                    size = size,
                                 )
                             )
                         }
