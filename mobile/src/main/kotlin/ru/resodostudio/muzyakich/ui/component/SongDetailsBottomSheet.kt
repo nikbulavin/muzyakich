@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.component
 
+import android.text.format.Formatter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +38,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
-import ru.resodostudio.muzyakich.ui.util.toMegabytesString
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +124,7 @@ fun SongDetailsBottomSheet(
                     icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
                 )
                 MuzTag(
-                    text = song.size.toMegabytesString(),
+                    text = Formatter.formatFileSize(LocalContext.current, song.size.toLong()),
                     icon = MuzIcons.Filled.HardDrive,
                 )
             }
