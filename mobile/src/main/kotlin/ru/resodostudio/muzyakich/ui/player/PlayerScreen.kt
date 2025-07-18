@@ -74,8 +74,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzOutlinedIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
@@ -681,7 +681,7 @@ private fun ProgressSlider(
                 exit = fadeOut() + scaleOut(),
             ) {
                 Icon(
-                    imageVector = MuzIcons.Filled.HighQuality,
+                    imageVector = MuzIcons.Rounded.HighQuality,
                     contentDescription = stringResource(localesR.string.high_quality),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,

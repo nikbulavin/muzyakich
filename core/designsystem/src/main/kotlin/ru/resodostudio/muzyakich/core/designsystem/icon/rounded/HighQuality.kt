@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.core.designsystem.icon.filled
+package ru.resodostudio.muzyakich.core.designsystem.icon.rounded
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -7,13 +7,13 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 
-val MuzIcons.Filled.HighQuality: ImageVector
+val MuzIcons.Rounded.HighQuality: ImageVector
     get() {
         if (_HighQuality != null) {
             return _HighQuality!!
         }
         _HighQuality = ImageVector.Builder(
-            name = "Filled.HighQuality",
+            name = "Rounded.HighQuality",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
