@@ -101,6 +101,7 @@ fun QueuePanel(
                         ),
                 )
                 MoreIconButton(
+                    song = currentSong,
                     modifier = Modifier
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,

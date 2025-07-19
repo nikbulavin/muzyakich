@@ -97,6 +97,7 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -246,6 +247,7 @@ private fun PlayerScreen(
                                                     ),
                                             )
                                             MoreIconButton(
+                                                song = currentSong,
                                                 modifier = Modifier
                                                     .sharedBounds(
                                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -330,16 +332,25 @@ private fun PlayerScreen(
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun MoreIconButton(
+    song: Song,
     modifier: Modifier = Modifier,
 ) {
+    var showSongDetails by rememberSaveable { mutableStateOf(false) }
+
     FilledTonalIconButton(
-        onClick = {},
+        onClick = { showSongDetails = true },
         shapes = IconButtonDefaults.shapes(),
         modifier = modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
     ) {
         Icon(
             imageVector = MuzIcons.Rounded.MoreVert,
             contentDescription = stringResource(localesR.string.more_options),
+        )
+    }
+    if (showSongDetails) {
+        SongDetailsBottomSheet(
+            song = song,
+            onDismiss = { showSongDetails = false },
         )
     }
 }
