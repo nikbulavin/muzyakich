@@ -8,8 +8,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -72,6 +72,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzOutlinedIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
@@ -190,7 +192,6 @@ private fun PlayerScreen(
                                         SongArtwork(
                                             artworkUri = currentSong.artworkUri,
                                             animatedVisibilityScope = this@AnimatedContent,
-                                            modifier = Modifier.padding(horizontal = 24.dp),
                                         )
                                     }
 
@@ -409,39 +410,41 @@ private fun SongArtwork(
     modifier: Modifier = Modifier,
 ) {
     with(LocalSharedTransitionScope.current) {
-        Crossfade(
-            targetState = artworkUri,
+        SubcomposeAsyncImage(
             modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
                 .sharedBounds(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    sharedContentState = rememberSharedContentState(artworkUri),
+                    sharedContentState = rememberSharedContentState(artworkUri.toString()),
                     animatedVisibilityScope = animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                 )
                 .clip(MaterialTheme.shapes.large),
-            animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
-        ) { artworkUriState ->
-            SubcomposeAsyncImage(
-                modifier = Modifier.fillMaxWidth(),
-                model = artworkUriState,
-                contentDescription = null,
-                error = {
-                    BoxWithConstraints(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                    ) {
-                        Icon(
-                            imageVector = MuzIcons.Rounded.MusicNote,
-                            contentDescription = null,
-                            modifier = Modifier.size((maxWidth.value / 1.75).dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
-            )
-        }
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(artworkUri)
+                .crossfade(true)
+                .placeholderMemoryCacheKey(artworkUri.toString())
+                .memoryCacheKey(artworkUri.toString())
+                .build(),
+            contentDescription = null,
+            error = {
+                BoxWithConstraints(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.MusicNote,
+                        contentDescription = null,
+                        modifier = Modifier.size((maxWidth.value / 1.75).dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+        )
     }
 }
 

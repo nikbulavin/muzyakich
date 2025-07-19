@@ -2,8 +2,8 @@ package ru.resodostudio.muzyakich.ui.component
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -39,47 +39,45 @@ fun SongArtworkMini(
     animatedVisibilityScope: AnimatedVisibilityScope? = null,
 ) {
     with(LocalSharedTransitionScope.current) {
-        Crossfade(
-            targetState = artworkUri,
+        SubcomposeAsyncImage(
             modifier = modifier
                 .size(size)
                 .then(
                     if (animatedVisibilityScope != null) {
                         Modifier.sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            sharedContentState = rememberSharedContentState(artworkUri),
+                            sharedContentState = rememberSharedContentState(artworkUri.toString()),
                             animatedVisibilityScope = animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                         )
                     } else {
                         Modifier
                     }
                 )
                 .clip(shape),
-            animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
-        ) { artworkUriState ->
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(artworkUriState)
-                    .crossfade(true)
-                    .size(256)
-                    .build(),
-                contentDescription = null,
-                error = {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(size)
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                    ) {
-                        Icon(
-                            imageVector = MuzIcons.Rounded.MusicNote,
-                            contentDescription = null,
-                            modifier = Modifier.size((size.value / 1.75).dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
-            )
-        }
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(artworkUri)
+                .crossfade(true)
+                .size(256)
+                .placeholderMemoryCacheKey(artworkUri.toString())
+                .memoryCacheKey(artworkUri.toString())
+                .build(),
+            contentDescription = null,
+            error = {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(size)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.MusicNote,
+                        contentDescription = null,
+                        modifier = Modifier.size((size.value / 1.75).dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+        )
     }
 }
