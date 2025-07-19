@@ -130,10 +130,10 @@ class MusicServiceConnection @Inject constructor(
         startPositionMs = startPositionMs,
     )
 
-    fun addSongToBeginningOfQueue(song: Song) {
+    fun playSongNext(song: Song) {
         mediaController?.let { controller ->
             val mediaItem = song.asMediaItem()
-            controller.addMediaItem(0, mediaItem)
+            controller.addMediaItem(controller.currentMediaItemIndex + 1, mediaItem)
         }
     }
 

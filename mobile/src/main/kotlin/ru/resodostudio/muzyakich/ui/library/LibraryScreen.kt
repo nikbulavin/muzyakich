@@ -89,7 +89,7 @@ fun LibraryScreen(
         onPauseClick = viewModel::pause,
         onSkipNextClick = viewModel::skipNext,
         onToggleFilterFavorites = viewModel::toggleFilterFavorites,
-        onPlayNextClick = viewModel::addSongToBeginningOfQueue,
+        onPlayNextClick = viewModel::playSongNext,
     )
 }
 

@@ -70,8 +70,8 @@ class LibraryViewModel @Inject constructor(
         shouldFilterFavoritesState.value = !shouldFilterFavoritesState.value
     }
 
-    fun addSongToBeginningOfQueue(song: Song) {
-        musicServiceConnection.addSongToBeginningOfQueue(song)
+    fun playSongNext(song: Song) {
+        musicServiceConnection.playSongNext(song)
     }
 }
 
