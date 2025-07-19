@@ -42,7 +42,7 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Cadence
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DeleteForever
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
@@ -177,27 +177,26 @@ private fun ActionPanel(
         MuzListItemEmphasized(
             headlineContent = {
                 Text(
-                    text = stringResource(localesR.string.delete),
+                    text = stringResource(localesR.string.move_to_trash),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             },
             leadingContent = {
                 Icon(
-                    imageVector = MuzIcons.Filled.DeleteForever,
+                    imageVector = MuzIcons.Filled.Delete,
                     contentDescription = null,
                 )
             },
             colors = ListItemDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                leadingIconColor = MaterialTheme.colorScheme.onErrorContainer,
-                headlineColor = MaterialTheme.colorScheme.onErrorContainer,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = {
                 runCatching {
-                    val pendingIntent = MediaStore.createDeleteRequest(
+                    val pendingIntent = MediaStore.createTrashRequest(
                         context.contentResolver,
                         listOf(song.mediaUri),
+                        true,
                     )
                     launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
                 }

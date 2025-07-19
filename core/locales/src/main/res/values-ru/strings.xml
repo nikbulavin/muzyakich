@@ -18,6 +18,7 @@
     <string name="bitrate_format">%1$d кбит/с</string>
     <string name="library_empty">У вас пока нет песен. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
     <string name="more_options">Дополнительно</string>
+    <string name="move_to_trash">Переместить в корзину</string>
     <string name="music_notification_channel_name">Сейчас играет</string>
     <string name="next_in_queue">Следующие в очереди</string>
     <string name="open_menu">Открыть меню</string>
