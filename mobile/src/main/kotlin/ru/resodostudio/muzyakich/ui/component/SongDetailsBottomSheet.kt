@@ -45,6 +45,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Cadence
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DeleteForever
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
@@ -57,6 +58,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 fun SongDetailsBottomSheet(
     song: Song,
     onDismiss: () -> Unit,
+    onPlayNextClick: (Song) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -129,6 +131,10 @@ fun SongDetailsBottomSheet(
             ActionPanel(
                 song = song,
                 modifier = Modifier.padding(16.dp),
+                onPlayNextClick = { song ->
+                    onPlayNextClick(song)
+                    onDismiss()
+                },
             )
         }
     }
@@ -138,11 +144,32 @@ fun SongDetailsBottomSheet(
 private fun ActionPanel(
     song: Song,
     modifier: Modifier = Modifier,
+    onPlayNextClick: (Song) -> Unit = {},
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
+        MuzListItemEmphasized(
+            headlineContent = {
+                Text(
+                    text = stringResource(localesR.string.play_next),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.PlaylistPlay,
+                    contentDescription = null,
+                )
+            },
+            colors = ListItemDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ),
+            onClick = { onPlayNextClick(song) },
+            shape = ListItemShape.First,
+        )
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartIntentSenderForResult(),
         ) {}
