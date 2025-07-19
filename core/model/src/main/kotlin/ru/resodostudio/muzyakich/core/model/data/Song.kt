@@ -1,8 +1,10 @@
 package ru.resodostudio.muzyakich.core.model.data
 
 import android.net.Uri
+import kotlin.uuid.Uuid
 
 data class Song(
+    val uuid: Uuid,
     val mediaId: String,
     val artistId: Long,
     val albumId: Long,

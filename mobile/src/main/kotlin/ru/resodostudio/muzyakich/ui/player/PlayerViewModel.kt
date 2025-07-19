@@ -16,6 +16,7 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.convertToPosition
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
@@ -65,7 +66,7 @@ class PlayerViewModel @Inject constructor(
 
     fun skipToNext() = musicServiceConnection.skipToNext()
 
-    fun skipToSong(mediaId: String) = musicServiceConnection.skipToSong(mediaId)
+    fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
 
     fun skipToPrevious() = musicServiceConnection.skipToPrevious()
 

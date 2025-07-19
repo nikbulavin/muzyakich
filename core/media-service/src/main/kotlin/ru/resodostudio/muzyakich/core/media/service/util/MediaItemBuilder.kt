@@ -5,6 +5,7 @@ import androidx.core.os.bundleOf
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.RequestMetadata
 import androidx.media3.common.MediaMetadata
+import kotlin.uuid.Uuid
 
 internal fun buildPlayableMediaItem(
     mediaId: String,
@@ -32,6 +33,7 @@ internal fun buildPlayableMediaItem(
             .setIsPlayable(true)
             .setExtras(
                 bundleOf(
+                    UUID to Uuid.random().toString(),
                     ARTIST_ID to artistId,
                     ALBUM_ID to albumId,
                     FOLDER to folder,
@@ -42,6 +44,7 @@ internal fun buildPlayableMediaItem(
     )
     .build()
 
+internal const val UUID = "uuid"
 internal const val ARTIST_ID = "artist_id"
 internal const val ALBUM_ID = "album_id"
 internal const val FOLDER = "folder"

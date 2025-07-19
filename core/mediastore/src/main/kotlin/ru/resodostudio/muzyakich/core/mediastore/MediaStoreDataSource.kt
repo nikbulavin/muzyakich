@@ -23,6 +23,7 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 class MediaStoreDataSource @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -42,43 +43,31 @@ class MediaStoreDataSource @Inject constructor(
                     )?.use { cursor ->
                         while (cursor.moveToNext()) {
                             val id = cursor.getMediaId()
-                            val artistId = cursor.getArtistId()
                             val albumId = cursor.getAlbumId()
-                            val title = cursor.getTitle()
-                            val artist = cursor.getArtist()
-                            val album = cursor.getAlbum()
-                            val duration = cursor.getDuration()
-                            val bitrate = cursor.getBitrate()
-                            val isFavorite = cursor.getIsFavorite()
-                            val size = cursor.getSize()
-                            val bitsPerSample = cursor.getBitsPerSample()
-                            val sampleRate = cursor.getSampleRate()
 
-                            val mediaId = id.toString()
                             val mediaUri = ContentUris.withAppendedId(
                                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                                 id,
                             )
 
-                            val folder = cursor.getDataFolder()
-
                             add(
                                 Song(
-                                    mediaId = mediaId,
-                                    artistId = artistId,
+                                    uuid = Uuid.random(),
+                                    mediaId = cursor.getMediaId().toString(),
+                                    artistId = cursor.getArtistId(),
                                     albumId = albumId,
                                     mediaUri = mediaUri,
                                     artworkUri = albumId.asArtworkUri(),
-                                    title = title,
-                                    artist = artist,
-                                    album = album,
-                                    folder = folder,
-                                    duration = duration,
-                                    bitrate = bitrate / 1000,
-                                    isFavorite = isFavorite == 1,
-                                    size = size,
-                                    bitsPerSample = bitsPerSample,
-                                    sampleRate = sampleRate,
+                                    title = cursor.getTitle(),
+                                    artist = cursor.getArtist(),
+                                    album = cursor.getAlbum(),
+                                    folder = cursor.getDataFolder(),
+                                    duration = cursor.getDuration(),
+                                    bitrate = cursor.getBitrate() / 1000,
+                                    isFavorite = cursor.getIsFavorite() == 1,
+                                    size = cursor.getSize(),
+                                    bitsPerSample = cursor.getBitsPerSample(),
+                                    sampleRate = cursor.getSampleRate(),
                                 )
                             )
                         }

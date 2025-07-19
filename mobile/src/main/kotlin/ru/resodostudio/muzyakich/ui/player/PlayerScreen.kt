@@ -100,6 +100,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
+import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -136,7 +137,7 @@ private fun PlayerScreen(
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
     onSkipPreviousClick: () -> Unit = {},
-    onSkipToSongClick: (mediaId: String) -> Unit = {},
+    onSkipToSongClick: (Uuid) -> Unit = {},
     onShuffleToggle: (Boolean) -> Unit = {},
     onRepeatToggle: (RepeatMode) -> Unit = {},
 ) {

@@ -41,5 +41,6 @@ internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() 
         allWarningsAsErrors = warningsAsErrors
         freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
         freeCompilerArgs.add("-Xannotation-default-target=param-property")
+        freeCompilerArgs.add("-opt-in=kotlin.uuid.ExperimentalUuidApi")
     }
 }

@@ -5,8 +5,10 @@ import ru.resodostudio.muzyakich.core.media.service.util.ALBUM_ID
 import ru.resodostudio.muzyakich.core.media.service.util.ARTIST_ID
 import ru.resodostudio.muzyakich.core.media.service.util.DURATION
 import ru.resodostudio.muzyakich.core.media.service.util.FOLDER
+import ru.resodostudio.muzyakich.core.media.service.util.UUID
 import ru.resodostudio.muzyakich.core.media.service.util.buildPlayableMediaItem
 import ru.resodostudio.muzyakich.core.model.data.Song
+import kotlin.uuid.Uuid
 
 internal fun Song.asMediaItem() = buildPlayableMediaItem(
     mediaId = mediaId,
@@ -22,6 +24,7 @@ internal fun Song.asMediaItem() = buildPlayableMediaItem(
 
 internal fun MediaItem.asSong(): Song {
     return Song(
+        uuid = Uuid.parse(mediaMetadata.extras?.getString(UUID) ?: ""),
         mediaId = mediaId,
         artist = mediaMetadata.artist?.toString() ?: "Unknown",
         title = mediaMetadata.title?.toString() ?: "Unknown",

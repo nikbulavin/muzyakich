@@ -30,6 +30,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionSc
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
+import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(
@@ -43,7 +44,7 @@ fun QueuePanel(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
-    onQueueItemClick: (String) -> Unit = {},
+    onQueueItemClick: (Uuid) -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -128,12 +129,12 @@ fun QueuePanel(
         ) {
             items(
                 items = playingQueue,
-                key = { it.mediaId },
+                key = { it.uuid },
             ) { song ->
                 QueueItem(
                     song = song,
                     modifier = Modifier.animateItem(),
-                    onClick = { onQueueItemClick(song.mediaId) },
+                    onClick = { onQueueItemClick(song.uuid) },
                 )
             }
         }

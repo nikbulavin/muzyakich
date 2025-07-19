@@ -89,6 +89,7 @@ fun LibraryScreen(
         onPauseClick = viewModel::pause,
         onSkipNextClick = viewModel::skipNext,
         onToggleFilterFavorites = viewModel::toggleFilterFavorites,
+        onPlayNextClick = viewModel::addSongToBeginningOfQueue,
     )
 }
 
@@ -106,6 +107,7 @@ private fun LibraryScreen(
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
     onToggleFilterFavorites: () -> Unit = {},
+    onPlayNextClick: (Song) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -259,6 +261,7 @@ private fun LibraryScreen(
                                                 SongDetailsBottomSheet(
                                                     song = song,
                                                     onDismiss = { showSongDetails = false },
+                                                    onPlayNextClick = onPlayNextClick,
                                                 )
                                             }
                                         }

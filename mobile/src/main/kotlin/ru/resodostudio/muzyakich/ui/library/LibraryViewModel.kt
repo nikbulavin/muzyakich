@@ -69,6 +69,10 @@ class LibraryViewModel @Inject constructor(
     fun toggleFilterFavorites() {
         shouldFilterFavoritesState.value = !shouldFilterFavoritesState.value
     }
+
+    fun addSongToBeginningOfQueue(song: Song) {
+        musicServiceConnection.addSongToBeginningOfQueue(song)
+    }
 }
 
 sealed interface LibraryUiState {
