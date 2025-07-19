@@ -2,7 +2,11 @@ package ru.resodostudio.muzyakich.ui.component
 
 import android.os.Build
 import android.os.ext.SdkExtensions
+import android.provider.MediaStore
 import android.text.format.Formatter
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -31,10 +36,13 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import ru.resodostudio.muzyakich.core.designsystem.component.ListItemShape
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItemEmphasized
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Cadence
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DeleteForever
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
@@ -60,7 +68,6 @@ fun SongDetailsBottomSheet(
     ) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -114,17 +121,67 @@ fun SongDetailsBottomSheet(
                     )
                 }
             }
-            TagSection(
+            TagPanel(
                 song = song,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(16.dp),
             )
             HorizontalDivider()
+            ActionPanel(
+                song = song,
+                modifier = Modifier.padding(16.dp),
+            )
         }
     }
 }
 
 @Composable
-private fun TagSection(
+private fun ActionPanel(
+    song: Song,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+        ) {}
+        val context = LocalContext.current
+        MuzListItemEmphasized(
+            headlineContent = {
+                Text(
+                    text = stringResource(localesR.string.delete),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.DeleteForever,
+                    contentDescription = null,
+                )
+            },
+            colors = ListItemDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                leadingIconColor = MaterialTheme.colorScheme.onErrorContainer,
+                headlineColor = MaterialTheme.colorScheme.onErrorContainer,
+            ),
+            onClick = {
+                runCatching {
+                    val pendingIntent = MediaStore.createDeleteRequest(
+                        context.contentResolver,
+                        listOf(song.mediaUri),
+                    )
+                    launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+                }
+            },
+            shape = ListItemShape.Last,
+        )
+    }
+}
+
+@Composable
+private fun TagPanel(
     song: Song,
     modifier: Modifier = Modifier,
 ) {

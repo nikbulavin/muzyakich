@@ -7,6 +7,7 @@
     <string name="artists">Исполнители</string>
     <string name="back">Назад</string>
     <string name="bit_depth_format">%1$d бит</string>
+    <string name="delete">Удалить</string>
     <string name="disable_shuffle_mode">Выключить режим перетасовки</string>
     <string name="disable_repeat_mode">Выключить режим повтора</string>
     <string name="enable_repeat_mode_all">Включить режим повтора для всех песен</string>
