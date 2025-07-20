@@ -188,6 +188,13 @@ private fun ActionPanel(
                     contentDescription = null,
                 )
             },
+            supportingContent = {
+                Text(
+                    text = stringResource(localesR.string.move_to_trash_description),
+                    maxLines = 1,
+                    overflow = TextOverflow.StartEllipsis,
+                )
+            },
             colors = ListItemDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),

@@ -19,6 +19,7 @@
     <string name="library_empty">You don\'t have any songs yet. Add your favorite music and enjoy listening!</string>
     <string name="more_options">More options</string>
     <string name="move_to_trash">Move to trash</string>
+    <string name="move_to_trash_description">Will be permanently deleted after 30 days</string>
     <string name="music_notification_channel_name">Now playing</string>
     <string name="next_in_queue">Next in queue</string>
     <string name="open_menu">Open menu</string>
