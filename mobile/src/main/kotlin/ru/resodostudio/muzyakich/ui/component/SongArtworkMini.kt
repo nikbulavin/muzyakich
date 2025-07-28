@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,13 @@ fun SongArtworkMini(
         SubcomposeAsyncImage(
             modifier = modifier
                 .size(size)
+                .dropShadow(
+                    shape = shape,
+                    shadow = Shadow(
+                        radius = 3.dp,
+                        color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.2f)
+                    ),
+                )
                 .then(
                     if (animatedVisibilityScope != null) {
                         Modifier.sharedBounds(

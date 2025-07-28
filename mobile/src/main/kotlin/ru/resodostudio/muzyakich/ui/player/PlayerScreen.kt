@@ -60,9 +60,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -414,6 +416,14 @@ private fun SongArtwork(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
+                .dropShadow(
+                    shape = MaterialTheme.shapes.large,
+                    shadow = Shadow(
+                        radius = 14.dp,
+                        spread = 6.dp,
+                        color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.2f)
+                    ),
+                )
                 .sharedBounds(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(artworkUri.toString()),
