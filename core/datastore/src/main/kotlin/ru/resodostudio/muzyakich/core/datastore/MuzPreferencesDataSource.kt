@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.core.datastore
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -17,10 +16,7 @@ class MuzPreferencesDataSource @Inject constructor(
     private val userPreferences: DataStore<UserPreferences>,
 ) {
     val userData = userPreferences.data
-        .catch {
-            Log.e(TAG, "Failed to read user preferences.", it)
-            emit(getCustomInstance())
-        }
+        .catch { emit(getCustomInstance()) }
         .map {
             UserData(
                 darkThemeConfig = when (it.darkThemeConfig) {
@@ -93,5 +89,3 @@ class MuzPreferencesDataSource @Inject constructor(
         }
     }
 }
-
-private const val TAG = "MuzPreferencesDataSource"
