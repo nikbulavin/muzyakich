@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.muzyakich.android.application.firebase)
     alias(libs.plugins.muzyakich.android.application.flavors)
     alias(libs.plugins.muzyakich.hilt)
+    alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -26,6 +27,7 @@ android {
             isShrinkResources = true
             applicationIdSuffix = MuzBuildType.RELEASE.applicationIdSuffix
             signingConfig = signingConfigs.named("debug").get()
+            baselineProfile.automaticGenerationDuringBuild = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -43,6 +45,11 @@ android {
     namespace = "ru.resodostudio.muzyakich"
 }
 
+baselineProfile {
+    automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
+}
+
 dependencies {
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
@@ -57,6 +64,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
@@ -64,4 +72,6 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
     debugImplementation(libs.leakcanary.android)
+
+    baselineProfile(projects.baselineprofile)
 }

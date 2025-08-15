@@ -26,6 +26,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":mobile")
 
+include(":baselineprofile")
 include(":core:common")
 include(":core:data")
 include(":core:datastore")

@@ -50,6 +50,10 @@ gradlePlugin {
             id = libs.plugins.muzyakich.android.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
+        register("androidTest") {
+            id = libs.plugins.muzyakich.android.test.get().pluginId
+            implementationClass = "AndroidTestConventionPlugin"
+        }
         register("hilt") {
             id = libs.plugins.muzyakich.hilt.get().pluginId
             implementationClass = "HiltConventionPlugin"
