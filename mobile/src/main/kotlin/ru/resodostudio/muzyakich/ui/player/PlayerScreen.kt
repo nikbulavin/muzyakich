@@ -443,7 +443,8 @@ private fun SongArtwork(
                     shadow = Shadow(
                         radius = 14.dp,
                         spread = 6.dp,
-                        color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.2f)
+                        color = MaterialTheme.colorScheme.inverseSurface,
+                        alpha = 0.1f,
                     ),
                 )
                 .sharedBounds(
