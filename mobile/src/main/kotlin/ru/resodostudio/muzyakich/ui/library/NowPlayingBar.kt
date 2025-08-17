@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
@@ -27,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,10 +41,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.CornerRounding
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.rectangle
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
+import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
+import ru.resodostudio.muzyakich.core.designsystem.theme.sharedBoundsRevealWithShapeMorph
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackState
 import ru.resodostudio.muzyakich.core.model.data.Song
@@ -65,52 +73,66 @@ internal fun NowPlayingBar(
     onSkipNextClick: () -> Unit = {},
     onClick: () -> Unit = {},
 ) {
-    Surface(
-        tonalElevation = 3.dp,
-        modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
-            .clickable { onClick() },
-    ) {
-        Box(
-            modifier = Modifier.padding(horizontal = 14.dp),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.padding(vertical = 12.dp),
-            ) {
-                val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
-                AnimatedContent(
-                    targetState = song,
-                    transitionSpec = {
-                        fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith fadeOut(
-                            snap()
-                        )
+    with(LocalSharedTransitionScope.current) {
+        Surface(
+            tonalElevation = 3.dp,
+            modifier = modifier
+                .clip(MaterialTheme.shapes.medium)
+                .clickable { onClick() }
+                .sharedBoundsRevealWithShapeMorph(
+                    sharedContentState = rememberSharedContentState(SharedElementKey.NowPlayingBarToPlayerScreen),
+                    restingShape = RoundedPolygon.rectangle(rounding = CornerRounding(12f)),
+                    targetShape = RoundedPolygon.rectangle().normalized(),
+                    targetValueByState = {
+                        when (it) {
+                            EnterExitState.PreEnter -> 0f
+                            EnterExitState.Visible -> 1f
+                            EnterExitState.PostExit -> 1f
+                        }
                     },
-                    contentKey = { it.mediaId },
-                    modifier = Modifier.weight(1f),
-                ) { songState ->
-                    SongInfo(
-                        song = songState,
+                ),
+        ) {
+            Box(
+                modifier = Modifier.padding(horizontal = 14.dp),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(vertical = 12.dp),
+                ) {
+                    val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+                    AnimatedContent(
+                        targetState = song,
+                        transitionSpec = {
+                            fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith fadeOut(
+                                snap()
+                            )
+                        },
+                        contentKey = { it.mediaId },
+                        modifier = Modifier.weight(1f),
+                    ) { songState ->
+                        SongInfo(
+                            song = songState,
+                        )
+                    }
+                    ActionButtons(
+                        nowPlayingState = nowPlayingState,
+                        onPlayClick = onPlayClick,
+                        onPauseClick = onPauseClick,
+                        onSkipNextClick = onSkipNextClick,
                     )
                 }
-                ActionButtons(
+
+                SongProgressIndicator(
+                    currentPosition = currentPosition,
+                    song = song,
                     nowPlayingState = nowPlayingState,
-                    onPlayClick = onPlayClick,
-                    onPauseClick = onPauseClick,
-                    onSkipNextClick = onSkipNextClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(3.dp),
                 )
             }
-
-            SongProgressIndicator(
-                currentPosition = currentPosition,
-                song = song,
-                nowPlayingState = nowPlayingState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(3.dp),
-            )
         }
     }
 }

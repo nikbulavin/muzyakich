@@ -10,4 +10,5 @@ android {
 dependencies {
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.ui.util)
+    implementation(libs.androidx.navigation3.ui)
 }

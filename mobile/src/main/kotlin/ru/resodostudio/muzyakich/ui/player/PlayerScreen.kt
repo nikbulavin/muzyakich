@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
@@ -71,6 +72,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.CornerRounding
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.rectangle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
@@ -93,6 +97,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipPrevious
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
+import ru.resodostudio.muzyakich.core.designsystem.theme.sharedBoundsRevealWithShapeMorph
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
@@ -145,183 +151,199 @@ private fun PlayerScreen(
     onShuffleToggle: (Boolean) -> Unit = {},
     onRepeatToggle: (RepeatMode) -> Unit = {},
 ) {
-    var queueOpened by rememberSaveable { mutableStateOf(false) }
+    with(LocalSharedTransitionScope.current) {
+        var queueOpened by rememberSaveable { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        when (playerUiState) {
-            PlayerUiState.Error -> onBackClick()
-            PlayerUiState.Loading -> Unit
-            is PlayerUiState.Success -> {
-                val currentSong = playerUiState.currentSong
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.statusBarsPadding(),
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    BackButton(onBackClick = onBackClick)
-
-                    BoxWithConstraints(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        val lazyListState = rememberLazyListState()
-                        val isPlayerActionsVisible by remember {
-                            derivedStateOf { lazyListState.firstVisibleItemIndex == 0 }
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .sharedBoundsRevealWithShapeMorph(
+                    sharedContentState = rememberSharedContentState(SharedElementKey.NowPlayingBarToPlayerScreen),
+                    restingShape = RoundedPolygon.rectangle(rounding = CornerRounding(12f)),
+                    targetShape = RoundedPolygon.rectangle().normalized(),
+                    targetValueByState = {
+                        when (it) {
+                            EnterExitState.PreEnter -> 0f
+                            EnterExitState.Visible -> 1f
+                            EnterExitState.PostExit -> 1f
                         }
-                        val animSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-                        AnimatedContent(
-                            targetState = queueOpened,
-                            transitionSpec = { fadeIn(animSpec) togetherWith fadeOut(animSpec) },
-                        ) { queueOpenedState ->
-                            if (queueOpenedState) {
-                                QueuePanel(
-                                    lazyListState = lazyListState,
-                                    currentSong = currentSong,
-                                    playingQueue = playerUiState.nowPlayingState.playingQueue,
-                                    modifier = Modifier.padding(top = 16.dp),
-                                    animatedVisibilityScope = this,
-                                    onQueueItemClick = onSkipToSongClick,
-                                )
-                            } else {
-                                Column(
-                                    modifier = Modifier.requiredHeight(maxHeight / 2 + 80.dp),
-                                ) {
-                                    Box(
-                                        modifier = Modifier.weight(1f),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        SongArtwork(
-                                            artworkUri = currentSong.artworkUri,
-                                            animatedVisibilityScope = this@AnimatedContent,
-                                        )
-                                    }
+                    },
+                ),
+        ) {
+            when (playerUiState) {
+                PlayerUiState.Error -> onBackClick()
+                PlayerUiState.Loading -> Unit
+                is PlayerUiState.Success -> {
+                    val currentSong = playerUiState.currentSong
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.statusBarsPadding(),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        BackButton(onBackClick = onBackClick)
 
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 32.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
+                        BoxWithConstraints(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            val lazyListState = rememberLazyListState()
+                            val isPlayerActionsVisible by remember {
+                                derivedStateOf { lazyListState.firstVisibleItemIndex == 0 }
+                            }
+                            val animSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+                            AnimatedContent(
+                                targetState = queueOpened,
+                                transitionSpec = { fadeIn(animSpec) togetherWith fadeOut(animSpec) },
+                            ) { queueOpenedState ->
+                                if (queueOpenedState) {
+                                    QueuePanel(
+                                        lazyListState = lazyListState,
+                                        currentSong = currentSong,
+                                        playingQueue = playerUiState.nowPlayingState.playingQueue,
+                                        modifier = Modifier.padding(top = 16.dp),
+                                        animatedVisibilityScope = this,
+                                        onQueueItemClick = onSkipToSongClick,
+                                    )
+                                } else {
+                                    Column(
+                                        modifier = Modifier.requiredHeight(maxHeight / 2 + 80.dp),
                                     ) {
-                                        with(LocalSharedTransitionScope.current) {
-                                            Column(
-                                                verticalArrangement = Arrangement.spacedBy(2.dp),
-                                                modifier = Modifier.weight(1f),
-                                            ) {
-                                                Text(
-                                                    text = currentSong.title,
-                                                    maxLines = 1,
+                                        Box(
+                                            modifier = Modifier.weight(1f),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            SongArtwork(
+                                                artworkUri = currentSong.artworkUri,
+                                                animatedVisibilityScope = this@AnimatedContent,
+                                            )
+                                        }
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 32.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            with(LocalSharedTransitionScope.current) {
+                                                Column(
+                                                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                                                    modifier = Modifier.weight(1f),
+                                                ) {
+                                                    Text(
+                                                        text = currentSong.title,
+                                                        maxLines = 1,
+                                                        modifier = Modifier
+                                                            .sharedBounds(
+                                                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                                                sharedContentState = rememberSharedContentState(
+                                                                    currentSong.title
+                                                                ),
+                                                                animatedVisibilityScope = this@AnimatedContent,
+                                                            )
+                                                            .basicMarquee(),
+                                                        style = MaterialTheme.typography.titleLarge,
+                                                    )
+                                                    Text(
+                                                        text = currentSong.artist,
+                                                        maxLines = 1,
+                                                        modifier = Modifier
+                                                            .sharedBounds(
+                                                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                                                sharedContentState = rememberSharedContentState(
+                                                                    currentSong.artist
+                                                                ),
+                                                                animatedVisibilityScope = this@AnimatedContent,
+                                                            )
+                                                            .basicMarquee(),
+                                                        style = MaterialTheme.typography.bodyLarge,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    )
+                                                }
+                                                FavoriteToggleButton(
+                                                    song = currentSong,
                                                     modifier = Modifier
                                                         .sharedBounds(
                                                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                             sharedContentState = rememberSharedContentState(
-                                                                currentSong.title
+                                                                localesR.string.favorites
                                                             ),
                                                             animatedVisibilityScope = this@AnimatedContent,
-                                                        )
-                                                        .basicMarquee(),
-                                                    style = MaterialTheme.typography.titleLarge,
+                                                        ),
                                                 )
-                                                Text(
-                                                    text = currentSong.artist,
-                                                    maxLines = 1,
+                                                MoreIconButton(
+                                                    song = currentSong,
                                                     modifier = Modifier
                                                         .sharedBounds(
                                                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                             sharedContentState = rememberSharedContentState(
-                                                                currentSong.artist
+                                                                localesR.string.more_options
                                                             ),
                                                             animatedVisibilityScope = this@AnimatedContent,
-                                                        )
-                                                        .basicMarquee(),
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        ),
                                                 )
                                             }
-                                            FavoriteToggleButton(
-                                                song = currentSong,
-                                                modifier = Modifier
-                                                    .sharedBounds(
-                                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                        sharedContentState = rememberSharedContentState(
-                                                            localesR.string.favorites
-                                                        ),
-                                                        animatedVisibilityScope = this@AnimatedContent,
-                                                    ),
-                                            )
-                                            MoreIconButton(
-                                                song = currentSong,
-                                                modifier = Modifier
-                                                    .sharedBounds(
-                                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                                        sharedContentState = rememberSharedContentState(
-                                                            localesR.string.more_options
-                                                        ),
-                                                        animatedVisibilityScope = this@AnimatedContent,
-                                                    ),
-                                            )
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
-                        val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-                        this@Column.AnimatedVisibility(
-                            visible = isPlayerActionsVisible || !queueOpened,
-                            modifier = Modifier.align(Alignment.BottomCenter),
-                            enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
-                            exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
-                        ) {
-                            Column(
-                                modifier = Modifier.requiredHeight(maxHeight / 2 - 80.dp),
+                            val spatialSpec =
+                                MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+                            val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+                            this@Column.AnimatedVisibility(
+                                visible = isPlayerActionsVisible || !queueOpened,
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
+                                exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
                             ) {
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(8.dp)
-                                        .background(
-                                            brush = Brush.verticalGradient(
-                                                listOf(
-                                                    Color.Transparent,
-                                                    MaterialTheme.colorScheme.surface
-                                                ),
-                                            )
-                                        ),
-                                )
-                                Surface(
-                                    modifier = Modifier.fillMaxSize(),
+                                Column(
+                                    modifier = Modifier.requiredHeight(maxHeight / 2 - 80.dp),
                                 ) {
-                                    Column(
+                                    Spacer(
                                         modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
-                                            .navigationBarsPadding(),
-                                        verticalArrangement = Arrangement.SpaceBetween,
+                                            .fillMaxWidth()
+                                            .height(8.dp)
+                                            .background(
+                                                brush = Brush.verticalGradient(
+                                                    listOf(
+                                                        Color.Transparent,
+                                                        MaterialTheme.colorScheme.surface
+                                                    ),
+                                                )
+                                            ),
+                                    )
+                                    Surface(
+                                        modifier = Modifier.fillMaxSize(),
                                     ) {
-                                        ProgressSlider(
-                                            currentPosition = playerUiState.currentPosition,
-                                            duration = playerUiState.currentSong.duration,
-                                            bitrate = playerUiState.currentSong.bitrate,
-                                            onSeekTo = onSeekTo,
-                                            modifier = Modifier.fillMaxWidth(),
-                                        )
-                                        PlayerActionButtons(
-                                            nowPlayingState = playerUiState.nowPlayingState,
-                                            onSkipPreviousClick = onSkipPreviousClick,
-                                            onPlayClick = onPlayClick,
-                                            onPauseClick = onPauseClick,
-                                            onSkipNextClick = onSkipNextClick,
-                                        )
-                                        PlaybackActionButtons(
-                                            playbackConfig = playerUiState.playbackConfig,
-                                            onRepeatToggle = onRepeatToggle,
-                                            onShuffleToggle = onShuffleToggle,
-                                            queueOpened = queueOpened,
-                                            onQueueClick = { queueOpened = it },
-                                        )
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                                                .navigationBarsPadding(),
+                                            verticalArrangement = Arrangement.SpaceBetween,
+                                        ) {
+                                            ProgressSlider(
+                                                currentPosition = playerUiState.currentPosition,
+                                                duration = playerUiState.currentSong.duration,
+                                                bitrate = playerUiState.currentSong.bitrate,
+                                                onSeekTo = onSeekTo,
+                                                modifier = Modifier.fillMaxWidth(),
+                                            )
+                                            PlayerActionButtons(
+                                                nowPlayingState = playerUiState.nowPlayingState,
+                                                onSkipPreviousClick = onSkipPreviousClick,
+                                                onPlayClick = onPlayClick,
+                                                onPauseClick = onPauseClick,
+                                                onSkipNextClick = onSkipNextClick,
+                                            )
+                                            PlaybackActionButtons(
+                                                playbackConfig = playerUiState.playbackConfig,
+                                                onRepeatToggle = onRepeatToggle,
+                                                onShuffleToggle = onShuffleToggle,
+                                                queueOpened = queueOpened,
+                                                onQueueClick = { queueOpened = it },
+                                            )
+                                        }
                                     }
                                 }
                             }
