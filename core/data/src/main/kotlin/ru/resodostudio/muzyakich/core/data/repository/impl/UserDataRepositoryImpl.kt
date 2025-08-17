@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.core.data.repository.offline
+package ru.resodostudio.muzyakich.core.data.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
@@ -8,7 +8,7 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.UserData
 import javax.inject.Inject
 
-internal class OfflineUserDataRepository @Inject constructor(
+internal class UserDataRepositoryImpl @Inject constructor(
     private val muzPreferencesDataSource: MuzPreferencesDataSource,
 ) : UserDataRepository {
 
