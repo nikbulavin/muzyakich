@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
+import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
@@ -20,7 +20,7 @@ import kotlin.uuid.Uuid
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    mediaRepository: MediaRepository,
+    songsRepository: SongsRepository,
     private val userDataRepository: UserDataRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
@@ -28,7 +28,7 @@ class PlayerViewModel @Inject constructor(
     val playerUiState = combine(
         musicServiceConnection.nowPlayingState,
         musicServiceConnection.currentPosition,
-        mediaRepository.songs,
+        songsRepository.getSongs(),
         userDataRepository.userData,
     ) { nowPlayingState, currentPosition, songs, userData ->
         val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }

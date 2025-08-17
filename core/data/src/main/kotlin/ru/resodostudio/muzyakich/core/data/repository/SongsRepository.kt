@@ -3,7 +3,7 @@ package ru.resodostudio.muzyakich.core.data.repository
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudio.muzyakich.core.model.data.Song
 
-interface MediaRepository {
+interface SongsRepository {
 
-    val songs: Flow<List<Song>>
+    fun getSongs(): Flow<List<Song>>
 }

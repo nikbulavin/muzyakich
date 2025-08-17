@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
-import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
+import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    mediaRepository: MediaRepository,
+    songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
@@ -25,7 +25,7 @@ class LibraryViewModel @Inject constructor(
     val libraryUiState = combine(
         musicServiceConnection.nowPlayingState,
         musicServiceConnection.currentPosition,
-        mediaRepository.songs,
+        songsRepository.getSongs(),
         shouldFilterFavoritesState,
     ) { nowPlayingState, currentPosition, songs, shouldFilterFavorites ->
         if (songs.isEmpty()) {

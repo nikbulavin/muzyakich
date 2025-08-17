@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.resodostudio.muzyakich.core.data.repository.MediaRepository
-import ru.resodostudio.muzyakich.core.data.repository.impl.MediaRepositoryImpl
+import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
+import ru.resodostudio.muzyakich.core.data.repository.impl.SongsRepositoryImpl
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.data.repository.impl.UserDataRepositoryImpl
 
@@ -19,7 +19,7 @@ internal abstract class DataModule {
     ): UserDataRepository
 
     @Binds
-    internal abstract fun bindsMediaRepository(
-        impl: MediaRepositoryImpl,
-    ): MediaRepository
+    internal abstract fun bindsSongsRepository(
+        impl: SongsRepositoryImpl,
+    ): SongsRepository
 }
