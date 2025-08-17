@@ -6,7 +6,7 @@ import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSource
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 
-class SongsRepositoryImpl @Inject constructor(
+internal class SongsRepositoryImpl @Inject constructor(
     private val mediaStoreDataSource: MediaStoreDataSource,
 ) : SongsRepository {
 
