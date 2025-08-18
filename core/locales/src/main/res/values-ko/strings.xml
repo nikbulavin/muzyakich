@@ -36,4 +36,8 @@
     <string name="skip_next">다음 곡</string>
     <string name="skip_previous">이전 곡</string>
     <string name="songs">노래</string>
+
+    <plurals name="number_of_songs">
+        <item quantity="other">%d곡</item>
+    </plurals>
 </resources>

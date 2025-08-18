@@ -36,4 +36,11 @@
     <string name="skip_next">Перейти к следующему</string>
     <string name="skip_previous">Перейти к предыдущему</string>
     <string name="songs">Песни</string>
+
+    <plurals name="number_of_songs">
+        <item quantity="one">%d песня</item>
+        <item quantity="few">%d песни</item>
+        <item quantity="many">%d песен</item>
+        <item quantity="other">%d песни</item>
+    </plurals>
 </resources>

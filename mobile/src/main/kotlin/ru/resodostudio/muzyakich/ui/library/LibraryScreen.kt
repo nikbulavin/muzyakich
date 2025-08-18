@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -301,8 +302,24 @@ private fun LibraryScreen(
                                         contentType = { "Artists" },
                                     ) { artist ->
                                         ListItem(
-                                            headlineContent = { Text(artist.name) },
-                                            supportingContent = { Text("${artist.songs.size} songs") },
+                                            headlineContent = {
+                                                Text(
+                                                    text = artist.name,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            },
+                                            supportingContent = {
+                                                Text(
+                                                    text = pluralStringResource(
+                                                        localesR.plurals.number_of_songs,
+                                                        artist.songs.size,
+                                                        artist.songs.size,
+                                                    ),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            },
                                             modifier = Modifier.animateItem(),
                                         )
                                     }

@@ -36,4 +36,9 @@
     <string name="skip_next">Skip next</string>
     <string name="skip_previous">Skip previous</string>
     <string name="songs">Songs</string>
+
+    <plurals name="number_of_songs">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
 </resources>
