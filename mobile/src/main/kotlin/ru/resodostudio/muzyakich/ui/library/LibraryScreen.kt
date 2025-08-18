@@ -181,7 +181,6 @@ private fun LibraryScreen(
                 }
 
                 is LibraryUiState.Success -> {
-                    val songs = libraryUiState.songs
                     var expanded by rememberSaveable { mutableStateOf(true) }
 
                     Box {
@@ -251,42 +250,11 @@ private fun LibraryScreen(
                                             )
                                         }
                                     }
-                                    items(
-                                        items = songs,
-                                        key = { it.mediaId },
-                                        contentType = { "Song" },
-                                    ) { song ->
-                                        val isPlaying =
-                                            libraryUiState.nowPlayingState.mediaId == song.mediaId &&
-                                                    libraryUiState.nowPlayingState.playWhenReady
-
-                                        var showSongDetails by rememberSaveable {
-                                            mutableStateOf(
-                                                false
-                                            )
-                                        }
-
-                                        SongItem(
-                                            song = song,
-                                            isPlaying = isPlaying,
-                                            modifier = Modifier.animateItem(),
-                                            onClick = {
-                                                onPlaySongsClick(
-                                                    songs,
-                                                    songs.indexOf(song)
-                                                )
-                                            },
-                                            onMenuClick = { showSongDetails = true },
-                                        )
-
-                                        if (showSongDetails) {
-                                            SongDetailsBottomSheet(
-                                                song = song,
-                                                onDismiss = { showSongDetails = false },
-                                                onPlayNextClick = onPlayNextClick,
-                                            )
-                                        }
-                                    }
+                                    songs(
+                                        libraryUiState = libraryUiState,
+                                        onPlaySongsClick = onPlaySongsClick,
+                                        onPlayNextClick = onPlayNextClick,
+                                    )
                                 }
 
                                 ALBUMS -> {
@@ -332,7 +300,7 @@ private fun LibraryScreen(
                                     expanded = expanded,
                                     onPlaySongsClick = onPlaySongsClick,
                                     onShuffleSongsClick = onShuffleSongsClick,
-                                    songs = songs,
+                                    songs = libraryUiState.songs,
                                     modifier = Modifier.offset(y = -ScreenOffset),
                                 )
                             }
@@ -340,6 +308,45 @@ private fun LibraryScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun LazyGridScope.songs(
+    libraryUiState: LibraryUiState.Success,
+    onPlaySongsClick: (List<Song>, Int) -> Unit,
+    onPlayNextClick: (Song) -> Unit,
+) {
+    items(
+        items = libraryUiState.songs,
+        key = { it.mediaId },
+        contentType = { "Song" },
+    ) { song ->
+        val isPlaying =
+            libraryUiState.nowPlayingState.mediaId == song.mediaId &&
+                    libraryUiState.nowPlayingState.playWhenReady
+
+        var showSongDetails by rememberSaveable { mutableStateOf(false) }
+
+        SongItem(
+            song = song,
+            isPlaying = isPlaying,
+            modifier = Modifier.animateItem(),
+            onClick = {
+                onPlaySongsClick(
+                    libraryUiState.songs,
+                    libraryUiState.songs.indexOf(song)
+                )
+            },
+            onMenuClick = { showSongDetails = true },
+        )
+
+        if (showSongDetails) {
+            SongDetailsBottomSheet(
+                song = song,
+                onDismiss = { showSongDetails = false },
+                onPlayNextClick = onPlayNextClick,
+            )
         }
     }
 }
