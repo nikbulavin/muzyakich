@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
@@ -43,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
@@ -127,6 +130,9 @@ private fun LibraryScreen(
         Column(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
         ) {
+            val lazyGridState = rememberLazyGridState()
+            val coroutineScope = rememberCoroutineScope()
+
             val libraryTabs = remember { LibraryTab.entries }
             var selectedTab by rememberSaveable { mutableStateOf(libraryTabs.first()) }
 
@@ -137,7 +143,12 @@ private fun LibraryScreen(
                 libraryTabs.forEach { tab ->
                     Tab(
                         selected = selectedTab == tab,
-                        onClick = { selectedTab = tab },
+                        onClick = {
+                            selectedTab = tab
+                            coroutineScope.launch {
+                                lazyGridState.scrollToItem(0)
+                            }
+                        },
                         icon = {
                             Icon(
                                 imageVector = tab.icon,
@@ -172,6 +183,7 @@ private fun LibraryScreen(
 
                     Box {
                         LazyVerticalGrid(
+                            state = lazyGridState,
                             columns = GridCells.Adaptive(300.dp),
                             contentPadding = PaddingValues(
                                 top = 8.dp,
@@ -245,7 +257,11 @@ private fun LibraryScreen(
                                             libraryUiState.nowPlayingState.mediaId == song.mediaId &&
                                                     libraryUiState.nowPlayingState.playWhenReady
 
-                                        var showSongDetails by rememberSaveable { mutableStateOf(false) }
+                                        var showSongDetails by rememberSaveable {
+                                            mutableStateOf(
+                                                false
+                                            )
+                                        }
 
                                         SongItem(
                                             song = song,
