@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
+import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
@@ -36,6 +37,13 @@ class LibraryViewModel @Inject constructor(
                 .run {
                     if (shouldFilterFavorites) filter { it.isFavorite } else this
                 }
+            val artists = songs.groupBy(Song::artistId).map { (artistId, songs) ->
+                Artist(
+                    id = artistId,
+                    name = songs.firstOrNull()?.artist ?: "<unknown>",
+                    songs = songs,
+                )
+            }
 
             LibraryUiState.Success(
                 nowPlayingState = nowPlayingState,
@@ -43,6 +51,7 @@ class LibraryViewModel @Inject constructor(
                 currentSong = currentSong,
                 songs = filteredSongs,
                 shouldFilterFavorites = shouldFilterFavorites,
+                artists = artists,
             )
         }
     }
@@ -87,5 +96,6 @@ sealed interface LibraryUiState {
         val currentSong: Song?,
         val songs: List<Song>,
         val shouldFilterFavorites: Boolean,
+        val artists: List<Artist>,
     ) : LibraryUiState
 }

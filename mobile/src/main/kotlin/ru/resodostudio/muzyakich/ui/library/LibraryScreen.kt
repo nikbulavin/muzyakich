@@ -32,6 +32,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
@@ -278,10 +279,16 @@ private fun LibraryScreen(
                                 }
 
                                 ARTISTS -> {
-                                    item(
-                                        span = { GridItemSpan(maxLineSpan) },
-                                    ) {
-                                        LoadingState(modifier = Modifier.animateItem())
+                                    items(
+                                        items = libraryUiState.artists,
+                                        key = { it.id },
+                                        contentType = { "Artists" },
+                                    ) { artist ->
+                                        ListItem(
+                                            headlineContent = { Text(artist.name) },
+                                            supportingContent = { Text("${artist.songs.size} songs") },
+                                            modifier = Modifier.animateItem(),
+                                        )
                                     }
                                 }
                             }
