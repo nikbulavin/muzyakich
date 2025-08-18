@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -68,6 +69,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
@@ -296,33 +298,9 @@ private fun LibraryScreen(
                                 }
 
                                 ARTISTS -> {
-                                    items(
-                                        items = libraryUiState.artists,
-                                        key = { it.id },
-                                        contentType = { "Artists" },
-                                    ) { artist ->
-                                        ListItem(
-                                            headlineContent = {
-                                                Text(
-                                                    text = artist.name,
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                )
-                                            },
-                                            supportingContent = {
-                                                Text(
-                                                    text = pluralStringResource(
-                                                        localesR.plurals.number_of_songs,
-                                                        artist.songs.size,
-                                                        artist.songs.size,
-                                                    ),
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                )
-                                            },
-                                            modifier = Modifier.animateItem(),
-                                        )
-                                    }
+                                    artists(
+                                        artists = libraryUiState.artists,
+                                    )
                                 }
                             }
                         }
@@ -363,6 +341,38 @@ private fun LibraryScreen(
                 }
             }
         }
+    }
+}
+
+private fun LazyGridScope.artists(
+    artists: List<Artist>,
+) {
+    items(
+        items = artists,
+        key = { it.id },
+        contentType = { "Artists" },
+    ) { artist ->
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = artist.name,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = pluralStringResource(
+                        localesR.plurals.number_of_songs,
+                        artist.songs.size,
+                        artist.songs.size,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            modifier = Modifier.animateItem(),
+        )
     }
 }
 
