@@ -170,118 +170,119 @@ private fun LibraryScreen(
                     var expanded by rememberSaveable { mutableStateOf(true) }
 
                     Box {
-                        AnimatedContent(selectedTab) { currentTab ->
-                            when (currentTab) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(300.dp),
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = 104.dp + WindowInsets.navigationBars
+                                    .asPaddingValues()
+                                    .calculateBottomPadding(),
+                            ),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .floatingToolbarVerticalNestedScroll(
+                                    expanded = expanded,
+                                    onExpand = { expanded = true },
+                                    onCollapse = { expanded = false },
+                                ),
+                        ) {
+                            when (selectedTab) {
                                 PLAYLISTS -> {
-                                    LoadingState(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .navigationBarsPadding(),
-                                    )
+                                    item(
+                                        span = { GridItemSpan(maxLineSpan) },
+                                    ) {
+                                        LoadingState(modifier = Modifier.animateItem())
+                                    }
                                 }
 
                                 SONGS -> {
-                                    LazyVerticalGrid(
-                                        columns = GridCells.Adaptive(300.dp),
-                                        contentPadding = PaddingValues(
-                                            top = 8.dp,
-                                            bottom = 104.dp + WindowInsets.navigationBars
-                                                .asPaddingValues()
-                                                .calculateBottomPadding(),
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .floatingToolbarVerticalNestedScroll(
-                                                expanded = expanded,
-                                                onExpand = { expanded = true },
-                                                onCollapse = { expanded = false },
-                                            ),
+                                    item(
+                                        span = { GridItemSpan(maxLineSpan) },
+                                        contentType = { "FilterChips" },
                                     ) {
-                                        item(
-                                            span = { GridItemSpan(maxLineSpan) },
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .animateItem(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                            ) {
-                                                val hapticFeedback = LocalHapticFeedback.current
-                                                val selected = libraryUiState.shouldFilterFavorites
-                                                FilterChip(
-                                                    selected = libraryUiState.shouldFilterFavorites,
-                                                    onClick = {
-                                                        hapticFeedback.performHapticFeedback(
-                                                            if (!selected) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-                                                        )
-                                                        onToggleFilterFavorites()
-                                                    },
-                                                    label = { Text(stringResource(localesR.string.favorites)) },
-                                                    modifier = Modifier.padding(start = 16.dp),
-                                                    leadingIcon = {
-                                                        val icon =
-                                                            if (libraryUiState.shouldFilterFavorites) {
-                                                                MuzIcons.Rounded.Check
-                                                            } else {
-                                                                MuzIcons.Filled.Star
-                                                            }
-                                                        Icon(
-                                                            imageVector = icon,
-                                                            contentDescription = null,
-                                                            modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                                        )
-                                                    },
-                                                )
-                                            }
-                                        }
-                                        items(
-                                            items = songs,
-                                            key = { it.mediaId },
-                                            contentType = { "Song" },
-                                        ) { song ->
-                                            val isPlaying =
-                                                libraryUiState.nowPlayingState.mediaId == song.mediaId &&
-                                                        libraryUiState.nowPlayingState.playWhenReady
-
-                                            var showSongDetails by rememberSaveable { mutableStateOf(false) }
-
-                                            SongItem(
-                                                song = song,
-                                                isPlaying = isPlaying,
-                                                modifier = Modifier.animateItem(),
+                                            val hapticFeedback = LocalHapticFeedback.current
+                                            val selected = libraryUiState.shouldFilterFavorites
+                                            FilterChip(
+                                                selected = libraryUiState.shouldFilterFavorites,
                                                 onClick = {
-                                                    onPlaySongsClick(
-                                                        songs,
-                                                        songs.indexOf(song)
+                                                    hapticFeedback.performHapticFeedback(
+                                                        if (!selected) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                                                    )
+                                                    onToggleFilterFavorites()
+                                                },
+                                                label = { Text(stringResource(localesR.string.favorites)) },
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                leadingIcon = {
+                                                    val icon =
+                                                        if (libraryUiState.shouldFilterFavorites) {
+                                                            MuzIcons.Rounded.Check
+                                                        } else {
+                                                            MuzIcons.Filled.Star
+                                                        }
+                                                    Icon(
+                                                        imageVector = icon,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
                                                     )
                                                 },
-                                                onMenuClick = { showSongDetails = true },
                                             )
+                                        }
+                                    }
+                                    items(
+                                        items = songs,
+                                        key = { it.mediaId },
+                                        contentType = { "Song" },
+                                    ) { song ->
+                                        val isPlaying =
+                                            libraryUiState.nowPlayingState.mediaId == song.mediaId &&
+                                                    libraryUiState.nowPlayingState.playWhenReady
 
-                                            if (showSongDetails) {
-                                                SongDetailsBottomSheet(
-                                                    song = song,
-                                                    onDismiss = { showSongDetails = false },
-                                                    onPlayNextClick = onPlayNextClick,
+                                        var showSongDetails by rememberSaveable { mutableStateOf(false) }
+
+                                        SongItem(
+                                            song = song,
+                                            isPlaying = isPlaying,
+                                            modifier = Modifier.animateItem(),
+                                            onClick = {
+                                                onPlaySongsClick(
+                                                    songs,
+                                                    songs.indexOf(song)
                                                 )
-                                            }
+                                            },
+                                            onMenuClick = { showSongDetails = true },
+                                        )
+
+                                        if (showSongDetails) {
+                                            SongDetailsBottomSheet(
+                                                song = song,
+                                                onDismiss = { showSongDetails = false },
+                                                onPlayNextClick = onPlayNextClick,
+                                            )
                                         }
                                     }
                                 }
 
                                 ALBUMS -> {
-                                    LoadingState(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .navigationBarsPadding(),
-                                    )
+                                    item(
+                                        span = { GridItemSpan(maxLineSpan) },
+                                    ) {
+                                        LoadingState(modifier = Modifier.animateItem())
+                                    }
                                 }
 
                                 ARTISTS -> {
-                                    LoadingState(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .navigationBarsPadding(),
-                                    )
+                                    item(
+                                        span = { GridItemSpan(maxLineSpan) },
+                                    ) {
+                                        LoadingState(modifier = Modifier.animateItem())
+                                    }
                                 }
                             }
                         }
