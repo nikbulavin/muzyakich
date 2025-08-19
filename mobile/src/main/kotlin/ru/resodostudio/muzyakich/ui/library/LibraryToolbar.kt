@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,7 +30,9 @@ internal fun LibraryToolbar(
     songs: List<Song>,
     modifier: Modifier = Modifier,
 ) {
+    val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     HorizontalFloatingToolbar(
+        colors = vibrantColors,
         modifier = modifier,
         expanded = expanded,
         content = {
@@ -43,7 +46,7 @@ internal fun LibraryToolbar(
                     contentDescription = stringResource(localesR.string.play_audio),
                 )
             }
-            Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(if (expanded) 2.dp else 4.dp))
         },
         trailingContent = {
             val shuffleButtonLabel = stringResource(localesR.string.shuffle)
