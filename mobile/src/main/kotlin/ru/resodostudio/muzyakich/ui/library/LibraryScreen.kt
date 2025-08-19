@@ -1,12 +1,10 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.snap
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.togetherWith
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -30,8 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
-import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -182,8 +177,6 @@ private fun LibraryScreen(
                 }
 
                 is LibraryUiState.Success -> {
-                    var expanded by rememberSaveable { mutableStateOf(true) }
-
                     Box {
                         LazyVerticalGrid(
                             state = lazyGridState,
@@ -194,13 +187,7 @@ private fun LibraryScreen(
                                     .asPaddingValues()
                                     .calculateBottomPadding(),
                             ),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .floatingToolbarVerticalNestedScroll(
-                                    expanded = expanded,
-                                    onExpand = { expanded = true },
-                                    onCollapse = { expanded = false },
-                                ),
+                            modifier = Modifier.fillMaxSize(),
                         ) {
                             when (selectedTab) {
                                 PLAYLISTS -> {
@@ -241,18 +228,17 @@ private fun LibraryScreen(
                             }
                         }
 
-                        val animSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
-                        AnimatedContent(
-                            targetState = libraryUiState.nowPlayingState.mediaId.isNotBlank(),
+                        val motionScheme = MaterialTheme.motionScheme
+                        this@Column.AnimatedVisibility(
+                            visible = libraryUiState.nowPlayingState.mediaId.isNotBlank(),
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .navigationBarsPadding(),
-                            contentAlignment = Alignment.Center,
-                            transitionSpec = {
-                                fadeIn() + scaleIn(animSpec, 0.92f) togetherWith fadeOut(snap())
-                            },
-                        ) { isPlaying ->
-                            if (libraryUiState.currentSong != null && isPlaying) {
+                            enter = fadeIn(motionScheme.defaultEffectsSpec()) +
+                                    scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                                    slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
+                        ) {
+                            if (libraryUiState.currentSong != null) {
                                 NowPlayingBar(
                                     nowPlayingState = libraryUiState.nowPlayingState,
                                     song = libraryUiState.currentSong,
@@ -262,14 +248,6 @@ private fun LibraryScreen(
                                     onPauseClick = onPauseClick,
                                     onSkipNextClick = onSkipNextClick,
                                     onClick = onNowPlayingBarClick,
-                                )
-                            } else {
-                                LibraryToolbar(
-                                    expanded = expanded,
-                                    onPlaySongsClick = onPlaySongsClick,
-                                    onShuffleSongsClick = onShuffleSongsClick,
-                                    songs = libraryUiState.songs,
-                                    modifier = Modifier.offset(y = -ScreenOffset),
                                 )
                             }
                         }
