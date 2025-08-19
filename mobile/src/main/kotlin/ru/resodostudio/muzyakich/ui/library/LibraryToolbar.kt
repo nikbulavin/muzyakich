@@ -1,23 +1,20 @@
 package ru.resodostudio.muzyakich.ui.library
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.model.data.Song
@@ -37,40 +34,49 @@ internal fun LibraryToolbar(
         expanded = expanded,
         content = {
             Spacer(Modifier.width(4.dp))
-            Button(
-                shapes = ButtonDefaults.shapes(ButtonDefaults.filledTonalShape, ButtonDefaults.filledTonalShape),
+            FilledIconButton(
+                modifier = Modifier.width(64.dp),
                 onClick = { onPlaySongsClick(songs, DEFAULT_INDEX) },
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.PlayArrow,
-                        contentDescription = null,
-                    )
-                    Text(text = stringResource(localesR.string.play_audio))
-                }
+                Icon(
+                    imageVector = MuzIcons.Rounded.PlayArrow,
+                    contentDescription = stringResource(localesR.string.play_audio),
+                )
             }
-            Spacer(Modifier.width(if (expanded) 8.dp else 4.dp))
+            Spacer(Modifier.width(4.dp))
         },
         trailingContent = {
-            TextButton(
-                shapes = ButtonDefaults.shapes(ButtonDefaults.textShape, ButtonDefaults.textShape),
-                onClick = { onShuffleSongsClick(songs, DEFAULT_INDEX) },
+            val shuffleButtonLabel = stringResource(localesR.string.shuffle)
+            AppBarRow(
+                maxItemCount = 1,
+                overflowIndicator = { menuState ->
+                    IconButton(
+                        onClick = {
+                            if (menuState.isExpanded) {
+                                menuState.dismiss()
+                            } else {
+                                menuState.show()
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.MoreVert,
+                            contentDescription = stringResource(localesR.string.open_menu),
+                        )
+                    }
+                },
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.Shuffle,
-                        contentDescription = null,
-                    )
-                    Text(text = stringResource(localesR.string.shuffle))
-                }
+                clickableItem(
+                    onClick = { onShuffleSongsClick(songs, DEFAULT_INDEX) },
+                    icon = {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.Shuffle,
+                            contentDescription = stringResource(localesR.string.shuffle),
+                        )
+                    },
+                    label = shuffleButtonLabel,
+                )
             }
-            if (expanded) Spacer(Modifier.width(4.dp))
         },
     )
 }
