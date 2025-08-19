@@ -22,6 +22,7 @@
     <string name="move_to_trash_description">Будет удален навсегда через 30 дней</string>
     <string name="music_notification_channel_name">Сейчас играет</string>
     <string name="next_in_queue">Следующие в очереди</string>
+    <string name="open_filter_menu">Открыть меню фильтров</string>
     <string name="open_menu">Открыть меню</string>
     <string name="pause_audio">Поставить на паузу</string>
     <string name="play_audio">Воспроизвести</string>

@@ -22,6 +22,7 @@
     <string name="move_to_trash_description">30일 후에 영구적으로 삭제됩니다</string>
     <string name="music_notification_channel_name">현재 재생 중</string>
     <string name="next_in_queue">다음 재생</string>
+    <string name="open_filter_menu">필터 메뉴 열기</string>
     <string name="open_menu">메뉴 열기</string>
     <string name="pause_audio">일시 정지</string>
     <string name="play_audio">재생</string>

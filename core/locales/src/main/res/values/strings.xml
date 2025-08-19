@@ -22,6 +22,7 @@
     <string name="move_to_trash_description">Will be permanently deleted after 30 days</string>
     <string name="music_notification_channel_name">Now playing</string>
     <string name="next_in_queue">Next in queue</string>
+    <string name="open_filter_menu">Open filter menu</string>
     <string name="open_menu">Open menu</string>
     <string name="pause_audio">Pause</string>
     <string name="play_audio">Play</string>
