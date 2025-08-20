@@ -76,6 +76,7 @@ import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.SONGS
+import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -212,30 +213,9 @@ private fun LibraryScreen(
                                         onPlaySongsClick = onPlaySongsClick,
                                         onPlayNextClick = onPlayNextClick,
                                     )
-                                    item(
-                                        span = { GridItemSpan(maxLineSpan) },
-                                    ) {
-                                        val songsCount = pluralStringResource(
-                                            localesR.plurals.number_of_songs,
-                                            libraryUiState.songs.size,
-                                            libraryUiState.songs.size,
-                                        )
-                                        val songsSizeOnDisk = Formatter.formatFileSize(
-                                            LocalContext.current,
-                                            libraryUiState.songs.sumOf { it.size }.toLong(),
-                                        )
-                                        val songsInfo = listOf(songsCount, songsSizeOnDisk)
-                                        Text(
-                                            text = songsInfo.joinToString(),
-                                            modifier = Modifier
-                                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                                .animateItem(),
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            style = MaterialTheme.typography.labelLarge,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
+                                    songsInfo(
+                                        songs = libraryUiState.songs,
+                                    )
                                 }
 
                                 ALBUMS -> {
@@ -281,6 +261,34 @@ private fun LibraryScreen(
                 }
             }
         }
+    }
+}
+
+private fun LazyGridScope.songsInfo(
+    songs: List<Song>,
+) {
+    item(
+        span = { GridItemSpan(maxLineSpan) },
+    ) {
+        val count = pluralStringResource(localesR.plurals.number_of_songs, songs.size, songs.size)
+        val overallDuration = songs
+            .sumOf { it.duration }
+            .asFormattedDuration()
+        val sizeOnDisk = Formatter.formatFileSize(
+            LocalContext.current,
+            songs.sumOf { it.size }.toLong(),
+        )
+        val songsInfo = listOf(count, overallDuration, sizeOnDisk)
+        Text(
+            text = songsInfo.joinToString(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .animateItem(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

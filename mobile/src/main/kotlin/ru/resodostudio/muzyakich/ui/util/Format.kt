@@ -1,9 +1,11 @@
 package ru.resodostudio.muzyakich.ui.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import java.text.NumberFormat
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 fun Long.asFormattedString(): String {
@@ -28,3 +30,20 @@ fun convertToProgress(count: Long, total: Long): Float {
 }
 
 fun convertToPosition(value: Float, total: Long) = (value * total).toLong()
+
+@Composable
+fun Long.asFormattedDuration(): String {
+    val hours = TimeUnit.MILLISECONDS.toHours(this)
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(this) % 60
+
+    val parts = buildList {
+        if (hours > 0) {
+            add(pluralStringResource(localesR.plurals.duration_hours, hours.toInt(), hours.toInt()))
+        }
+        if (minutes > 0) {
+            add(pluralStringResource(localesR.plurals.duration_minutes, minutes.toInt(), minutes.toInt()))
+        }
+    }
+
+    return parts.joinToString(" ")
+}

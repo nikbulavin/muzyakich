@@ -38,6 +38,12 @@
     <string name="skip_previous">이전 곡</string>
     <string name="songs">노래</string>
 
+    <plurals name="duration_hours">
+        <item quantity="other">%d 시간</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="other">%d 분</item>
+    </plurals>
     <plurals name="number_of_songs">
         <item quantity="other">%d곡</item>
     </plurals>
