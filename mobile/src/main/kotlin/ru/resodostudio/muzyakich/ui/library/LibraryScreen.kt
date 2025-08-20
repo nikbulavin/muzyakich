@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.library
 
+import android.text.format.Formatter
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -210,6 +212,30 @@ private fun LibraryScreen(
                                         onPlaySongsClick = onPlaySongsClick,
                                         onPlayNextClick = onPlayNextClick,
                                     )
+                                    item(
+                                        span = { GridItemSpan(maxLineSpan) },
+                                    ) {
+                                        val songsCount = pluralStringResource(
+                                            localesR.plurals.number_of_songs,
+                                            libraryUiState.songs.size,
+                                            libraryUiState.songs.size,
+                                        )
+                                        val songsSizeOnDisk = Formatter.formatFileSize(
+                                            LocalContext.current,
+                                            libraryUiState.songs.sumOf { it.size }.toLong(),
+                                        )
+                                        val songsInfo = listOf(songsCount, songsSizeOnDisk)
+                                        Text(
+                                            text = songsInfo.joinToString(),
+                                            modifier = Modifier
+                                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                                .animateItem(),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
                                 }
 
                                 ALBUMS -> {
