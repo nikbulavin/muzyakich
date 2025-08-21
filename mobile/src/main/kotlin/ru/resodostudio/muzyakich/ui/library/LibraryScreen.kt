@@ -181,6 +181,16 @@ private fun LibraryScreen(
                 }
 
                 is LibraryUiState.Success -> {
+                    var shouldShowFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+                    if (shouldShowFilterBottomSheet) {
+                        FilterBottomSheet(
+                            onDismiss = { shouldShowFilterBottomSheet = false },
+                            shouldFilterFavorites = libraryUiState.shouldFilterFavorites,
+                            onToggleFilterFavorites = onToggleFilterFavorites,
+                        )
+                    }
+
                     Box {
                         LazyVerticalGrid(
                             state = lazyGridState,
@@ -207,7 +217,7 @@ private fun LibraryScreen(
                                         songs = libraryUiState.songs,
                                         onPlaySongsClick = onPlaySongsClick,
                                         onShuffleSongsClick = onShuffleSongsClick,
-                                        onToggleFilterFavorites = onToggleFilterFavorites,
+                                        onFilterClick = { shouldShowFilterBottomSheet = true },
                                     )
                                     songs(
                                         libraryUiState = libraryUiState,
@@ -302,7 +312,7 @@ private fun LazyGridScope.actionButtons(
     songs: List<Song>,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onShuffleSongsClick: (List<Song>, Int) -> Unit,
-    onToggleFilterFavorites: () -> Unit,
+    onFilterClick: () -> Unit,
 ) {
     item(
         span = { GridItemSpan(maxLineSpan) },
@@ -353,7 +363,7 @@ private fun LazyGridScope.actionButtons(
                 }
             }
             IconButton(
-                onClick = onToggleFilterFavorites,
+                onClick = onFilterClick,
             ) {
                 Icon(
                     imageVector = MuzIcons.Rounded.FilterList,
