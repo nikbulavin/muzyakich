@@ -14,6 +14,7 @@
     <string name="enable_repeat_mode_one">한 곡 반복</string>
     <string name="enable_shuffle_mode">셔플 모드 활성화</string>
     <string name="favorites">즐겨찾기</string>
+    <string name="filters">필터</string>
     <string name="high_quality">고화질</string>
     <string name="bitrate_format">%1$dkbps</string>
     <string name="library_empty">아직 노래가 없습니다. 좋아하는 음악을 추가하고 감상하세요!</string>

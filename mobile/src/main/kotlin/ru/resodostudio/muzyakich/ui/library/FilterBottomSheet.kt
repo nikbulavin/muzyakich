@@ -50,7 +50,7 @@ fun FilterBottomSheet(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = "Filters",
+                text = stringResource(localesR.string.filters),
                 style = MaterialTheme.typography.titleMedium,
             )
             FlowRow(
