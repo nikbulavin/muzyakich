@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.ui.library
 import android.text.format.Formatter
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
@@ -242,7 +243,11 @@ private fun LibraryScreen(
                                 .navigationBarsPadding(),
                             enter = fadeIn(motionScheme.defaultEffectsSpec()) +
                                     scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
-                                    slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
+                                    slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
+                                    expandHorizontally(
+                                        animationSpec = motionScheme.defaultSpatialSpec(),
+                                        expandFrom = Alignment.CenterHorizontally,
+                                    ),
                         ) {
                             if (libraryUiState.currentSong != null) {
                                 NowPlayingBar(
