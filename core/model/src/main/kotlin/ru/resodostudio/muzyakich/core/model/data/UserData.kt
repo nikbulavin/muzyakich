@@ -4,4 +4,5 @@ data class UserData(
     val darkThemeConfig: DarkThemeConfig,
     val useDynamicColor: Boolean,
     val playbackConfig: PlaybackConfig,
+    val filterConfig: FilterConfig,
 )

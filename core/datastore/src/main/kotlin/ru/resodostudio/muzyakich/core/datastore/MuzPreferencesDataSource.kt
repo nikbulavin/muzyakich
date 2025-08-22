@@ -7,8 +7,11 @@ import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.DARK
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.LIGHT
+import ru.resodostudio.muzyakich.core.model.data.FilterConfig
 import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode
+import ru.resodostudio.muzyakich.core.model.data.SortBy
+import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.core.model.data.UserData
 import javax.inject.Inject
 
@@ -42,6 +45,24 @@ class MuzPreferencesDataSource @Inject constructor(
                     },
                     shuffleModeEnabled = it.shuffleModeEnabled
                 ),
+                filterConfig = FilterConfig(
+                    sortOrder = when (it.sortOrder) {
+                        null,
+                        SortOrderProto.SORT_ORDER_ASCENDING,
+                        SortOrderProto.UNRECOGNIZED,
+                            -> SortOrder.ASCENDING
+
+                        SortOrderProto.SORT_ORDER_DESCENDING -> SortOrder.DESCENDING
+                    },
+                    sortBy = when (it.sortBy) {
+                        null,
+                        SortByProto.SORT_BY_ARTIST,
+                        SortByProto.UNRECOGNIZED,
+                            -> SortBy.ARTIST
+
+                        SortByProto.SORT_BY_TITLE -> SortBy.TITLE
+                    }
+                )
             )
         }
 
