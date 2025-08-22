@@ -109,4 +109,32 @@ class MuzPreferencesDataSource @Inject constructor(
             }
         }
     }
+
+    suspend fun setSortByPreference(sortBy: SortBy) {
+        runCatching {
+            userPreferences.updateData {
+                it.copy {
+                    this.sortBy = when (sortBy) {
+                        SortBy.ARTIST -> SortByProto.SORT_BY_ARTIST
+                        SortBy.TITLE -> SortByProto.SORT_BY_TITLE
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun setSortOrderPreference(sortOrder: SortOrder) {
+        runCatching {
+            userPreferences.updateData {
+                it.copy {
+                    this.sortOrder = when (sortOrder) {
+                        SortOrder.ASCENDING -> SortOrderProto.SORT_ORDER_ASCENDING
+                        SortOrder.DESCENDING -> SortOrderProto.SORT_ORDER_DESCENDING
+                    }
+                }
+            }
+        }
+    }
+
+
 }
