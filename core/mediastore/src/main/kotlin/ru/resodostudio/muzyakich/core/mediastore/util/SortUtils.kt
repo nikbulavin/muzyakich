@@ -9,8 +9,8 @@ import ru.resodostudio.muzyakich.core.model.data.SortOrder.*
 
 internal fun buildMediaStoreSortOrder(sortBy: SortBy, sortOrder: SortOrder): String {
     val mediaStoreSortBy = when (sortBy) {
-        TITLE -> MediaStore.Audio.Media.TITLE
         ARTIST -> MediaStore.Audio.Media.ARTIST
+        TITLE -> MediaStore.Audio.Media.TITLE
     }
     val mediaStoreSortOrder = when (sortOrder) {
         ASCENDING -> "ASC"

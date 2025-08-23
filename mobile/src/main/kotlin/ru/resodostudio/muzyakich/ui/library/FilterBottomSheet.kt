@@ -101,8 +101,8 @@ fun FilterBottomSheet(
                 text = stringResource(localesR.string.sort_by),
                 style = MaterialTheme.typography.titleMedium,
             )
-            val sortByOptions = listOf(stringResource(localesR.string.title), stringResource(localesR.string.artist))
-            val unCheckedIcons = listOf(MuzIcons.Rounded.Title, MuzIcons.Filled.Artist)
+            val sortByOptions = listOf(stringResource(localesR.string.artist), stringResource(localesR.string.title))
+            val unCheckedIcons = listOf(MuzIcons.Filled.Artist, MuzIcons.Rounded.Title)
 
             Row(
                 Modifier.padding(horizontal = 8.dp),
