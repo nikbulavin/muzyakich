@@ -350,7 +350,11 @@ private fun LazyGridScope.actionButtons(
                         imageVector = MuzIcons.Rounded.PlayArrow,
                         contentDescription = null,
                     )
-                    Text(text = stringResource(localesR.string.play_audio))
+                    Text(
+                        text = stringResource(localesR.string.play_audio),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
             }
             OutlinedButton(
@@ -368,7 +372,11 @@ private fun LazyGridScope.actionButtons(
                         imageVector = MuzIcons.Rounded.Shuffle,
                         contentDescription = null,
                     )
-                    Text(text = stringResource(localesR.string.shuffle))
+                    Text(
+                        text = stringResource(localesR.string.shuffle),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
             }
             IconButton(
