@@ -4,6 +4,7 @@
 
     <string name="add_to_favorites">Добавить в избранное</string>
     <string name="albums">Альбомы</string>
+    <string name="artist">Исполнитель</string>
     <string name="artists">Исполнители</string>
     <string name="back">Назад</string>
     <string name="bit_depth_format">%1$d бит</string>
@@ -38,6 +39,8 @@
     <string name="skip_next">Перейти к следующему</string>
     <string name="skip_previous">Перейти к предыдущему</string>
     <string name="songs">Песни</string>
+    <string name="sort_by">Упорядочить по</string>
+    <string name="title">Название</string>
 
     <plurals name="duration_hours">
         <item quantity="one">%d час</item>

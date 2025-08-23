@@ -4,6 +4,7 @@
 
     <string name="add_to_favorites">Add to favorites</string>
     <string name="albums">Albums</string>
+    <string name="artist">Artist</string>
     <string name="artists">Artists</string>
     <string name="back">Back</string>
     <string name="bit_depth_format">%1$d-bit</string>
@@ -38,6 +39,8 @@
     <string name="skip_next">Skip next</string>
     <string name="skip_previous">Skip previous</string>
     <string name="songs">Songs</string>
+    <string name="sort_by">Sort by</string>
+    <string name="title">Title</string>
 
     <plurals name="duration_hours">
         <item quantity="one">%d hour</item>

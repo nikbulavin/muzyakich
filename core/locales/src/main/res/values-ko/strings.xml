@@ -4,7 +4,8 @@
 
     <string name="add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="albums">앨범</string>
-    <string name="artists">아티스트</string>
+    <string name="artist">아티스트</string>
+    <string name="artists">아티스트들</string>
     <string name="back">뒤로</string>
     <string name="bit_depth_format">%1$d비트</string>
     <string name="delete">삭제</string>
@@ -38,6 +39,8 @@
     <string name="skip_next">다음 곡</string>
     <string name="skip_previous">이전 곡</string>
     <string name="songs">노래</string>
+    <string name="sort_by">정렬 기준</string>
+    <string name="title">제목</string>
 
     <plurals name="duration_hours">
         <item quantity="other">%d 시간</item>

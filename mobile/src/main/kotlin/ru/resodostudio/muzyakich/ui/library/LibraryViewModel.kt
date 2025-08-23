@@ -5,56 +5,68 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
+import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.Artist
+import ru.resodostudio.muzyakich.core.model.data.FilterConfig
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.data.SortBy
+import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
     songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
+    private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
 
     private val shouldFilterFavoritesState = MutableStateFlow(false)
 
-    val libraryUiState = combine(
-        musicServiceConnection.nowPlayingState,
-        musicServiceConnection.currentPosition,
-        songsRepository.getSongs(),
-        shouldFilterFavoritesState,
-    ) { nowPlayingState, currentPosition, songs, shouldFilterFavorites ->
-        if (songs.isEmpty()) {
-            LibraryUiState.Empty
-        } else {
-            val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
-            val filteredSongs = songs
-                .run {
-                    if (shouldFilterFavorites) filter { it.isFavorite } else this
+    val libraryUiState = userDataRepository.userData.flatMapLatest { userData ->
+        combine(
+            musicServiceConnection.nowPlayingState,
+            musicServiceConnection.currentPosition,
+            songsRepository.getSongs(userData.filterConfig.sortBy, userData.filterConfig.sortOrder),
+            shouldFilterFavoritesState,
+        ) { nowPlayingState, currentPosition, songs, shouldFilterFavorites ->
+            if (songs.isEmpty()) {
+                LibraryUiState.Empty
+            } else {
+                val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
+                val filteredSongs = songs
+                    .run {
+                        if (shouldFilterFavorites) filter { it.isFavorite } else this
+                    }
+                val artists = songs.groupBy(Song::artistId).map { (artistId, songs) ->
+                    Artist(
+                        id = artistId,
+                        name = songs.firstOrNull()?.artist ?: "<unknown>",
+                        songs = songs,
+                    )
                 }
-            val artists = songs.groupBy(Song::artistId).map { (artistId, songs) ->
-                Artist(
-                    id = artistId,
-                    name = songs.firstOrNull()?.artist ?: "<unknown>",
-                    songs = songs,
+
+                LibraryUiState.Success(
+                    nowPlayingState = nowPlayingState,
+                    currentPosition = currentPosition,
+                    currentSong = currentSong,
+                    songs = filteredSongs,
+                    shouldFilterFavorites = shouldFilterFavorites,
+                    artists = artists,
+                    filterConfig = userData.filterConfig,
                 )
             }
-
-            LibraryUiState.Success(
-                nowPlayingState = nowPlayingState,
-                currentPosition = currentPosition,
-                currentSong = currentSong,
-                songs = filteredSongs,
-                shouldFilterFavorites = shouldFilterFavorites,
-                artists = artists,
-            )
         }
     }
+        .catch { LibraryUiState.Empty }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -82,6 +94,18 @@ class LibraryViewModel @Inject constructor(
     fun playSongNext(song: Song) {
         musicServiceConnection.playSongNext(song)
     }
+
+    fun updateSortByPreference(sortBy: SortBy) {
+        viewModelScope.launch {
+            userDataRepository.setSortByPreference(sortBy)
+        }
+    }
+
+    fun updateSortOrderPreference(sortOrder: SortOrder) {
+        viewModelScope.launch {
+            userDataRepository.setSortOrderPreference(sortOrder)
+        }
+    }
 }
 
 sealed interface LibraryUiState {
@@ -97,5 +121,6 @@ sealed interface LibraryUiState {
         val songs: List<Song>,
         val shouldFilterFavorites: Boolean,
         val artists: List<Artist>,
+        val filterConfig: FilterConfig,
     ) : LibraryUiState
 }

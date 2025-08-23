@@ -70,6 +70,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.data.SortBy
+import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
@@ -97,6 +99,8 @@ fun LibraryScreen(
         onSkipNextClick = viewModel::skipNext,
         onToggleFilterFavorites = viewModel::toggleFilterFavorites,
         onPlayNextClick = viewModel::playSongNext,
+        onSortByUpdate = viewModel::updateSortByPreference,
+        onSortOrderUpdate = viewModel::updateSortOrderPreference,
     )
 }
 
@@ -115,6 +119,8 @@ private fun LibraryScreen(
     onSkipNextClick: () -> Unit = {},
     onToggleFilterFavorites: () -> Unit = {},
     onPlayNextClick: (Song) -> Unit = {},
+    onSortByUpdate: (SortBy) -> Unit = {},
+    onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -185,6 +191,9 @@ private fun LibraryScreen(
 
                     if (shouldShowFilterBottomSheet) {
                         FilterBottomSheet(
+                            filterConfig = libraryUiState.filterConfig,
+                            onSortByUpdate = onSortByUpdate,
+                            onSortOrderUpdate = onSortOrderUpdate,
                             onDismiss = { shouldShowFilterBottomSheet = false },
                             shouldFilterFavorites = libraryUiState.shouldFilterFavorites,
                             onToggleFilterFavorites = onToggleFilterFavorites,
