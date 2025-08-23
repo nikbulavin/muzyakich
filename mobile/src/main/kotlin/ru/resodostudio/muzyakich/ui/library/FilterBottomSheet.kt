@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Title
 import ru.resodostudio.muzyakich.core.model.data.FilterConfig
@@ -58,6 +57,7 @@ fun FilterBottomSheet(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
+    val hapticFeedback = LocalHapticFeedback.current
 
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
@@ -77,7 +77,6 @@ fun FilterBottomSheet(
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                val hapticFeedback = LocalHapticFeedback.current
                 FilterChip(
                     selected = shouldFilterFavorites,
                     onClick = {
@@ -101,18 +100,24 @@ fun FilterBottomSheet(
                 text = stringResource(localesR.string.sort_by),
                 style = MaterialTheme.typography.titleMedium,
             )
-            val sortByOptions = listOf(stringResource(localesR.string.artist), stringResource(localesR.string.title))
-            val unCheckedIcons = listOf(MuzIcons.Filled.Artist, MuzIcons.Rounded.Title)
+            val sortByOptions = listOf(
+                stringResource(localesR.string.artist),
+                stringResource(localesR.string.title),
+            )
+            val sortByIcons = listOf(MuzIcons.Filled.Artist, MuzIcons.Rounded.Title)
 
             Row(
                 Modifier.padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             ) {
                 sortByOptions.forEachIndexed { index, label ->
-                    val selected = filterConfig.sortBy.ordinal == index
+                    val checked = filterConfig.sortBy.ordinal == index
                     ToggleButton(
-                        checked = selected,
-                        onCheckedChange = { onSortByUpdate(SortBy.entries[index]) },
+                        checked = checked,
+                        onCheckedChange = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            onSortByUpdate(SortBy.entries[index])
+                        },
                         modifier = Modifier
                             .semantics { role = Role.RadioButton }
                             .weight(1f),
@@ -124,7 +129,7 @@ fun FilterBottomSheet(
                             },
                     ) {
                         Icon(
-                            if (selected) MuzIcons.Rounded.Check else unCheckedIcons[index],
+                            if (checked) MuzIcons.Rounded.Check else sortByIcons[index],
                             contentDescription = null,
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
