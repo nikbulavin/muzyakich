@@ -14,6 +14,8 @@ import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.data.SortBy
+import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.ui.util.convertToPosition
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -28,7 +30,7 @@ class PlayerViewModel @Inject constructor(
     val playerUiState = combine(
         musicServiceConnection.nowPlayingState,
         musicServiceConnection.currentPosition,
-        songsRepository.getSongs(),
+        songsRepository.getSongs(sortBy = SortBy.TITLE, sortOrder = SortOrder.ASCENDING),
         userDataRepository.userData,
     ) { nowPlayingState, currentPosition, songs, userData ->
         val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
