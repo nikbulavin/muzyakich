@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
@@ -132,9 +133,10 @@ fun FilterBottomSheet(
                                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                             },
                     ) {
-                        Icon(
-                            imageVector = if (checked) MuzIcons.Rounded.Check else sortByIcons[index],
-                            contentDescription = null,
+                        AnimatedIcon(
+                            targetState = checked,
+                            baseIcon = MuzIcons.Rounded.Check,
+                            targetIcon = sortByIcons[index],
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
                         Text(
@@ -181,9 +183,10 @@ fun FilterBottomSheet(
                                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                             },
                     ) {
-                        Icon(
-                            imageVector = if (checked) MuzIcons.Rounded.Check else sortOrderIcons[index],
-                            contentDescription = null,
+                        AnimatedIcon(
+                            targetState = checked,
+                            baseIcon = MuzIcons.Rounded.Check,
+                            targetIcon = sortOrderIcons[index],
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
                         Text(
