@@ -4,6 +4,6 @@ option java_package = "ru.resodostudio.muzyakich.core.datastore";
 option java_multiple_files = true;
 
 enum SortByProto {
-    SORT_BY_TITLE = 0;
-    SORT_BY_ARTIST = 1;
+    SORT_BY_ARTIST = 0;
+    SORT_BY_TITLE = 1;
 }
