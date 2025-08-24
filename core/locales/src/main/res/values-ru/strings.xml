@@ -40,6 +40,9 @@
     <string name="skip_previous">Перейти к предыдущему</string>
     <string name="songs">Песни</string>
     <string name="sort_by">Упорядочить по</string>
+    <string name="sort_order">Порядок сортировки</string>
+    <string name="sort_order_ascending">По возрастанию</string>
+    <string name="sort_order_descending">По убыванию</string>
     <string name="title">Название</string>
 
     <plurals name="duration_hours">

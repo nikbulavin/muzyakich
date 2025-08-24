@@ -40,6 +40,9 @@
     <string name="skip_previous">이전 곡</string>
     <string name="songs">노래</string>
     <string name="sort_by">정렬 기준</string>
+    <string name="sort_order">정렬 순서</string>
+    <string name="sort_order_ascending">오름차순</string>
+    <string name="sort_order_descending">내림차순</string>
     <string name="title">제목</string>
 
     <plurals name="duration_hours">

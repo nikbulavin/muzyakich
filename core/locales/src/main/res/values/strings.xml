@@ -40,6 +40,9 @@
     <string name="skip_previous">Skip previous</string>
     <string name="songs">Songs</string>
     <string name="sort_by">Sort by</string>
+    <string name="sort_order">Sort order</string>
+    <string name="sort_order_ascending">Ascending</string>
+    <string name="sort_order_descending">Descending</string>
     <string name="title">Title</string>
 
     <plurals name="duration_hours">

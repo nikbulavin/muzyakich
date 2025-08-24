@@ -29,10 +29,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowDownwardAlt
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowUpwardAlt
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Title
 import ru.resodostudio.muzyakich.core.model.data.FilterConfig
@@ -76,6 +79,7 @@ fun FilterBottomSheet(
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(bottom = 8.dp),
             ) {
                 FilterChip(
                     selected = shouldFilterFavorites,
@@ -107,7 +111,7 @@ fun FilterBottomSheet(
             val sortByIcons = listOf(MuzIcons.Filled.Artist, MuzIcons.Rounded.Title)
 
             Row(
-                Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             ) {
                 sortByOptions.forEachIndexed { index, label ->
@@ -129,11 +133,64 @@ fun FilterBottomSheet(
                             },
                     ) {
                         Icon(
-                            if (checked) MuzIcons.Rounded.Check else sortByIcons[index],
+                            imageVector = if (checked) MuzIcons.Rounded.Check else sortByIcons[index],
                             contentDescription = null,
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
-                        Text(label)
+                        Text(
+                            text = label,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+            }
+
+            Text(
+                text = stringResource(localesR.string.sort_order),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            val sortOrderOptions = listOf(
+                stringResource(localesR.string.sort_order_ascending),
+                stringResource(localesR.string.sort_order_descending),
+            )
+            val sortOrderIcons = listOf(
+                MuzIcons.Rounded.ArrowUpwardAlt,
+                MuzIcons.Rounded.ArrowDownwardAlt,
+            )
+
+            Row(
+                modifier = Modifier.padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            ) {
+                sortOrderOptions.forEachIndexed { index, label ->
+                    val checked = filterConfig.sortOrder.ordinal == index
+                    ToggleButton(
+                        checked = checked,
+                        onCheckedChange = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            onSortOrderUpdate(SortOrder.entries[index])
+                        },
+                        modifier = Modifier
+                            .semantics { role = Role.RadioButton }
+                            .weight(1f),
+                        shapes =
+                            when (index) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                sortByOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            },
+                    ) {
+                        Icon(
+                            imageVector = if (checked) MuzIcons.Rounded.Check else sortOrderIcons[index],
+                            contentDescription = null,
+                        )
+                        Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+                        Text(
+                            text = label,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }
