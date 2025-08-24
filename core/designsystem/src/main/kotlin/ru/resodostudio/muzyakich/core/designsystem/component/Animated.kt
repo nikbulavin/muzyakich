@@ -34,8 +34,8 @@ fun AnimatedIcon(
         targetState = targetState,
         label = label,
         transitionSpec = {
-            fadeIn(effectsSpec) + scaleIn(spatialSpec) togetherWith
-                    fadeOut(effectsSpec) + scaleOut(spatialSpec)
+            fadeIn(effectsSpec) + scaleIn(spatialSpec, 0.3f) togetherWith
+                    fadeOut(effectsSpec) + scaleOut(spatialSpec, 0.3f)
         },
         modifier = modifier,
     ) { state ->
