@@ -7,8 +7,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.rectangle
+import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
@@ -222,28 +221,14 @@ private fun ActionButtons(
         modifier = modifier
             .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
     ) {
-        val animSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
-        AnimatedContent(
+        AnimatedIcon(
             targetState = !nowPlayingState.playWhenReady,
-            label = "PlayPauseButton",
-            transitionSpec = {
-                fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(animSpec) + scaleOut(
-                    targetScale = 0.3f
-                )
-            },
-        ) { paused ->
-            if (paused) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.PlayArrow,
-                    contentDescription = stringResource(localesR.string.play_audio),
-                )
-            } else {
-                Icon(
-                    imageVector = MuzIcons.Rounded.Pause,
-                    contentDescription = stringResource(localesR.string.pause_audio),
-                )
-            }
-        }
+            baseIcon = MuzIcons.Rounded.PlayArrow,
+            targetIcon = MuzIcons.Rounded.Pause,
+            baseContentDescription = stringResource(localesR.string.play_audio),
+            targetContentDescription = stringResource(localesR.string.pause_audio),
+            label = "PlayPauseIconAnimation",
+        )
     }
     IconButton(
         onClick = onSkipNextClick,
