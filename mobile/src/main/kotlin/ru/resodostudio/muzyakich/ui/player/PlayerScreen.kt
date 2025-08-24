@@ -80,6 +80,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzOutlinedIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
@@ -617,30 +618,15 @@ private fun PlayerActionButtons(
                 .padding(horizontal = 8.dp)
                 .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
-            val animSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
-            AnimatedContent(
-                targetState = !nowPlayingState.playWhenReady,
-                label = "PlayPauseButton",
-                transitionSpec = {
-                    fadeIn(animSpec) + scaleIn(initialScale = 0.3f) togetherWith fadeOut(
-                        animSpec
-                    ) + scaleOut(targetScale = 0.3f)
-                },
-            ) { paused ->
-                if (paused) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.PlayArrow,
-                        contentDescription = stringResource(localesR.string.play_audio),
-                        modifier = Modifier.size(32.dp),
-                    )
-                } else {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.Pause,
-                        contentDescription = stringResource(localesR.string.pause_audio),
-                        modifier = Modifier.size(32.dp),
-                    )
-                }
-            }
+            AnimatedIcon(
+                targetState = nowPlayingState.playWhenReady,
+                baseIcon = MuzIcons.Rounded.Pause,
+                targetIcon = MuzIcons.Rounded.PlayArrow,
+                baseContentDescription = stringResource(localesR.string.pause_audio),
+                targetContentDescription = stringResource(localesR.string.play_audio),
+                label = "PlayPauseIconAnimation",
+                modifier = Modifier.size(32.dp),
+            )
         }
         FilledTonalIconButton(
             onClick = onSkipNextClick,
