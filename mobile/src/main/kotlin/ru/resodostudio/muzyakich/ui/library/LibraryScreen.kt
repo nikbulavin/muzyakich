@@ -76,6 +76,7 @@ import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
+import ru.resodostudio.muzyakich.ui.component.songsInfo
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
@@ -291,34 +292,6 @@ private fun LibraryScreen(
                 }
             }
         }
-    }
-}
-
-private fun LazyGridScope.songsInfo(
-    songs: List<Song>,
-) {
-    item(
-        span = { GridItemSpan(maxLineSpan) },
-    ) {
-        val count = pluralStringResource(localesR.plurals.number_of_songs, songs.size, songs.size)
-        val overallDuration = songs
-            .sumOf { it.duration }
-            .asFormattedDuration()
-        val sizeOnDisk = Formatter.formatFileSize(
-            LocalContext.current,
-            songs.sumOf { it.size }.toLong(),
-        )
-        val songsInfo = listOf(count, overallDuration, sizeOnDisk)
-        Text(
-            text = songsInfo.joinToString(),
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .animateItem(),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 

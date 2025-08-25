@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui.component
 
 import android.provider.MediaStore
+import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,7 +10,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -33,6 +36,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -56,39 +60,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
-
-fun LazyGridScope.songs(
-    songs: List<Song>,
-    nowPlayingState: NowPlayingState,
-    onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onPlayNextClick: (Song) -> Unit,
-) {
-    items(
-        items = songs,
-        key = { it.mediaId },
-        contentType = { "Song" },
-    ) { song ->
-        val isPlaying = nowPlayingState.mediaId == song.mediaId && nowPlayingState.playWhenReady
-        var showSongDetails by rememberSaveable { mutableStateOf(false) }
-
-        SongItem(
-            song = song,
-            isPlaying = isPlaying,
-            modifier = Modifier.animateItem(),
-            onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
-            onMenuClick = { showSongDetails = true },
-        )
-
-        if (showSongDetails) {
-            SongDetailsBottomSheet(
-                song = song,
-                onDismiss = { showSongDetails = false },
-                onPlayNextClick = onPlayNextClick,
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -230,4 +203,64 @@ fun SongItem(
             }
         },
     )
+}
+
+fun LazyGridScope.songs(
+    songs: List<Song>,
+    nowPlayingState: NowPlayingState,
+    onPlaySongsClick: (List<Song>, Int) -> Unit,
+    onPlayNextClick: (Song) -> Unit,
+) {
+    items(
+        items = songs,
+        key = { it.mediaId },
+        contentType = { "Song" },
+    ) { song ->
+        val isPlaying = nowPlayingState.mediaId == song.mediaId && nowPlayingState.playWhenReady
+        var showSongDetails by rememberSaveable { mutableStateOf(false) }
+
+        SongItem(
+            song = song,
+            isPlaying = isPlaying,
+            modifier = Modifier.animateItem(),
+            onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
+            onMenuClick = { showSongDetails = true },
+        )
+
+        if (showSongDetails) {
+            SongDetailsBottomSheet(
+                song = song,
+                onDismiss = { showSongDetails = false },
+                onPlayNextClick = onPlayNextClick,
+            )
+        }
+    }
+}
+
+fun LazyGridScope.songsInfo(
+    songs: List<Song>,
+) {
+    item(
+        span = { GridItemSpan(maxLineSpan) },
+    ) {
+        val count = pluralStringResource(localesR.plurals.number_of_songs, songs.size, songs.size)
+        val overallDuration = songs
+            .sumOf { it.duration }
+            .asFormattedDuration()
+        val sizeOnDisk = Formatter.formatFileSize(
+            LocalContext.current,
+            songs.sumOf { it.size }.toLong(),
+        )
+        val songsInfo = listOf(count, overallDuration, sizeOnDisk)
+        Text(
+            text = songsInfo.joinToString(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .animateItem(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
 }

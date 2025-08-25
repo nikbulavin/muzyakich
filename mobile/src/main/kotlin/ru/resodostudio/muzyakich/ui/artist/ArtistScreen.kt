@@ -21,6 +21,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
+import ru.resodostudio.muzyakich.ui.component.songsInfo
 
 @Composable
 fun ArtistScreen(
@@ -79,6 +80,9 @@ fun ArtistScreen(
                         nowPlayingState = NowPlayingState(),
                         onPlaySongsClick = { _, _ -> },
                         onPlayNextClick = {},
+                    )
+                    songsInfo(
+                        songs = artistUiState.artist.songs,
                     )
                 }
             }
