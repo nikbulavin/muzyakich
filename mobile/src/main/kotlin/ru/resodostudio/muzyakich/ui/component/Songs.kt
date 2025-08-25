@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.library
+package ru.resodostudio.muzyakich.ui.component
 
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,8 +54,41 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
+import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
+
+fun LazyGridScope.songs(
+    songs: List<Song>,
+    nowPlayingState: NowPlayingState,
+    onPlaySongsClick: (List<Song>, Int) -> Unit,
+    onPlayNextClick: (Song) -> Unit,
+) {
+    items(
+        items = songs,
+        key = { it.mediaId },
+        contentType = { "Song" },
+    ) { song ->
+        val isPlaying = nowPlayingState.mediaId == song.mediaId && nowPlayingState.playWhenReady
+        var showSongDetails by rememberSaveable { mutableStateOf(false) }
+
+        SongItem(
+            song = song,
+            isPlaying = isPlaying,
+            modifier = Modifier.animateItem(),
+            onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
+            onMenuClick = { showSongDetails = true },
+        )
+
+        if (showSongDetails) {
+            SongDetailsBottomSheet(
+                song = song,
+                onDismiss = { showSongDetails = false },
+                onPlayNextClick = onPlayNextClick,
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

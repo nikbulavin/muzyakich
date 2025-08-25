@@ -18,7 +18,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
+import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
+import ru.resodostudio.muzyakich.ui.component.songs
 
 @Composable
 fun ArtistScreen(
@@ -72,7 +74,12 @@ fun ArtistScreen(
                     ),
                     modifier = Modifier.fillMaxSize(),
                 ) {
-
+                    songs(
+                        songs = artistUiState.artist.songs,
+                        nowPlayingState = NowPlayingState(),
+                        onPlaySongsClick = { _, _ -> },
+                        onPlayNextClick = {},
+                    )
                 }
             }
         }

@@ -75,7 +75,7 @@ import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
-import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
+import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
@@ -233,7 +233,8 @@ private fun LibraryScreen(
                                         onFilterClick = { shouldShowFilterBottomSheet = true },
                                     )
                                     songs(
-                                        libraryUiState = libraryUiState,
+                                        songs = libraryUiState.songs,
+                                        nowPlayingState = libraryUiState.nowPlayingState,
                                         onPlaySongsClick = onPlaySongsClick,
                                         onPlayNextClick = onPlayNextClick,
                                     )
@@ -392,45 +393,6 @@ private fun LazyGridScope.actionButtons(
                     contentDescription = stringResource(localesR.string.open_filter_menu),
                 )
             }
-        }
-    }
-}
-
-private fun LazyGridScope.songs(
-    libraryUiState: LibraryUiState.Success,
-    onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onPlayNextClick: (Song) -> Unit,
-) {
-    items(
-        items = libraryUiState.songs,
-        key = { it.mediaId },
-        contentType = { "Song" },
-    ) { song ->
-        val isPlaying =
-            libraryUiState.nowPlayingState.mediaId == song.mediaId &&
-                    libraryUiState.nowPlayingState.playWhenReady
-
-        var showSongDetails by rememberSaveable { mutableStateOf(false) }
-
-        SongItem(
-            song = song,
-            isPlaying = isPlaying,
-            modifier = Modifier.animateItem(),
-            onClick = {
-                onPlaySongsClick(
-                    libraryUiState.songs,
-                    libraryUiState.songs.indexOf(song)
-                )
-            },
-            onMenuClick = { showSongDetails = true },
-        )
-
-        if (showSongDetails) {
-            SongDetailsBottomSheet(
-                song = song,
-                onDismiss = { showSongDetails = false },
-                onPlayNextClick = onPlayNextClick,
-            )
         }
     }
 }
