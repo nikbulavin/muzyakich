@@ -18,7 +18,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.component.songsInfo
@@ -33,6 +33,8 @@ fun ArtistScreen(
     ArtistScreen(
         artistUiState = artistUiState.value,
         onBackClick = onBackClick,
+        onPlaySongsClick = viewModel::playSongs,
+        onPlayNextClick = viewModel::playSongNext,
     )
 }
 
@@ -41,6 +43,8 @@ fun ArtistScreen(
 fun ArtistScreen(
     artistUiState: ArtistUiState,
     onBackClick: () -> Unit,
+    onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
+    onPlayNextClick: (Song) -> Unit = {},
 ) {
     when (artistUiState) {
         ArtistUiState.Error -> LoadingState()
@@ -77,9 +81,9 @@ fun ArtistScreen(
                 ) {
                     songs(
                         songs = artistUiState.artist.songs,
-                        nowPlayingState = NowPlayingState(),
-                        onPlaySongsClick = { _, _ -> },
-                        onPlayNextClick = {},
+                        nowPlayingState = artistUiState.nowPlayingState,
+                        onPlaySongsClick = onPlaySongsClick,
+                        onPlayNextClick = onPlayNextClick,
                     )
                     songsInfo(
                         songs = artistUiState.artist.songs,

@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.ui.library
 
-import android.text.format.Formatter
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
@@ -51,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -81,7 +79,6 @@ import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.SONGS
-import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

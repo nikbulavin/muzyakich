@@ -8,25 +8,33 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.data.repository.ArtistsRepository
+import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.Artist
+import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.data.Song
 
 @HiltViewModel(assistedFactory = ArtistViewModel.Factory::class)
 class ArtistViewModel @AssistedInject constructor(
     @Assisted val artistId: Long,
     artistsRepository: ArtistsRepository,
+    private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
-    val artistUiState = artistsRepository.getArtists()
-        .map { artists ->
+    val artistUiState = combine(
+        artistsRepository.getArtists(),
+        musicServiceConnection.nowPlayingState,
+    ) { artists, nowPlaying ->
             val artist = artists.find { it.id == artistId }
             if (artist == null) {
                 ArtistUiState.Error
             } else {
                 ArtistUiState.Success(
                     artist = artist,
+                    nowPlayingState = nowPlaying,
                 )
             }
         }
@@ -36,6 +44,14 @@ class ArtistViewModel @AssistedInject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ArtistUiState.Loading,
         )
+
+    fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
+        musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
+    }
+
+    fun playSongNext(song: Song) {
+        musicServiceConnection.playSongNext(song)
+    }
 
     @AssistedFactory
     interface Factory {
@@ -53,5 +69,6 @@ sealed interface ArtistUiState {
 
     data class Success(
         val artist: Artist,
+        val nowPlayingState: NowPlayingState,
     ) : ArtistUiState
 }
