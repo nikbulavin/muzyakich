@@ -74,7 +74,7 @@ fun ArtistScreen(
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
                     contentPadding = PaddingValues(
-                        top = paddingValues.calculateTopPadding() + 8.dp,
+                        top = 8.dp + paddingValues.calculateTopPadding(),
                         bottom = 104.dp + paddingValues.calculateBottomPadding(),
                     ),
                     modifier = Modifier.fillMaxSize(),
