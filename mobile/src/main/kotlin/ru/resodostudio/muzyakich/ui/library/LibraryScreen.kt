@@ -7,6 +7,7 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -85,6 +86,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun LibraryScreen(
     onNowPlayingBarClick: () -> Unit,
+    onArtistClick: (Long) -> Unit,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
     val libraryUiState by viewModel.libraryUiState.collectAsStateWithLifecycle()
@@ -92,6 +94,7 @@ fun LibraryScreen(
     LibraryScreen(
         libraryUiState = libraryUiState,
         onNowPlayingBarClick = onNowPlayingBarClick,
+        onArtistClick = onArtistClick,
         onPlaySongsClick = viewModel::playSongs,
         onShuffleSongsClick = viewModel::shuffleSongs,
         onPlayClick = viewModel::play,
@@ -112,6 +115,7 @@ fun LibraryScreen(
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
     onNowPlayingBarClick: () -> Unit,
+    onArtistClick: (Long) -> Unit,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onPlayClick: () -> Unit = {},
@@ -249,6 +253,7 @@ private fun LibraryScreen(
                                 ARTISTS -> {
                                     artists(
                                         artists = libraryUiState.artists,
+                                        onArtistClick = onArtistClick,
                                     )
                                 }
                             }
@@ -432,6 +437,7 @@ private fun LazyGridScope.songs(
 
 private fun LazyGridScope.artists(
     artists: List<Artist>,
+    onArtistClick: (Long) -> Unit,
 ) {
     items(
         items = artists,
@@ -457,7 +463,9 @@ private fun LazyGridScope.artists(
                     overflow = TextOverflow.Ellipsis,
                 )
             },
-            modifier = Modifier.animateItem(),
+            modifier = Modifier
+                .clickable { onArtistClick(artist.id) }
+                .animateItem(),
         )
     }
 }

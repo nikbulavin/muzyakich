@@ -1,0 +1,57 @@
+package ru.resodostudio.muzyakich.ui.artist
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import ru.resodostudio.muzyakich.core.data.repository.ArtistsRepository
+import ru.resodostudio.muzyakich.core.model.data.Artist
+
+@HiltViewModel(assistedFactory = ArtistViewModel.Factory::class)
+class ArtistViewModel @AssistedInject constructor(
+    @Assisted val artistId: Long,
+    artistsRepository: ArtistsRepository,
+) : ViewModel() {
+
+    val artistUiState = artistsRepository.getArtists()
+        .map { artists ->
+            val artist = artists.find { it.id == artistId }
+            if (artist == null) {
+                ArtistUiState.Error
+            } else {
+                ArtistUiState.Success(
+                    artist = artist,
+                )
+            }
+        }
+        .catch { ArtistUiState.Error }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ArtistUiState.Loading,
+        )
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            artistId: Long,
+        ): ArtistViewModel
+    }
+}
+
+sealed interface ArtistUiState {
+
+    data object Loading : ArtistUiState
+
+    data object Error : ArtistUiState
+
+    data class Success(
+        val artist: Artist,
+    ) : ArtistUiState
+}

@@ -8,12 +8,15 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudio.muzyakich.ui.artist.ArtistScreen
+import ru.resodostudio.muzyakich.ui.artist.ArtistViewModel
 import ru.resodostudio.muzyakich.ui.library.LibraryScreen
 import ru.resodostudio.muzyakich.ui.player.PlayerScreen
 
@@ -50,15 +53,22 @@ fun MuzNavDisplay() {
         entryProvider = entryProvider {
             entry<LibraryRoute> {
                 LibraryScreen(
-                    onNowPlayingBarClick = {
-                        backStack.add(PlayerRoute)
-                    },
+                    onNowPlayingBarClick = { backStack.add(PlayerRoute) },
+                    onArtistClick = { artistId -> backStack.add(ArtistRoute(artistId)) },
                 )
             }
             entry<PlayerRoute> {
                 PlayerScreen(
-                    onBackClick = {
-                        backStack.removeLastOrNull()
+                    onBackClick = backStack::removeLastOrNull,
+                )
+            }
+            entry<ArtistRoute> { artistKey ->
+                ArtistScreen(
+                    onBackClick = backStack::removeLastOrNull,
+                    viewModel = hiltViewModel<ArtistViewModel, ArtistViewModel.Factory>(
+                        key = artistKey.artistId.toString(),
+                    ) { factory ->
+                        factory.create(artistKey.artistId)
                     },
                 )
             }
