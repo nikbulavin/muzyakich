@@ -22,4 +22,6 @@ interface UserDataRepository {
     suspend fun setSortByPreference(sortBy: SortBy)
 
     suspend fun setSortOrderPreference(sortOrder: SortOrder)
+
+    suspend fun setFilterFavoritesPreference(shouldFilterFavorites: Boolean)
 }

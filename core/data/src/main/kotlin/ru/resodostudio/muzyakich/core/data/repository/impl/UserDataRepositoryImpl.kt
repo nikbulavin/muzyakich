@@ -39,4 +39,8 @@ internal class UserDataRepositoryImpl @Inject constructor(
     override suspend fun setSortOrderPreference(sortOrder: SortOrder) {
         return muzPreferencesDataSource.setSortOrderPreference(sortOrder)
     }
+
+    override suspend fun setFilterFavoritesPreference(shouldFilterFavorites: Boolean) {
+        return muzPreferencesDataSource.setFilterFavoritesPreference(shouldFilterFavorites)
+    }
 }

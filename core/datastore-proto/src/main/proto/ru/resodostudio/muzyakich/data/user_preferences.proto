@@ -21,4 +21,6 @@ message UserPreferences {
     SortByProto sort_by = 5;
 
     SortOrderProto sort_order = 6;
+
+    bool should_filter_favorites = 7;
 }

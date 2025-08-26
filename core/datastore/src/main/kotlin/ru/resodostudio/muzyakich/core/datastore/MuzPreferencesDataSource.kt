@@ -61,7 +61,8 @@ class MuzPreferencesDataSource @Inject constructor(
                             -> SortBy.ARTIST
 
                         SortByProto.SORT_BY_TITLE -> SortBy.TITLE
-                    }
+                    },
+                    shouldFilterFavorites = it.shouldFilterFavorites,
                 )
             )
         }
@@ -132,6 +133,14 @@ class MuzPreferencesDataSource @Inject constructor(
                         SortOrder.DESCENDING -> SortOrderProto.SORT_ORDER_DESCENDING
                     }
                 }
+            }
+        }
+    }
+
+    suspend fun setFilterFavoritesPreference(shouldFilterFavorites: Boolean) {
+        runCatching {
+            userPreferences.updateData {
+                it.copy { this.shouldFilterFavorites = shouldFilterFavorites }
             }
         }
     }
