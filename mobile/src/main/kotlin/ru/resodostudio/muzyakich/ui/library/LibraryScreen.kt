@@ -116,7 +116,7 @@ private fun LibraryScreen(
     onPlayClick: () -> Unit = {},
     onPauseClick: () -> Unit = {},
     onSkipNextClick: () -> Unit = {},
-    onToggleFilterFavorites: () -> Unit = {},
+    onToggleFilterFavorites: (Boolean) -> Unit = {},
     onPlayNextClick: (Song) -> Unit = {},
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
@@ -194,7 +194,6 @@ private fun LibraryScreen(
                             onSortByUpdate = onSortByUpdate,
                             onSortOrderUpdate = onSortOrderUpdate,
                             onDismiss = { shouldShowFilterBottomSheet = false },
-                            shouldFilterFavorites = libraryUiState.shouldFilterFavorites,
                             onToggleFilterFavorites = onToggleFilterFavorites,
                         )
                     }

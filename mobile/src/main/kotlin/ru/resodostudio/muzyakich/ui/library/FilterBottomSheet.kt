@@ -53,8 +53,7 @@ fun FilterBottomSheet(
     filterConfig: FilterConfig,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    shouldFilterFavorites: Boolean = false,
-    onToggleFilterFavorites: () -> Unit = {},
+    onToggleFilterFavorites: (Boolean) -> Unit = {},
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
@@ -82,18 +81,19 @@ fun FilterBottomSheet(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(bottom = 8.dp),
             ) {
+                val selected = filterConfig.shouldFilterFavorites
                 FilterChip(
-                    selected = shouldFilterFavorites,
+                    selected = selected,
                     onClick = {
                         hapticFeedback.performHapticFeedback(
-                            if (shouldFilterFavorites) HapticFeedbackType.ToggleOff else HapticFeedbackType.ToggleOn
+                            if (selected) HapticFeedbackType.ToggleOff else HapticFeedbackType.ToggleOn
                         )
-                        onToggleFilterFavorites()
+                        onToggleFilterFavorites(!selected)
                     },
                     label = { Text(stringResource(localesR.string.favorites)) },
                     leadingIcon = {
                         Icon(
-                            imageVector = if (shouldFilterFavorites) MuzIcons.Rounded.Check else MuzIcons.Filled.Star,
+                            imageVector = if (selected) MuzIcons.Rounded.Check else MuzIcons.Filled.Star,
                             contentDescription = null,
                             modifier = modifier.size(FilterChipDefaults.IconSize),
                         )

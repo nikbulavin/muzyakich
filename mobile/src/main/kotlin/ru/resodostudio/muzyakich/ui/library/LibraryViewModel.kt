@@ -3,7 +3,6 @@ package ru.resodostudio.muzyakich.ui.library
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -29,22 +28,19 @@ class LibraryViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
 
-    private val shouldFilterFavoritesState = MutableStateFlow(false)
-
     val libraryUiState = userDataRepository.userData.flatMapLatest { userData ->
         combine(
             musicServiceConnection.nowPlayingState,
             musicServiceConnection.currentPosition,
             songsRepository.getSongs(userData.filterConfig.sortBy, userData.filterConfig.sortOrder),
-            shouldFilterFavoritesState,
-        ) { nowPlayingState, currentPosition, songs, shouldFilterFavorites ->
+        ) { nowPlayingState, currentPosition, songs ->
             if (songs.isEmpty()) {
                 LibraryUiState.Empty
             } else {
                 val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
                 val filteredSongs = songs
                     .run {
-                        if (shouldFilterFavorites) filter { it.isFavorite } else this
+                        if (userData.filterConfig.shouldFilterFavorites) filter { it.isFavorite } else this
                     }
                 val artists = songs.groupBy(Song::artistId).map { (artistId, songs) ->
                     Artist(
@@ -59,7 +55,6 @@ class LibraryViewModel @Inject constructor(
                     currentPosition = currentPosition,
                     currentSong = currentSong,
                     songs = filteredSongs,
-                    shouldFilterFavorites = shouldFilterFavorites,
                     artists = artists,
                     filterConfig = userData.filterConfig,
                 )
@@ -87,8 +82,10 @@ class LibraryViewModel @Inject constructor(
 
     fun skipNext() = musicServiceConnection.skipToNext()
 
-    fun toggleFilterFavorites() {
-        shouldFilterFavoritesState.value = !shouldFilterFavoritesState.value
+    fun toggleFilterFavorites(shouldFilterFavorites: Boolean) {
+        viewModelScope.launch {
+            userDataRepository.setFilterFavoritesPreference(shouldFilterFavorites)
+        }
     }
 
     fun playSongNext(song: Song) {
@@ -119,7 +116,6 @@ sealed interface LibraryUiState {
         val currentPosition: Long,
         val currentSong: Song?,
         val songs: List<Song>,
-        val shouldFilterFavorites: Boolean,
         val artists: List<Artist>,
         val filterConfig: FilterConfig,
     ) : LibraryUiState
