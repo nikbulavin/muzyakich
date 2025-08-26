@@ -14,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -92,10 +91,11 @@ fun FilterBottomSheet(
                     },
                     label = { Text(stringResource(localesR.string.favorites)) },
                     leadingIcon = {
-                        Icon(
-                            imageVector = if (selected) MuzIcons.Rounded.Check else MuzIcons.Filled.Star,
-                            contentDescription = null,
-                            modifier = modifier.size(FilterChipDefaults.IconSize),
+                        AnimatedIcon(
+                            targetState = selected,
+                            baseIcon = MuzIcons.Rounded.Check,
+                            targetIcon = MuzIcons.Filled.Star,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
                         )
                     },
                 )
