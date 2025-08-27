@@ -1,11 +1,6 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -76,6 +71,7 @@ import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.SONGS
+import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -92,9 +88,6 @@ fun LibraryScreen(
         onArtistClick = onArtistClick,
         onPlaySongsClick = viewModel::playSongs,
         onShuffleSongsClick = viewModel::shuffleSongs,
-        onPlayClick = viewModel::play,
-        onPauseClick = viewModel::pause,
-        onSkipNextClick = viewModel::skipNext,
         onToggleFilterFavorites = viewModel::toggleFilterFavorites,
         onPlayNextClick = viewModel::playSongNext,
         onSortByUpdate = viewModel::updateSortByPreference,
@@ -113,9 +106,6 @@ private fun LibraryScreen(
     onArtistClick: (Long) -> Unit,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
-    onPlayClick: () -> Unit = {},
-    onPauseClick: () -> Unit = {},
-    onSkipNextClick: () -> Unit = {},
     onToggleFilterFavorites: (Boolean) -> Unit = {},
     onPlayNextClick: (Song) -> Unit = {},
     onSortByUpdate: (SortBy) -> Unit = {},
@@ -252,33 +242,12 @@ private fun LibraryScreen(
                             }
                         }
 
-                        val motionScheme = MaterialTheme.motionScheme
-                        this@Column.AnimatedVisibility(
-                            visible = libraryUiState.nowPlayingState.mediaId.isNotBlank(),
+                        NowPlayingBar(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .navigationBarsPadding(),
-                            enter = fadeIn(motionScheme.defaultEffectsSpec()) +
-                                    scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
-                                    slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
-                                    expandHorizontally(
-                                        animationSpec = motionScheme.defaultSpatialSpec(),
-                                        expandFrom = Alignment.CenterHorizontally,
-                                    ),
-                        ) {
-                            if (libraryUiState.currentSong != null) {
-                                NowPlayingBar(
-                                    nowPlayingState = libraryUiState.nowPlayingState,
-                                    song = libraryUiState.currentSong,
-                                    currentPosition = libraryUiState.currentPosition,
-                                    modifier = Modifier.padding(16.dp),
-                                    onPlayClick = onPlayClick,
-                                    onPauseClick = onPauseClick,
-                                    onSkipNextClick = onSkipNextClick,
-                                    onClick = onNowPlayingBarClick,
-                                )
-                            }
-                        }
+                            onClick = onNowPlayingBarClick,
+                        )
                     }
                 }
             }

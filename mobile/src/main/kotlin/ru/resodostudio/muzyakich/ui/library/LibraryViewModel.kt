@@ -76,12 +76,6 @@ class LibraryViewModel @Inject constructor(
         musicServiceConnection.shuffleSongs(songs = songs, startIndex = startIndex)
     }
 
-    fun play() = musicServiceConnection.play()
-
-    fun pause() = musicServiceConnection.pause()
-
-    fun skipNext() = musicServiceConnection.skipToNext()
-
     fun toggleFilterFavorites(shouldFilterFavorites: Boolean) {
         viewModelScope.launch {
             userDataRepository.setFilterFavoritesPreference(shouldFilterFavorites)

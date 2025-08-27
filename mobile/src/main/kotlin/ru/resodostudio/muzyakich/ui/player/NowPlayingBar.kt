@@ -1,13 +1,17 @@
-package ru.resodostudio.muzyakich.ui.library
+package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -41,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.rectangle
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
@@ -56,20 +62,50 @@ import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun NowPlayingBar(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: PlayerViewModel = hiltViewModel(),
+) {
+    val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
+    val motionScheme = MaterialTheme.motionScheme
+
+    AnimatedVisibility(
+        visible = playerUiState is PlayerUiState.Success && (playerUiState as PlayerUiState.Success).nowPlayingState.mediaId.isNotBlank(),
+        enter = fadeIn(motionScheme.defaultEffectsSpec()) +
+                scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
+                expandHorizontally(
+                    animationSpec = motionScheme.defaultSpatialSpec(),
+                    expandFrom = Alignment.CenterHorizontally,
+                ),
+        modifier = modifier,
+    ) {
+        NowPlayingBar(
+            modifier = Modifier.padding(16.dp),
+            playerUiState = playerUiState as PlayerUiState.Success,
+            onClick = onClick,
+            onPlayClick = viewModel::play,
+            onPauseClick = viewModel::pause,
+            onSkipNextClick = viewModel::skipToNext,
+        )
+    }
+}
+
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalSharedTransitionApi::class,
 )
 @Composable
-internal fun NowPlayingBar(
-    nowPlayingState: NowPlayingState,
-    song: Song,
-    currentPosition: Long,
+private fun NowPlayingBar(
+    playerUiState: PlayerUiState.Success,
+    onClick: () -> Unit,
+    onPlayClick: () -> Unit,
+    onPauseClick: () -> Unit,
+    onSkipNextClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onPlayClick: () -> Unit = {},
-    onPauseClick: () -> Unit = {},
-    onSkipNextClick: () -> Unit = {},
-    onClick: () -> Unit = {},
 ) {
     with(LocalSharedTransitionScope.current) {
         Surface(
@@ -100,7 +136,7 @@ internal fun NowPlayingBar(
                 ) {
                     val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
                     AnimatedContent(
-                        targetState = song,
+                        targetState = playerUiState.currentSong,
                         transitionSpec = {
                             fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith fadeOut(
                                 snap()
@@ -114,7 +150,7 @@ internal fun NowPlayingBar(
                         )
                     }
                     ActionButtons(
-                        nowPlayingState = nowPlayingState,
+                        nowPlayingState = playerUiState.nowPlayingState,
                         onPlayClick = onPlayClick,
                         onPauseClick = onPauseClick,
                         onSkipNextClick = onSkipNextClick,
@@ -122,9 +158,9 @@ internal fun NowPlayingBar(
                 }
 
                 SongProgressIndicator(
-                    currentPosition = currentPosition,
-                    song = song,
-                    nowPlayingState = nowPlayingState,
+                    currentPosition = playerUiState.currentPosition,
+                    song = playerUiState.currentSong,
+                    nowPlayingState = playerUiState.nowPlayingState,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
