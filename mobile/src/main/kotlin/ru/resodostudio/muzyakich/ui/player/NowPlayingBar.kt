@@ -258,11 +258,8 @@ private fun ActionButtons(
             .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
     ) {
         AnimatedIcon(
-            targetState = !nowPlayingState.playWhenReady,
-            baseIcon = MuzIcons.Rounded.PlayArrow,
-            targetIcon = MuzIcons.Rounded.Pause,
-            baseContentDescription = stringResource(localesR.string.play_audio),
-            targetContentDescription = stringResource(localesR.string.pause_audio),
+            icon = if (nowPlayingState.playWhenReady) MuzIcons.Rounded.Pause else MuzIcons.Rounded.PlayArrow,
+            contentDescription = if (nowPlayingState.playWhenReady) stringResource(localesR.string.pause_audio) else stringResource(localesR.string.play_audio),
             label = "PlayPauseIconAnimation",
         )
     }

@@ -92,10 +92,8 @@ fun FilterBottomSheet(
                     label = { Text(stringResource(localesR.string.favorites)) },
                     leadingIcon = {
                         AnimatedIcon(
-                            targetState = selected,
-                            baseIcon = MuzIcons.Rounded.Check,
-                            targetIcon = MuzIcons.Filled.Star,
-                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                            icon = if (selected) MuzIcons.Rounded.Check else MuzIcons.Filled.Star,
+                            iconSize = FilterChipDefaults.IconSize,
                         )
                     },
                 )
@@ -134,9 +132,7 @@ fun FilterBottomSheet(
                             },
                     ) {
                         AnimatedIcon(
-                            targetState = checked,
-                            baseIcon = MuzIcons.Rounded.Check,
-                            targetIcon = sortByIcons[index],
+                            icon = if (checked) MuzIcons.Rounded.Check else sortByIcons[index],
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
                         Text(
@@ -184,9 +180,7 @@ fun FilterBottomSheet(
                             },
                     ) {
                         AnimatedIcon(
-                            targetState = checked,
-                            baseIcon = MuzIcons.Rounded.Check,
-                            targetIcon = sortOrderIcons[index],
+                            icon = if (checked) MuzIcons.Rounded.Check else sortOrderIcons[index],
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
                         Text(

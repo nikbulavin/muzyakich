@@ -619,13 +619,10 @@ private fun PlayerActionButtons(
                 .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             AnimatedIcon(
-                targetState = nowPlayingState.playWhenReady,
-                baseIcon = MuzIcons.Rounded.Pause,
-                targetIcon = MuzIcons.Rounded.PlayArrow,
-                baseContentDescription = stringResource(localesR.string.pause_audio),
-                targetContentDescription = stringResource(localesR.string.play_audio),
+                icon = if (nowPlayingState.playWhenReady) MuzIcons.Rounded.Pause else MuzIcons.Rounded.PlayArrow,
+                contentDescription = if (nowPlayingState.playWhenReady) stringResource(localesR.string.pause_audio) else stringResource(localesR.string.play_audio),
                 label = "PlayPauseIconAnimation",
-                modifier = Modifier.size(32.dp),
+                iconSize = 32.dp,
             )
         }
         FilledTonalIconButton(
