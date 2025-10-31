@@ -5,9 +5,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.text.style.LineHeightStyle.Alignment
-import androidx.compose.ui.text.style.LineHeightStyle.Trim
 import androidx.compose.ui.unit.sp
 import ru.resodostudio.muzyakich.core.designsystem.R
 
@@ -69,10 +66,6 @@ internal val MuzTypography = Typography(
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
         fontFamily = ShantellSansFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Bottom,
-            trim = Trim.LastLineBottom,
-        ),
     ),
     titleMedium = TextStyle(
         fontWeight = FontWeight.Bold,
@@ -94,10 +87,6 @@ internal val MuzTypography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
         fontFamily = NunitoFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Center,
-            trim = Trim.None,
-        ),
     ),
     bodyMedium = TextStyle(
         fontWeight = FontWeight.Bold,
@@ -119,10 +108,6 @@ internal val MuzTypography = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
         fontFamily = NunitoFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Center,
-            trim = Trim.LastLineBottom,
-        ),
     ),
     labelMedium = TextStyle(
         fontWeight = FontWeight.ExtraBold,
@@ -130,10 +115,6 @@ internal val MuzTypography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
         fontFamily = NunitoFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Center,
-            trim = Trim.LastLineBottom,
-        ),
     ),
     labelSmall = TextStyle(
         fontWeight = FontWeight.ExtraBold,
@@ -141,9 +122,5 @@ internal val MuzTypography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
         fontFamily = NunitoFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Center,
-            trim = Trim.LastLineBottom,
-        ),
     )
 )
