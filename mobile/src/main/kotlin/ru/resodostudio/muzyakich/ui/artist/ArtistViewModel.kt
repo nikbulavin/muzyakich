@@ -7,7 +7,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
@@ -38,7 +37,6 @@ class ArtistViewModel @AssistedInject constructor(
                 )
             }
         }
-        .catch { ArtistUiState.Error }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
