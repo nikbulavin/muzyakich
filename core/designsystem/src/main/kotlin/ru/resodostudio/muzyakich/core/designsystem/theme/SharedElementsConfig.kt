@@ -45,7 +45,7 @@ class MorphOverlayClip(val morph: Morph, private val animatedProgress: () -> Flo
         bounds: Rect,
         layoutDirection: LayoutDirection,
         density: Density,
-    ): Path? {
+    ): Path {
         matrix.reset()
         val max = max(bounds.width, bounds.height)
         matrix.scale(max, max)
