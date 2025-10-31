@@ -28,7 +28,7 @@ kotlin = "2.2.21"
 kotlinxCoroutines = "1.10.2"
 ksp = "2.3.0"
 leakcanaryAndroid = "2.14"
-lottie = "6.7.0"
+lottie = "6.7.1"
 protobuf = "4.33.0"
 protobufPlugin = "0.9.5"
 
