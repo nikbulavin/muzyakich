@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
@@ -121,6 +122,10 @@ private fun LibraryScreen(
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
+    val hazeState = rememberHazeState()
+    val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceContainer)
+    val hazeStyle = HazeMaterials.ultraThin()
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
@@ -146,7 +151,14 @@ private fun LibraryScreen(
 
             PrimaryScrollableTabRow(
                 selectedTabIndex = selectedTab.ordinal,
-                modifier = Modifier.fillMaxWidth(),
+                containerColor = Color.Transparent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .hazeEffect(hazeState, hazeStyle) {
+                        inputScale = HazeInputScale.Auto
+                        blurEnabled = true
+                        noiseFactor = 0f
+                    },
             ) {
                 libraryTabs.forEach { tab ->
                     Tab(
@@ -199,8 +211,6 @@ private fun LibraryScreen(
                     }
 
                     Box {
-                        val hazeState = rememberHazeState()
-                        val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceContainer)
                         LazyVerticalGrid(
                             state = lazyGridState,
                             columns = GridCells.Adaptive(300.dp),
@@ -262,7 +272,7 @@ private fun LibraryScreen(
                                 .align(Alignment.BottomCenter)
                                 .navigationBarsPadding()
                                 .clip(MaterialTheme.shapes.medium)
-                                .hazeEffect(hazeState, hazeStyle) {
+                                .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
                                     inputScale = HazeInputScale.Auto
                                     blurEnabled = true
                                     noiseFactor = 0f
