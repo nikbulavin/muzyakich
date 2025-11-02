@@ -40,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
@@ -48,6 +49,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
@@ -98,6 +106,8 @@ fun LibraryScreen(
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalMaterial3Api::class,
+    ExperimentalHazeMaterialsApi::class,
+    ExperimentalHazeApi::class,
 )
 @Composable
 private fun LibraryScreen(
@@ -189,6 +199,8 @@ private fun LibraryScreen(
                     }
 
                     Box {
+                        val hazeState = rememberHazeState()
+                        val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceContainer)
                         LazyVerticalGrid(
                             state = lazyGridState,
                             columns = GridCells.Adaptive(300.dp),
@@ -196,7 +208,9 @@ private fun LibraryScreen(
                                 top = 8.dp,
                                 bottom = 104.dp + paddingValues.calculateBottomPadding(),
                             ),
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .hazeSource(hazeState),
                         ) {
                             when (selectedTab) {
                                 PLAYLISTS -> {
@@ -244,8 +258,15 @@ private fun LibraryScreen(
 
                         NowPlayingBar(
                             modifier = Modifier
+                                .padding(16.dp)
                                 .align(Alignment.BottomCenter)
-                                .navigationBarsPadding(),
+                                .navigationBarsPadding()
+                                .clip(MaterialTheme.shapes.medium)
+                                .hazeEffect(hazeState, hazeStyle) {
+                                    inputScale = HazeInputScale.Auto
+                                    blurEnabled = true
+                                    noiseFactor = 0f
+                                },
                             onClick = onNowPlayingBarClick,
                         )
                     }

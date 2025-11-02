@@ -31,13 +31,11 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -84,7 +82,6 @@ fun NowPlayingBar(
         modifier = modifier,
     ) {
         NowPlayingBar(
-            modifier = Modifier.padding(16.dp),
             playerUiState = playerUiState as PlayerUiState.Success,
             onClick = onClick,
             onPlayClick = viewModel::play,
@@ -108,10 +105,9 @@ private fun NowPlayingBar(
     modifier: Modifier = Modifier,
 ) {
     with(LocalSharedTransitionScope.current) {
-        Surface(
-            tonalElevation = 3.dp,
+        Box(
             modifier = modifier
-                .clip(MaterialTheme.shapes.medium)
+                .padding(horizontal = 14.dp)
                 .clickable { onClick() }
                 .sharedBoundsRevealWithShapeMorph(
                     sharedContentState = rememberSharedContentState(SharedElementKey.NowPlayingBarToPlayerScreen),
@@ -126,47 +122,42 @@ private fun NowPlayingBar(
                     },
                 ),
         ) {
-            Box(
-                modifier = Modifier.padding(horizontal = 14.dp),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(vertical = 12.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(vertical = 12.dp),
-                ) {
-                    val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
-                    AnimatedContent(
-                        targetState = playerUiState.currentSong,
-                        transitionSpec = {
-                            fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith fadeOut(
-                                snap()
-                            )
-                        },
-                        contentKey = { it.mediaId },
-                        modifier = Modifier.weight(1f),
-                    ) { songState ->
-                        SongInfo(
-                            song = songState,
-                        )
-                    }
-                    ActionButtons(
-                        nowPlayingState = playerUiState.nowPlayingState,
-                        onPlayClick = onPlayClick,
-                        onPauseClick = onPauseClick,
-                        onSkipNextClick = onSkipNextClick,
+                val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+                AnimatedContent(
+                    targetState = playerUiState.currentSong,
+                    transitionSpec = {
+                        fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith
+                                fadeOut(snap())
+                    },
+                    contentKey = { it.mediaId },
+                    modifier = Modifier.weight(1f),
+                ) { songState ->
+                    SongInfo(
+                        song = songState,
                     )
                 }
-
-                SongProgressIndicator(
-                    currentPosition = playerUiState.currentPosition,
-                    song = playerUiState.currentSong,
+                ActionButtons(
                     nowPlayingState = playerUiState.nowPlayingState,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(3.dp),
+                    onPlayClick = onPlayClick,
+                    onPauseClick = onPauseClick,
+                    onSkipNextClick = onSkipNextClick,
                 )
             }
+
+            SongProgressIndicator(
+                currentPosition = playerUiState.currentPosition,
+                song = playerUiState.currentSong,
+                nowPlayingState = playerUiState.nowPlayingState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(3.dp),
+            )
         }
     }
 }

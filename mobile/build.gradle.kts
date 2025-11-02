@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.androidx.tracing)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
+    implementation(libs.haze)
+    implementation(libs.haze.materials)
     implementation(libs.lottie.compose)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
