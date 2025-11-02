@@ -41,7 +41,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
@@ -125,6 +127,7 @@ private fun LibraryScreen(
     val hazeState = rememberHazeState()
     val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceContainer)
     val hazeStyle = HazeMaterials.ultraThin()
+    val hazeBlurRadius = 32.dp
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -157,6 +160,7 @@ private fun LibraryScreen(
                     .hazeEffect(hazeState, hazeStyle) {
                         inputScale = HazeInputScale.Auto
                         blurEnabled = true
+                        blurRadius = hazeBlurRadius
                         noiseFactor = 0f
                     },
             ) {
@@ -268,15 +272,26 @@ private fun LibraryScreen(
 
                         NowPlayingBar(
                             modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.BottomCenter)
                                 .navigationBarsPadding()
+                                .padding(16.dp)
+                                .dropShadow(
+                                    shape = MaterialTheme.shapes.medium,
+                                    shadow = Shadow(
+                                        radius = 10.dp,
+                                        spread = 6.dp,
+                                        color = MaterialTheme.colorScheme.inverseSurface,
+                                        alpha = 0.1f,
+                                    ),
+                                )
+                                .align(Alignment.BottomCenter)
                                 .clip(MaterialTheme.shapes.medium)
                                 .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
                                     inputScale = HazeInputScale.Auto
                                     blurEnabled = true
+                                    blurRadius = hazeBlurRadius
                                     noiseFactor = 0f
-                                },
+                                }
+                                ,
                             onClick = onNowPlayingBarClick,
                         )
                     }
