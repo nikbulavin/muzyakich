@@ -107,8 +107,8 @@ private fun NowPlayingBar(
     with(LocalSharedTransitionScope.current) {
         Box(
             modifier = modifier
-                .padding(horizontal = 14.dp)
                 .clickable { onClick() }
+                .padding(horizontal = 14.dp)
                 .sharedBoundsRevealWithShapeMorph(
                     sharedContentState = rememberSharedContentState(SharedElementKey.NowPlayingBarToPlayerScreen),
                     restingShape = RoundedPolygon.rectangle(rounding = CornerRounding(12f)),
