@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -152,6 +153,7 @@ private fun PlayerScreen(
     onShuffleToggle: (Boolean) -> Unit = {},
     onRepeatToggle: (RepeatMode) -> Unit = {},
 ) {
+    val motionScheme = MaterialTheme.motionScheme
     with(LocalSharedTransitionScope.current) {
         var queueOpened by rememberSaveable { mutableStateOf(false) }
 
@@ -169,6 +171,7 @@ private fun PlayerScreen(
                             EnterExitState.PostExit -> 1f
                         }
                     },
+                    boundsTransform = BoundsTransform { _, _ -> motionScheme.slowSpatialSpec() },
                 ),
         ) {
             when (playerUiState) {

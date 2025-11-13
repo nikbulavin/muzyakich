@@ -2,6 +2,7 @@ package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -104,6 +105,7 @@ private fun NowPlayingBar(
     onSkipNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val motionScheme = MaterialTheme.motionScheme
     with(LocalSharedTransitionScope.current) {
         Box(
             modifier = modifier
@@ -120,6 +122,7 @@ private fun NowPlayingBar(
                             EnterExitState.PostExit -> 1f
                         }
                     },
+                    boundsTransform = BoundsTransform { _, _ -> motionScheme.slowSpatialSpec() },
                 ),
         ) {
             Row(
@@ -127,7 +130,7 @@ private fun NowPlayingBar(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.padding(vertical = 12.dp),
             ) {
-                val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+                val animSpec = motionScheme.defaultSpatialSpec<IntOffset>()
                 AnimatedContent(
                     targetState = playerUiState.currentSong,
                     transitionSpec = {
