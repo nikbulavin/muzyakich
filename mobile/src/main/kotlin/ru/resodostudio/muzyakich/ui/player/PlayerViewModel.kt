@@ -6,13 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
@@ -23,7 +21,7 @@ import kotlin.uuid.Uuid
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     songsRepository: SongsRepository,
-    private val userDataRepository: UserDataRepository,
+    userDataRepository: UserDataRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
@@ -69,18 +67,6 @@ class PlayerViewModel @Inject constructor(
     fun skipToNext() = musicServiceConnection.skipToNext()
 
     fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
-
-    fun setShuffleModeEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userDataRepository.setShuffleModePreference(enabled)
-        }
-    }
-
-    fun setRepeatMode(repeatMode: RepeatMode) {
-        viewModelScope.launch {
-            userDataRepository.setRepeatModePreference(repeatMode)
-        }
-    }
 }
 
 sealed interface PlayerUiState {

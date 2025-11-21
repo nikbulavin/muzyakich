@@ -79,10 +79,15 @@ import androidx.graphics.shapes.rectangle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
+import androidx.media3.common.Player.REPEAT_MODE_ALL
+import androidx.media3.common.Player.REPEAT_MODE_OFF
+import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberPreviousButtonState
+import androidx.media3.ui.compose.state.rememberRepeatButtonState
+import androidx.media3.ui.compose.state.rememberShuffleButtonState
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -131,8 +136,6 @@ fun PlayerScreen(
         onBackClick = onBackClick,
         onSeekTo = viewModel::seekTo,
         onSkipToSongClick = viewModel::skipToSong,
-        onShuffleToggle = viewModel::setShuffleModeEnabled,
-        onRepeatToggle = viewModel::setRepeatMode,
     )
 }
 
@@ -146,8 +149,6 @@ private fun PlayerScreen(
     onBackClick: () -> Unit = {},
     onSeekTo: (Float) -> Unit = {},
     onSkipToSongClick: (Uuid) -> Unit = {},
-    onShuffleToggle: (Boolean) -> Unit = {},
-    onRepeatToggle: (RepeatMode) -> Unit = {},
 ) {
     val motionScheme = MaterialTheme.motionScheme
     with(LocalSharedTransitionScope.current) {
@@ -287,8 +288,7 @@ private fun PlayerScreen(
                                 }
                             }
 
-                            val spatialSpec =
-                                MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+                            val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
                             val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
                             this@Column.AnimatedVisibility(
                                 visible = isPlayerActionsVisible || !queueOpened,
@@ -329,18 +329,16 @@ private fun PlayerScreen(
                                                 onSeekTo = onSeekTo,
                                                 modifier = Modifier.fillMaxWidth(),
                                             )
-                                            playerUiState.nowPlayingState.player?.let {
+                                            playerUiState.nowPlayingState.player?.let { player ->
                                                 PlayerActionButtons(
-                                                    player = it,
+                                                    player = player,
+                                                )
+                                                PlaybackActionButtons(
+                                                    player = player,
+                                                    queueOpened = queueOpened,
+                                                    onQueueClick = { queueOpened = it },
                                                 )
                                             }
-                                            PlaybackActionButtons(
-                                                playbackConfig = playerUiState.playbackConfig,
-                                                onRepeatToggle = onRepeatToggle,
-                                                onShuffleToggle = onShuffleToggle,
-                                                queueOpened = queueOpened,
-                                                onQueueClick = { queueOpened = it },
-                                            )
                                         }
                                     }
                                 }
@@ -503,16 +501,21 @@ private fun BackButton(
     }
 }
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun PlaybackActionButtons(
-    playbackConfig: PlaybackConfig,
-    onRepeatToggle: (RepeatMode) -> Unit,
-    onShuffleToggle: (Boolean) -> Unit,
+    player: Player,
     modifier: Modifier = Modifier,
     queueOpened: Boolean = false,
     onQueueClick: (Boolean) -> Unit = {},
 ) {
+    val shuffleButtonState = rememberShuffleButtonState(player)
+    val repeatButtonState = rememberRepeatButtonState(
+        player = player,
+        toggleModeSequence = listOf(REPEAT_MODE_OFF, REPEAT_MODE_ALL, REPEAT_MODE_ONE),
+    )
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -520,47 +523,49 @@ private fun PlaybackActionButtons(
     ) {
         MuzOutlinedIconToggleButton(
             modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-            checked = playbackConfig.shuffleModeEnabled,
-            onCheckedChange = onShuffleToggle,
+            checked = shuffleButtonState.shuffleOn,
+            onCheckedChange = { shuffleButtonState.onClick() },
             shape = IconButtonDefaults.smallSquareShape,
             icon = MuzIcons.Rounded.Shuffle,
             contentDescriptionRes = localesR.string.shuffle,
         )
 
-        val repeatMode = playbackConfig.repeatMode
-        val icon =
-            if (repeatMode == REPEAT_ONE) MuzIcons.Rounded.RepeatOne else MuzIcons.Rounded.Repeat
-        val contentDescriptionRes = when (repeatMode) {
-            REPEAT_OFF -> localesR.string.enable_repeat_mode_all
-            REPEAT_ALL -> localesR.string.enable_repeat_mode_one
-            REPEAT_ONE -> localesR.string.disable_repeat_mode
+        val icon = if (repeatButtonState.repeatModeState == REPEAT_MODE_ONE) {
+            MuzIcons.Rounded.RepeatOne
+        } else {
+            MuzIcons.Rounded.Repeat
+        }
+        val contentDescriptionRes = when (repeatButtonState.repeatModeState) {
+            REPEAT_MODE_OFF -> localesR.string.enable_repeat_mode_all
+            REPEAT_MODE_ALL -> localesR.string.enable_repeat_mode_one
+            else -> localesR.string.disable_repeat_mode
         }
         val hapticFeedback = LocalHapticFeedback.current
         MuzOutlinedIconToggleButton(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-            checked = repeatMode != REPEAT_OFF,
+            checked = repeatButtonState.repeatModeState != REPEAT_MODE_OFF,
             icon = icon,
             contentDescriptionRes = contentDescriptionRes,
             onCustomCheckedChange = {
-                val newRepeatMode = when (repeatMode) {
-                    REPEAT_OFF -> {
+                when (repeatButtonState.repeatModeState) {
+                    REPEAT_MODE_OFF -> {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                         REPEAT_ALL
                     }
 
-                    REPEAT_ALL -> {
+                    REPEAT_MODE_ALL -> {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                         REPEAT_ONE
                     }
 
-                    REPEAT_ONE -> {
+                    REPEAT_MODE_ONE -> {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                         REPEAT_OFF
                     }
                 }
-                onRepeatToggle(newRepeatMode)
+                repeatButtonState.onClick()
             },
             shape = IconButtonDefaults.smallSquareShape,
         )
@@ -612,7 +617,11 @@ private fun PlayerActionButtons(
         ) {
             AnimatedIcon(
                 icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
-                contentDescription = if (playPauseButtonState.showPlay) stringResource(localesR.string.play_audio) else stringResource(localesR.string.pause_audio),
+                contentDescription = if (playPauseButtonState.showPlay) {
+                    stringResource(localesR.string.play_audio)
+                } else {
+                    stringResource(localesR.string.pause_audio)
+                },
                 label = "PlayPauseIconAnimation",
                 iconSize = 32.dp,
             )
