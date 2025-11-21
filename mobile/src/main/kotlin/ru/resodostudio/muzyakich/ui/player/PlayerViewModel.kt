@@ -60,12 +60,6 @@ class PlayerViewModel @Inject constructor(
         )
     }
 
-    fun play() = musicServiceConnection.play()
-
-    fun pause() = musicServiceConnection.pause()
-
-    fun skipToNext() = musicServiceConnection.skipToNext()
-
     fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
 }
 

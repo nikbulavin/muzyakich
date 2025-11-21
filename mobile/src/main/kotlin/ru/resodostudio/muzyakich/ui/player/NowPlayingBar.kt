@@ -46,6 +46,10 @@ import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.rectangle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.state.rememberNextButtonState
+import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
@@ -85,9 +89,6 @@ fun NowPlayingBar(
         NowPlayingBar(
             playerUiState = playerUiState as PlayerUiState.Success,
             onClick = onClick,
-            onPlayClick = viewModel::play,
-            onPauseClick = viewModel::pause,
-            onSkipNextClick = viewModel::skipToNext,
         )
     }
 }
@@ -100,9 +101,6 @@ fun NowPlayingBar(
 private fun NowPlayingBar(
     playerUiState: PlayerUiState.Success,
     onClick: () -> Unit,
-    onPlayClick: () -> Unit,
-    onPauseClick: () -> Unit,
-    onSkipNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val motionScheme = MaterialTheme.motionScheme
@@ -144,12 +142,11 @@ private fun NowPlayingBar(
                         song = songState,
                     )
                 }
-                ActionButtons(
-                    nowPlayingState = playerUiState.nowPlayingState,
-                    onPlayClick = onPlayClick,
-                    onPauseClick = onPauseClick,
-                    onSkipNextClick = onSkipNextClick,
-                )
+                playerUiState.nowPlayingState.player?.let { player ->
+                    ActionButtons(
+                        player = player,
+                    )
+                }
             }
 
             SongProgressIndicator(
@@ -230,38 +227,36 @@ private fun SongProgressIndicator(
     }
 }
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun ActionButtons(
-    nowPlayingState: NowPlayingState,
-    onPlayClick: () -> Unit,
-    onPauseClick: () -> Unit,
-    onSkipNextClick: () -> Unit,
+    player: Player,
     modifier: Modifier = Modifier,
 ) {
+    val playPauseButtonState = rememberPlayPauseButtonState(player)
+    val nextButtonState = rememberNextButtonState(player)
     FilledIconButton(
-        onClick = {
-            if (!nowPlayingState.playWhenReady) {
-                onPlayClick()
-            } else {
-                onPauseClick()
-            }
-        },
+        onClick = playPauseButtonState::onClick,
         shapes = IconButtonDefaults.shapes(),
         modifier = modifier
             .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
     ) {
         AnimatedIcon(
-            icon = if (nowPlayingState.playWhenReady) MuzIcons.Rounded.Pause else MuzIcons.Rounded.PlayArrow,
-            contentDescription = if (nowPlayingState.playWhenReady) stringResource(localesR.string.pause_audio) else stringResource(localesR.string.play_audio),
+            icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
+            contentDescription = if (playPauseButtonState.showPlay) {
+                stringResource(localesR.string.play_audio)
+            } else {
+                stringResource(localesR.string.pause_audio)
+            },
             label = "PlayPauseIconAnimation",
         )
     }
     IconButton(
-        onClick = onSkipNextClick,
+        onClick = nextButtonState::onClick,
         shapes = IconButtonDefaults.shapes(),
         modifier = modifier,
-        enabled = nowPlayingState.hasNextMediaItem,
+        enabled = nextButtonState.isEnabled,
     ) {
         Icon(
             imageVector = MuzIcons.Rounded.SkipNext,
