@@ -162,6 +162,7 @@ class MusicServiceConnection @Inject constructor(
                 duration = duration.orDefaultTimestamp(),
                 hasNextMediaItem = hasNextMediaItem(),
                 playingQueue = getCurrentPlayingQueue(this),
+                player = this,
             )
         }
     }

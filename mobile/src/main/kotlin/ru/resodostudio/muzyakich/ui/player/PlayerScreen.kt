@@ -78,6 +78,11 @@ import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.rectangle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.state.rememberNextButtonState
+import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
+import androidx.media3.ui.compose.state.rememberPreviousButtonState
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -102,7 +107,6 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionSc
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedBoundsRevealWithShapeMorph
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
@@ -126,10 +130,6 @@ fun PlayerScreen(
         playerUiState = playerUiState,
         onBackClick = onBackClick,
         onSeekTo = viewModel::seekTo,
-        onPlayClick = viewModel::play,
-        onPauseClick = viewModel::pause,
-        onSkipNextClick = viewModel::skipToNext,
-        onSkipPreviousClick = viewModel::skipToPrevious,
         onSkipToSongClick = viewModel::skipToSong,
         onShuffleToggle = viewModel::setShuffleModeEnabled,
         onRepeatToggle = viewModel::setRepeatMode,
@@ -145,10 +145,6 @@ private fun PlayerScreen(
     playerUiState: PlayerUiState,
     onBackClick: () -> Unit = {},
     onSeekTo: (Float) -> Unit = {},
-    onPlayClick: () -> Unit = {},
-    onPauseClick: () -> Unit = {},
-    onSkipNextClick: () -> Unit = {},
-    onSkipPreviousClick: () -> Unit = {},
     onSkipToSongClick: (Uuid) -> Unit = {},
     onShuffleToggle: (Boolean) -> Unit = {},
     onRepeatToggle: (RepeatMode) -> Unit = {},
@@ -333,13 +329,11 @@ private fun PlayerScreen(
                                                 onSeekTo = onSeekTo,
                                                 modifier = Modifier.fillMaxWidth(),
                                             )
-                                            PlayerActionButtons(
-                                                nowPlayingState = playerUiState.nowPlayingState,
-                                                onSkipPreviousClick = onSkipPreviousClick,
-                                                onPlayClick = onPlayClick,
-                                                onPauseClick = onPauseClick,
-                                                onSkipNextClick = onSkipNextClick,
-                                            )
+                                            playerUiState.nowPlayingState.player?.let {
+                                                PlayerActionButtons(
+                                                    player = it,
+                                                )
+                                            }
                                             PlaybackActionButtons(
                                                 playbackConfig = playerUiState.playbackConfig,
                                                 onRepeatToggle = onRepeatToggle,
@@ -582,23 +576,24 @@ private fun PlaybackActionButtons(
     }
 }
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun PlayerActionButtons(
-    nowPlayingState: NowPlayingState,
-    onSkipPreviousClick: () -> Unit,
-    onPlayClick: () -> Unit,
-    onPauseClick: () -> Unit,
-    onSkipNextClick: () -> Unit,
+    player: Player,
     modifier: Modifier = Modifier,
 ) {
+    val previousButtonState = rememberPreviousButtonState(player)
+    val playPauseButtonState = rememberPlayPauseButtonState(player)
+    val nextButtonState = rememberNextButtonState(player)
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FilledTonalIconButton(
-            onClick = onSkipPreviousClick,
+            onClick = previousButtonState::onClick,
             shapes = IconButtonDefaults.shapes(),
             modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
         ) {
@@ -609,29 +604,23 @@ private fun PlayerActionButtons(
             )
         }
         FilledIconButton(
-            onClick = {
-                if (!nowPlayingState.playWhenReady) {
-                    onPlayClick()
-                } else {
-                    onPauseClick()
-                }
-            },
+            onClick = playPauseButtonState::onClick,
             shapes = IconButtonDefaults.shapes(),
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
         ) {
             AnimatedIcon(
-                icon = if (nowPlayingState.playWhenReady) MuzIcons.Rounded.Pause else MuzIcons.Rounded.PlayArrow,
-                contentDescription = if (nowPlayingState.playWhenReady) stringResource(localesR.string.pause_audio) else stringResource(localesR.string.play_audio),
+                icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
+                contentDescription = if (playPauseButtonState.showPlay) stringResource(localesR.string.play_audio) else stringResource(localesR.string.pause_audio),
                 label = "PlayPauseIconAnimation",
                 iconSize = 32.dp,
             )
         }
         FilledTonalIconButton(
-            onClick = onSkipNextClick,
+            onClick = nextButtonState::onClick,
             shapes = IconButtonDefaults.shapes(),
-            enabled = nowPlayingState.hasNextMediaItem,
+            enabled = nextButtonState.isEnabled,
             modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
         ) {
             Icon(

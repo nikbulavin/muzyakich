@@ -70,8 +70,6 @@ class PlayerViewModel @Inject constructor(
 
     fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
 
-    fun skipToPrevious() = musicServiceConnection.skipToPrevious()
-
     fun setShuffleModeEnabled(enabled: Boolean) {
         viewModelScope.launch {
             userDataRepository.setShuffleModePreference(enabled)

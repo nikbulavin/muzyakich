@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.core.model.data
 
+import androidx.media3.common.Player
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_DURATION_MS
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_MEDIA_ID
@@ -13,4 +14,5 @@ data class NowPlayingState(
     val duration: Long = DEFAULT_DURATION_MS,
     val hasNextMediaItem: Boolean = false,
     val playingQueue: List<Song> = emptyList(),
+    val player: Player? = null,
 )

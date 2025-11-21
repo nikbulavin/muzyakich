@@ -8,4 +8,6 @@ android {
 
 dependencies {
     implementation(projects.core.common)
+
+    implementation(libs.androidx.media3.exoPlayer)
 }
