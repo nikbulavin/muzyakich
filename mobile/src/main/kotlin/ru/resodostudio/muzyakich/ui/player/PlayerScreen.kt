@@ -83,6 +83,8 @@ import androidx.media3.common.Player.REPEAT_MODE_ALL
 import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.ui.compose.indicators.TimeText
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberPreviousButtonState
@@ -117,7 +119,6 @@ import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
-import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -286,7 +287,8 @@ private fun PlayerScreen(
                                 }
                             }
 
-                            val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+                            val spatialSpec =
+                                MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
                             val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
                             this@Column.AnimatedVisibility(
                                 visible = isPlayerActionsVisible || !queueOpened,
@@ -320,13 +322,16 @@ private fun PlayerScreen(
                                                 .navigationBarsPadding(),
                                             verticalArrangement = Arrangement.SpaceBetween,
                                         ) {
-                                            ProgressSlider(
-                                                currentPosition = playerUiState.currentPosition,
-                                                duration = playerUiState.currentSong.duration,
-                                                bitrate = playerUiState.currentSong.bitrate,
-                                                onSeekTo = onSeekTo,
-                                                modifier = Modifier.fillMaxWidth(),
-                                            )
+                                            playerUiState.nowPlayingState.player?.let { player ->
+                                                ProgressSlider(
+                                                    player = player,
+                                                    currentPosition = playerUiState.currentPosition,
+                                                    duration = playerUiState.currentSong.duration,
+                                                    bitrate = playerUiState.currentSong.bitrate,
+                                                    onSeekTo = onSeekTo,
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                )
+                                            }
                                             playerUiState.nowPlayingState.player?.let { player ->
                                                 PlayerActionButtons(
                                                     player = player,
@@ -642,6 +647,7 @@ private fun PlayerActionButtons(
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun ProgressSlider(
+    player: Player,
     currentPosition: Long,
     duration: Long,
     bitrate: Int,
@@ -673,37 +679,31 @@ private fun ProgressSlider(
             modifier = Modifier.height(32.dp),
         )
 
-        val timeMillis by remember(currentPosition) {
-            derivedStateOf {
-                val current = currentPosition / 1000
-                val total = duration / 1000
-                val remaining = (total - current).coerceAtLeast(0)
-                TimeMillis(
-                    current = current.asFormattedString(),
-                    remaining = remaining.asFormattedString(),
-                )
-            }
-        }
-
         Box(
             contentAlignment = Alignment.Center,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = timeMillis.current,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            TimeText(player) {
+                val currentPosition = Util.getStringForTime(currentPositionMs)
+                    .removePrefix("0")
+                val remainingDuration = Util.getStringForTime(durationMs - currentPositionMs)
+                    .removePrefix("0")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = currentPosition,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
 
-                Text(
-                    text = "-${timeMillis.remaining}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                    Text(
+                        text = "-$remainingDuration",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             this@Column.AnimatedVisibility(
                 visible = bitrate >= 256,
