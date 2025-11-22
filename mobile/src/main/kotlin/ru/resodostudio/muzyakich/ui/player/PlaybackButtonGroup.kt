@@ -117,7 +117,6 @@ private fun repeatModeIcon(repeatMode: @Player.RepeatMode Int): ImageVector {
 }
 
 @StringRes
-@Composable
 private fun repeatModeContentDescription(repeatMode: @Player.RepeatMode Int): Int {
     return when (repeatMode) {
         REPEAT_MODE_OFF -> localesR.string.enable_repeat_mode_all
