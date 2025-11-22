@@ -70,19 +70,6 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    fun skipToPrevious() = mediaController?.run {
-        seekToPrevious()
-        if (_nowPlayingState.value.playWhenReady) play()
-    }
-
-    fun play() = mediaController?.play()
-    fun pause() = mediaController?.pause()
-
-    fun skipToNext() = mediaController?.run {
-        seekToNext()
-        if (_nowPlayingState.value.playWhenReady) play()
-    }
-
     fun seekTo(position: Long) = mediaController?.run {
         seekTo(position)
         if (_nowPlayingState.value.playWhenReady) play()
