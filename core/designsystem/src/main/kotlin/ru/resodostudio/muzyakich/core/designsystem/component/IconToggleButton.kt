@@ -20,6 +20,7 @@ fun MuzOutlinedIconToggleButton(
     icon: ImageVector,
     @StringRes contentDescriptionRes: Int,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     shape: Shape? = null,
     onCheckedChange: (Boolean) -> Unit = {},
     onCustomCheckedChange: ((Boolean) -> Unit)? = null,
@@ -39,7 +40,7 @@ fun MuzOutlinedIconToggleButton(
         },
         shapes = IconButtonDefaults.toggleableShapes(shape),
         colors = IconButtonDefaults.outlinedIconToggleButtonVibrantColors(),
-        border = IconButtonDefaults.outlinedIconButtonVibrantBorder(true),
+        border = IconButtonDefaults.outlinedIconToggleButtonVibrantBorder(enabled, checked),
         modifier = modifier,
     ) {
         Icon(

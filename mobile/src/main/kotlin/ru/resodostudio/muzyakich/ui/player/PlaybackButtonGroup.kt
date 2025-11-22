@@ -55,6 +55,7 @@ fun PlaybackButtonGroup(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         MuzOutlinedIconToggleButton(
+            enabled = shuffleButtonState.isEnabled,
             modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
             checked = shuffleButtonState.shuffleOn,
             onCheckedChange = { shuffleButtonState.onClick() },
@@ -67,6 +68,7 @@ fun PlaybackButtonGroup(
         val contentDescriptionRes = repeatModeContentDescription(repeatButtonState.repeatModeState)
         val hapticFeedback = LocalHapticFeedback.current
         MuzOutlinedIconToggleButton(
+            enabled = repeatButtonState.isEnabled,
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
