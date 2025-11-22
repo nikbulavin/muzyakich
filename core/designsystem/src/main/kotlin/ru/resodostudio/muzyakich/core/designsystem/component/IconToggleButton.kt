@@ -38,6 +38,8 @@ fun MuzOutlinedIconToggleButton(
             }
         },
         shapes = IconButtonDefaults.toggleableShapes(shape),
+        colors = IconButtonDefaults.outlinedIconToggleButtonVibrantColors(),
+        border = IconButtonDefaults.outlinedIconButtonVibrantBorder(true),
         modifier = modifier,
     ) {
         Icon(
