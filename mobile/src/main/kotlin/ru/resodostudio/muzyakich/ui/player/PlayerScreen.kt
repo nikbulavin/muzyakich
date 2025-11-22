@@ -38,13 +38,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.extraSmallContainerSize
-import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
@@ -79,44 +77,23 @@ import androidx.graphics.shapes.rectangle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
-import androidx.media3.common.Player.REPEAT_MODE_ALL
-import androidx.media3.common.Player.REPEAT_MODE_OFF
-import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.ui.compose.indicators.TimeText
-import androidx.media3.ui.compose.state.rememberNextButtonState
-import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
-import androidx.media3.ui.compose.state.rememberPreviousButtonState
-import androidx.media3.ui.compose.state.rememberRepeatButtonState
-import androidx.media3.ui.compose.state.rememberShuffleButtonState
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzOutlinedIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.KeyboardArrowDown
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.QueueMusic
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Repeat
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.RepeatOne
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipPrevious
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedBoundsRevealWithShapeMorph
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
 import ru.resodostudio.muzyakich.ui.util.convertToProgress
@@ -333,7 +310,7 @@ private fun PlayerScreen(
                                                 )
                                             }
                                             playerUiState.nowPlayingState.player?.let { player ->
-                                                PlayerActionButtons(
+                                                PlayerControlButtonGroup(
                                                     player = player,
                                                 )
                                                 PlaybackButtonGroup(
@@ -501,66 +478,6 @@ private fun BackButton(
             contentDescription = stringResource(localesR.string.back),
             modifier = Modifier.size(20.dp),
         )
-    }
-}
-
-@androidx.annotation.OptIn(UnstableApi::class)
-@Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun PlayerActionButtons(
-    player: Player,
-    modifier: Modifier = Modifier,
-) {
-    val previousButtonState = rememberPreviousButtonState(player)
-    val playPauseButtonState = rememberPlayPauseButtonState(player)
-    val nextButtonState = rememberNextButtonState(player)
-
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        FilledTonalIconButton(
-            onClick = previousButtonState::onClick,
-            shapes = IconButtonDefaults.shapes(),
-            modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-        ) {
-            Icon(
-                imageVector = MuzIcons.Rounded.SkipPrevious,
-                contentDescription = stringResource(localesR.string.skip_previous),
-                modifier = Modifier.size(32.dp),
-            )
-        }
-        FilledIconButton(
-            onClick = playPauseButtonState::onClick,
-            shapes = IconButtonDefaults.shapes(),
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-        ) {
-            AnimatedIcon(
-                icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
-                contentDescription = if (playPauseButtonState.showPlay) {
-                    stringResource(localesR.string.play_audio)
-                } else {
-                    stringResource(localesR.string.pause_audio)
-                },
-                label = "PlayPauseIconAnimation",
-                iconSize = 32.dp,
-            )
-        }
-        FilledTonalIconButton(
-            onClick = nextButtonState::onClick,
-            shapes = IconButtonDefaults.shapes(),
-            enabled = nextButtonState.isEnabled,
-            modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-        ) {
-            Icon(
-                imageVector = MuzIcons.Rounded.SkipNext,
-                contentDescription = stringResource(localesR.string.skip_next),
-                modifier = Modifier.size(32.dp),
-            )
-        }
     }
 }
 
