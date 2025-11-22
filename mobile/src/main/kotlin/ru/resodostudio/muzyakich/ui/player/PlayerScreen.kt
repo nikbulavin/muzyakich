@@ -644,6 +644,7 @@ private fun PlayerActionButtons(
     }
 }
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun ProgressSlider(
@@ -720,5 +721,3 @@ private fun ProgressSlider(
         }
     }
 }
-
-private data class TimeMillis(val current: String, val remaining: String)
