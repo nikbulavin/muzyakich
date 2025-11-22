@@ -336,7 +336,7 @@ private fun PlayerScreen(
                                                 PlayerActionButtons(
                                                     player = player,
                                                 )
-                                                PlaybackActionButtons(
+                                                PlaybackButtonGroup(
                                                     player = player,
                                                     queueOpened = queueOpened,
                                                     onQueueClick = { queueOpened = it },
@@ -500,86 +500,6 @@ private fun BackButton(
             imageVector = MuzIcons.Rounded.KeyboardArrowDown,
             contentDescription = stringResource(localesR.string.back),
             modifier = Modifier.size(20.dp),
-        )
-    }
-}
-
-@androidx.annotation.OptIn(UnstableApi::class)
-@Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun PlaybackActionButtons(
-    player: Player,
-    modifier: Modifier = Modifier,
-    queueOpened: Boolean = false,
-    onQueueClick: (Boolean) -> Unit = {},
-) {
-    val shuffleButtonState = rememberShuffleButtonState(player)
-    val repeatButtonState = rememberRepeatButtonState(
-        player = player,
-        toggleModeSequence = listOf(REPEAT_MODE_OFF, REPEAT_MODE_ALL, REPEAT_MODE_ONE),
-    )
-
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        MuzOutlinedIconToggleButton(
-            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-            checked = shuffleButtonState.shuffleOn,
-            onCheckedChange = { shuffleButtonState.onClick() },
-            shape = IconButtonDefaults.smallSquareShape,
-            icon = MuzIcons.Rounded.Shuffle,
-            contentDescriptionRes = localesR.string.shuffle,
-        )
-
-        val icon = if (repeatButtonState.repeatModeState == REPEAT_MODE_ONE) {
-            MuzIcons.Rounded.RepeatOne
-        } else {
-            MuzIcons.Rounded.Repeat
-        }
-        val contentDescriptionRes = when (repeatButtonState.repeatModeState) {
-            REPEAT_MODE_OFF -> localesR.string.enable_repeat_mode_all
-            REPEAT_MODE_ALL -> localesR.string.enable_repeat_mode_one
-            else -> localesR.string.disable_repeat_mode
-        }
-        val hapticFeedback = LocalHapticFeedback.current
-        MuzOutlinedIconToggleButton(
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-            checked = repeatButtonState.repeatModeState != REPEAT_MODE_OFF,
-            icon = icon,
-            contentDescriptionRes = contentDescriptionRes,
-            onCustomCheckedChange = {
-                when (repeatButtonState.repeatModeState) {
-                    REPEAT_MODE_OFF -> {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        REPEAT_ALL
-                    }
-
-                    REPEAT_MODE_ALL -> {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        REPEAT_ONE
-                    }
-
-                    REPEAT_MODE_ONE -> {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                        REPEAT_OFF
-                    }
-                }
-                repeatButtonState.onClick()
-            },
-            shape = IconButtonDefaults.smallSquareShape,
-        )
-
-        MuzOutlinedIconToggleButton(
-            modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-            checked = queueOpened,
-            icon = MuzIcons.Rounded.QueueMusic,
-            contentDescriptionRes = localesR.string.queue,
-            onCheckedChange = onQueueClick,
-            shape = IconButtonDefaults.smallSquareShape,
         )
     }
 }
