@@ -30,9 +30,8 @@ class LibraryViewModel @Inject constructor(
     val libraryUiState = userDataRepository.userData.flatMapLatest { userData ->
         combine(
             musicServiceConnection.nowPlayingState,
-            musicServiceConnection.currentPosition,
             songsRepository.getSongs(userData.filterConfig.sortBy, userData.filterConfig.sortOrder),
-        ) { nowPlayingState, currentPosition, songs ->
+        ) { nowPlayingState, songs ->
             if (songs.isEmpty()) {
                 LibraryUiState.Empty
             } else {
@@ -51,7 +50,6 @@ class LibraryViewModel @Inject constructor(
 
                 LibraryUiState.Success(
                     nowPlayingState = nowPlayingState,
-                    currentPosition = currentPosition,
                     currentSong = currentSong,
                     songs = filteredSongs,
                     artists = artists,
@@ -105,7 +103,6 @@ sealed interface LibraryUiState {
 
     data class Success(
         val nowPlayingState: NowPlayingState,
-        val currentPosition: Long,
         val currentSong: Song?,
         val songs: List<Song>,
         val artists: List<Artist>,

@@ -27,10 +27,9 @@ class PlayerViewModel @Inject constructor(
 
     val playerUiState = combine(
         musicServiceConnection.nowPlayingState,
-        musicServiceConnection.currentPosition,
         songsRepository.getSongs(sortBy = SortBy.TITLE, sortOrder = SortOrder.ASCENDING),
         userDataRepository.userData,
-    ) { nowPlayingState, currentPosition, songs, userData ->
+    ) { nowPlayingState, songs, userData ->
         val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
 
         if (currentSong == null) {
@@ -38,7 +37,6 @@ class PlayerViewModel @Inject constructor(
         } else {
             PlayerUiState.Success(
                 nowPlayingState = nowPlayingState,
-                currentPosition = currentPosition,
                 currentSong = currentSong,
                 songs = songs,
                 playbackConfig = userData.playbackConfig,
@@ -71,7 +69,6 @@ sealed interface PlayerUiState {
 
     data class Success(
         val nowPlayingState: NowPlayingState,
-        val currentPosition: Long,
         val currentSong: Song,
         val songs: List<Song>,
         val playbackConfig: PlaybackConfig,

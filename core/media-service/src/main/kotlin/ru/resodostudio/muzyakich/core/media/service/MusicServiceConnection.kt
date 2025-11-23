@@ -17,14 +17,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.guava.await
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_POSITION_MS
@@ -39,7 +35,6 @@ import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.Uuid
 
 @Singleton
@@ -52,14 +47,6 @@ class MusicServiceConnection @Inject constructor(
 
     private val _nowPlayingState = MutableStateFlow(NowPlayingState())
     val nowPlayingState = _nowPlayingState.asStateFlow()
-
-    val currentPosition = flow {
-        while (currentCoroutineContext().isActive) {
-            val currentPosition = mediaController?.currentPosition ?: DEFAULT_POSITION_MS
-            emit(currentPosition)
-            delay(25.milliseconds)
-        }
-    }
 
     init {
         coroutineScope.launch {

@@ -50,6 +50,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
+import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
@@ -58,11 +59,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedBoundsRevealWithShapeMorph
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
-import ru.resodostudio.muzyakich.core.model.data.PlaybackState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
-import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -149,15 +147,15 @@ private fun NowPlayingBar(
                 }
             }
 
-            SongProgressIndicator(
-                currentPosition = playerUiState.currentPosition,
-                song = playerUiState.currentSong,
-                nowPlayingState = playerUiState.nowPlayingState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(3.dp),
-            )
+            playerUiState.nowPlayingState.player?.let { player ->
+                SongProgressIndicator(
+                    player = player,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(3.dp),
+                )
+            }
         }
     }
 }
@@ -198,24 +196,21 @@ private fun SongInfo(
     }
 }
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun SongProgressIndicator(
-    currentPosition: Long,
-    song: Song,
-    nowPlayingState: NowPlayingState,
+    player: Player,
     modifier: Modifier = Modifier,
 ) {
+    val progressState = rememberProgressStateWithTickCount(player = player, totalTickCount = 2000)
     val progress by animateFloatAsState(
-        targetValue = convertToProgress(
-            count = currentPosition,
-            total = song.duration,
-        ),
+        targetValue = progressState.currentPositionProgress,
         label = "ProgressAnimation",
         animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
     )
 
-    if (nowPlayingState.playbackState == PlaybackState.BUFFERING) {
+    if (progressState.bufferedPositionProgress == 0f) {
         LinearProgressIndicator(
             modifier = modifier,
         )
