@@ -30,7 +30,6 @@ import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.media.service.util.UUID
 import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
-import ru.resodostudio.muzyakich.core.media.service.util.orDefaultTimestamp
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
@@ -133,7 +132,6 @@ class MusicServiceConnection @Inject constructor(
                 mediaId = currentMediaItem?.mediaId.orEmpty(),
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
-                duration = duration.orDefaultTimestamp(),
                 playingQueue = getCurrentPlayingQueue(this),
                 player = this,
             )

@@ -97,6 +97,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.sharedBoundsRevealWithS
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
+import ru.resodostudio.muzyakich.ui.util.toSeekPosition
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -123,7 +124,7 @@ fun PlayerScreen(
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
     onBackClick: () -> Unit = {},
-    onSeekTo: (Float) -> Unit = {},
+    onSeekTo: (Long) -> Unit = {},
     onSkipToSongClick: (Uuid) -> Unit = {},
 ) {
     val motionScheme = MaterialTheme.motionScheme
@@ -485,7 +486,7 @@ private fun BackButton(
 private fun ProgressSlider(
     player: Player,
     bitrate: Int,
-    onSeekTo: (Float) -> Unit,
+    onSeekTo: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val progressState = rememberProgressStateWithTickCount(player = player, totalTickCount = 2000)
@@ -501,10 +502,10 @@ private fun ProgressSlider(
             onValueChange = {
                 isSeeking = true
                 sliderPosition = it
-                onSeekTo(it)
+                onSeekTo(it.toSeekPosition(player.duration))
             },
             onValueChangeFinished = {
-                onSeekTo(sliderPosition)
+                onSeekTo(sliderPosition.toSeekPosition(player.duration))
                 isSeeking = false
             },
             modifier = Modifier.height(32.dp),

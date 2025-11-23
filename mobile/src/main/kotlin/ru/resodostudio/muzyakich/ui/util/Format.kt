@@ -25,11 +25,7 @@ fun formatSampleRate(rate: Float, locale: Locale = Locale.getDefault()): String 
     return stringResource(localesR.string.sample_rate_format, formatted)
 }
 
-fun convertToProgress(count: Long, total: Long): Float {
-    return (count * 100f / total / 100f).takeIf(Float::isFinite) ?: 0f
-}
-
-fun convertToPosition(value: Float, total: Long) = (value * total).toLong()
+fun Float.toSeekPosition(duration: Long) = (this * duration).toLong()
 
 @Composable
 fun Long.asFormattedDuration(): String {

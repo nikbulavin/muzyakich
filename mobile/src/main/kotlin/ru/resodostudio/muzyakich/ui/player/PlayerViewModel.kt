@@ -14,7 +14,6 @@ import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
-import ru.resodostudio.muzyakich.ui.util.convertToPosition
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -49,13 +48,8 @@ class PlayerViewModel @Inject constructor(
             initialValue = PlayerUiState.Loading,
         )
 
-    fun seekTo(position: Float) {
-        musicServiceConnection.seekTo(
-            convertToPosition(
-                position,
-                musicServiceConnection.nowPlayingState.value.duration,
-            )
-        )
+    fun seekTo(position: Long) {
+        musicServiceConnection.seekTo(position)
     }
 
     fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
