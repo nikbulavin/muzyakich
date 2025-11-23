@@ -11,26 +11,18 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ALL
 import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_OFF
 import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ONE
 import ru.resodostudio.muzyakich.core.common.Constants.SHUFFLE_MODE_OFF
 import ru.resodostudio.muzyakich.core.common.Constants.SHUFFLE_MODE_ON
-import ru.resodostudio.muzyakich.core.common.Dispatcher
-import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import javax.inject.Inject
 
-class MusicSessionCallback @Inject constructor(
-    @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
+class MuzMediaLibrarySessionCallback @Inject constructor(
     private val musicActionHandler: MusicActionHandler,
 ) : MediaLibrarySession.Callback {
 
-    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
     val customLayout: List<CommandButton> get() = musicActionHandler.customLayout
 
     fun setRepeatModeAction(repeatMode: RepeatMode) {
@@ -93,7 +85,6 @@ class MusicSessionCallback @Inject constructor(
     }
 
     fun cancelCoroutineScope() {
-        coroutineScope.cancel()
         musicActionHandler.cancelCoroutineScope()
     }
 }

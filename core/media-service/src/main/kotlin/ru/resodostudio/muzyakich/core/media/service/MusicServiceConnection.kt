@@ -51,7 +51,7 @@ class MusicServiceConnection @Inject constructor(
         coroutineScope.launch {
             mediaController = MediaController.Builder(
                 context,
-                SessionToken(context, ComponentName(context, MusicService::class.java))
+                SessionToken(context, ComponentName(context, MuzMediaSessionService::class.java))
             ).buildAsync().await().apply { addListener(PlayerListener()) }
         }
     }

@@ -34,7 +34,7 @@ import javax.inject.Inject
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
-class MusicService : MediaSessionService() {
+class MuzMediaSessionService : MediaSessionService() {
 
     @Inject
     @Dispatcher(Main)
@@ -47,7 +47,7 @@ class MusicService : MediaSessionService() {
     lateinit var musicNotificationProvider: MusicNotificationProvider
 
     @Inject
-    lateinit var musicSessionCallback: MusicSessionCallback
+    lateinit var mediaLibrarySessionCallback: MuzMediaLibrarySessionCallback
 
     private var mediaSession: MediaSession? = null
 
@@ -69,12 +69,12 @@ class MusicService : MediaSessionService() {
             .build()
 
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
-            addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
+            addNextIntent(Intent(this@MuzMediaSessionService, Class.forName(TARGET_ACTIVITY_NAME)))
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         mediaSession = MediaSession.Builder(this, player)
-            .setCallback(musicSessionCallback)
+            .setCallback(mediaLibrarySessionCallback)
             .setSessionActivity(sessionActivityPendingIntent)
             .build()
             .apply { player.addListener(PlayerListener()) }
@@ -94,7 +94,7 @@ class MusicService : MediaSessionService() {
             clearListener()
             mediaSession = null
         }
-        musicSessionCallback.cancelCoroutineScope()
+        mediaLibrarySessionCallback.cancelCoroutineScope()
         musicNotificationProvider.cancelCoroutineScope()
     }
 
@@ -114,9 +114,9 @@ class MusicService : MediaSessionService() {
                 }
                 shuffleModeEnabled = playbackConfig.shuffleModeEnabled
             }
-            musicSessionCallback.setRepeatModeAction(playbackConfig.repeatMode)
-            musicSessionCallback.setShuffleModeAction(playbackConfig.shuffleModeEnabled)
-            mediaSession?.setCustomLayout(musicSessionCallback.customLayout)
+            mediaLibrarySessionCallback.setRepeatModeAction(playbackConfig.repeatMode)
+            mediaLibrarySessionCallback.setShuffleModeAction(playbackConfig.shuffleModeEnabled)
+            mediaSession?.setCustomLayout(mediaLibrarySessionCallback.customLayout)
         }
     }
 
