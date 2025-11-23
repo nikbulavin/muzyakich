@@ -80,6 +80,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.ui.compose.indicators.TimeText
+import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -96,7 +97,6 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.sharedBoundsRevealWithS
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
-import ru.resodostudio.muzyakich.ui.util.convertToProgress
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -302,8 +302,6 @@ private fun PlayerScreen(
                                             playerUiState.nowPlayingState.player?.let { player ->
                                                 ProgressSlider(
                                                     player = player,
-                                                    currentPosition = playerUiState.currentPosition,
-                                                    duration = playerUiState.currentSong.duration,
                                                     bitrate = playerUiState.currentSong.bitrate,
                                                     onSeekTo = onSeekTo,
                                                     modifier = Modifier.fillMaxWidth(),
@@ -486,23 +484,18 @@ private fun BackButton(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun ProgressSlider(
     player: Player,
-    currentPosition: Long,
-    duration: Long,
     bitrate: Int,
     onSeekTo: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val progressState = rememberProgressStateWithTickCount(player = player, totalTickCount = 2000)
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        val progress = convertToProgress(
-            count = currentPosition,
-            total = duration,
-        )
         var sliderPosition by remember { mutableFloatStateOf(0f) }
         var isSeeking by remember { mutableStateOf(false) }
-        if (!isSeeking) sliderPosition = progress
+        if (!isSeeking) sliderPosition = progressState.currentPositionProgress
         Slider(
             value = sliderPosition,
             onValueChange = {
