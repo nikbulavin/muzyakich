@@ -7,17 +7,12 @@ import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.common.C.USAGE_MEDIA
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
 import javax.inject.Inject
 
@@ -26,17 +21,12 @@ import javax.inject.Inject
 class MusicService : MediaSessionService() {
 
     @Inject
-    lateinit var userDataRepository: UserDataRepository
-
-    @Inject
     lateinit var musicNotificationProvider: MusicNotificationProvider
 
     @Inject
     lateinit var mediaLibrarySessionCallback: MuzMediaLibrarySessionCallback
 
     private var mediaSession: MediaSession? = null
-
-    private val _currentMediaId = MutableStateFlow("")
 
     override fun onCreate() {
         super.onCreate()
@@ -60,7 +50,6 @@ class MusicService : MediaSessionService() {
             .setCallback(mediaLibrarySessionCallback)
             .setSessionActivity(sessionActivityPendingIntent)
             .build()
-            .apply { player.addListener(PlayerListener()) }
 
         setMediaNotificationProvider(musicNotificationProvider)
     }
@@ -82,13 +71,5 @@ class MusicService : MediaSessionService() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         pauseAllPlayersAndStopSelf()
-    }
-
-    private inner class PlayerListener : Player.Listener {
-
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            if (mediaItem == null) return
-            _currentMediaId.update { mediaItem.mediaId }
-        }
     }
 }
