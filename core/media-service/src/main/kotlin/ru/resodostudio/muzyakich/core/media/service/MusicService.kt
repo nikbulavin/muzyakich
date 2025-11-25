@@ -14,31 +14,16 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudio.muzyakich.core.common.Dispatcher
-import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
-import ru.resodostudio.muzyakich.core.media.service.util.unsafeLazy
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import javax.inject.Inject
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
-class MuzMediaSessionService : MediaSessionService() {
-
-    @Inject
-    @Dispatcher(Main)
-    lateinit var mainDispatcher: CoroutineDispatcher
+class MusicService : MediaSessionService() {
 
     @Inject
     lateinit var userDataRepository: UserDataRepository
@@ -50,8 +35,6 @@ class MuzMediaSessionService : MediaSessionService() {
     lateinit var mediaLibrarySessionCallback: MuzMediaLibrarySessionCallback
 
     private var mediaSession: MediaSession? = null
-
-    private val coroutineScope by unsafeLazy { CoroutineScope(mainDispatcher + SupervisorJob()) }
 
     private val _currentMediaId = MutableStateFlow("")
 
@@ -69,7 +52,7 @@ class MuzMediaSessionService : MediaSessionService() {
             .build()
 
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
-            addNextIntent(Intent(this@MuzMediaSessionService, Class.forName(TARGET_ACTIVITY_NAME)))
+            addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
@@ -80,14 +63,11 @@ class MuzMediaSessionService : MediaSessionService() {
             .apply { player.addListener(PlayerListener()) }
 
         setMediaNotificationProvider(musicNotificationProvider)
-
-        startPlaybackModeSync()
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
-        super.onDestroy()
         mediaSession?.run {
             player.release()
             release()
@@ -96,6 +76,7 @@ class MuzMediaSessionService : MediaSessionService() {
         }
         mediaLibrarySessionCallback.cancelCoroutineScope()
         musicNotificationProvider.cancelCoroutineScope()
+        super.onDestroy()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
@@ -103,24 +84,8 @@ class MuzMediaSessionService : MediaSessionService() {
         pauseAllPlayersAndStopSelf()
     }
 
-    private fun startPlaybackModeSync() = coroutineScope.launch {
-        userDataRepository.userData.collectLatest { userData ->
-            val playbackConfig = userData.playbackConfig
-            mediaSession?.player?.run {
-                repeatMode = when (playbackConfig.repeatMode) {
-                    REPEAT_OFF -> Player.REPEAT_MODE_OFF
-                    REPEAT_ALL -> Player.REPEAT_MODE_ALL
-                    REPEAT_ONE -> Player.REPEAT_MODE_ONE
-                }
-                shuffleModeEnabled = playbackConfig.shuffleModeEnabled
-            }
-            mediaLibrarySessionCallback.setRepeatModeAction(playbackConfig.repeatMode)
-            mediaLibrarySessionCallback.setShuffleModeAction(playbackConfig.shuffleModeEnabled)
-            mediaSession?.setCustomLayout(mediaLibrarySessionCallback.customLayout)
-        }
-    }
-
     private inner class PlayerListener : Player.Listener {
+
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             if (mediaItem == null) return
             _currentMediaId.update { mediaItem.mediaId }

@@ -7,7 +7,7 @@
 
     <application>
         <service
-            android:name=".MuzMediaSessionService"
+            android:name=".MusicService"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback"
             tools:ignore="ExportedService">
