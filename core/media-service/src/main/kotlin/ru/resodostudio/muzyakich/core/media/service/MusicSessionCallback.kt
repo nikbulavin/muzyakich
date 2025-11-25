@@ -5,7 +5,6 @@ import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.CommandButton
-import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
@@ -19,9 +18,9 @@ import ru.resodostudio.muzyakich.core.common.Constants.SHUFFLE_MODE_ON
 import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import javax.inject.Inject
 
-class MuzMediaLibrarySessionCallback @Inject constructor(
+class MusicSessionCallback @Inject constructor(
     private val musicActionHandler: MusicActionHandler,
-) : MediaLibrarySession.Callback {
+) : MediaSession.Callback {
 
     val customLayout: List<CommandButton> get() = musicActionHandler.customLayout
 

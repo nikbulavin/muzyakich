@@ -24,7 +24,7 @@ class MusicService : MediaSessionService() {
     lateinit var musicNotificationProvider: MusicNotificationProvider
 
     @Inject
-    lateinit var mediaLibrarySessionCallback: MuzMediaLibrarySessionCallback
+    lateinit var musicSessionCallback: MusicSessionCallback
 
     private var mediaSession: MediaSession? = null
 
@@ -47,7 +47,7 @@ class MusicService : MediaSessionService() {
         }
 
         mediaSession = MediaSession.Builder(this, player)
-            .setCallback(mediaLibrarySessionCallback)
+            .setCallback(musicSessionCallback)
             .setSessionActivity(sessionActivityPendingIntent)
             .build()
 
@@ -63,7 +63,7 @@ class MusicService : MediaSessionService() {
             clearListener()
             mediaSession = null
         }
-        mediaLibrarySessionCallback.cancelCoroutineScope()
+        musicSessionCallback.cancelCoroutineScope()
         musicNotificationProvider.cancelCoroutineScope()
         super.onDestroy()
     }
