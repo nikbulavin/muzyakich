@@ -25,12 +25,8 @@ import javax.inject.Inject
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 class MusicActionHandler @Inject constructor(
-    @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
     @ApplicationContext private val context: Context,
-    private val userDataRepository: UserDataRepository,
 ) {
-    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
-
     val customCommands = getAvailableCustomCommands()
     private val customLayoutMap = mutableMapOf<String, CommandButton>().apply {
         this[SHUFFLE_MODE] = customCommands.getValue(SHUFFLE_MODE_OFF)
@@ -58,21 +54,12 @@ class MusicActionHandler @Inject constructor(
         customLayoutMap[SHUFFLE_MODE] = customCommands.getValue(action)
     }
 
-    fun cancelCoroutineScope() = coroutineScope.cancel()
+    private fun handleRepeatCommand(action: String) {
 
-    private fun handleRepeatCommand(action: String) = coroutineScope.launch {
-        when (action) {
-            REPEAT_MODE_OFF -> userDataRepository.setRepeatModePreference(RepeatMode.REPEAT_OFF)
-            REPEAT_MODE_ALL -> userDataRepository.setRepeatModePreference(RepeatMode.REPEAT_ALL)
-            REPEAT_MODE_ONE -> userDataRepository.setRepeatModePreference(RepeatMode.REPEAT_ONE)
-        }
     }
 
-    private fun handleShuffleCommand(action: String) = coroutineScope.launch {
-        when (action) {
-            SHUFFLE_MODE_ON -> userDataRepository.setShuffleModePreference(true)
-            SHUFFLE_MODE_OFF -> userDataRepository.setShuffleModePreference(false)
-        }
+    private fun handleShuffleCommand(action: String) {
+
     }
 
     private fun getAvailableCustomCommands() = mapOf(
@@ -108,7 +95,9 @@ private fun buildCustomCommand(
     action: String,
     displayName: String,
     icon: Int,
-) = CommandButton.Builder(icon)
-    .setDisplayName(displayName)
-    .setSessionCommand(SessionCommand(action, Bundle.EMPTY))
-    .build()
+): CommandButton {
+    return CommandButton.Builder(icon)
+        .setDisplayName(displayName)
+        .setSessionCommand(SessionCommand(action, Bundle.EMPTY))
+        .build()
+}

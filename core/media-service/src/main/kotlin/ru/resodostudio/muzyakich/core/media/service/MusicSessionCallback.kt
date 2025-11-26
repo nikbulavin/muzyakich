@@ -7,7 +7,9 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionCommands
 import androidx.media3.session.SessionResult
+import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ALL
@@ -22,7 +24,15 @@ class MusicSessionCallback @Inject constructor(
     private val musicActionHandler: MusicActionHandler,
 ) : MediaSession.Callback {
 
-    val customLayout: List<CommandButton> get() = musicActionHandler.customLayout
+    @OptIn(UnstableApi::class)
+    private val mediaNotificationSessionCommands: SessionCommands
+        get() = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
+            .also { builder ->
+                musicActionHandler.customCommands.values.forEach { commandButton ->
+                    commandButton.sessionCommand?.let { builder.add(it) }
+                }
+            }
+            .build()
 
     fun setRepeatModeAction(repeatMode: RepeatMode) {
         val action = when (repeatMode) {
@@ -54,18 +64,19 @@ class MusicSessionCallback @Inject constructor(
     @OptIn(UnstableApi::class)
     override fun onConnect(
         session: MediaSession,
-        controller: MediaSession.ControllerInfo
+        controller: MediaSession.ControllerInfo,
     ): MediaSession.ConnectionResult {
-        val connectionResult = super.onConnect(session, controller)
-        val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
-        musicActionHandler.customCommands.values.forEach { commandButton ->
-            commandButton.sessionCommand?.let(availableSessionCommands::add)
+        if (
+            session.isMediaNotificationController(controller) ||
+            session.isAutomotiveController(controller) ||
+            session.isAutoCompanionController(controller)
+        ) {
+            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                .setAvailableSessionCommands(mediaNotificationSessionCommands)
+                .setMediaButtonPreferences(musicActionHandler.customLayout)
+                .build()
         }
-
-        return MediaSession.ConnectionResult.accept(
-            availableSessionCommands.build(),
-            connectionResult.availablePlayerCommands,
-        )
+        return MediaSession.ConnectionResult.AcceptedResultBuilder(session).build()
     }
 
     override fun onPostConnect(session: MediaSession, controller: MediaSession.ControllerInfo) {
@@ -81,9 +92,5 @@ class MusicSessionCallback @Inject constructor(
         musicActionHandler.onCustomCommand(customCommand)
         session.setCustomLayout(musicActionHandler.customLayout)
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
-    }
-
-    fun cancelCoroutineScope() {
-        musicActionHandler.cancelCoroutineScope()
     }
 }

@@ -45,7 +45,6 @@ class MusicService : MediaSessionService() {
             clearListener()
             mediaSession = null
         }
-        musicSessionCallback.cancelCoroutineScope()
         musicNotificationProvider.cancelCoroutineScope()
         super.onDestroy()
     }
