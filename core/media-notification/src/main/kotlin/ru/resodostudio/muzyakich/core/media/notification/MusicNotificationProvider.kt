@@ -25,7 +25,6 @@ import kotlinx.coroutines.withContext
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.media.notification.common.MusicActions
 import ru.resodostudio.muzyakich.core.media.notification.util.asArtworkBitmap
 import javax.inject.Inject
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -49,24 +48,13 @@ class MusicNotificationProvider @Inject constructor(
         ensureNotificationChannelExists()
 
         val player = mediaSession.player
-        val metadata = player.mediaMetadata
 
         val builder = NotificationCompat.Builder(context, MUSIC_NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(metadata.title)
-            .setContentText(metadata.artist)
             .setSmallIcon(R.drawable.ic_music_note)
             .setStyle(MediaStyle(mediaSession))
-            .setContentIntent(mediaSession.sessionActivity)
-
-        getNotificationActions(
-            mediaSession = mediaSession,
-            customLayout = customLayout,
-            actionFactory = actionFactory,
-            playWhenReady = player.playWhenReady,
-        ).forEach(builder::addAction)
 
         setupArtwork(
-            uri = metadata.artworkUri,
+            uri = player.mediaMetadata.artworkUri,
             setLargeIcon = builder::setLargeIcon,
             updateNotification = {
                 val notification = MediaNotification(MUSIC_NOTIFICATION_ID, builder.build())
@@ -88,23 +76,10 @@ class MusicNotificationProvider @Inject constructor(
         val notificationChannel = NotificationChannel(
             MUSIC_NOTIFICATION_CHANNEL_ID,
             context.getString(localesR.string.music_notification_channel_name),
-            NotificationManager.IMPORTANCE_LOW,
+            NotificationManager.IMPORTANCE_DEFAULT,
         )
         notificationManager.createNotificationChannel(notificationChannel)
     }
-
-    private fun getNotificationActions(
-        mediaSession: MediaSession,
-        customLayout: ImmutableList<CommandButton>,
-        actionFactory: MediaNotification.ActionFactory,
-        playWhenReady: Boolean,
-    ) = listOf(
-        MusicActions.getShuffleAction(mediaSession, customLayout, actionFactory),
-        MusicActions.getSkipPreviousAction(context, mediaSession, actionFactory),
-        MusicActions.getPlayPauseAction(context, mediaSession, actionFactory, playWhenReady),
-        MusicActions.getSkipNextAction(context, mediaSession, actionFactory),
-        MusicActions.getRepeatAction(mediaSession, customLayout, actionFactory),
-    )
 
     private fun setupArtwork(
         uri: Uri?,
@@ -116,8 +91,9 @@ class MusicNotificationProvider @Inject constructor(
         updateNotification()
     }
 
-    private suspend fun loadArtworkBitmap(uri: Uri?) =
-        withContext(ioDispatcher) { uri?.asArtworkBitmap(context) }
+    private suspend fun loadArtworkBitmap(uri: Uri?): Bitmap? {
+        return withContext(ioDispatcher) { uri?.asArtworkBitmap(context) }
+    }
 }
 
 private const val MUSIC_NOTIFICATION_ID = 1
