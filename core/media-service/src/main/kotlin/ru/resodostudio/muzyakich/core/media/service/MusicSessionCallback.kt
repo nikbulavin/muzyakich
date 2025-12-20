@@ -4,12 +4,10 @@ import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionCommands
 import androidx.media3.session.SessionResult
-import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import ru.resodostudio.muzyakich.core.common.Constants.REPEAT_MODE_ALL
@@ -24,9 +22,10 @@ class MusicSessionCallback @Inject constructor(
     private val musicActionHandler: MusicActionHandler,
 ) : MediaSession.Callback {
 
-    @OptIn(UnstableApi::class)
     private val mediaNotificationSessionCommands: SessionCommands
-        get() = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
+        @OptIn(UnstableApi::class)
+        get() = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS
+            .buildUpon()
             .also { builder ->
                 musicActionHandler.customCommands.values.forEach { commandButton ->
                     commandButton.sessionCommand?.let { builder.add(it) }
