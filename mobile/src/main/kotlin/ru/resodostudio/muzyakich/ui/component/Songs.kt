@@ -6,22 +6,18 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,9 +49,9 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import ru.resodostudio.muzyakich.R
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
@@ -67,14 +63,20 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun SongItem(
     song: Song,
+    shapes: ListItemShapes,
     modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
 ) {
-    ListItem(
-        modifier = modifier.clickable(onClick = onClick),
-        headlineContent = {
+    MuzSelectableListItem(
+        shapes = shapes,
+        selected = isPlaying,
+        onClick = onClick,
+        onLongClick = onMenuClick,
+        onLongClickLabel = stringResource(localesR.string.open_menu),
+        modifier = modifier,
+        content = {
             Text(
                 text = song.title,
                 maxLines = 1,
@@ -151,80 +153,69 @@ fun SongItem(
             }
         },
         trailingContent = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                val (icon, contentDescription) = if (song.isFavorite) {
-                    MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
-                } else {
-                    MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
-                }
+            val (icon, contentDescription) = if (song.isFavorite) {
+                MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
+            } else {
+                MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
+            }
 
-                val context = LocalContext.current
-                val launcher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.StartIntentSenderForResult(),
-                ) {}
-                val hapticFeedback = LocalHapticFeedback.current
-                IconToggleButton(
-                    checked = song.isFavorite,
-                    onCheckedChange = { checked ->
-                        hapticFeedback.performHapticFeedback(
-                            if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+            val context = LocalContext.current
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartIntentSenderForResult(),
+            ) {}
+            val hapticFeedback = LocalHapticFeedback.current
+            IconToggleButton(
+                checked = song.isFavorite,
+                onCheckedChange = { checked ->
+                    hapticFeedback.performHapticFeedback(
+                        if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                    )
+                    runCatching {
+                        val pendingIntent = MediaStore.createFavoriteRequest(
+                            context.contentResolver,
+                            listOf(song.mediaUri),
+                            checked,
                         )
-                        runCatching {
-                            val pendingIntent = MediaStore.createFavoriteRequest(
-                                context.contentResolver,
-                                listOf(song.mediaUri),
-                                checked,
-                            )
-                            launcher.launch(
-                                IntentSenderRequest.Builder(pendingIntent.intentSender).build()
-                            )
-                        }
-                    },
-                    shapes = IconButtonDefaults.toggleableShapes(),
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = contentDescription,
-                    )
-                }
-                IconButton(
-                    onClick = onMenuClick,
-                    shapes = IconButtonDefaults.shapes(),
-                    modifier = Modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.MoreVert,
-                        contentDescription = stringResource(localesR.string.open_menu),
-                    )
-                }
+                        launcher.launch(
+                            IntentSenderRequest.Builder(pendingIntent.intentSender).build()
+                        )
+                    }
+                },
+                shapes = IconButtonDefaults.toggleableShapes(),
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDescription,
+                )
             }
         },
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyGridScope.songs(
     songs: List<Song>,
     nowPlayingState: NowPlayingState,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onPlayNextClick: (Song) -> Unit,
 ) {
-    items(
+    itemsIndexed(
         items = songs,
-        key = { it.mediaId },
-        contentType = { "Song" },
-    ) { song ->
+        key = { _, song -> song.mediaId },
+        contentType = { _, _ -> "Song" },
+    ) { index, song ->
         val isPlaying = nowPlayingState.mediaId == song.mediaId && nowPlayingState.playWhenReady
         var showSongDetails by rememberSaveable { mutableStateOf(false) }
 
         SongItem(
             song = song,
             isPlaying = isPlaying,
-            modifier = Modifier.animateItem(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
             onMenuClick = { showSongDetails = true },
+            shapes = ListItemDefaults.segmentedShapes(index, songs.size),
         )
 
         if (showSongDetails) {

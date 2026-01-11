@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryScrollableTabRow
@@ -225,6 +226,7 @@ private fun LibraryScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .hazeSource(hazeState),
+                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                         ) {
                             when (selectedTab) {
                                 PLAYLISTS -> {

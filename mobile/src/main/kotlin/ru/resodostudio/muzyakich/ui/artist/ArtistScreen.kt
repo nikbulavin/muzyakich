@@ -1,12 +1,15 @@
 package ru.resodostudio.muzyakich.ui.artist
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -38,7 +41,7 @@ fun ArtistScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ArtistScreen(
     artistUiState: ArtistUiState,
@@ -78,6 +81,7 @@ fun ArtistScreen(
                         bottom = 104.dp + paddingValues.calculateBottomPadding(),
                     ),
                     modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                 ) {
                     songs(
                         songs = artistUiState.artist.songs,
