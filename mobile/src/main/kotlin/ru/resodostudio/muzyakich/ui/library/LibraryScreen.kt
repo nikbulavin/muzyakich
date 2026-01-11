@@ -22,7 +22,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +61,7 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
@@ -220,7 +220,6 @@ private fun LibraryScreen(
                             state = lazyGridState,
                             columns = GridCells.Adaptive(300.dp),
                             contentPadding = PaddingValues(
-                                top = 8.dp,
                                 bottom = 104.dp + paddingValues.calculateBottomPadding(),
                             ),
                             modifier = Modifier
@@ -303,7 +302,7 @@ private fun LibraryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 private fun LazyGridScope.actionButtons(
     songs: List<Song>,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
@@ -317,7 +316,7 @@ private fun LazyGridScope.actionButtons(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .animateItem(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -366,14 +365,11 @@ private fun LazyGridScope.actionButtons(
                     )
                 }
             }
-            IconButton(
+            MuzIconButton(
                 onClick = onFilterClick,
-            ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.FilterList,
-                    contentDescription = stringResource(localesR.string.open_filter_menu),
-                )
-            }
+                icon = MuzIcons.Rounded.FilterList,
+                contentDescription = stringResource(localesR.string.open_filter_menu),
+            )
         }
     }
 }

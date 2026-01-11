@@ -299,6 +299,7 @@ private fun PlayerScreen(
                                                 .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
                                                 .navigationBarsPadding(),
                                             verticalArrangement = Arrangement.SpaceBetween,
+                                            horizontalAlignment = Alignment.CenterHorizontally,
                                         ) {
                                             playerUiState.nowPlayingState.player?.let { player ->
                                                 ProgressSlider(
