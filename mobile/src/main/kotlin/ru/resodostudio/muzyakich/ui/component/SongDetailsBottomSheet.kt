@@ -37,8 +37,11 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItem
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSwitch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Cadence
@@ -47,7 +50,9 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.ui.util.formatSampleRate
@@ -151,6 +156,46 @@ private fun ActionPanel(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
+        val context = LocalContext.current
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+        ) {}
+        MuzToggableListItem(
+            checked = song.isFavorite,
+            onCheckedChange = { checked ->
+                runCatching {
+                    val pendingIntent = MediaStore.createFavoriteRequest(
+                        context.contentResolver,
+                        listOf(song.mediaUri),
+                        checked,
+                    )
+                    launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+                }
+            },
+            content = {
+                Text(
+                    text = stringResource(localesR.string.favorites),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            leadingContent = {
+                AnimatedIcon(
+                    icon = if (song.isFavorite) MuzIcons.Filled.Star else MuzIcons.Rounded.Star,
+                    contentDescription = null,
+                )
+            },
+            trailingContent = {
+                MuzSwitch(
+                    checked = song.isFavorite,
+                    onCheckedChange = null,
+                )
+            },
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ),
+            shapes = ListItemDefaults.segmentedShapes(0, 3),
+        )
         MuzListItem(
             content = {
                 Text(
@@ -165,16 +210,12 @@ private fun ActionPanel(
                     contentDescription = null,
                 )
             },
-            colors = ListItemDefaults.colors(
+            colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = { onPlayNextClick(song) },
-            shapes = ListItemDefaults.segmentedShapes(0, 2),
+            shapes = ListItemDefaults.segmentedShapes(1, 3),
         )
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartIntentSenderForResult(),
-        ) {}
-        val context = LocalContext.current
         MuzListItem(
             content = {
                 Text(
@@ -196,7 +237,7 @@ private fun ActionPanel(
                     overflow = TextOverflow.StartEllipsis,
                 )
             },
-            colors = ListItemDefaults.colors(
+            colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = {
@@ -209,7 +250,7 @@ private fun ActionPanel(
                     launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
                 }
             },
-            shapes = ListItemDefaults.segmentedShapes(1, 2),
+            shapes = ListItemDefaults.segmentedShapes(2, 3),
         )
     }
 }
