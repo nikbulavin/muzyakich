@@ -97,8 +97,8 @@ fun SongItem(
                         modifier = Modifier
                             .zIndex(1f)
                             .size(56.dp)
-                            .background(MaterialTheme.colorScheme.surface.copy(0.6f))
-                            .clip(MaterialTheme.shapes.small),
+                            .clip(MaterialTheme.shapes.small)
+                            .background(MaterialTheme.colorScheme.surface.copy(0.6f)),
                     ) {
                         val dynamicProperties = rememberLottieDynamicProperties(
                             rememberLottieDynamicProperty(
