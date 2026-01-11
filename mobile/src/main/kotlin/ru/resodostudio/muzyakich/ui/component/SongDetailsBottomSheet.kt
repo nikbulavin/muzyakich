@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
@@ -36,8 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import ru.resodostudio.muzyakich.core.designsystem.component.ListItemShape
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItemEmphasized
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
@@ -140,6 +140,7 @@ fun SongDetailsBottomSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ActionPanel(
     song: Song,
@@ -150,8 +151,8 @@ private fun ActionPanel(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        MuzListItemEmphasized(
-            headlineContent = {
+        MuzListItem(
+            content = {
                 Text(
                     text = stringResource(localesR.string.play_next),
                     maxLines = 1,
@@ -168,14 +169,14 @@ private fun ActionPanel(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = { onPlayNextClick(song) },
-            shape = ListItemShape.First,
+            shapes = ListItemDefaults.segmentedShapes(0, 2),
         )
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartIntentSenderForResult(),
         ) {}
         val context = LocalContext.current
-        MuzListItemEmphasized(
-            headlineContent = {
+        MuzListItem(
+            content = {
                 Text(
                     text = stringResource(localesR.string.move_to_trash),
                     maxLines = 1,
@@ -208,7 +209,7 @@ private fun ActionPanel(
                     launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
                 }
             },
-            shape = ListItemShape.Last,
+            shapes = ListItemDefaults.segmentedShapes(1, 2),
         )
     }
 }
