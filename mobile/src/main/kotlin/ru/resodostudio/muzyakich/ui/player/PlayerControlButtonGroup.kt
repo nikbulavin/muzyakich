@@ -2,12 +2,8 @@ package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.runtime.Composable
@@ -20,7 +16,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberPreviousButtonState
-import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
@@ -41,8 +37,8 @@ fun PlayerControlButtonGroup(
     val nextButtonState = rememberNextButtonState(player)
 
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         MuzTonalIconButton(
@@ -52,24 +48,18 @@ fun PlayerControlButtonGroup(
             icon = MuzIcons.Rounded.SkipPrevious,
             contentDescription = stringResource(localesR.string.skip_previous),
         )
-        FilledIconButton(
-            onClick = playPauseButtonState::onClick,
-            shapes = IconButtonDefaults.shapes(),
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-        ) {
-            AnimatedIcon(
-                icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
-                contentDescription = if (playPauseButtonState.showPlay) {
-                    stringResource(localesR.string.play_audio)
-                } else {
-                    stringResource(localesR.string.pause_audio)
-                },
-                label = "PlayPauseIconAnimation",
-                iconSize = 32.dp,
-            )
-        }
+        MuzFilledIconToggleButton(
+            checked = !playPauseButtonState.showPlay,
+            onCheckedChange = { playPauseButtonState.onClick() },
+            icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
+            contentDescription = if (playPauseButtonState.showPlay) {
+                stringResource(localesR.string.play_audio)
+            } else {
+                stringResource(localesR.string.pause_audio)
+            },
+            containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+            iconSize = IconButtonDefaults.largeIconSize,
+        )
         MuzTonalIconButton(
             onClick = nextButtonState::onClick,
             enabled = nextButtonState.isEnabled,
