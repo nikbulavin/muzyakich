@@ -5,10 +5,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.runtime.Composable
@@ -22,6 +21,7 @@ import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberPreviousButtonState
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
@@ -31,7 +31,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 fun PlayerControlButtonGroup(
     player: Player,
     modifier: Modifier = Modifier,
@@ -45,17 +45,13 @@ fun PlayerControlButtonGroup(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FilledTonalIconButton(
+        MuzTonalIconButton(
             onClick = previousButtonState::onClick,
-            shapes = IconButtonDefaults.shapes(),
-            modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-        ) {
-            Icon(
-                imageVector = MuzIcons.Rounded.SkipPrevious,
-                contentDescription = stringResource(localesR.string.skip_previous),
-                modifier = Modifier.size(32.dp),
-            )
-        }
+            containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+            iconSize = IconButtonDefaults.largeIconSize,
+            icon = MuzIcons.Rounded.SkipPrevious,
+            contentDescription = stringResource(localesR.string.skip_previous),
+        )
         FilledIconButton(
             onClick = playPauseButtonState::onClick,
             shapes = IconButtonDefaults.shapes(),
@@ -74,17 +70,13 @@ fun PlayerControlButtonGroup(
                 iconSize = 32.dp,
             )
         }
-        FilledTonalIconButton(
+        MuzTonalIconButton(
             onClick = nextButtonState::onClick,
-            shapes = IconButtonDefaults.shapes(),
             enabled = nextButtonState.isEnabled,
-            modifier = Modifier.size(largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-        ) {
-            Icon(
-                imageVector = MuzIcons.Rounded.SkipNext,
-                contentDescription = stringResource(localesR.string.skip_next),
-                modifier = Modifier.size(32.dp),
-            )
-        }
+            containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+            icon = MuzIcons.Rounded.SkipNext,
+            iconSize = IconButtonDefaults.largeIconSize,
+            contentDescription = stringResource(localesR.string.skip_next),
+        )
     }
 }

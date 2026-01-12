@@ -343,7 +343,7 @@ fun MoreIconButton(
     MuzTonalIconButton(
         modifier = modifier,
         onClick = { showSongDetails = true },
-        size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+        containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
         icon = MuzIcons.Rounded.MoreVert,
         contentDescription = stringResource(localesR.string.more_options),
     )

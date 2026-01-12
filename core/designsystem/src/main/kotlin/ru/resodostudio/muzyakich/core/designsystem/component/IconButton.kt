@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -114,7 +115,9 @@ fun MuzTonalIconButton(
     modifier: Modifier = Modifier,
     tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     colors: IconButtonColors = IconButtonDefaults.filledTonalIconButtonColors(),
-    size: DpSize = smallContainerSize(),
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
+    enabled: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -128,11 +131,13 @@ fun MuzTonalIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
-            modifier = Modifier.size(size),
+            modifier = Modifier.size(containerSize),
+            enabled = enabled,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
+                modifier = Modifier.size(iconSize),
             )
         }
     }
