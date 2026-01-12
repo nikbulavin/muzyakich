@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -95,6 +96,39 @@ fun MuzIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun MuzTonalIconButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconButtonColors = IconButtonDefaults.filledTonalIconButtonColors(),
+    size: DpSize = smallContainerSize(),
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        FilledTonalIconButton(
+            onClick = onClick,
+            shapes = IconButtonDefaults.shapes(),
+            colors = colors,
+            modifier = Modifier.size(size),
         ) {
             Icon(
                 imageVector = icon,

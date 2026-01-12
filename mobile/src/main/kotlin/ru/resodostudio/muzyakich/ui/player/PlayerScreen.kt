@@ -37,8 +37,8 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -84,6 +84,7 @@ import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
@@ -332,23 +333,20 @@ private fun PlayerScreen(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 fun MoreIconButton(
     song: Song,
     modifier: Modifier = Modifier,
 ) {
     var showSongDetails by rememberSaveable { mutableStateOf(false) }
 
-    FilledTonalIconButton(
+    MuzTonalIconButton(
+        modifier = modifier,
         onClick = { showSongDetails = true },
-        shapes = IconButtonDefaults.shapes(),
-        modifier = modifier.size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-    ) {
-        Icon(
-            imageVector = MuzIcons.Rounded.MoreVert,
-            contentDescription = stringResource(localesR.string.more_options),
-        )
-    }
+        size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+        icon = MuzIcons.Rounded.MoreVert,
+        contentDescription = stringResource(localesR.string.more_options),
+    )
     if (showSongDetails) {
         SongDetailsBottomSheet(
             song = song,
