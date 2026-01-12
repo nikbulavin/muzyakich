@@ -23,11 +23,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LinearProgressIndicator
@@ -51,7 +48,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
-import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconToggleButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
@@ -224,38 +222,29 @@ private fun SongProgressIndicator(
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 private fun ActionButtons(
     player: Player,
     modifier: Modifier = Modifier,
 ) {
     val playPauseButtonState = rememberPlayPauseButtonState(player)
     val nextButtonState = rememberNextButtonState(player)
-    FilledIconButton(
-        onClick = playPauseButtonState::onClick,
-        shapes = IconButtonDefaults.shapes(),
-        modifier = modifier
-            .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-    ) {
-        AnimatedIcon(
-            icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
-            contentDescription = if (playPauseButtonState.showPlay) {
-                stringResource(localesR.string.play_audio)
-            } else {
-                stringResource(localesR.string.pause_audio)
-            },
-            label = "PlayPauseIconAnimation",
-        )
-    }
-    IconButton(
+    MuzFilledIconToggleButton(
+        checked = !playPauseButtonState.showPlay,
+        onCheckedChange = { playPauseButtonState.onClick() },
+        icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
+        contentDescription = if (playPauseButtonState.showPlay) {
+            stringResource(localesR.string.play_audio)
+        } else {
+            stringResource(localesR.string.pause_audio)
+        },
+        containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+    )
+    MuzIconButton(
         onClick = nextButtonState::onClick,
-        shapes = IconButtonDefaults.shapes(),
         modifier = modifier,
         enabled = nextButtonState.isEnabled,
-    ) {
-        Icon(
-            imageVector = MuzIcons.Rounded.SkipNext,
-            contentDescription = stringResource(localesR.string.skip_next),
-        )
-    }
+        icon = MuzIcons.Rounded.SkipNext,
+        contentDescription = stringResource(localesR.string.skip_next),
+    )
 }

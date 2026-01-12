@@ -17,7 +17,7 @@ import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberPreviousButtonState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconToggleButton
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzTonalIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
@@ -41,7 +41,7 @@ fun PlayerControlButtonGroup(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        MuzTonalIconButton(
+        MuzFilledTonalIconButton(
             onClick = previousButtonState::onClick,
             containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
             iconSize = IconButtonDefaults.largeIconSize,
@@ -60,7 +60,7 @@ fun PlayerControlButtonGroup(
             containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
             iconSize = IconButtonDefaults.largeIconSize,
         )
-        MuzTonalIconButton(
+        MuzFilledTonalIconButton(
             onClick = nextButtonState::onClick,
             enabled = nextButtonState.isEnabled,
             containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),

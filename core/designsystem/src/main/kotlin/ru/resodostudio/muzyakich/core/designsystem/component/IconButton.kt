@@ -86,6 +86,7 @@ fun MuzIconButton(
     modifier: Modifier = Modifier,
     tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     colors: IconButtonColors = IconButtonDefaults.iconButtonVibrantColors(),
+    enabled: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -99,6 +100,7 @@ fun MuzIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
+            enabled = enabled,
         ) {
             Icon(
                 imageVector = icon,
@@ -110,7 +112,7 @@ fun MuzIconButton(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun MuzTonalIconButton(
+fun MuzFilledTonalIconButton(
     onClick: () -> Unit,
     icon: ImageVector,
     contentDescription: String,

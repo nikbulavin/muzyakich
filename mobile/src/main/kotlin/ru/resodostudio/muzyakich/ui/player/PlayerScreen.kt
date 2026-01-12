@@ -84,7 +84,7 @@ import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzTonalIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
@@ -340,7 +340,7 @@ fun MoreIconButton(
 ) {
     var showSongDetails by rememberSaveable { mutableStateOf(false) }
 
-    MuzTonalIconButton(
+    MuzFilledTonalIconButton(
         modifier = modifier,
         onClick = { showSongDetails = true },
         containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
