@@ -12,6 +12,7 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.IconToggleButtonColors
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -179,6 +180,43 @@ fun MuzFilledIconToggleButton(
                 icon = icon,
                 contentDescription = contentDescription,
                 iconSize = iconSize,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun MuzOutlinedIconButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
+    enabled: Boolean = true,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        OutlinedIconButton(
+            onClick = onClick,
+            shapes = IconButtonDefaults.shapes(),
+            colors = IconButtonDefaults.outlinedIconButtonVibrantColors(),
+            enabled = enabled,
+            border = IconButtonDefaults.outlinedIconButtonVibrantBorder(true),
+            modifier = Modifier.size(containerSize),
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(iconSize),
             )
         }
     }

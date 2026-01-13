@@ -45,10 +45,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.extraSmallContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -63,7 +63,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -85,6 +84,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzOutlinedIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
@@ -455,28 +455,21 @@ private fun SongArtwork(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun BackButton(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedIconButton(
+    MuzOutlinedIconButton(
         onClick = onBackClick,
-        modifier = modifier
-            .padding(top = 8.dp)
-            .size(extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
-        shapes = IconButtonDefaults.shapes(IconButtonDefaults.extraSmallRoundShape),
-        border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
-            brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
-        ),
-    ) {
-        Icon(
-            imageVector = MuzIcons.Rounded.KeyboardArrowDown,
-            contentDescription = stringResource(localesR.string.back),
-            modifier = Modifier.size(20.dp),
-        )
-    }
+        modifier = modifier.padding(top = 8.dp),
+        containerSize = extraSmallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+        icon = MuzIcons.Rounded.KeyboardArrowDown,
+        contentDescription = stringResource(localesR.string.back),
+        iconSize = IconButtonDefaults.extraSmallIconSize,
+        tooltipPosition = TooltipAnchorPosition.Right,
+    )
 }
 
 @androidx.annotation.OptIn(UnstableApi::class)
