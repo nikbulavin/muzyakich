@@ -171,9 +171,15 @@ fun MuzFilledIconToggleButton(
         tooltip = { PlainTooltip { Text(contentDescription) } },
         state = rememberTooltipState(),
     ) {
+        val hapticFeedback = LocalHapticFeedback.current
         FilledIconToggleButton(
             checked = checked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = {
+                hapticFeedback.performHapticFeedback(
+                    if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                )
+                onCheckedChange(!checked)
+            },
             shapes = IconButtonDefaults.toggleableShapes(),
             colors = colors,
             modifier = Modifier.size(containerSize),
