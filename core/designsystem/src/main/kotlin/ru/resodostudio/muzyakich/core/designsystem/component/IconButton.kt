@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -217,6 +218,49 @@ fun MuzOutlinedIconButton(
                 imageVector = icon,
                 contentDescription = contentDescription,
                 modifier = Modifier.size(iconSize),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun MuzFilledTonalIconToggleButton(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconToggleButtonColors = IconButtonDefaults.filledTonalIconToggleButtonColors(),
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        val hapticFeedback = LocalHapticFeedback.current
+        FilledTonalIconToggleButton(
+            checked = checked,
+            onCheckedChange = {
+                hapticFeedback.performHapticFeedback(
+                    if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                )
+                onCheckedChange(!checked)
+            },
+            shapes = IconButtonDefaults.toggleableShapes(),
+            colors = colors,
+            modifier = Modifier.size(containerSize),
+        ) {
+            AnimatedIcon(
+                icon = icon,
+                contentDescription = contentDescription,
+                iconSize = iconSize,
             )
         }
     }
