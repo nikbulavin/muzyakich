@@ -12,10 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
@@ -29,9 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,6 +46,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import ru.resodostudio.muzyakich.R
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
@@ -59,7 +57,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SongItem(
     song: Song,
@@ -163,13 +161,9 @@ fun SongItem(
             val launcher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.StartIntentSenderForResult(),
             ) {}
-            val hapticFeedback = LocalHapticFeedback.current
-            IconToggleButton(
+            MuzIconToggleButton(
                 checked = song.isFavorite,
                 onCheckedChange = { checked ->
-                    hapticFeedback.performHapticFeedback(
-                        if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-                    )
                     runCatching {
                         val pendingIntent = MediaStore.createFavoriteRequest(
                             context.contentResolver,
@@ -181,13 +175,9 @@ fun SongItem(
                         )
                     }
                 },
-                shapes = IconButtonDefaults.toggleableShapes(),
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = contentDescription,
-                )
-            }
+                icon = icon,
+                contentDescription = contentDescription,
+            )
         },
     )
 }
