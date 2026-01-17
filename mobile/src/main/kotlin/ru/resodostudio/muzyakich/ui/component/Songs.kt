@@ -200,9 +200,7 @@ fun LazyGridScope.songs(
         SongItem(
             song = song,
             isPlaying = isPlaying,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .animateItem(),
+            modifier = Modifier.animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
             onMenuClick = { showSongDetails = true },
             shapes = ListItemDefaults.segmentedShapes(index, songs.size),
