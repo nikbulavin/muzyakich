@@ -38,10 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
@@ -50,13 +47,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.chrisbanes.haze.ExperimentalHazeApi
-import dev.chrisbanes.haze.HazeInputScale
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
@@ -82,12 +72,10 @@ import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.SONGS
-import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun LibraryScreen(
-    onNowPlayingBarClick: () -> Unit,
     onArtistClick: (Long) -> Unit,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
@@ -95,7 +83,6 @@ fun LibraryScreen(
 
     LibraryScreen(
         libraryUiState = libraryUiState,
-        onNowPlayingBarClick = onNowPlayingBarClick,
         onArtistClick = onArtistClick,
         onPlaySongsClick = viewModel::playSongs,
         onShuffleSongsClick = viewModel::shuffleSongs,
@@ -109,13 +96,10 @@ fun LibraryScreen(
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalMaterial3Api::class,
-    ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class,
 )
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
-    onNowPlayingBarClick: () -> Unit,
     onArtistClick: (Long) -> Unit,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
@@ -124,11 +108,6 @@ private fun LibraryScreen(
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
-    val hazeState = rememberHazeState()
-    val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceContainer)
-    val hazeStyle = HazeMaterials.ultraThin()
-    val hazeBlurRadius = 32.dp
-
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
@@ -155,14 +134,7 @@ private fun LibraryScreen(
             PrimaryScrollableTabRow(
                 selectedTabIndex = selectedTab.ordinal,
                 containerColor = Color.Transparent,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .hazeEffect(hazeState, hazeStyle) {
-                        inputScale = HazeInputScale.Auto
-                        blurEnabled = true
-                        blurRadius = hazeBlurRadius
-                        noiseFactor = 0f
-                    },
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 libraryTabs.forEach { tab ->
                     Tab(
@@ -224,9 +196,7 @@ private fun LibraryScreen(
                                 top = 8.dp,
                                 bottom = 104.dp + paddingValues.calculateBottomPadding(),
                             ),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .hazeSource(hazeState),
+                            modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                         ) {
                             when (selectedTab) {
@@ -272,31 +242,6 @@ private fun LibraryScreen(
                                 }
                             }
                         }
-
-                        NowPlayingBar(
-                            modifier = Modifier
-                                .navigationBarsPadding()
-                                .padding(16.dp)
-                                .dropShadow(
-                                    shape = MaterialTheme.shapes.medium,
-                                    shadow = Shadow(
-                                        radius = 10.dp,
-                                        spread = 6.dp,
-                                        color = MaterialTheme.colorScheme.inverseSurface,
-                                        alpha = 0.1f,
-                                    ),
-                                )
-                                .align(Alignment.BottomCenter)
-                                .clip(MaterialTheme.shapes.medium)
-                                .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                    inputScale = HazeInputScale.Auto
-                                    blurEnabled = true
-                                    blurRadius = hazeBlurRadius
-                                    noiseFactor = 0f
-                                }
-                                ,
-                            onClick = onNowPlayingBarClick,
-                        )
                     }
                 }
             }
