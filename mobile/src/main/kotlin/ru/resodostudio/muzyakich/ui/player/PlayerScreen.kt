@@ -103,7 +103,6 @@ fun PlayerScreen(
     PlayerScreen(
         playerUiState = playerUiState,
         onBackClick = onBackClick,
-        onSeekTo = viewModel::seekTo,
         onSkipToSongClick = viewModel::skipToSong,
     )
 }
@@ -116,7 +115,6 @@ fun PlayerScreen(
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
     onBackClick: () -> Unit = {},
-    onSeekTo: (Long) -> Unit = {},
     onSkipToSongClick: (Uuid) -> Unit = {},
 ) {
     with(LocalSharedTransitionScope.current) {
@@ -280,7 +278,6 @@ private fun PlayerScreen(
                                                 ProgressSlider(
                                                     player = player,
                                                     bitrate = playerUiState.currentSong.bitrate,
-                                                    onSeekTo = onSeekTo,
                                                     modifier = Modifier.fillMaxWidth(),
                                                 )
                                             }
@@ -444,7 +441,6 @@ private fun BackButton(
 private fun ProgressSlider(
     player: Player,
     bitrate: Int,
-    onSeekTo: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val progressState = rememberProgressStateWithTickCount(player = player, totalTickCount = 2000)
@@ -460,10 +456,10 @@ private fun ProgressSlider(
             onValueChange = {
                 isSeeking = true
                 sliderPosition = it
-                onSeekTo(it.toSeekPosition(player.duration))
+                player.seekTo(it toSeekPosition player.duration)
             },
             onValueChangeFinished = {
-                onSeekTo(sliderPosition.toSeekPosition(player.duration))
+                player.seekTo(sliderPosition toSeekPosition player.duration)
                 isSeeking = false
             },
             modifier = Modifier.height(32.dp),
