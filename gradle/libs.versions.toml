@@ -1,11 +1,11 @@
 [versions]
 accompanist = "0.37.3"
-androidGradlePlugin = "8.13.2"
+androidGradlePlugin = "9.0.0"
 androidxActivityCompose = "1.12.2"
 androidxCoreSplashscreen = "1.2.0"
 androidxDataStore = "1.2.0"
 androidxLifecycle = "2.10.0"
-androidxMacroBenchmark = "1.4.1"
+androidxMacroBenchmark = "1.5.0-alpha01"
 androidxMedia3 = "1.9.0"
 androidxNavigation3 = "1.0.0"
 androidxProfileinstaller = "1.4.1"
@@ -25,7 +25,8 @@ gmsPlugin = "4.4.4"
 haze = "1.7.1"
 hilt = "2.58"
 hiltExt = "1.3.0"
-kotlin = "2.2.21"
+junit4 = "4.13.2"
+kotlin = "2.3.0"
 kotlinxCoroutines = "1.10.2"
 ksp = "2.3.4"
 leakcanaryAndroid = "2.14"
@@ -74,6 +75,7 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+junit = { module = "junit:junit", version.ref = "junit4" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutines" }
 leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
