@@ -56,6 +56,7 @@ dependencies {
     implementation(projects.core.locales)
     implementation(projects.core.mediaService)
     implementation(projects.core.model)
+    implementation(projects.core.navigation)
 
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)

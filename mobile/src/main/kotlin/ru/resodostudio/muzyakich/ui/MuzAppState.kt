@@ -8,17 +8,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import ru.resodostudio.muzyakich.core.navigation.NavigationState
+import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
+import ru.resodostudio.muzyakich.navigation.LibraryNavKey
 
 @Composable
-fun rememberMuzAppState(): MuzAppState {
+fun rememberMuzAppState(
+    navigationState: NavigationState = rememberNavigationState(listOf(LibraryNavKey)),
+): MuzAppState {
     return remember {
-        MuzAppState()
+        MuzAppState(
+            navigationState = navigationState,
+        )
     }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Stable
-class MuzAppState() {
+class MuzAppState(
+    val navigationState: NavigationState,
+) {
 
     val permissionState: PermissionState
         @Composable get() = rememberMuzyakichPermissionState { isPermissionRequested = true }

@@ -58,7 +58,9 @@ fun MuzApp(
                     }
                 }
 
-                PermissionStatus.Granted -> MuzNavDisplay()
+                PermissionStatus.Granted -> MuzNavDisplay(
+                    appState = appState,
+                )
             }
         }
     }

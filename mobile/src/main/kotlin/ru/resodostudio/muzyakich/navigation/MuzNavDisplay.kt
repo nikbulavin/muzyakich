@@ -8,12 +8,13 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.core.navigation.toEntries
+import ru.resodostudio.muzyakich.ui.MuzAppState
 import ru.resodostudio.muzyakich.ui.artist.ArtistScreen
 import ru.resodostudio.muzyakich.ui.artist.ArtistViewModel
 import ru.resodostudio.muzyakich.ui.library.LibraryScreen
@@ -21,16 +22,39 @@ import ru.resodostudio.muzyakich.ui.player.PlayerScreen
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun MuzNavDisplay() {
-    val backStack = rememberNavBackStack(LibraryRoute)
+fun MuzNavDisplay(
+    appState: MuzAppState,
+) {
+    val navigator = remember { Navigator(appState.navigationState) }
     val motionScheme = MaterialTheme.motionScheme
 
+    val entryProvider = entryProvider {
+        entry<LibraryNavKey> {
+            LibraryScreen(
+                onNowPlayingBarClick = { navigator.navigate(PlayerNavKey) },
+                onArtistClick = { artistId -> navigator.navigate(ArtistNavKey(artistId)) },
+            )
+        }
+        entry<PlayerNavKey> {
+            PlayerScreen(
+                onBackClick = navigator::goBack,
+            )
+        }
+        entry<ArtistNavKey> { artistKey ->
+            ArtistScreen(
+                onBackClick = navigator::goBack,
+                viewModel = hiltViewModel<ArtistViewModel, ArtistViewModel.Factory>(
+                    key = artistKey.artistId.toString(),
+                ) { factory ->
+                    factory.create(artistKey.artistId)
+                },
+            )
+        }
+    }
+
     NavDisplay(
-        backStack = backStack,
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-        ),
+        entries = appState.navigationState.toEntries(entryProvider),
+        onBack = navigator::goBack,
         transitionSpec = {
             ContentTransform(
                 fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
@@ -48,29 +72,6 @@ fun MuzNavDisplay() {
                 fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.defaultSpatialSpec()),
                 fadeOut(motionScheme.fastEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
             )
-        },
-        entryProvider = entryProvider {
-            entry<LibraryRoute> {
-                LibraryScreen(
-                    onNowPlayingBarClick = { backStack.add(PlayerRoute) },
-                    onArtistClick = { artistId -> backStack.add(ArtistRoute(artistId)) },
-                )
-            }
-            entry<PlayerRoute> {
-                PlayerScreen(
-                    onBackClick = backStack::removeLastOrNull,
-                )
-            }
-            entry<ArtistRoute> { artistKey ->
-                ArtistScreen(
-                    onBackClick = backStack::removeLastOrNull,
-                    viewModel = hiltViewModel<ArtistViewModel, ArtistViewModel.Factory>(
-                        key = artistKey.artistId.toString(),
-                    ) { factory ->
-                        factory.create(artistKey.artistId)
-                    },
-                )
-            }
         },
     )
 }

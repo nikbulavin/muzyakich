@@ -4,10 +4,10 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object LibraryRoute : NavKey
+data object LibraryNavKey : NavKey
 
 @Serializable
-data object PlayerRoute : NavKey
+data object PlayerNavKey : NavKey
 
 @Serializable
-data class ArtistRoute(val artistId: Long) : NavKey
+data class ArtistNavKey(val artistId: Long) : NavKey
