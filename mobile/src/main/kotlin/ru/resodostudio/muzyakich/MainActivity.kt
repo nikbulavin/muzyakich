@@ -24,12 +24,17 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.MainActivityUiState.Loading
 import ru.resodostudio.muzyakich.core.designsystem.theme.MuzTheme
+import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.ui.MuzApp
 import ru.resodostudio.muzyakich.ui.rememberMuzAppState
 import ru.resodostudio.muzyakich.util.isSystemInDarkTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var musicServiceConnection: MusicServiceConnection
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -78,7 +83,9 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
         setContent {
-            val appState = rememberMuzAppState()
+            val appState = rememberMuzAppState(
+                musicServiceConnection = musicServiceConnection,
+            )
             MuzTheme(
                 darkTheme = themeSettings.darkTheme,
                 dynamicTheme = themeSettings.dynamicTheme,
