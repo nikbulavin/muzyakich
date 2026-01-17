@@ -7,7 +7,4 @@ import kotlinx.serialization.Serializable
 data object LibraryNavKey : NavKey
 
 @Serializable
-data object PlayerNavKey : NavKey
-
-@Serializable
 data class ArtistNavKey(val artistId: Long) : NavKey

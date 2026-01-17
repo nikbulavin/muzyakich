@@ -18,7 +18,8 @@ import ru.resodostudio.muzyakich.ui.MuzAppState
 import ru.resodostudio.muzyakich.ui.artist.ArtistScreen
 import ru.resodostudio.muzyakich.ui.artist.ArtistViewModel
 import ru.resodostudio.muzyakich.ui.library.LibraryScreen
-import ru.resodostudio.muzyakich.ui.player.PlayerScreen
+import ru.resodostudio.muzyakich.ui.player.navigation.navigateToPlayer
+import ru.resodostudio.muzyakich.ui.player.navigation.playerEntry
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -31,15 +32,11 @@ fun MuzNavDisplay(
     val entryProvider = entryProvider {
         entry<LibraryNavKey> {
             LibraryScreen(
-                onNowPlayingBarClick = { navigator.navigate(PlayerNavKey) },
+                onNowPlayingBarClick = navigator::navigateToPlayer,
                 onArtistClick = { artistId -> navigator.navigate(ArtistNavKey(artistId)) },
             )
         }
-        entry<PlayerNavKey> {
-            PlayerScreen(
-                onBackClick = navigator::goBack,
-            )
-        }
+        playerEntry(navigator)
         entry<ArtistNavKey> { artistKey ->
             ArtistScreen(
                 onBackClick = navigator::goBack,
