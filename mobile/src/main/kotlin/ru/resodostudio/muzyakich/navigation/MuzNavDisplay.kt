@@ -15,9 +15,7 @@ import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.ui.MuzAppState
 import ru.resodostudio.muzyakich.ui.artist.navigation.artistEntry
-import ru.resodostudio.muzyakich.ui.artist.navigation.navigateToArtist
-import ru.resodostudio.muzyakich.ui.library.LibraryScreen
-import ru.resodostudio.muzyakich.ui.player.navigation.navigateToPlayer
+import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
 import ru.resodostudio.muzyakich.ui.player.navigation.playerEntry
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -29,12 +27,7 @@ fun MuzNavDisplay(
     val motionScheme = MaterialTheme.motionScheme
 
     val entryProvider = entryProvider {
-        entry<LibraryNavKey> {
-            LibraryScreen(
-                onNowPlayingBarClick = navigator::navigateToPlayer,
-                onArtistClick = navigator::navigateToArtist,
-            )
-        }
+        libraryEntry(navigator)
         playerEntry(navigator)
         artistEntry(navigator)
     }

@@ -10,7 +10,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import ru.resodostudio.muzyakich.core.navigation.NavigationState
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
-import ru.resodostudio.muzyakich.navigation.LibraryNavKey
+import ru.resodostudio.muzyakich.ui.library.navigation.LibraryNavKey
 
 @Composable
 fun rememberMuzAppState(
