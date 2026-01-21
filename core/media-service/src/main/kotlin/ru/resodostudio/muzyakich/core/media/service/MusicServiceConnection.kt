@@ -56,11 +56,6 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    fun seekTo(position: Long) = mediaController?.run {
-        seekTo(position)
-        if (_nowPlayingState.value.playWhenReady) play()
-    }
-
     fun skipToSong(uuid: Uuid, position: Long = C.TIME_UNSET) {
         mediaController?.run {
             val timeline = currentTimeline

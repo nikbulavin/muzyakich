@@ -5,12 +5,10 @@ import androidx.navigation3.runtime.NavKey
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.ui.artist.navigation.navigateToArtist
 import ru.resodostudio.muzyakich.ui.library.LibraryScreen
-import ru.resodostudio.muzyakich.ui.player.navigation.navigateToPlayer
 
 fun EntryProviderScope<NavKey>.libraryEntry(navigator: Navigator) {
     entry<LibraryNavKey> {
         LibraryScreen(
-            onNowPlayingBarClick = navigator::navigateToPlayer,
             onArtistClick = navigator::navigateToArtist,
         )
     }

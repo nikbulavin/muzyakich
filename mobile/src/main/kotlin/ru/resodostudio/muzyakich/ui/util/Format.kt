@@ -25,7 +25,7 @@ fun formatSampleRate(rate: Float, locale: Locale = Locale.getDefault()): String 
     return stringResource(localesR.string.sample_rate_format, formatted)
 }
 
-fun Float.toSeekPosition(duration: Long) = (this * duration).toLong()
+infix fun Float.toSeekPosition(duration: Long) = (this * duration).toLong()
 
 @Composable
 fun Long.asFormattedDuration(): String {

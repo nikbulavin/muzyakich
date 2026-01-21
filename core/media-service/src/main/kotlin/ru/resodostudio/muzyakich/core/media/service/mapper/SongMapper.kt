@@ -22,7 +22,7 @@ internal fun Song.asMediaItem() = buildPlayableMediaItem(
     duration = duration,
 )
 
-internal fun MediaItem.asSong(): Song {
+fun MediaItem.asSong(): Song {
     return Song(
         uuid = Uuid.parse(mediaMetadata.extras?.getString(UUID) ?: ""),
         mediaId = mediaId,

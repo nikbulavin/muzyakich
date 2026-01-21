@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,14 +14,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -40,10 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
@@ -52,16 +47,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.chrisbanes.haze.ExperimentalHazeApi
-import dev.chrisbanes.haze.HazeInputScale
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
@@ -83,12 +72,10 @@ import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
 import ru.resodostudio.muzyakich.ui.library.LibraryTab.SONGS
-import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun LibraryScreen(
-    onNowPlayingBarClick: () -> Unit,
     onArtistClick: (Long) -> Unit,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
@@ -96,7 +83,6 @@ fun LibraryScreen(
 
     LibraryScreen(
         libraryUiState = libraryUiState,
-        onNowPlayingBarClick = onNowPlayingBarClick,
         onArtistClick = onArtistClick,
         onPlaySongsClick = viewModel::playSongs,
         onShuffleSongsClick = viewModel::shuffleSongs,
@@ -110,13 +96,10 @@ fun LibraryScreen(
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalMaterial3Api::class,
-    ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class,
 )
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
-    onNowPlayingBarClick: () -> Unit,
     onArtistClick: (Long) -> Unit,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
@@ -125,11 +108,6 @@ private fun LibraryScreen(
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
-    val hazeState = rememberHazeState()
-    val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceContainer)
-    val hazeStyle = HazeMaterials.ultraThin()
-    val hazeBlurRadius = 32.dp
-
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
@@ -156,14 +134,7 @@ private fun LibraryScreen(
             PrimaryScrollableTabRow(
                 selectedTabIndex = selectedTab.ordinal,
                 containerColor = Color.Transparent,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .hazeEffect(hazeState, hazeStyle) {
-                        inputScale = HazeInputScale.Auto
-                        blurEnabled = true
-                        blurRadius = hazeBlurRadius
-                        noiseFactor = 0f
-                    },
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 libraryTabs.forEach { tab ->
                     Tab(
@@ -220,11 +191,12 @@ private fun LibraryScreen(
                             state = lazyGridState,
                             columns = GridCells.Adaptive(300.dp),
                             contentPadding = PaddingValues(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 8.dp,
                                 bottom = 104.dp + paddingValues.calculateBottomPadding(),
                             ),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .hazeSource(hazeState),
+                            modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                         ) {
                             when (selectedTab) {
@@ -270,31 +242,6 @@ private fun LibraryScreen(
                                 }
                             }
                         }
-
-                        NowPlayingBar(
-                            modifier = Modifier
-                                .navigationBarsPadding()
-                                .padding(16.dp)
-                                .dropShadow(
-                                    shape = MaterialTheme.shapes.medium,
-                                    shadow = Shadow(
-                                        radius = 10.dp,
-                                        spread = 6.dp,
-                                        color = MaterialTheme.colorScheme.inverseSurface,
-                                        alpha = 0.1f,
-                                    ),
-                                )
-                                .align(Alignment.BottomCenter)
-                                .clip(MaterialTheme.shapes.medium)
-                                .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                    inputScale = HazeInputScale.Auto
-                                    blurEnabled = true
-                                    blurRadius = hazeBlurRadius
-                                    noiseFactor = 0f
-                                }
-                                ,
-                            onClick = onNowPlayingBarClick,
-                        )
                     }
                 }
             }
@@ -316,7 +263,7 @@ private fun LazyGridScope.actionButtons(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(bottom = 8.dp - ListItemDefaults.SegmentedGap)
                 .animateItem(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -374,17 +321,20 @@ private fun LazyGridScope.actionButtons(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.artists(
     artists: List<Artist>,
     onArtistClick: (Long) -> Unit,
 ) {
-    items(
+    itemsIndexed(
         items = artists,
-        key = { it.id },
-        contentType = { "Artists" },
-    ) { artist ->
-        ListItem(
-            headlineContent = {
+        key = { _, artist -> artist.id },
+        contentType = { _, _ -> "Artist" },
+    ) { index, artist ->
+        MuzSelectableListItem(
+            shapes = ListItemDefaults.segmentedShapes(index, artists.size),
+            selected = false,
+            content = {
                 Text(
                     text = artist.name,
                     maxLines = 1,
@@ -402,9 +352,8 @@ private fun LazyGridScope.artists(
                     overflow = TextOverflow.Ellipsis,
                 )
             },
-            modifier = Modifier
-                .clickable { onArtistClick(artist.id) }
-                .animateItem(),
+            onClick = { onArtistClick(artist.id) },
+            modifier = Modifier.animateItem(),
         )
     }
 }
