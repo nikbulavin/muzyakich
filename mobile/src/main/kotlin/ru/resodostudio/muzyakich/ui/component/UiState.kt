@@ -2,8 +2,8 @@ package ru.resodostudio.muzyakich.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +22,7 @@ fun LoadingState(
     Box(
         modifier = modifier.testTag("loadingCircle"),
         contentAlignment = Alignment.Center,
-        content = { ContainedLoadingIndicator() },
+        content = { LoadingIndicator() },
     )
 }
 
