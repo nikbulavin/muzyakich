@@ -2,7 +2,6 @@ package ru.resodostudio.muzyakich.ui.library
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -186,60 +185,58 @@ private fun LibraryScreen(
                         )
                     }
 
-                    Box {
-                        LazyVerticalGrid(
-                            state = lazyGridState,
-                            columns = GridCells.Adaptive(300.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 8.dp,
-                                bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                            ),
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                        ) {
-                            when (selectedTab) {
-                                PLAYLISTS -> {
-                                    item(
-                                        span = { GridItemSpan(maxLineSpan) },
-                                    ) {
-                                        LoadingState(modifier = Modifier.animateItem())
-                                    }
+                    LazyVerticalGrid(
+                        state = lazyGridState,
+                        columns = GridCells.Adaptive(300.dp),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = 104.dp + paddingValues.calculateBottomPadding(),
+                        ),
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                    ) {
+                        when (selectedTab) {
+                            PLAYLISTS -> {
+                                item(
+                                    span = { GridItemSpan(maxLineSpan) },
+                                ) {
+                                    LoadingState(modifier = Modifier.animateItem())
                                 }
+                            }
 
-                                SONGS -> {
-                                    actionButtons(
-                                        songs = libraryUiState.songs,
-                                        onPlaySongsClick = onPlaySongsClick,
-                                        onShuffleSongsClick = onShuffleSongsClick,
-                                        onFilterClick = { shouldShowFilterBottomSheet = true },
-                                    )
-                                    songs(
-                                        songs = libraryUiState.songs,
-                                        nowPlayingState = libraryUiState.nowPlayingState,
-                                        onPlaySongsClick = onPlaySongsClick,
-                                        onPlayNextClick = onPlayNextClick,
-                                    )
-                                    songsInfo(
-                                        songs = libraryUiState.songs,
-                                    )
-                                }
+                            SONGS -> {
+                                actionButtons(
+                                    songs = libraryUiState.songs,
+                                    onPlaySongsClick = onPlaySongsClick,
+                                    onShuffleSongsClick = onShuffleSongsClick,
+                                    onFilterClick = { shouldShowFilterBottomSheet = true },
+                                )
+                                songs(
+                                    songs = libraryUiState.songs,
+                                    nowPlayingState = libraryUiState.nowPlayingState,
+                                    onPlaySongsClick = onPlaySongsClick,
+                                    onPlayNextClick = onPlayNextClick,
+                                )
+                                songsInfo(
+                                    songs = libraryUiState.songs,
+                                )
+                            }
 
-                                ALBUMS -> {
-                                    item(
-                                        span = { GridItemSpan(maxLineSpan) },
-                                    ) {
-                                        LoadingState(modifier = Modifier.animateItem())
-                                    }
+                            ALBUMS -> {
+                                item(
+                                    span = { GridItemSpan(maxLineSpan) },
+                                ) {
+                                    LoadingState(modifier = Modifier.animateItem())
                                 }
+                            }
 
-                                ARTISTS -> {
-                                    artists(
-                                        artists = libraryUiState.artists,
-                                        onArtistClick = onArtistClick,
-                                    )
-                                }
+                            ARTISTS -> {
+                                artists(
+                                    artists = libraryUiState.artists,
+                                    onArtistClick = onArtistClick,
+                                )
                             }
                         }
                     }
