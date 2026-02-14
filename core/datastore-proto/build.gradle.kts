@@ -1,10 +1,6 @@
 plugins {
-    alias(libs.plugins.muzyakich.android.library)
+    alias(libs.plugins.muzyakich.jvm.library)
     alias(libs.plugins.protobuf)
-}
-
-android {
-    namespace = "ru.resodostudio.muzyakich.core.datastore.proto"
 }
 
 protobuf {
@@ -12,9 +8,9 @@ protobuf {
         artifact = libs.protobuf.protoc.get().toString()
     }
     generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                register("java") {
+        all().configureEach {
+            builtins {
+                named("java") {
                     option("lite")
                 }
                 register("kotlin") {
@@ -22,14 +18,6 @@ protobuf {
                 }
             }
         }
-    }
-}
-
-androidComponents.beforeVariants {
-    android.sourceSets.register(it.name) {
-        val buildDir = layout.buildDirectory.get().asFile
-        java.srcDir(buildDir.resolve("generated/sources/proto/${it.name}/java"))
-        kotlin.srcDir(buildDir.resolve("generated/sources/proto/${it.name}/kotlin"))
     }
 }
 

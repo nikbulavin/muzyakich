@@ -16,19 +16,27 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             apply(plugin = "com.android.library")
-            apply(plugin = "org.jetbrains.kotlin.android")
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
                 testOptions.targetSdk = 36
                 lint.targetSdk = 36
                 configureFlavors(this)
+                testOptions.animationsDisabled = true
+                resourcePrefix = path.split("""\W""".toRegex())
+                    .drop(1)
+                    .distinct()
+                    .joinToString(separator = "_")
+                    .lowercase() + "_"
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
                 disableUnnecessaryAndroidTests(target)
             }
             dependencies {
+                "androidTestImplementation"(libs.findLibrary("kotlin.test").get())
+
                 "testImplementation"(kotlin("test"))
+                "testImplementation"(libs.findLibrary("junit").get())
 
                 "implementation"(libs.findLibrary("androidx.tracing").get())
             }
