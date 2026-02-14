@@ -42,14 +42,12 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.extraSmallContainerSize
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -71,7 +69,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.ui.compose.indicators.TimeText
-import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
+import androidx.media3.ui.compose.material3.indicator.ProgressSlider
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -89,7 +87,6 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionSc
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
-import ru.resodostudio.muzyakich.ui.util.toSeekPosition
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -443,25 +440,12 @@ private fun ProgressSlider(
     bitrate: Int,
     modifier: Modifier = Modifier,
 ) {
-    val progressState = rememberProgressStateWithTickCount(player = player, totalTickCount = 2000)
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        var sliderPosition by remember { mutableFloatStateOf(0f) }
-        var isSeeking by remember { mutableStateOf(false) }
-        if (!isSeeking) sliderPosition = progressState.currentPositionProgress
-        Slider(
-            value = sliderPosition,
-            onValueChange = {
-                isSeeking = true
-                sliderPosition = it
-                player.seekTo(it toSeekPosition player.duration)
-            },
-            onValueChangeFinished = {
-                player.seekTo(sliderPosition toSeekPosition player.duration)
-                isSeeking = false
-            },
+        ProgressSlider(
+            player = player,
             modifier = Modifier.height(32.dp),
         )
 

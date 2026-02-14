@@ -25,8 +25,6 @@ fun formatSampleRate(rate: Float, locale: Locale = Locale.getDefault()): String 
     return stringResource(localesR.string.sample_rate_format, formatted)
 }
 
-infix fun Float.toSeekPosition(duration: Long) = (this * duration).toLong()
-
 @Composable
 fun Long.asFormattedDuration(): String {
     val hours = TimeUnit.MILLISECONDS.toHours(this)

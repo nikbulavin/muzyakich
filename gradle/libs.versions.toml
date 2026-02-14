@@ -6,7 +6,7 @@ androidxCoreSplashscreen = "1.2.0"
 androidxDataStore = "1.2.0"
 androidxLifecycle = "2.10.0"
 androidxMacroBenchmark = "1.5.0-alpha03"
-androidxMedia3 = "1.9.2"
+androidxMedia3 = "1.10.0-alpha01"
 androidxNavigation3 = "1.0.1"
 androidxProfileinstaller = "1.4.1"
 androidxTestCore = "1.7.0"
@@ -52,6 +52,7 @@ androidx-lifecycle-viewModelNavigation3 = { module = "androidx.lifecycle:lifecyc
 androidx-media3-exoPlayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "androidxMedia3" }
 androidx-media3-ui-compose = { module = "androidx.media3:media3-ui-compose", version.ref = "androidxMedia3" }
+androidx-media3-ui-compose-material3 = { module = "androidx.media3:media3-ui-compose-material3", version.ref = "androidxMedia3" }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidxNavigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidxNavigation3" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileinstaller" }

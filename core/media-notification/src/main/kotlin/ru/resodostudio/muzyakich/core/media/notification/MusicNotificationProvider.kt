@@ -67,6 +67,9 @@ class MusicNotificationProvider @Inject constructor(
     }
 
     override fun handleCustomCommand(session: MediaSession, action: String, extras: Bundle) = false
+    override fun getNotificationChannelInfo(): MediaNotification.Provider.NotificationChannelInfo {
+        TODO("Not yet implemented")
+    }
 
     fun cancelCoroutineScope() = coroutineScope.cancel()
 
