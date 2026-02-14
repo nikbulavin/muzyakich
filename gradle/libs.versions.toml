@@ -29,7 +29,6 @@ junit4 = "4.13.2"
 kotlin = "2.3.10"
 kotlinxCoroutines = "1.10.2"
 ksp = "2.3.5"
-leakcanaryAndroid = "2.14"
 lottie = "6.7.1"
 protobuf = "4.33.5"
 protobufPlugin = "0.9.6"
@@ -80,7 +79,6 @@ junit = { module = "junit:junit", version.ref = "junit4" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutines" }
-leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-javalite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf" }
