@@ -5,11 +5,8 @@ import android.icu.util.Measure
 import android.icu.util.MeasureUnit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.res.stringResource
-import java.text.NumberFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 fun Long.asFormattedString(): String {
     val minutes = (this / 60)
@@ -18,14 +15,15 @@ fun Long.asFormattedString(): String {
 }
 
 @Composable
-fun formatSampleRate(rate: Float, locale: Locale = Locale.getDefault()): String {
-    val numberFormat = NumberFormat.getNumberInstance(locale).apply {
-        maximumFractionDigits = 1
-        minimumFractionDigits = 0
-        isGroupingUsed = false
-    }
-    val formatted = numberFormat.format(rate)
-    return stringResource(localesR.string.sample_rate_format, formatted)
+fun Float.asFormattedSampleRate(): String {
+    return MeasureFormat
+        .getInstance(
+            LocalLocale.current.platformLocale,
+            MeasureFormat.FormatWidth.SHORT,
+        )
+        .formatMeasures(
+            Measure(this, MeasureUnit.KILOHERTZ),
+        )
 }
 
 @Composable

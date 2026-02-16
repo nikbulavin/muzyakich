@@ -54,8 +54,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.util.asFormattedSampleRate
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
-import ru.resodostudio.muzyakich.ui.util.formatSampleRate
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -297,7 +297,7 @@ private fun AudioQualityTag(
                 append(" ")
             }
             if (song.sampleRate > 0) {
-                append(formatSampleRate(song.sampleRate / 1000f))
+                append((song.sampleRate / 1000f).asFormattedSampleRate())
             }
         }
         MuzTag(

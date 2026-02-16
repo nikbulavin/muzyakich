@@ -32,7 +32,6 @@
     <string name="playlists">재생 목록</string>
     <string name="queue">대기열</string>
     <string name="remove_from_favorites">즐겨찾기에서 제거</string>
-    <string name="sample_rate_format">%skHz</string>
     <string name="search">검색</string>
     <string name="settings">설정</string>
     <string name="shuffle">셔플</string>

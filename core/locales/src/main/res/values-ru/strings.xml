@@ -32,7 +32,6 @@
     <string name="playlists">Плейлисты</string>
     <string name="queue">Очередь</string>
     <string name="remove_from_favorites">Удалить из избранного</string>
-    <string name="sample_rate_format">%s кГц</string>
     <string name="search">Поиск</string>
     <string name="settings">Настройки</string>
     <string name="shuffle">Перемешать</string>
