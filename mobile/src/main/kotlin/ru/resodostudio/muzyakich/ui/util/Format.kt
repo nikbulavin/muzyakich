@@ -1,7 +1,10 @@
 package ru.resodostudio.muzyakich.ui.util
 
+import android.icu.text.MeasureFormat
+import android.icu.util.Measure
+import android.icu.util.MeasureUnit
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import java.text.NumberFormat
 import java.util.Locale
@@ -30,14 +33,19 @@ fun Long.asFormattedDuration(): String {
     val hours = TimeUnit.MILLISECONDS.toHours(this)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(this) % 60
 
-    val parts = buildList {
-        if (hours > 0) {
-            add(pluralStringResource(localesR.plurals.duration_hours, hours.toInt(), hours.toInt()))
-        }
-        if (minutes > 0) {
-            add(pluralStringResource(localesR.plurals.duration_minutes, minutes.toInt(), minutes.toInt()))
-        }
-    }
+    val measureFormat = MeasureFormat.getInstance(
+        LocalLocale.current.platformLocale,
+        MeasureFormat.FormatWidth.WIDE,
+    )
 
-    return parts.joinToString(" ")
+    return if (hours > 0) {
+        measureFormat.formatMeasures(
+            Measure(hours, MeasureUnit.HOUR),
+            Measure(minutes, MeasureUnit.MINUTE),
+        )
+    } else {
+        measureFormat.formatMeasures(
+            Measure(minutes, MeasureUnit.MINUTE),
+        )
+    }
 }
