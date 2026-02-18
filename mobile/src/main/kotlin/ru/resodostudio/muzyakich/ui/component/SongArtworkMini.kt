@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -62,6 +63,7 @@ fun SongArtworkMini(
                 .placeholderMemoryCacheKey(artworkUri.toString())
                 .memoryCacheKey(artworkUri.toString())
                 .build(),
+            contentScale = ContentScale.Crop,
             contentDescription = null,
             error = {
                 Box(

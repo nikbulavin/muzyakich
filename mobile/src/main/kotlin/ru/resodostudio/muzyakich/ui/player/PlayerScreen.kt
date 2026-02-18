@@ -8,7 +8,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -35,7 +34,6 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -59,6 +57,7 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
@@ -104,10 +103,7 @@ fun PlayerScreen(
     )
 }
 
-@OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalSharedTransitionApi::class,
-)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
@@ -300,8 +296,8 @@ private fun PlayerScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 fun MoreIconButton(
     song: Song,
     modifier: Modifier = Modifier,
@@ -323,7 +319,7 @@ fun MoreIconButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FavoriteToggleButton(
     song: Song,
@@ -357,10 +353,7 @@ fun FavoriteToggleButton(
     )
 }
 
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SongArtwork(
     artworkUri: Uri,
@@ -370,7 +363,6 @@ private fun SongArtwork(
     with(LocalSharedTransitionScope.current) {
         SubcomposeAsyncImage(
             modifier = modifier
-                .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .dropShadow(
                     shape = MaterialTheme.shapes.large,
@@ -381,6 +373,7 @@ private fun SongArtwork(
                         alpha = 0.1f,
                     ),
                 )
+                .aspectRatio(1f)
                 .sharedBounds(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(artworkUri.toString()),
@@ -395,6 +388,7 @@ private fun SongArtwork(
                 .memoryCacheKey(artworkUri.toString())
                 .build(),
             contentDescription = null,
+            contentScale = ContentScale.Crop,
             error = {
                 BoxWithConstraints(
                     contentAlignment = Alignment.Center,
@@ -415,7 +409,7 @@ private fun SongArtwork(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun BackButton(
     onBackClick: () -> Unit,
