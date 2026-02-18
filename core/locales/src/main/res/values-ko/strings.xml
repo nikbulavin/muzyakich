@@ -7,7 +7,6 @@
     <string name="artist">아티스트</string>
     <string name="artists">아티스트들</string>
     <string name="back">뒤로</string>
-    <string name="bit_depth_format">%1$d비트</string>
     <string name="delete">삭제</string>
     <string name="disable_shuffle_mode">셔플 모드 비활성화</string>
     <string name="disable_repeat_mode">반복 안함</string>

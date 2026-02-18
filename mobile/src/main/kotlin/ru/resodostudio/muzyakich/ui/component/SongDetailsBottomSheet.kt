@@ -54,6 +54,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.util.asFormattedBitDepth
 import ru.resodostudio.muzyakich.ui.util.asFormattedSampleRate
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -291,7 +292,7 @@ private fun AudioQualityTag(
     if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
         val audioQualityText = buildString {
             if (song.bitsPerSample > 0) {
-                append(stringResource(localesR.string.bit_depth_format, song.bitsPerSample))
+                append(song.bitsPerSample.asFormattedBitDepth())
             }
             if (song.bitsPerSample > 0 && song.sampleRate > 0) {
                 append(" ")

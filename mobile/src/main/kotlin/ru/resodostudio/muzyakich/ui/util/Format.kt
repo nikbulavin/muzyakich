@@ -4,7 +4,7 @@ import android.icu.text.MeasureFormat
 import android.icu.util.Measure
 import android.icu.util.MeasureUnit
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.LocalConfiguration
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +18,7 @@ fun Long.asFormattedString(): String {
 fun Float.asFormattedSampleRate(): String {
     return MeasureFormat
         .getInstance(
-            LocalLocale.current.platformLocale,
+            LocalConfiguration.current.locales[0],
             MeasureFormat.FormatWidth.SHORT,
         )
         .formatMeasures(
@@ -27,12 +27,25 @@ fun Float.asFormattedSampleRate(): String {
 }
 
 @Composable
+fun Int.asFormattedBitDepth(): String {
+    return MeasureFormat
+        .getInstance(
+            LocalConfiguration.current.locales[0],
+            MeasureFormat.FormatWidth.SHORT,
+        )
+        .formatMeasures(
+            Measure(this, MeasureUnit.BIT),
+        )
+        .replace(" ", "-")
+}
+
+@Composable
 fun Long.asFormattedDuration(): String {
     val hours = TimeUnit.MILLISECONDS.toHours(this)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(this) % 60
 
     val measureFormat = MeasureFormat.getInstance(
-        LocalLocale.current.platformLocale,
+        LocalConfiguration.current.locales[0],
         MeasureFormat.FormatWidth.WIDE,
     )
 
