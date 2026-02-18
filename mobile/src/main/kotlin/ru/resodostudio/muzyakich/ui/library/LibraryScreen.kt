@@ -246,7 +246,7 @@ private fun LibraryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.actionButtons(
     songs: List<Song>,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
