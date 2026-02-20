@@ -4,21 +4,21 @@ import android.icu.text.MeasureFormat
 import android.icu.util.Measure
 import android.icu.util.MeasureUnit
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalConfiguration
-import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 import java.util.concurrent.TimeUnit
 
+@Composable
 fun Long.asFormattedString(): String {
     val minutes = (this / 60)
     val seconds = (this % 60)
-    return "%d:%02d".format(Locale.getDefault(), minutes, seconds)
+    return "%d:%02d".format(LocalLocale.current.platformLocale, minutes, seconds)
 }
 
 @Composable
 fun Float.asFormattedSampleRate(): String {
     return MeasureFormat
         .getInstance(
-            LocalConfiguration.current.locales[0],
+            LocalLocale.current.platformLocale,
             MeasureFormat.FormatWidth.SHORT,
         )
         .formatMeasures(
@@ -30,7 +30,7 @@ fun Float.asFormattedSampleRate(): String {
 fun Int.asFormattedBitDepth(): String {
     return MeasureFormat
         .getInstance(
-            LocalConfiguration.current.locales[0],
+            LocalLocale.current.platformLocale,
             MeasureFormat.FormatWidth.SHORT,
         )
         .formatMeasures(
@@ -45,7 +45,7 @@ fun Long.asFormattedDuration(): String {
     val minutes = TimeUnit.MILLISECONDS.toMinutes(this) % 60
 
     val measureFormat = MeasureFormat.getInstance(
-        LocalConfiguration.current.locales[0],
+        LocalLocale.current.platformLocale,
         MeasureFormat.FormatWidth.WIDE,
     )
 

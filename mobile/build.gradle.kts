@@ -17,6 +17,8 @@ android {
         versionName = "1.0.0-alpha01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        androidResources.localeFilters += setOf("en", "ru", "ko")
     }
     buildTypes {
         debug {
