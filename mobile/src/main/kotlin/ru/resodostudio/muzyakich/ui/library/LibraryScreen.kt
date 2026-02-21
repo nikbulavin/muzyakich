@@ -1,6 +1,11 @@
 package ru.resodostudio.muzyakich.ui.library
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -249,9 +254,16 @@ private fun LibraryScreen(
                         }
                     }
 
+                    val motionScheme = MaterialTheme.motionScheme
+
                     NavDisplay(
                         entries = navigationState.toEntries(entryProvider),
                         onBack = navigator::goBack,
+                        transitionSpec = {
+                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                                    fadeOut(snap())
+                        },
                     )
                 }
             }
