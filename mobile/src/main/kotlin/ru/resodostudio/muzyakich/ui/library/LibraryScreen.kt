@@ -43,6 +43,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
+import kotlinx.serialization.Serializable
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
@@ -59,15 +63,26 @@ import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
+import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
+import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.component.songsInfo
-import ru.resodostudio.muzyakich.ui.library.LibraryTab.ALBUMS
-import ru.resodostudio.muzyakich.ui.library.LibraryTab.ARTISTS
-import ru.resodostudio.muzyakich.ui.library.LibraryTab.PLAYLISTS
-import ru.resodostudio.muzyakich.ui.library.LibraryTab.SONGS
 import ru.resodostudio.muzyakich.core.locales.R as localesR
+
+@Serializable
+data object PlaylistsNavKey : NavKey
+
+@Serializable
+data object SongsNavKey : NavKey
+
+@Serializable
+data object AlbumsNavKey : NavKey
+
+@Serializable
+data object ArtistsNavKey : NavKey
 
 @Composable
 fun LibraryScreen(
@@ -120,17 +135,23 @@ private fun LibraryScreen(
         Column(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
         ) {
-            val libraryTabs = remember { LibraryTab.entries }
-            var selectedTab by rememberSaveable { mutableStateOf(libraryTabs.first()) }
+            val libraryTabs = LibraryTab.entries
+
+            val navigationState = rememberNavigationState(
+                initialBackStack = listOf(libraryTabs.first().navKey),
+            )
+            val navigator = remember { Navigator(navigationState) }
+            val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
+                ?: libraryTabs.first()
 
             PrimaryScrollableTabRow(
-                selectedTabIndex = selectedTab.ordinal,
+                selectedTabIndex = currentTab.ordinal,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 libraryTabs.forEach { tab ->
                     Tab(
-                        selected = selectedTab == tab,
-                        onClick = { selectedTab = tab },
+                        selected = currentTab == tab,
+                        onClick = { navigator.navigate(tab.navKey) },
                         icon = {
                             Icon(
                                 imageVector = tab.icon,
@@ -172,27 +193,22 @@ private fun LibraryScreen(
                         )
                     }
 
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(300.dp),
-                        contentPadding = PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 8.dp,
-                            bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                        ),
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                    ) {
-                        when (selectedTab) {
-                            PLAYLISTS -> {
-                                item(
-                                    span = { GridItemSpan(maxLineSpan) },
-                                ) {
-                                    LoadingState(modifier = Modifier.animateItem())
-                                }
-                            }
-
-                            SONGS -> {
+                    val entryProvider = entryProvider {
+                        entry<PlaylistsNavKey> {
+                            LoadingState(Modifier.fillMaxSize())
+                        }
+                        entry<SongsNavKey> {
+                            LazyVerticalGrid(
+                                columns = GridCells.Adaptive(300.dp),
+                                contentPadding = PaddingValues(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 8.dp,
+                                    bottom = 104.dp + paddingValues.calculateBottomPadding(),
+                                ),
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                            ) {
                                 actionButtons(
                                     songs = libraryUiState.songs,
                                     onPlaySongsClick = onPlaySongsClick,
@@ -209,16 +225,22 @@ private fun LibraryScreen(
                                     songs = libraryUiState.songs,
                                 )
                             }
-
-                            ALBUMS -> {
-                                item(
-                                    span = { GridItemSpan(maxLineSpan) },
-                                ) {
-                                    LoadingState(modifier = Modifier.animateItem())
-                                }
-                            }
-
-                            ARTISTS -> {
+                        }
+                        entry<AlbumsNavKey> {
+                            LoadingState(Modifier.fillMaxSize())
+                        }
+                        entry<ArtistsNavKey> {
+                            LazyVerticalGrid(
+                                columns = GridCells.Adaptive(300.dp),
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                                contentPadding = PaddingValues(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 16.dp,
+                                    bottom = 104.dp + paddingValues.calculateBottomPadding(),
+                                ),
+                            ) {
                                 artists(
                                     artists = libraryUiState.artists,
                                     onArtistClick = onArtistClick,
@@ -226,6 +248,11 @@ private fun LibraryScreen(
                             }
                         }
                     }
+
+                    NavDisplay(
+                        entries = navigationState.toEntries(entryProvider),
+                        onBack = navigator::goBack,
+                    )
                 }
             }
         }
@@ -344,9 +371,10 @@ private fun LazyGridScope.artists(
 enum class LibraryTab(
     @StringRes val titleRes: Int,
     val icon: ImageVector,
+    val navKey: NavKey,
 ) {
-    PLAYLISTS(localesR.string.playlists, MuzIcons.Rounded.LibraryMusic),
-    SONGS(localesR.string.songs, MuzIcons.Rounded.MusicNote),
-    ALBUMS(localesR.string.albums, MuzIcons.Rounded.Album),
-    ARTISTS(localesR.string.artists, MuzIcons.Rounded.Artist),
+    PLAYLISTS(localesR.string.playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
+    SONGS(localesR.string.songs, MuzIcons.Rounded.MusicNote, SongsNavKey),
+    ALBUMS(localesR.string.albums, MuzIcons.Rounded.Album, AlbumsNavKey),
+    ARTISTS(localesR.string.artists, MuzIcons.Rounded.Artist, ArtistsNavKey),
 }
