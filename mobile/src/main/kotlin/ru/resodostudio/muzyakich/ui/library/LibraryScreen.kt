@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,12 +31,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
@@ -46,7 +43,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
@@ -124,26 +120,17 @@ private fun LibraryScreen(
         Column(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
         ) {
-            val lazyGridState = rememberLazyGridState()
-            val coroutineScope = rememberCoroutineScope()
-
             val libraryTabs = remember { LibraryTab.entries }
             var selectedTab by rememberSaveable { mutableStateOf(libraryTabs.first()) }
 
             PrimaryScrollableTabRow(
                 selectedTabIndex = selectedTab.ordinal,
-                containerColor = Color.Transparent,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 libraryTabs.forEach { tab ->
                     Tab(
                         selected = selectedTab == tab,
-                        onClick = {
-                            selectedTab = tab
-                            coroutineScope.launch {
-                                lazyGridState.scrollToItem(0)
-                            }
-                        },
+                        onClick = { selectedTab = tab },
                         icon = {
                             Icon(
                                 imageVector = tab.icon,
@@ -186,7 +173,6 @@ private fun LibraryScreen(
                     }
 
                     LazyVerticalGrid(
-                        state = lazyGridState,
                         columns = GridCells.Adaptive(300.dp),
                         contentPadding = PaddingValues(
                             start = 16.dp,
