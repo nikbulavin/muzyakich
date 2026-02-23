@@ -52,7 +52,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -186,21 +185,21 @@ fun SongItem(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyGridScope.songs(
     songs: List<Song>,
-    nowPlayingState: NowPlayingState,
+    currentMediaId: String?,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onPlayNextClick: (Song) -> Unit,
+    isPlaying: Boolean = false,
 ) {
     itemsIndexed(
         items = songs,
         key = { _, song -> song.mediaId },
         contentType = { _, _ -> "Song" },
     ) { index, song ->
-        val isPlaying = nowPlayingState.mediaId == song.mediaId && nowPlayingState.playWhenReady
         var showSongDetails by rememberSaveable { mutableStateOf(false) }
 
         SongItem(
             song = song,
-            isPlaying = isPlaying,
+            isPlaying = currentMediaId == song.mediaId && isPlaying,
             modifier = Modifier.animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
             onMenuClick = { showSongDetails = true },

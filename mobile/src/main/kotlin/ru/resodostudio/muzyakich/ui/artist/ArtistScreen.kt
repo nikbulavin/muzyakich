@@ -87,9 +87,10 @@ fun ArtistScreen(
                 ) {
                     songs(
                         songs = artistUiState.artist.songs,
-                        nowPlayingState = artistUiState.nowPlayingState,
+                        currentMediaId = artistUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
                         onPlaySongsClick = onPlaySongsClick,
                         onPlayNextClick = onPlayNextClick,
+                        isPlaying = artistUiState.nowPlayingState.player?.isPlaying ?: false,
                     )
                     songsInfo(
                         songs = artistUiState.artist.songs,

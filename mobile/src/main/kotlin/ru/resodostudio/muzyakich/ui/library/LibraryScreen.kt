@@ -34,10 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -66,22 +63,17 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
-import ru.resodostudio.muzyakich.ui.component.songs
-import ru.resodostudio.muzyakich.ui.component.songsInfo
+import ru.resodostudio.muzyakich.ui.songs.navigation.SongsNavKey
+import ru.resodostudio.muzyakich.ui.songs.navigation.songsEntry
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Serializable
 data object PlaylistsNavKey : NavKey
-
-@Serializable
-data object SongsNavKey : NavKey
 
 @Serializable
 data object AlbumsNavKey : NavKey
@@ -99,12 +91,6 @@ fun LibraryScreen(
     LibraryScreen(
         libraryUiState = libraryUiState,
         onArtistClick = onArtistClick,
-        onPlaySongsClick = viewModel::playSongs,
-        onShuffleSongsClick = viewModel::shuffleSongs,
-        onToggleFilterFavorites = viewModel::toggleFilterFavorites,
-        onPlayNextClick = viewModel::playSongNext,
-        onSortByUpdate = viewModel::updateSortByPreference,
-        onSortOrderUpdate = viewModel::updateSortOrderPreference,
     )
 }
 
@@ -116,12 +102,6 @@ fun LibraryScreen(
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
     onArtistClick: (Long) -> Unit,
-    onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
-    onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
-    onToggleFilterFavorites: (Boolean) -> Unit = {},
-    onPlayNextClick: (Song) -> Unit = {},
-    onSortByUpdate: (SortBy) -> Unit = {},
-    onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -186,51 +166,11 @@ private fun LibraryScreen(
                 }
 
                 is LibraryUiState.Success -> {
-                    var shouldShowFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
-
-                    if (shouldShowFilterBottomSheet) {
-                        FilterBottomSheet(
-                            filterConfig = libraryUiState.filterConfig,
-                            onSortByUpdate = onSortByUpdate,
-                            onSortOrderUpdate = onSortOrderUpdate,
-                            onDismiss = { shouldShowFilterBottomSheet = false },
-                            onToggleFilterFavorites = onToggleFilterFavorites,
-                        )
-                    }
-
                     val entryProvider = entryProvider {
                         entry<PlaylistsNavKey> {
                             LoadingState(Modifier.fillMaxSize())
                         }
-                        entry<SongsNavKey> {
-                            LazyVerticalGrid(
-                                columns = GridCells.Adaptive(300.dp),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 8.dp,
-                                    bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                                ),
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                            ) {
-                                actionButtons(
-                                    songs = libraryUiState.songs,
-                                    onPlaySongsClick = onPlaySongsClick,
-                                    onShuffleSongsClick = onShuffleSongsClick,
-                                    onFilterClick = { shouldShowFilterBottomSheet = true },
-                                )
-                                songs(
-                                    songs = libraryUiState.songs,
-                                    nowPlayingState = libraryUiState.nowPlayingState,
-                                    onPlaySongsClick = onPlaySongsClick,
-                                    onPlayNextClick = onPlayNextClick,
-                                )
-                                songsInfo(
-                                    songs = libraryUiState.songs,
-                                )
-                            }
-                        }
+                        songsEntry()
                         entry<AlbumsNavKey> {
                             LoadingState(Modifier.fillMaxSize())
                         }
@@ -282,7 +222,7 @@ private fun LibraryScreen(
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyGridScope.actionButtons(
+fun LazyGridScope.actionButtons(
     songs: List<Song>,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onShuffleSongsClick: (List<Song>, Int) -> Unit,
