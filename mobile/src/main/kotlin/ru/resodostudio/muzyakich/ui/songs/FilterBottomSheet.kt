@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.library
+package ru.resodostudio.muzyakich.ui.songs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,7 +62,7 @@ fun FilterBottomSheet(
     val hapticFeedback = LocalHapticFeedback.current
 
     ModalBottomSheet(
-        onDismissRequest = { onDismiss() },
+        onDismissRequest = onDismiss,
         sheetState = sheetState,
         modifier = modifier,
     ) {

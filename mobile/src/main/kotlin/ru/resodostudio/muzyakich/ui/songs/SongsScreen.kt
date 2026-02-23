@@ -28,7 +28,6 @@ import ru.resodostudio.muzyakich.ui.component.EmptyState
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.component.songsInfo
-import ru.resodostudio.muzyakich.ui.library.FilterBottomSheet
 import ru.resodostudio.muzyakich.ui.library.actionButtons
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
