@@ -8,17 +8,12 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,25 +28,20 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTopAppBar
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
@@ -61,12 +51,12 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
-import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
-import ru.resodostudio.muzyakich.ui.component.EmptyState
+import ru.resodostudio.muzyakich.ui.artists.navigation.ArtistsNavKey
+import ru.resodostudio.muzyakich.ui.artists.navigation.artistsEntry
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.songs.navigation.SongsNavKey
 import ru.resodostudio.muzyakich.ui.songs.navigation.songsEntry
@@ -78,35 +68,19 @@ data object PlaylistsNavKey : NavKey
 @Serializable
 data object AlbumsNavKey : NavKey
 
-@Serializable
-data object ArtistsNavKey : NavKey
-
-@Composable
-fun LibraryScreen(
-    onArtistClick: (Long) -> Unit,
-    viewModel: LibraryViewModel = hiltViewModel(),
-) {
-    val libraryUiState by viewModel.libraryUiState.collectAsStateWithLifecycle()
-
-    LibraryScreen(
-        libraryUiState = libraryUiState,
-        onArtistClick = onArtistClick,
-    )
-}
-
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalMaterial3Api::class,
 )
 @Composable
-private fun LibraryScreen(
-    libraryUiState: LibraryUiState,
+fun LibraryScreen(
     onArtistClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MuzTopAppBar(
                 titleRes = localesR.string.app_name,
@@ -153,70 +127,38 @@ private fun LibraryScreen(
                     )
                 }
             }
-            when (libraryUiState) {
-                LibraryUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-                LibraryUiState.Empty -> {
-                    EmptyState(
-                        messageRes = localesR.string.library_empty,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp)
-                            .navigationBarsPadding(),
-                    )
+            val entryProvider = entryProvider {
+                entry<PlaylistsNavKey> {
+                    LoadingState(Modifier.fillMaxSize())
                 }
-
-                is LibraryUiState.Success -> {
-                    val entryProvider = entryProvider {
-                        entry<PlaylistsNavKey> {
-                            LoadingState(Modifier.fillMaxSize())
-                        }
-                        songsEntry()
-                        entry<AlbumsNavKey> {
-                            LoadingState(Modifier.fillMaxSize())
-                        }
-                        entry<ArtistsNavKey> {
-                            LazyVerticalGrid(
-                                columns = GridCells.Adaptive(300.dp),
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 16.dp,
-                                    bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                                ),
-                            ) {
-                                artists(
-                                    artists = libraryUiState.artists,
-                                    onArtistClick = onArtistClick,
-                                )
-                            }
-                        }
-                    }
-
-                    val motionScheme = MaterialTheme.motionScheme
-
-                    NavDisplay(
-                        entries = navigationState.toEntries(entryProvider),
-                        onBack = navigator::goBack,
-                        transitionSpec = {
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                                    fadeOut(snap())
-                        },
-                        popTransitionSpec = {
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                                    fadeOut(snap())
-                        },
-                        predictivePopTransitionSpec = {
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                                    fadeOut(snap())
-                        },
-                    )
+                songsEntry()
+                entry<AlbumsNavKey> {
+                    LoadingState(Modifier.fillMaxSize())
                 }
+                artistsEntry(onArtistClick)
             }
+
+            val motionScheme = MaterialTheme.motionScheme
+
+            NavDisplay(
+                entries = navigationState.toEntries(entryProvider),
+                onBack = navigator::goBack,
+                transitionSpec = {
+                    scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                            fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                            fadeOut(snap())
+                },
+                popTransitionSpec = {
+                    scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                            fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                            fadeOut(snap())
+                },
+                predictivePopTransitionSpec = {
+                    scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                            fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                            fadeOut(snap())
+                },
+            )
         }
     }
 }
@@ -290,43 +232,6 @@ fun LazyGridScope.actionButtons(
                 contentDescription = stringResource(localesR.string.open_filter_menu),
             )
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyGridScope.artists(
-    artists: List<Artist>,
-    onArtistClick: (Long) -> Unit,
-) {
-    itemsIndexed(
-        items = artists,
-        key = { _, artist -> artist.id },
-        contentType = { _, _ -> "Artist" },
-    ) { index, artist ->
-        MuzSelectableListItem(
-            shapes = ListItemDefaults.segmentedShapes(index, artists.size),
-            selected = false,
-            content = {
-                Text(
-                    text = artist.name,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = pluralStringResource(
-                        localesR.plurals.number_of_songs,
-                        artist.songs.size,
-                        artist.songs.size,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            onClick = { onArtistClick(artist.id) },
-            modifier = Modifier.animateItem(),
-        )
     }
 }
 
