@@ -22,8 +22,12 @@ Google. It is a reactive, single-activity app that uses the following:
 
 ## Modules
 
-The main Android app with features lives in the `app/` folder and core and shared modules in
+The main Android app with features lives in the `mobile/` folder and core and shared modules in
 `core/`.
+
+## Localization
+
+All `strings.xml` files with translations are located in the `core/locales/` folder.
 
 ## Commands to Build & Test
 
