@@ -1,15 +1,17 @@
 package ru.resodostudio.muzyakich.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -114,7 +116,7 @@ fun MuzApp(
 
                     val entryProvider = entryProvider {
                         libraryEntry(navigator)
-                        playerEntry(navigator)
+                        playerEntry(navigator, motionScheme)
                         artistEntry(navigator)
                     }
 
@@ -123,35 +125,17 @@ fun MuzApp(
                         entries = appState.navigationState.toEntries(entryProvider),
                         onBack = navigator::goBack,
                         transitionSpec = {
-                            ContentTransform(
-                                fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(
-                                    motionScheme.defaultSpatialSpec()
-                                ) { it / 2 },
-                                fadeOut(motionScheme.fastEffectsSpec()) + slideOutVertically(
-                                    motionScheme.defaultSpatialSpec()
-                                ),
-                            )
+                            slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } togetherWith
+                                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it }
                         },
                         popTransitionSpec = {
-                            ContentTransform(
-                                fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(
-                                    motionScheme.defaultSpatialSpec()
-                                ),
-                                fadeOut(motionScheme.fastEffectsSpec()) + slideOutVertically(
-                                    motionScheme.defaultSpatialSpec()
-                                ),
-                            )
+                            slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
+                                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
                         },
                         predictivePopTransitionSpec = {
-                            ContentTransform(
-                                fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(
-                                    motionScheme.defaultSpatialSpec()
-                                ),
-                                fadeOut(motionScheme.fastEffectsSpec()) + slideOutVertically(
-                                    motionScheme.defaultSpatialSpec()
-                                ) { it / 2 },
-                            )
-                        },
+                            slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
+                                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
+                        }
                     )
                 }
             }

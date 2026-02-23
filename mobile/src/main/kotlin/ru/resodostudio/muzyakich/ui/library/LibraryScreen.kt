@@ -264,6 +264,16 @@ private fun LibraryScreen(
                                     fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
                                     fadeOut(snap())
                         },
+                        popTransitionSpec = {
+                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                                    fadeOut(snap())
+                        },
+                        predictivePopTransitionSpec = {
+                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                                    fadeOut(snap())
+                        },
                     )
                 }
             }
