@@ -55,6 +55,8 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
+import ru.resodostudio.muzyakich.ui.albums.navigation.AlbumsNavKey
+import ru.resodostudio.muzyakich.ui.albums.navigation.albumsEntry
 import ru.resodostudio.muzyakich.ui.artists.navigation.ArtistsNavKey
 import ru.resodostudio.muzyakich.ui.artists.navigation.artistsEntry
 import ru.resodostudio.muzyakich.ui.component.LoadingState
@@ -64,9 +66,6 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Serializable
 data object PlaylistsNavKey : NavKey
-
-@Serializable
-data object AlbumsNavKey : NavKey
 
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
@@ -132,9 +131,7 @@ fun LibraryScreen(
                     LoadingState(Modifier.fillMaxSize())
                 }
                 songsEntry()
-                entry<AlbumsNavKey> {
-                    LoadingState(Modifier.fillMaxSize())
-                }
+                albumsEntry()
                 artistsEntry(onArtistClick)
             }
 
@@ -189,9 +186,7 @@ fun LazyGridScope.actionButtons(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        ButtonDefaults.IconSpacing
-                    ),
+                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
                 ) {
                     Icon(
                         imageVector = MuzIcons.Rounded.PlayArrow,
@@ -211,9 +206,7 @@ fun LazyGridScope.actionButtons(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        ButtonDefaults.IconSpacing
-                    ),
+                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
                 ) {
                     Icon(
                         imageVector = MuzIcons.Rounded.Shuffle,

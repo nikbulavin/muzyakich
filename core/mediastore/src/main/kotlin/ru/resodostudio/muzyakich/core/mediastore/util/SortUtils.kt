@@ -5,7 +5,8 @@ import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortBy.ARTIST
 import ru.resodostudio.muzyakich.core.model.data.SortBy.TITLE
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
-import ru.resodostudio.muzyakich.core.model.data.SortOrder.*
+import ru.resodostudio.muzyakich.core.model.data.SortOrder.ASCENDING
+import ru.resodostudio.muzyakich.core.model.data.SortOrder.DESCENDING
 
 internal fun buildMediaStoreSortOrder(sortBy: SortBy, sortOrder: SortOrder): String {
     val mediaStoreSortBy = when (sortBy) {
