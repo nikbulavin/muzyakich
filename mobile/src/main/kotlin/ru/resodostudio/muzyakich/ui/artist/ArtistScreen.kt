@@ -29,6 +29,7 @@ import ru.resodostudio.muzyakich.ui.component.songsInfo
 @Composable
 fun ArtistScreen(
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: ArtistViewModel = hiltViewModel(),
 ) {
     val artistUiState = viewModel.artistUiState.collectAsStateWithLifecycle()
@@ -36,6 +37,7 @@ fun ArtistScreen(
     ArtistScreen(
         artistUiState = artistUiState.value,
         onBackClick = onBackClick,
+        modifier = modifier,
         onPlaySongsClick = viewModel::playSongs,
         onPlayNextClick = viewModel::playSongNext,
     )
@@ -46,12 +48,13 @@ fun ArtistScreen(
 fun ArtistScreen(
     artistUiState: ArtistUiState,
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onPlayNextClick: (Song) -> Unit = {},
 ) {
     when (artistUiState) {
-        ArtistUiState.Error -> LoadingState()
-        ArtistUiState.Loading -> LoadingState()
+        ArtistUiState.Error -> LoadingState(modifier.fillMaxSize())
+        ArtistUiState.Loading -> LoadingState(modifier.fillMaxSize())
         is ArtistUiState.Success -> {
             Scaffold(
                 topBar = {
@@ -72,7 +75,8 @@ fun ArtistScreen(
                             }
                         },
                     )
-                }
+                },
+                modifier = modifier,
             ) { paddingValues ->
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
