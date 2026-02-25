@@ -40,3 +40,7 @@ internal fun Cursor.getSampleRate() =
     } else {
         0
     }
+
+internal fun Cursor.getTrackNumber() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK))
+
+internal fun Cursor.getYear() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR))

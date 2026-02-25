@@ -37,7 +37,7 @@ class AlbumViewModel @AssistedInject constructor(
             id = albumId,
             title = albumSongs.firstOrNull()?.album ?: "<unknown>",
             artist = albumSongs.firstOrNull()?.artist ?: "<unknown>",
-            songs = albumSongs,
+            songs = albumSongs.sortedBy { it.trackNumber },
         )
         AlbumUiState.Success(
             album = album,

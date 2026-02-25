@@ -28,6 +28,8 @@ internal object MediaStoreConfig {
                 add(MediaStore.Audio.Media.BITS_PER_SAMPLE)
                 add(MediaStore.Audio.Media.SAMPLERATE)
             }
+            add(MediaStore.Audio.Media.TRACK)
+            add(MediaStore.Audio.Media.YEAR)
         }
     }
 }

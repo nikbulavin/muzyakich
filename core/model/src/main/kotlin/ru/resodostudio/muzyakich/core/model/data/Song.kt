@@ -20,4 +20,6 @@ data class Song(
     val size: Int,
     val bitsPerSample: Int,
     val sampleRate: Int,
+    val trackNumber: Int,
+    val year: Int,
 )

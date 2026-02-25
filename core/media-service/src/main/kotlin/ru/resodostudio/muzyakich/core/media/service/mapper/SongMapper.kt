@@ -20,6 +20,8 @@ internal fun Song.asMediaItem() = buildPlayableMediaItem(
     artist = artist,
     folder = folder,
     duration = duration,
+    trackNumber = trackNumber,
+    releaseYear = year,
 )
 
 fun MediaItem.asSong(): Song {
@@ -40,5 +42,7 @@ fun MediaItem.asSong(): Song {
         size = 0,
         bitsPerSample = 0,
         sampleRate = 0,
+        trackNumber = 0,
+        year = 0,
     )
 }

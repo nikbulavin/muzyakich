@@ -67,6 +67,13 @@ private fun AlbumScreen(
                                 overflow = TextOverflow.Ellipsis,
                             )
                         },
+                        subtitle = {
+                            Text(
+                                text = albumUiState.album.songs.firstOrNull()?.year.toString(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(

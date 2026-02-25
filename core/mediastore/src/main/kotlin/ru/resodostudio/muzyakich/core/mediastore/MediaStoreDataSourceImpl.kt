@@ -22,6 +22,8 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getMediaId
 import ru.resodostudio.muzyakich.core.mediastore.util.getSampleRate
 import ru.resodostudio.muzyakich.core.mediastore.util.getSize
 import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
+import ru.resodostudio.muzyakich.core.mediastore.util.getTrackNumber
+import ru.resodostudio.muzyakich.core.mediastore.util.getYear
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
@@ -75,6 +77,8 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                     size = cursor.getSize(),
                                     bitsPerSample = cursor.getBitsPerSample(),
                                     sampleRate = cursor.getSampleRate(),
+                                    trackNumber = cursor.getTrackNumber(),
+                                    year = cursor.getYear(),
                                 )
                             )
                         }

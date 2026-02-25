@@ -17,6 +17,8 @@ internal fun buildPlayableMediaItem(
     artist: String,
     folder: String,
     duration: Long,
+    trackNumber: Int,
+    releaseYear: Int,
 ) = MediaItem.Builder()
     .setMediaId(mediaId)
     .setRequestMetadata(
@@ -31,6 +33,8 @@ internal fun buildPlayableMediaItem(
             .setArtist(artist)
             .setIsBrowsable(false)
             .setIsPlayable(true)
+            .setTrackNumber(trackNumber)
+            .setReleaseYear(releaseYear)
             .setExtras(
                 bundleOf(
                     UUID to Uuid.random().toString(),
