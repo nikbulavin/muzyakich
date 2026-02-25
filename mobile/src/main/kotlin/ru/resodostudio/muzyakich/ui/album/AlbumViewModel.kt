@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.artist
+package ru.resodostudio.muzyakich.ui.album
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,41 +8,47 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
-import ru.resodostudio.muzyakich.core.data.repository.ArtistsRepository
+import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.data.Artist
+import ru.resodostudio.muzyakich.core.model.data.Album
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.data.SortBy
+import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel(assistedFactory = ArtistViewModel.Factory::class)
-class ArtistViewModel @AssistedInject constructor(
-    @Assisted val artistId: Long,
-    artistsRepository: ArtistsRepository,
+@HiltViewModel(assistedFactory = AlbumViewModel.Factory::class)
+class AlbumViewModel @AssistedInject constructor(
+    @Assisted val albumId: Long,
+    songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
-    val artistUiState = combine(
-        artistsRepository.getArtists(),
+    val albumUiState = combine(
+        songsRepository.getSongs(SortBy.TITLE, SortOrder.ASCENDING),
         musicServiceConnection.nowPlayingState,
-    ) { artists, nowPlaying ->
-            val artist = artists.find { it.id == artistId }
-            if (artist == null) {
-                ArtistUiState.Error
-            } else {
-                ArtistUiState.Success(
-                    artist = artist,
-                    nowPlayingState = nowPlaying,
-                )
-            }
-        }
+    ) { songs, nowPlaying ->
+        val albumSongs = songs.filter { it.albumId == albumId }
+        val album = Album(
+            id = albumId,
+            title = albumSongs.firstOrNull()?.album ?: "<unknown>",
+            artist = albumSongs.firstOrNull()?.artist ?: "<unknown>",
+            songs = albumSongs,
+        )
+        AlbumUiState.Success(
+            album = album,
+            nowPlayingState = nowPlaying,
+        )
+    }
+        .catch { AlbumUiState.Error }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
-            initialValue = ArtistUiState.Loading,
+            initialValue = AlbumUiState.Loading,
         )
 
     fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
@@ -56,19 +62,19 @@ class ArtistViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            artistId: Long,
-        ): ArtistViewModel
+            albumId: Long,
+        ): AlbumViewModel
     }
 }
 
-sealed interface ArtistUiState {
+sealed interface AlbumUiState {
 
-    data object Loading : ArtistUiState
+    data object Loading : AlbumUiState
 
-    data object Error : ArtistUiState
+    data object Error : AlbumUiState
 
     data class Success(
-        val artist: Artist,
+        val album: Album,
         val nowPlayingState: NowPlayingState,
-    ) : ArtistUiState
+    ) : AlbumUiState
 }
