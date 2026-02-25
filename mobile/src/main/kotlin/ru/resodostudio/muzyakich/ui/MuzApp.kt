@@ -53,6 +53,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.toEntries
+import ru.resodostudio.muzyakich.ui.album.navigation.albumEntry
 import ru.resodostudio.muzyakich.ui.artist.navigation.artistEntry
 import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
 import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
@@ -97,8 +98,9 @@ fun MuzApp(
                 ),
         ) {
             val hazeState = rememberHazeState()
-            val nowPlayingBarHazeStyle =
-                HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceContainer)
+            val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            )
             val hazeBlurRadius = 32.dp
 
             val permissionState = appState.permissionState
@@ -117,6 +119,7 @@ fun MuzApp(
                     val entryProvider = entryProvider {
                         libraryEntry(navigator)
                         playerEntry(navigator, motionScheme)
+                        albumEntry(navigator)
                         artistEntry(navigator)
                     }
 

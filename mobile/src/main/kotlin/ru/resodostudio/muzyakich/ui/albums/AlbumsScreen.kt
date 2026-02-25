@@ -45,6 +45,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun AlbumsScreen(
+    onAlbumClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AlbumsViewModel = hiltViewModel(),
 ) {
@@ -52,6 +53,7 @@ fun AlbumsScreen(
 
     AlbumsScreen(
         albumsUiState = albumsUiState,
+        onAlbumClick = onAlbumClick,
         modifier = modifier,
     )
 }
@@ -60,6 +62,7 @@ fun AlbumsScreen(
 @Composable
 private fun AlbumsScreen(
     albumsUiState: AlbumsUiState,
+    onAlbumClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (albumsUiState) {
@@ -90,6 +93,7 @@ private fun AlbumsScreen(
             ) {
                 albums(
                     albums = albumsUiState.albums,
+                    onAlbumClick = onAlbumClick,
                 )
             }
         }
@@ -98,6 +102,7 @@ private fun AlbumsScreen(
 
 private fun LazyGridScope.albums(
     albums: List<Album>,
+    onAlbumClick: (Long) -> Unit,
 ) {
     items(
         items = albums,
@@ -106,7 +111,7 @@ private fun LazyGridScope.albums(
     ) { album ->
         AlbumCard(
             album = album,
-            onClick = { },
+            onClick = onAlbumClick,
             modifier = Modifier.animateItem(),
         )
     }
@@ -115,11 +120,11 @@ private fun LazyGridScope.albums(
 @Composable
 private fun AlbumCard(
     album: Album,
-    onClick: () -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
-        onClick = onClick,
+        onClick = { onClick(album.id) },
         modifier = modifier,
     ) {
         Column {

@@ -73,6 +73,7 @@ data object PlaylistsNavKey : NavKey
 )
 @Composable
 fun LibraryScreen(
+    onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -131,7 +132,7 @@ fun LibraryScreen(
                     LoadingState(Modifier.fillMaxSize())
                 }
                 songsEntry()
-                albumsEntry()
+                albumsEntry(onAlbumClick)
                 artistsEntry(onArtistClick)
             }
 
