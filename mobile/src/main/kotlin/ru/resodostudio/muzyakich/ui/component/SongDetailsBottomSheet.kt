@@ -46,6 +46,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Cadence
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Event
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
@@ -270,6 +271,12 @@ private fun TagPanel(
             text = (song.duration / 1000).asFormattedString(),
             icon = MuzIcons.Filled.Schedule,
         )
+        if (song.year != 0) {
+            MuzTag(
+                text = song.year.toString(),
+                icon = MuzIcons.Filled.Event,
+            )
+        }
         MuzTag(
             text = stringResource(localesR.string.bitrate_format, song.bitrate),
             icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
