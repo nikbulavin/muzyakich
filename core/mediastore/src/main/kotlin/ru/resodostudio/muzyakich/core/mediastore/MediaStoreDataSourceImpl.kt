@@ -4,8 +4,12 @@ import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import ru.resodostudio.muzyakich.core.common.Dispatcher
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
 import ru.resodostudio.muzyakich.core.mediastore.util.MediaStoreConfig
 import ru.resodostudio.muzyakich.core.mediastore.util.asArtworkUri
 import ru.resodostudio.muzyakich.core.mediastore.util.buildMediaStoreSortOrder
@@ -33,13 +37,14 @@ import kotlin.uuid.Uuid
 
 internal class MediaStoreDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context,
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : MediaStoreDataSource {
 
     override fun getSongs(
         sortBy: SortBy,
         sortOrder: SortOrder,
-    ): Flow<List<Song>> =
-        context.contentResolver
+    ): Flow<List<Song>> {
+        return context.contentResolver
             .observe(uri = MediaStoreConfig.Song.Collection)
             .map {
                 buildList {
@@ -85,4 +90,6 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                     }
                 }
             }
+            .flowOn(ioDispatcher)
+    }
 }
