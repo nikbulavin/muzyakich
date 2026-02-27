@@ -3,19 +3,23 @@ package ru.resodostudio.muzyakich.ui.album
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -26,6 +30,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.component.songsInfo
+import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun AlbumScreen(
@@ -97,13 +102,48 @@ private fun AlbumScreen(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                 ) {
-                    songs(
-                        songs = albumUiState.album.songs,
-                        currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
-                        onPlaySongsClick = onPlaySongsClick,
-                        onPlayNextClick = onPlayNextClick,
-                        isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
-                    )
+                    val groupedSongs = albumUiState.album.songs.groupBy { it.trackNumber / 1000 }
+                    val hasMultipleDiscs = albumUiState.album.songs.isNotEmpty() &&
+                            albumUiState.album.songs.all { it.trackNumber >= 1000 } &&
+                            groupedSongs.size > 1
+
+                    if (hasMultipleDiscs) {
+                        groupedSongs.forEach { (discNumber, groupSongs) ->
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Text(
+                                    text = stringResource(localesR.string.disc_number, discNumber),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = 16.dp,
+                                        bottom = 8.dp,
+                                    ),
+                                )
+                            }
+                            songs(
+                                songs = groupSongs,
+                                currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
+                                onPlaySongsClick = { _, index ->
+                                    val songToPlay = groupSongs[index]
+                                    onPlaySongsClick(
+                                        albumUiState.album.songs,
+                                        albumUiState.album.songs.indexOf(songToPlay),
+                                    )
+                                },
+                                onPlayNextClick = onPlayNextClick,
+                                isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
+                            )
+                        }
+                    } else {
+                        songs(
+                            songs = albumUiState.album.songs,
+                            currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
+                            onPlaySongsClick = onPlaySongsClick,
+                            onPlayNextClick = onPlayNextClick,
+                            isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
+                        )
+                    }
                     songsInfo(
                         songs = albumUiState.album.songs,
                     )
