@@ -27,7 +27,8 @@ The main Android app with features lives in the `mobile/` folder and core and sh
 
 ## Localization
 
-All `strings.xml` files with translations are located in the `core/locales/` folder.
+All `strings.xml` files with translations are located in the `core/locales/` folder. The strings
+within them are stored strictly in alphabetical order.
 
 ## Commands to Build & Test
 
