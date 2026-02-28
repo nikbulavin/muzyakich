@@ -73,11 +73,14 @@ private fun AlbumScreen(
                             )
                         },
                         subtitle = {
-                            Text(
-                                text = albumUiState.album.songs.firstOrNull()?.year.toString(),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                            val firstYear = albumUiState.album.songs.firstOrNull()?.year ?: 0
+                            if (firstYear != 0 && albumUiState.album.songs.all { it.year == firstYear }) {
+                                Text(
+                                    text = firstYear.toString(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
                         },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
