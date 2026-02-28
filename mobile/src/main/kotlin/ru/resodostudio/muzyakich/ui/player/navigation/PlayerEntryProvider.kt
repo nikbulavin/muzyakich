@@ -17,14 +17,14 @@ import ru.resodostudio.muzyakich.ui.player.PlayerScreen
 fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator, motionScheme: MotionScheme) {
     entry<PlayerNavKey>(
         metadata = NavDisplay.transitionSpec {
-            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.defaultSpatialSpec()) { it } togetherWith
-                    fadeOut(motionScheme.fastEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { -it }
+            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { it } togetherWith
+                    fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { -it }
         } + NavDisplay.popTransitionSpec {
-            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.defaultSpatialSpec()) { -it } togetherWith
-                    fadeOut(motionScheme.fastEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { -it }
+            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { -it } togetherWith
+                    fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { -it }
         } + NavDisplay.predictivePopTransitionSpec {
-            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.defaultSpatialSpec()) { -it } togetherWith
-                    fadeOut(motionScheme.fastEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { it }
+            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { -it } togetherWith
+                    fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { it }
         },
     ) {
         PlayerScreen(
