@@ -21,11 +21,17 @@ internal class SongsRepositoryImpl @Inject constructor(
         sortOrder: SortOrder,
     ): Flow<List<Song>> {
         return combine(
-            mediaStoreDataSource.getSongs(sortBy, sortOrder),
+            mediaStoreDataSource.getSongs(),
             favoriteSongDao.getFavoriteMediaIds(),
         ) { songs, favoriteMediaIds ->
-            songs.map { song ->
-                song.copy(isFavorite = song.mediaId in favoriteMediaIds)
+            songs.mapTo(ArrayList(songs.size)) { song ->
+                song.copy(isFavorite = song.mediaId in favoriteMediaIds.toSet())
+            }.apply {
+                val comparator = when (sortBy) {
+                    SortBy.ARTIST -> compareBy(Song::artist)
+                    SortBy.TITLE -> compareBy(Song::title)
+                }
+                sortWith(if (sortOrder == SortOrder.ASCENDING) comparator else comparator.reversed())
             }
         }
     }

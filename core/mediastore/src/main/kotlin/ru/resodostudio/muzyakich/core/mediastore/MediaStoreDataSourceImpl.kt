@@ -16,7 +16,6 @@ import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
 import ru.resodostudio.muzyakich.core.mediastore.util.MediaStoreConfig
 import ru.resodostudio.muzyakich.core.mediastore.util.asArtworkUri
-import ru.resodostudio.muzyakich.core.mediastore.util.buildMediaStoreSortOrder
 import ru.resodostudio.muzyakich.core.mediastore.util.getAlbum
 import ru.resodostudio.muzyakich.core.mediastore.util.getAlbumId
 import ru.resodostudio.muzyakich.core.mediastore.util.getArtist
@@ -32,8 +31,6 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
 import ru.resodostudio.muzyakich.core.mediastore.util.getTrackNumber
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -42,10 +39,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : MediaStoreDataSource {
 
-    override fun getSongs(
-        sortBy: SortBy,
-        sortOrder: SortOrder,
-    ): Flow<List<Song>> {
+    override fun getSongs(): Flow<List<Song>> {
         return context.contentResolver
             .observe(uri = MediaStoreConfig.Song.Collection)
             .map {
@@ -55,7 +49,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                         MediaStoreConfig.Song.Projection.toTypedArray(),
                         "${MediaStore.Audio.Media.IS_MUSIC} = ?",
                         arrayOf("1"),
-                        buildMediaStoreSortOrder(sortBy, sortOrder),
+                        "${MediaStore.Audio.Media.TITLE} ASC",
                     )?.use { cursor ->
                         while (cursor.moveToNext()) {
                             val id = cursor.getMediaId()

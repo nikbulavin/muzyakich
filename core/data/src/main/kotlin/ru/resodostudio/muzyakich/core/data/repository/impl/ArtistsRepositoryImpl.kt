@@ -6,8 +6,6 @@ import ru.resodostudio.muzyakich.core.data.repository.ArtistsRepository
 import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSource
 import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import javax.inject.Inject
 
 internal class ArtistsRepositoryImpl @Inject constructor(
@@ -15,7 +13,7 @@ internal class ArtistsRepositoryImpl @Inject constructor(
 ) : ArtistsRepository {
 
     override fun getArtists(): Flow<List<Artist>> {
-        return mediaStoreDataSource.getSongs(sortBy = SortBy.TITLE, sortOrder = SortOrder.ASCENDING)
+        return mediaStoreDataSource.getSongs()
             .map { songs ->
                 songs.groupBy(Song::artistId).map { (artistId, songs) ->
                     Artist(
