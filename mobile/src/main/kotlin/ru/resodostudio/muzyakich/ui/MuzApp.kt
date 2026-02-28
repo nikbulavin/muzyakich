@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -50,6 +49,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.toEntries
@@ -65,7 +65,6 @@ import ru.resodostudio.muzyakich.ui.player.navigation.playerEntry
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
     ExperimentalHazeApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
 fun MuzApp(
@@ -76,6 +75,8 @@ fun MuzApp(
 
     val nowPlayingState by appState.nowPlayingState.collectAsStateWithLifecycle()
     val player = nowPlayingState.player
+
+    val motionScheme = MaterialTheme.motionScheme
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -114,8 +115,6 @@ fun MuzApp(
                 }
 
                 PermissionStatus.Granted -> {
-                    val motionScheme = MaterialTheme.motionScheme
-
                     val entryProvider = entryProvider {
                         libraryEntry(navigator)
                         playerEntry(navigator, motionScheme)
@@ -138,11 +137,11 @@ fun MuzApp(
                         predictivePopTransitionSpec = {
                             slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
                                     slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
-                        }
+                        },
+                        sharedTransitionScope = LocalSharedTransitionScope.current,
                     )
                 }
             }
-            val motionScheme = MaterialTheme.motionScheme
 
             AnimatedVisibility(
                 visible = appState.navigationState.currentKey !is PlayerNavKey && player?.currentMediaItem != null,

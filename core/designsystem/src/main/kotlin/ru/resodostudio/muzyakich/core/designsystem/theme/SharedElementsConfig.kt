@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package ru.resodostudio.muzyakich.core.designsystem.theme
 
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -39,6 +37,7 @@ class MorphOverlayClip(val morph: Morph, private val animatedProgress: () -> Flo
     SharedTransitionScope.OverlayClip {
     private val matrix = Matrix()
 
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     override fun getClipPath(
         sharedContentState: SharedTransitionScope.SharedContentState,
         bounds: Rect,
