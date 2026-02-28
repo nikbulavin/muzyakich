@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.kotlin.compose.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 tasks {
@@ -49,6 +50,10 @@ gradlePlugin {
         register("androidLibraryCompose") {
             id = libs.plugins.muzyakich.android.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("androidRoom") {
+            id = libs.plugins.muzyakich.android.room.get().pluginId
+            implementationClass = "AndroidRoomConventionPlugin"
         }
         register("androidTest") {
             id = libs.plugins.muzyakich.android.test.get().pluginId
