@@ -10,5 +10,5 @@ import androidx.room.PrimaryKey
 data class FavoriteSongEntity(
     @PrimaryKey
     @ColumnInfo(name = "media_id")
-    val mediaId: Long,
+    val mediaId: String,
 )

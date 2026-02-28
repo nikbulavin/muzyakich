@@ -11,4 +11,6 @@ interface SongsRepository {
         sortBy: SortBy,
         sortOrder: SortOrder,
     ): Flow<List<Song>>
+
+    suspend fun toggleFavorite(mediaId: String, isFavorite: Boolean)
 }

@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ca152afe444efd3ecd88c2874a656275",
+    "identityHash": "6a3b4378d267f8aeef43a49463658380",
     "entities": [
       {
         "tableName": "favorite_songs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, PRIMARY KEY(`media_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` TEXT NOT NULL, PRIMARY KEY(`media_id`))",
         "fields": [
           {
             "fieldPath": "mediaId",
             "columnName": "media_id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -25,7 +25,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ca152afe444efd3ecd88c2874a656275')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6a3b4378d267f8aeef43a49463658380')"
     ]
   }
 }

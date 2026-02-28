@@ -10,11 +10,11 @@ import ru.resodostudio.muzyakich.core.database.model.FavoriteSongEntity
 interface FavoriteSongDao {
 
     @Query("SELECT media_id FROM favorite_songs")
-    fun getFavoriteMediaIds(): Flow<List<Long>>
+    fun getFavoriteMediaIds(): Flow<List<String>>
 
     @Upsert
     suspend fun upsertFavoriteSong(favoriteSongEntity: FavoriteSongEntity)
 
     @Query("DELETE FROM favorite_songs WHERE media_id = :mediaId")
-    suspend fun deleteFavoriteSong(mediaId: Long)
+    suspend fun deleteFavoriteSong(mediaId: String)
 }
