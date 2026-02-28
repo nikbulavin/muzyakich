@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class SongsViewModel @Inject constructor(
-    songsRepository: SongsRepository,
+    private val songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
     private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
@@ -83,6 +83,12 @@ class SongsViewModel @Inject constructor(
     fun updateSortOrderPreference(sortOrder: SortOrder) {
         viewModelScope.launch {
             userDataRepository.setSortOrderPreference(sortOrder)
+        }
+    }
+
+    fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
+        viewModelScope.launch {
+            songsRepository.toggleFavorite(mediaId, isFavorite)
         }
     }
 }

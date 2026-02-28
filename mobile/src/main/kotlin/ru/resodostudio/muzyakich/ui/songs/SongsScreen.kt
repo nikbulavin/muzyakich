@@ -47,6 +47,7 @@ fun SongsScreen(
         onPlayNextClick = viewModel::playSongNext,
         onSortByUpdate = viewModel::updateSortByPreference,
         onSortOrderUpdate = viewModel::updateSortOrderPreference,
+        onFavoriteChange = viewModel::setSongFavorite,
     )
 }
 
@@ -61,6 +62,7 @@ private fun SongsScreen(
     onPlayNextClick: (Song) -> Unit = {},
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     when (songsUiState) {
         SongsUiState.Empty -> {
@@ -111,6 +113,7 @@ private fun SongsScreen(
                     onPlaySongsClick = onPlaySongsClick,
                     onPlayNextClick = onPlayNextClick,
                     isPlaying = songsUiState.isPlaying,
+                    onFavoriteChange = onFavoriteChange,
                 )
                 songsInfo(
                     songs = songsUiState.songs,

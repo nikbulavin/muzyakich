@@ -1,10 +1,6 @@
 package ru.resodostudio.muzyakich.ui.component
 
-import android.provider.MediaStore
 import android.text.format.Formatter
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -65,6 +61,7 @@ fun SongItem(
     isPlaying: Boolean = false,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     MuzSelectableListItem(
         shapes = shapes,
@@ -156,25 +153,9 @@ fun SongItem(
             } else {
                 MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
             }
-
-            val context = LocalContext.current
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartIntentSenderForResult(),
-            ) {}
             MuzIconToggleButton(
                 checked = song.isFavorite,
-                onCheckedChange = { checked ->
-                    runCatching {
-                        val pendingIntent = MediaStore.createFavoriteRequest(
-                            context.contentResolver,
-                            listOf(song.mediaUri),
-                            checked,
-                        )
-                        launcher.launch(
-                            IntentSenderRequest.Builder(pendingIntent.intentSender).build()
-                        )
-                    }
-                },
+                onCheckedChange = { onFavoriteChange(song.mediaId, it) },
                 icon = icon,
                 contentDescription = contentDescription,
             )
@@ -189,6 +170,7 @@ fun LazyGridScope.songs(
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onPlayNextClick: (Song) -> Unit,
     isPlaying: Boolean = false,
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     itemsIndexed(
         items = songs,
@@ -204,6 +186,7 @@ fun LazyGridScope.songs(
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
             onMenuClick = { showSongDetails = true },
             shapes = ListItemDefaults.segmentedShapes(index, songs.size),
+            onFavoriteChange = onFavoriteChange,
         )
 
         if (showSongDetails) {
