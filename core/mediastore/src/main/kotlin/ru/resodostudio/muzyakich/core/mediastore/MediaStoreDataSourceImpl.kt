@@ -6,14 +6,19 @@ import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
+import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
 import ru.resodostudio.muzyakich.core.mediastore.util.MediaStoreConfig
 import ru.resodostudio.muzyakich.core.mediastore.util.asArtworkUri
 import ru.resodostudio.muzyakich.core.mediastore.util.getAlbum
@@ -29,14 +34,19 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getSampleRate
 import ru.resodostudio.muzyakich.core.mediastore.util.getSize
 import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
 import ru.resodostudio.muzyakich.core.mediastore.util.getTrackNumber
+import ru.resodostudio.muzyakich.core.mediastore.util.getYear
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
+@Singleton
 internal class MediaStoreDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
+    @ApplicationScope private val applicationScope: CoroutineScope,
 ) : MediaStoreDataSource {
 
     override fun getSongs(): Flow<List<Song>> {
@@ -79,7 +89,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                     bitsPerSample = cursor.getBitsPerSample(),
                                     sampleRate = cursor.getSampleRate(),
                                     trackNumber = cursor.getTrackNumber(),
-                                    year = 0,
+                                    year = cursor.getYear(),
                                 )
                             )
                         }
@@ -89,7 +99,9 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                 coroutineScope {
                     songs.map { song ->
                         async {
-                            var year = song.year
+                            if (song.year != 0) return@async song
+
+                            var year = 0
                             MediaMetadataRetriever().apply {
                                 runCatching {
                                     setDataSource(context, song.mediaUri)
@@ -107,5 +119,10 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                 }
             }
             .flowOn(ioDispatcher)
+            .shareIn(
+                scope = applicationScope,
+                started = SharingStarted.WhileSubscribed(5.seconds),
+                replay = 1,
+            )
     }
 }
