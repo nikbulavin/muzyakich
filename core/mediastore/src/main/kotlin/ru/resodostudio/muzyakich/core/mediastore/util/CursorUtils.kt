@@ -23,9 +23,6 @@ internal fun Cursor.getDuration() = getLong(getColumnIndexOrThrow(MediaStore.Aud
 
 internal fun Cursor.getBitrate() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.BITRATE))
 
-internal fun Cursor.getIsFavorite() =
-    getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.IS_FAVORITE))
-
 internal fun Cursor.getSize() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE))
 internal fun Cursor.getBitsPerSample() =
     if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {

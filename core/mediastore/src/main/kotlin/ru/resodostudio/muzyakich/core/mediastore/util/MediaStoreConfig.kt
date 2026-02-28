@@ -22,7 +22,6 @@ internal object MediaStoreConfig {
             add(MediaStore.Audio.Media.DURATION)
             add(MediaStore.Audio.Media.DATA)
             add(MediaStore.Audio.Media.BITRATE)
-            add(MediaStore.Audio.Media.IS_FAVORITE)
             add(MediaStore.Audio.Media.SIZE)
             if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
                 add(MediaStore.Audio.Media.BITS_PER_SAMPLE)
