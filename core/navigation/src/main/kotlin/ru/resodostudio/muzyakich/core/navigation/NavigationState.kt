@@ -2,11 +2,7 @@ package ru.resodostudio.muzyakich.core.navigation
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -21,7 +17,7 @@ fun rememberNavigationState(
 ): NavigationState {
     require(initialBackStack.isNotEmpty()) { "Initial back stack cannot be empty" }
 
-    val backStack = rememberNavBackStack(*(initialBackStack.toTypedArray()))
+    val backStack = rememberNavBackStack(*initialBackStack.toTypedArray())
 
     return remember(backStack) {
         NavigationState(
@@ -38,10 +34,12 @@ fun rememberNavigationState(
 class NavigationState(
     val backStack: NavBackStack<NavKey>,
 ) {
-    val startKey: NavKey by derivedStateOf { backStack.first() }
+    val startKey: NavKey
+        get() = backStack.first()
 
     @get:VisibleForTesting
-    val currentKey: NavKey by derivedStateOf { backStack.last() }
+    val currentKey: NavKey
+        get() = backStack.last()
 }
 
 /**
@@ -50,14 +48,13 @@ class NavigationState(
 @Composable
 fun NavigationState.toEntries(
     entryProvider: (NavKey) -> NavEntry<NavKey>,
-): SnapshotStateList<NavEntry<NavKey>> {
-    val decorators = listOf(
-        rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
-        rememberViewModelStoreNavEntryDecorator<NavKey>(),
-    )
+): List<NavEntry<NavKey>> {
     return rememberDecoratedNavEntries(
         backStack = backStack,
-        entryDecorators = decorators,
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator(),
+        ),
         entryProvider = entryProvider,
-    ).toMutableStateList()
+    )
 }
