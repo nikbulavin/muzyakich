@@ -2,9 +2,13 @@ package ru.resodostudio.muzyakich.core.mediastore
 
 import android.content.ContentUris
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -27,7 +31,6 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getSampleRate
 import ru.resodostudio.muzyakich.core.mediastore.util.getSize
 import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
 import ru.resodostudio.muzyakich.core.mediastore.util.getTrackNumber
-import ru.resodostudio.muzyakich.core.mediastore.util.getYear
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
@@ -47,7 +50,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
         return context.contentResolver
             .observe(uri = MediaStoreConfig.Song.Collection)
             .map {
-                buildList {
+                val songs = buildList {
                     context.contentResolver.query(
                         MediaStoreConfig.Song.Collection,
                         MediaStoreConfig.Song.Projection.toTypedArray(),
@@ -83,11 +86,31 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                     bitsPerSample = cursor.getBitsPerSample(),
                                     sampleRate = cursor.getSampleRate(),
                                     trackNumber = cursor.getTrackNumber(),
-                                    year = cursor.getYear(),
+                                    year = 0,
                                 )
                             )
                         }
                     }
+                }
+
+                coroutineScope {
+                    songs.map { song ->
+                        async {
+                            var year = song.year
+                            MediaMetadataRetriever().apply {
+                                runCatching {
+                                    setDataSource(context, song.mediaUri)
+                                    extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
+                                        ?.takeIf { it.length >= 4 }
+                                        ?.take(4)
+                                        ?.toIntOrNull()
+                                        ?.let { year = it }
+                                }.onFailure { it.printStackTrace() }
+                                runCatching { release() }
+                            }
+                            song.copy(year = year)
+                        }
+                    }.awaitAll()
                 }
             }
             .flowOn(ioDispatcher)
