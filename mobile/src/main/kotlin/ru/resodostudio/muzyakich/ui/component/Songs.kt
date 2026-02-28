@@ -185,7 +185,11 @@ fun LazyGridScope.songs(
             modifier = Modifier.animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
             onMenuClick = { showSongDetails = true },
-            shapes = ListItemDefaults.segmentedShapes(index, songs.size),
+            shapes = if (songs.size == 1) {
+                ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
+            } else {
+                ListItemDefaults.segmentedShapes(index, songs.size)
+            },
             onFavoriteChange = onFavoriteChange,
         )
 
