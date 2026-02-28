@@ -5,5 +5,5 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 
 interface MediaStoreDataSource {
 
-    fun getSongs(): Flow<List<Song>>
+    val songs: Flow<List<Song>>
 }

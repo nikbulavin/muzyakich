@@ -13,7 +13,7 @@ internal class ArtistsRepositoryImpl @Inject constructor(
 ) : ArtistsRepository {
 
     override fun getArtists(): Flow<List<Artist>> {
-        return mediaStoreDataSource.getSongs()
+        return mediaStoreDataSource.songs
             .map { songs ->
                 songs.groupBy(Song::artistId).map { (artistId, songs) ->
                     Artist(

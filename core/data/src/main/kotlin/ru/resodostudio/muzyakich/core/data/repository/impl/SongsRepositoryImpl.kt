@@ -21,7 +21,7 @@ internal class SongsRepositoryImpl @Inject constructor(
         sortOrder: SortOrder,
     ): Flow<List<Song>> {
         return combine(
-            mediaStoreDataSource.getSongs(),
+            mediaStoreDataSource.songs,
             favoriteSongDao.getFavoriteMediaIds(),
         ) { songs, favoriteMediaIds ->
             songs.mapTo(ArrayList(songs.size)) { song ->

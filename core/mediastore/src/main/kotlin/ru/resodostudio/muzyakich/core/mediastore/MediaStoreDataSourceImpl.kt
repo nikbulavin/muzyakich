@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.core.mediastore
 import android.content.ContentUris
 import android.content.Context
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -13,9 +14,12 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
 import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
@@ -49,80 +53,94 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
     @ApplicationScope private val applicationScope: CoroutineScope,
 ) : MediaStoreDataSource {
 
-    override fun getSongs(): Flow<List<Song>> {
-        return context.contentResolver
-            .observe(uri = MediaStoreConfig.Song.Collection)
-            .map {
-                val songs = buildList {
-                    context.contentResolver.query(
-                        MediaStoreConfig.Song.Collection,
-                        MediaStoreConfig.Song.Projection.toTypedArray(),
-                        "${MediaStore.Audio.Media.IS_MUSIC} = ?",
-                        arrayOf("1"),
-                        "${MediaStore.Audio.Media.TITLE} ASC",
-                    )?.use { cursor ->
-                        while (cursor.moveToNext()) {
-                            val id = cursor.getMediaId()
-                            val albumId = cursor.getAlbumId()
+    private val isMusicSelectionArgs = arrayOf("1")
+    private val retrieverSemaphore = Semaphore(10)
 
-                            val mediaUri = ContentUris.withAppendedId(
-                                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                                id,
-                            )
+    override val songs: Flow<List<Song>> = context.contentResolver
+        .observe(uri = MediaStoreConfig.Song.Collection)
+        .map {
+            val songs = buildList {
+                context.contentResolver.query(
+                    MediaStoreConfig.Song.Collection,
+                    MediaStoreConfig.Song.Projection,
+                    "${MediaStore.Audio.Media.IS_MUSIC} = ?",
+                    isMusicSelectionArgs,
+                    "${MediaStore.Audio.Media.TITLE} ASC",
+                )?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        val id = cursor.getMediaId()
+                        val albumId = cursor.getAlbumId()
 
-                            add(
-                                Song(
-                                    uuid = Uuid.random(),
-                                    mediaId = cursor.getMediaId().toString(),
-                                    artistId = cursor.getArtistId(),
-                                    albumId = albumId,
-                                    mediaUri = mediaUri,
-                                    artworkUri = albumId.asArtworkUri(),
-                                    title = cursor.getTitle(),
-                                    artist = cursor.getArtist(),
-                                    album = cursor.getAlbum(),
-                                    folder = cursor.getDataFolder(),
-                                    duration = cursor.getDuration(),
-                                    bitrate = cursor.getBitrate() / 1000,
-                                    isFavorite = false,
-                                    size = cursor.getSize(),
-                                    bitsPerSample = cursor.getBitsPerSample(),
-                                    sampleRate = cursor.getSampleRate(),
-                                    trackNumber = cursor.getTrackNumber(),
-                                    year = cursor.getYear(),
-                                )
+                        val mediaUri = ContentUris.withAppendedId(
+                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                            id,
+                        )
+
+                        add(
+                            Song(
+                                uuid = Uuid.random(),
+                                mediaId = cursor.getMediaId().toString(),
+                                artistId = cursor.getArtistId(),
+                                albumId = albumId,
+                                mediaUri = mediaUri,
+                                artworkUri = albumId.asArtworkUri(),
+                                title = cursor.getTitle(),
+                                artist = cursor.getArtist(),
+                                album = cursor.getAlbum(),
+                                folder = cursor.getDataFolder(),
+                                duration = cursor.getDuration(),
+                                bitrate = cursor.getBitrate() / 1000,
+                                isFavorite = false,
+                                size = cursor.getSize(),
+                                bitsPerSample = cursor.getBitsPerSample(),
+                                sampleRate = cursor.getSampleRate(),
+                                trackNumber = cursor.getTrackNumber(),
+                                year = cursor.getYear(),
                             )
-                        }
+                        )
                     }
                 }
+            }
 
-                coroutineScope {
-                    songs.map { song ->
+            coroutineScope {
+                val songsToUpdateDeferred = songs
+                    .filter { it.year == 0 }
+                    .map { song ->
                         async {
-                            if (song.year != 0) return@async song
-
-                            var year = 0
-                            MediaMetadataRetriever().apply {
-                                runCatching {
-                                    setDataSource(context, song.mediaUri)
-                                    extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
-                                        ?.takeIf { it.length >= 4 }
-                                        ?.take(4)
-                                        ?.toIntOrNull()
-                                        ?.let { year = it }
-                                }.onFailure { it.printStackTrace() }
-                                runCatching { release() }
-                            }
-                            song.copy(year = year)
+                            val extractedYear = extractYear(context, song.mediaUri)
+                            song.copy(year = extractedYear)
                         }
-                    }.awaitAll()
+                    }
+
+                val updatedSongsMap = songsToUpdateDeferred.awaitAll().associateBy { it.mediaId }
+
+                songs.map { song ->
+                    updatedSongsMap[song.mediaId] ?: song
                 }
             }
-            .flowOn(ioDispatcher)
-            .shareIn(
-                scope = applicationScope,
-                started = SharingStarted.WhileSubscribed(5.seconds),
-                replay = 1,
-            )
+        }
+        .catch { exception ->
+            exception.printStackTrace()
+            emit(emptyList())
+        }
+        .flowOn(ioDispatcher)
+        .shareIn(
+            scope = applicationScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            replay = 1,
+        )
+
+    private suspend fun extractYear(context: Context, uri: Uri): Int {
+        return retrieverSemaphore.withPermit {
+            MediaMetadataRetriever().use { retriever ->
+                runCatching {
+                    retriever.setDataSource(context, uri)
+                    retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
+                        ?.takeIf { it.length >= 4 }
+                        ?.take(4)
+                        ?.toIntOrNull()
+                }.getOrNull() ?: 0
+            }
+        }
     }
 }

@@ -30,6 +30,6 @@ internal object MediaStoreConfig {
             }
             add(MediaStore.Audio.Media.TRACK)
             add(MediaStore.Audio.Media.YEAR)
-        }
+        }.toTypedArray()
     }
 }
