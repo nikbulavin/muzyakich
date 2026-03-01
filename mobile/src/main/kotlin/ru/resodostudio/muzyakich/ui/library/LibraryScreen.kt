@@ -67,10 +67,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Serializable
 data object PlaylistsNavKey : NavKey
 
-@OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
     onAlbumClick: (Long) -> Unit,
