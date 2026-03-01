@@ -7,9 +7,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
+import ru.resodostudio.muzyakich.core.domain.GetArtistsUseCase
 import ru.resodostudio.muzyakich.core.model.data.Artist
-import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import javax.inject.Inject
@@ -17,22 +16,16 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class ArtistsViewModel @Inject constructor(
-    songsRepository: SongsRepository,
+    getArtistsUseCase: GetArtistsUseCase,
 ) : ViewModel() {
 
-    val artistsUiState = songsRepository.getSongs(SortBy.ARTIST, SortOrder.ASCENDING)
-        .map { songs ->
-            if (songs.isEmpty()) {
+    val artistsUiState = getArtistsUseCase.invoke(SortBy.ARTIST, SortOrder.ASCENDING)
+        .map { artists ->
+            if (artists.isEmpty()) {
                 ArtistsUiState.Empty
             } else {
                 ArtistsUiState.Success(
-                    artists = songs.groupBy(Song::artistId).map { (artistId, songs) ->
-                        Artist(
-                            id = artistId,
-                            name = songs.firstOrNull()?.artist ?: "<unknown>",
-                            songs = songs,
-                        )
-                    }
+                    artists = artists,
                 )
             }
         }

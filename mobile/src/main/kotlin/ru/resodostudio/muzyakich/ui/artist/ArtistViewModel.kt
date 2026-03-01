@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
-import ru.resodostudio.muzyakich.core.data.repository.ArtistsRepository
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
+import ru.resodostudio.muzyakich.core.domain.GetArtistUseCase
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
@@ -23,16 +23,15 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel(assistedFactory = ArtistViewModel.Factory::class)
 class ArtistViewModel @AssistedInject constructor(
     @Assisted val artistId: Long,
-    artistsRepository: ArtistsRepository,
+    getArtistUseCase: GetArtistUseCase,
     private val musicServiceConnection: MusicServiceConnection,
     private val songsRepository: SongsRepository,
 ) : ViewModel() {
 
     val artistUiState = combine(
-        artistsRepository.getArtists(),
+        getArtistUseCase.invoke(artistId),
         musicServiceConnection.nowPlayingState,
-    ) { artists, nowPlaying ->
-        val artist = artists.find { it.id == artistId }
+    ) { artist, nowPlaying ->
         if (artist == null) {
             ArtistUiState.Error
         } else {
