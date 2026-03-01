@@ -22,7 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -47,7 +47,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FilterList
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
@@ -99,7 +98,7 @@ fun LibraryScreen(
             val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
                 ?: libraryTabs.first()
 
-            PrimaryScrollableTabRow(
+            PrimaryTabRow(
                 selectedTabIndex = currentTab.ordinal,
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -230,7 +229,7 @@ enum class LibraryTab(
     val icon: ImageVector,
     val navKey: NavKey,
 ) {
-    PLAYLISTS(localesR.string.playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
+    //PLAYLISTS(localesR.string.playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
     SONGS(localesR.string.songs, MuzIcons.Rounded.MusicNote, SongsNavKey),
     ALBUMS(localesR.string.albums, MuzIcons.Rounded.Album, AlbumsNavKey),
     ARTISTS(localesR.string.artists, MuzIcons.Rounded.Artist, ArtistsNavKey),
