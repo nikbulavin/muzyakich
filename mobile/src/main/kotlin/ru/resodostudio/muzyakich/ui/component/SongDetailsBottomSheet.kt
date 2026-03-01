@@ -66,7 +66,9 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 fun SongDetailsBottomSheet(
     song: Song,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -75,6 +77,7 @@ fun SongDetailsBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -144,6 +147,7 @@ fun SongDetailsBottomSheet(
                     onPlayNextClick(song)
                     onDismiss()
                 },
+                onFavoriteChange = onFavoriteChange,
             )
         }
     }
@@ -155,6 +159,7 @@ private fun ActionPanel(
     song: Song,
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     Column(
         modifier = modifier,
@@ -166,16 +171,7 @@ private fun ActionPanel(
         ) {}
         MuzToggableListItem(
             checked = song.isFavorite,
-            onCheckedChange = { checked ->
-                runCatching {
-                    val pendingIntent = MediaStore.createFavoriteRequest(
-                        context.contentResolver,
-                        listOf(song.mediaUri),
-                        checked,
-                    )
-                    launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
-                }
-            },
+            onCheckedChange = { checked -> onFavoriteChange(song.mediaId, checked) },
             content = {
                 Text(
                     text = stringResource(localesR.string.favorites),
