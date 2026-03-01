@@ -95,7 +95,6 @@ fun LibraryScreen(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
         ) {
             val libraryTabs = LibraryTab.entries
-
             val navigationState = rememberNavigationState(
                 initialBackStack = listOf(libraryTabs.first().navKey),
             )
@@ -110,7 +109,7 @@ fun LibraryScreen(
                 libraryTabs.forEach { tab ->
                     Tab(
                         selected = currentTab == tab,
-                        onClick = { navigator.navigate(tab.navKey) },
+                        onClick = { navigator.navigateAndClearStack(tab.navKey) },
                         icon = {
                             Icon(
                                 imageVector = tab.icon,

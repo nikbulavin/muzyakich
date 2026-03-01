@@ -22,6 +22,13 @@ class Navigator(val state: NavigationState) {
         }
     }
 
+    fun navigateAndClearStack(key: NavKey) {
+        state.backStack.apply {
+            clear()
+            add(key)
+        }
+    }
+
     /**
      * Go back to the previous navigation key.
      */
