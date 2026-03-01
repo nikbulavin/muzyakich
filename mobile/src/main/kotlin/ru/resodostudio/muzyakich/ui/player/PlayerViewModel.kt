@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
@@ -19,7 +20,7 @@ import kotlin.uuid.Uuid
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    songsRepository: SongsRepository,
+    private val songsRepository: SongsRepository,
     userDataRepository: UserDataRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
@@ -49,6 +50,12 @@ class PlayerViewModel @Inject constructor(
         )
 
     fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
+
+    fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
+        viewModelScope.launch {
+            songsRepository.toggleFavorite(mediaId, isFavorite)
+        }
+    }
 }
 
 sealed interface PlayerUiState {

@@ -41,6 +41,7 @@ fun QueuePanel(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     onQueueItemClick: (Uuid) -> Unit = {},
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     Column(
         modifier = modifier,
@@ -90,6 +91,7 @@ fun QueuePanel(
                 }
                 FavoriteToggleButton(
                     song = currentSong,
+                    onFavoriteChange = onFavoriteChange,
                     modifier = Modifier
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,

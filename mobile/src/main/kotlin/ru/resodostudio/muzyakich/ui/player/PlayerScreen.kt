@@ -1,10 +1,6 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import android.net.Uri
-import android.provider.MediaStore
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -100,6 +96,7 @@ fun PlayerScreen(
         playerUiState = playerUiState,
         onBackClick = onBackClick,
         onSkipToSongClick = viewModel::skipToSong,
+        onFavoriteChange = viewModel::setSongFavorite,
     )
 }
 
@@ -109,6 +106,7 @@ private fun PlayerScreen(
     playerUiState: PlayerUiState,
     onBackClick: () -> Unit = {},
     onSkipToSongClick: (Uuid) -> Unit = {},
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     with(LocalSharedTransitionScope.current) {
         var queueOpened by rememberSaveable { mutableStateOf(false) }
@@ -148,6 +146,7 @@ private fun PlayerScreen(
                                         modifier = Modifier.padding(top = 16.dp),
                                         animatedVisibilityScope = this,
                                         onQueueItemClick = onSkipToSongClick,
+                                        onFavoriteChange = onFavoriteChange,
                                     )
                                 } else {
                                     Column(
@@ -206,6 +205,7 @@ private fun PlayerScreen(
                                             }
                                             FavoriteToggleButton(
                                                 song = currentSong,
+                                                onFavoriteChange = onFavoriteChange,
                                                 modifier = Modifier
                                                     .sharedBounds(
                                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -323,6 +323,7 @@ fun MoreIconButton(
 @Composable
 fun FavoriteToggleButton(
     song: Song,
+    onFavoriteChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val (icon, contentDescription) = if (song.isFavorite) {
@@ -330,23 +331,9 @@ fun FavoriteToggleButton(
     } else {
         MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
     }
-    val context = LocalContext.current
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult(),
-    ) {}
     MuzFilledTonalIconToggleButton(
         checked = song.isFavorite,
-        onCheckedChange = { checked ->
-            runCatching {
-                val pendingIntent = MediaStore.createFavoriteRequest(
-                    context.contentResolver,
-                    listOf(song.mediaUri),
-                    checked,
-                )
-                launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
-            }
-        },
+        onCheckedChange = { onFavoriteChange(song.mediaId, it) },
         modifier = modifier,
         icon = icon,
         contentDescription = contentDescription,
