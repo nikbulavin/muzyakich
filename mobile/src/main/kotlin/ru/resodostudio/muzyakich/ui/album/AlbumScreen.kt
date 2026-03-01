@@ -45,6 +45,7 @@ fun AlbumScreen(
         onBackClick = onBackClick,
         onPlaySongsClick = viewModel::playSongs,
         onPlayNextClick = viewModel::playSongNext,
+        onFavoriteChange = viewModel::setSongFavorite,
         modifier = modifier,
     )
 }
@@ -56,6 +57,7 @@ private fun AlbumScreen(
     onBackClick: () -> Unit,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onPlayNextClick: (Song) -> Unit,
+    onFavoriteChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (albumUiState) {
@@ -136,6 +138,7 @@ private fun AlbumScreen(
                                 },
                                 onPlayNextClick = onPlayNextClick,
                                 isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
+                                onFavoriteChange = onFavoriteChange,
                             )
                         }
                     } else {
@@ -145,6 +148,7 @@ private fun AlbumScreen(
                             onPlaySongsClick = onPlaySongsClick,
                             onPlayNextClick = onPlayNextClick,
                             isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
+                            onFavoriteChange = onFavoriteChange,
                         )
                     }
                     songsInfo(

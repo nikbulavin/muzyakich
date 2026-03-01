@@ -40,6 +40,7 @@ fun ArtistScreen(
         modifier = modifier,
         onPlaySongsClick = viewModel::playSongs,
         onPlayNextClick = viewModel::playSongNext,
+        onFavoriteChange = viewModel::setSongFavorite,
     )
 }
 
@@ -51,6 +52,7 @@ fun ArtistScreen(
     modifier: Modifier = Modifier,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onPlayNextClick: (Song) -> Unit = {},
+    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     when (artistUiState) {
         ArtistUiState.Error -> LoadingState(modifier.fillMaxSize())
@@ -95,6 +97,7 @@ fun ArtistScreen(
                         onPlaySongsClick = onPlaySongsClick,
                         onPlayNextClick = onPlayNextClick,
                         isPlaying = artistUiState.nowPlayingState.player?.isPlaying ?: false,
+                        onFavoriteChange = onFavoriteChange,
                     )
                     songsInfo(
                         songs = artistUiState.artist.songs,
