@@ -49,6 +49,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.ui.song.detail.SongBottomSheet
 import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -194,7 +195,7 @@ fun LazyGridScope.songs(
         )
 
         if (showSongDetails) {
-            SongDetailsBottomSheet(
+            SongBottomSheet(
                 song = song,
                 onDismiss = { showSongDetails = false },
                 onPlayNextClick = onPlayNextClick,

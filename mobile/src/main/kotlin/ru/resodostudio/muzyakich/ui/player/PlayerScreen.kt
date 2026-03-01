@@ -81,7 +81,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.ui.component.SongDetailsBottomSheet
+import ru.resodostudio.muzyakich.ui.song.detail.SongBottomSheet
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -312,7 +312,7 @@ fun MoreIconButton(
         contentDescription = stringResource(localesR.string.more_options),
     )
     if (showSongDetails) {
-        SongDetailsBottomSheet(
+        SongBottomSheet(
             song = song,
             onDismiss = { showSongDetails = false },
         )

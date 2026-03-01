@@ -54,8 +54,8 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionSc
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.toEntries
-import ru.resodostudio.muzyakich.ui.album.navigation.albumEntry
-import ru.resodostudio.muzyakich.ui.artist.navigation.artistEntry
+import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
+import ru.resodostudio.muzyakich.ui.artist.detail.navigation.artistEntry
 import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
 import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.player.navigation.PlayerNavKey
