@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.model.data.Artist
 import ru.resodostudio.muzyakich.ui.component.EmptyState
@@ -116,7 +117,7 @@ private fun LazyGridScope.artists(
                     overflow = TextOverflow.Ellipsis,
                 )
             },
-            onClick = { onArtistClick(artist.id) },
+            onClick = dropUnlessResumed { onArtistClick(artist.id) },
             modifier = Modifier.animateItem(),
         )
     }

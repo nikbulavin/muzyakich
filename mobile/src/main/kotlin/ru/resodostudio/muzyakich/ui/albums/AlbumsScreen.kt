@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -124,7 +125,7 @@ private fun AlbumCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        onClick = { onClick(album.id) },
+        onClick = dropUnlessResumed { onClick(album.id) },
         modifier = modifier,
     ) {
         Column {
