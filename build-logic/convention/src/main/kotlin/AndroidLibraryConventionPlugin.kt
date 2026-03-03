@@ -21,6 +21,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 testOptions.targetSdk = 36
                 lint.targetSdk = 36
+                defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 configureFlavors(this)
                 testOptions.animationsDisabled = true
                 resourcePrefix = path.split("""\W""".toRegex())
