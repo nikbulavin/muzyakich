@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -52,6 +53,7 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
+import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
@@ -61,6 +63,7 @@ import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.player.navigation.PlayerNavKey
 import ru.resodostudio.muzyakich.ui.player.navigation.navigateToPlayer
 import ru.resodostudio.muzyakich.ui.player.navigation.playerEntry
+import ru.resodostudio.muzyakich.ui.song.detail.navigation.songEntry
 
 @OptIn(
     ExperimentalPermissionsApi::class,
@@ -121,7 +124,10 @@ fun MuzApp(
                         playerEntry(navigator, motionScheme)
                         albumEntry(navigator)
                         artistEntry(navigator)
+                        songEntry()
                     }
+
+                    val bottomSheetStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
 
                     NavDisplay(
                         modifier = Modifier.hazeSource(hazeState),
@@ -140,6 +146,7 @@ fun MuzApp(
                                     slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
                         },
                         sharedTransitionScope = LocalSharedTransitionScope.current,
+                        sceneStrategies = listOf(bottomSheetStrategy),
                     )
                 }
             }

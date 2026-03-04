@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.muzyakich.android.library)
+    alias(libs.plugins.muzyakich.android.library.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.compose)
 }
 
 android {
@@ -10,5 +10,7 @@ android {
 
 dependencies {
     api(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.viewModelNavigation3)
+    implementation(libs.androidx.navigation3.ui)
 }
