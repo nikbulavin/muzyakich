@@ -16,6 +16,16 @@ internal class SongsRepositoryImpl @Inject constructor(
     private val favoriteSongDao: FavoriteSongDao,
 ) : SongsRepository {
 
+    override fun getSong(mediaId: String): Flow<Song?> {
+        return combine(
+            mediaStoreDataSource.songs,
+            favoriteSongDao.getFavoriteMediaIds(),
+        ) { songs, favoriteMediaIds ->
+            val song = songs.find { it.mediaId == mediaId }
+            song?.copy(isFavorite = song.mediaId in favoriteMediaIds.toSet())
+        }
+    }
+
     override fun getSongs(
         sortBy: SortBy,
         sortOrder: SortOrder,

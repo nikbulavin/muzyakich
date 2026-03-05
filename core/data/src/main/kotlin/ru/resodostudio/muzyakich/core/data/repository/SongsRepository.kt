@@ -7,6 +7,8 @@ import ru.resodostudio.muzyakich.core.model.data.SortOrder
 
 interface SongsRepository {
 
+    fun getSong(mediaId: String): Flow<Song?>
+
     fun getSongs(
         sortBy: SortBy,
         sortOrder: SortOrder,
