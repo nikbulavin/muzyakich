@@ -35,6 +35,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun AlbumScreen(
     onBackClick: () -> Unit,
+    onSongLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AlbumViewModel = hiltViewModel(),
 ) {
@@ -43,8 +44,8 @@ fun AlbumScreen(
     AlbumScreen(
         albumUiState = albumUiState,
         onBackClick = onBackClick,
+        onSongLongClick = onSongLongClick,
         onPlaySongsClick = viewModel::playSongs,
-        onPlayNextClick = viewModel::playSongNext,
         onFavoriteChange = viewModel::setSongFavorite,
         modifier = modifier,
     )
@@ -55,8 +56,8 @@ fun AlbumScreen(
 private fun AlbumScreen(
     albumUiState: AlbumUiState,
     onBackClick: () -> Unit,
+    onSongLongClick: (String) -> Unit,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onPlayNextClick: (Song) -> Unit,
     onFavoriteChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -136,9 +137,9 @@ private fun AlbumScreen(
                                         albumUiState.album.songs.indexOf(songToPlay),
                                     )
                                 },
-                                onPlayNextClick = onPlayNextClick,
                                 isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
                                 onFavoriteChange = onFavoriteChange,
+                                onSongLongClick = onSongLongClick,
                             )
                         }
                     } else {
@@ -146,9 +147,9 @@ private fun AlbumScreen(
                             songs = albumUiState.album.songs,
                             currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
                             onPlaySongsClick = onPlaySongsClick,
-                            onPlayNextClick = onPlayNextClick,
                             isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
                             onFavoriteChange = onFavoriteChange,
+                            onSongLongClick = onSongLongClick,
                         )
                     }
                     songsInfo(

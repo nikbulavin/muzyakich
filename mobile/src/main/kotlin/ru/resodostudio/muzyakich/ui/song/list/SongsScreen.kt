@@ -33,6 +33,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun SongsScreen(
+    onSongLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SongsViewModel = hiltViewModel(),
 ) {
@@ -40,11 +41,11 @@ fun SongsScreen(
 
     SongsScreen(
         songsUiState = songsUiState,
+        onSongLongClick = onSongLongClick,
         modifier = modifier,
         onPlaySongsClick = viewModel::playSongs,
         onShuffleSongsClick = viewModel::shuffleSongs,
         onToggleFilterFavorites = viewModel::toggleFilterFavorites,
-        onPlayNextClick = viewModel::playSongNext,
         onSortByUpdate = viewModel::updateSortByPreference,
         onSortOrderUpdate = viewModel::updateSortOrderPreference,
         onFavoriteChange = viewModel::setSongFavorite,
@@ -55,11 +56,11 @@ fun SongsScreen(
 @Composable
 private fun SongsScreen(
     songsUiState: SongsUiState,
+    onSongLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
     onToggleFilterFavorites: (Boolean) -> Unit = {},
-    onPlayNextClick: (Song) -> Unit = {},
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
@@ -111,9 +112,9 @@ private fun SongsScreen(
                     songs = songsUiState.songs,
                     currentMediaId = songsUiState.currentMediaId,
                     onPlaySongsClick = onPlaySongsClick,
-                    onPlayNextClick = onPlayNextClick,
                     isPlaying = songsUiState.isPlaying,
                     onFavoriteChange = onFavoriteChange,
+                    onSongLongClick = onSongLongClick,
                 )
                 songsInfo(
                     songs = songsUiState.songs,

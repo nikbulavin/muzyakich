@@ -56,10 +56,6 @@ class AlbumViewModel @AssistedInject constructor(
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
     }
 
-    fun playSongNext(song: Song) {
-        musicServiceConnection.playSongNext(song)
-    }
-
     fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
         viewModelScope.launch {
             songsRepository.toggleFavorite(mediaId, isFavorite)

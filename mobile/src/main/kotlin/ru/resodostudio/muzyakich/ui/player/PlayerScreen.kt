@@ -81,13 +81,13 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.ui.song.detail.SongBottomSheet
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun PlayerScreen(
     onBackClick: () -> Unit,
+    onSongLongClick: (String) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
@@ -95,6 +95,7 @@ fun PlayerScreen(
     PlayerScreen(
         playerUiState = playerUiState,
         onBackClick = onBackClick,
+        onSongLongClick = onSongLongClick,
         onSkipToSongClick = viewModel::skipToSong,
         onFavoriteChange = viewModel::setSongFavorite,
     )
@@ -104,7 +105,8 @@ fun PlayerScreen(
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
-    onBackClick: () -> Unit = {},
+    onBackClick: () -> Unit,
+    onSongLongClick: (String) -> Unit,
     onSkipToSongClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
@@ -147,6 +149,7 @@ private fun PlayerScreen(
                                         animatedVisibilityScope = this,
                                         onQueueItemClick = onSkipToSongClick,
                                         onFavoriteChange = onFavoriteChange,
+                                        onSongLongClick = onSongLongClick,
                                     )
                                 } else {
                                     Column(
@@ -216,7 +219,7 @@ private fun PlayerScreen(
                                                     ),
                                             )
                                             MoreIconButton(
-                                                song = currentSong,
+                                                onClick = { onSongLongClick(currentSong.mediaId) },
                                                 modifier = Modifier
                                                     .sharedBounds(
                                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -299,24 +302,16 @@ private fun PlayerScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MoreIconButton(
-    song: Song,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showSongDetails by rememberSaveable { mutableStateOf(false) }
-
     MuzFilledTonalIconButton(
         modifier = modifier,
-        onClick = { showSongDetails = true },
+        onClick = onClick,
         containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
         icon = MuzIcons.Rounded.MoreVert,
         contentDescription = stringResource(localesR.string.more_options),
     )
-    if (showSongDetails) {
-        SongBottomSheet(
-            song = song,
-            onDismiss = { showSongDetails = false },
-        )
-    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

@@ -22,11 +22,11 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +35,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -61,94 +63,108 @@ import ru.resodostudio.muzyakich.ui.util.asFormattedSampleRate
 import ru.resodostudio.muzyakich.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongBottomSheet(
-    song: Song,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SongViewModel = hiltViewModel(),
+) {
+    val songUiState by viewModel.songUiState.collectAsStateWithLifecycle()
+
+    SongBottomSheet(
+        songUiState = songUiState,
+        onDismiss = onDismiss,
+        modifier = modifier,
+        onPlayNextClick = viewModel::playSongNext,
+        onFavoriteChange = viewModel::setSongFavorite,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun SongBottomSheet(
+    songUiState: SongUiState,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        modifier = modifier,
-    ) {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+    when (songUiState) {
+        SongUiState.Error -> LoadingIndicator()
+        SongUiState.Loading -> LoadingIndicator()
+        is SongUiState.Success -> {
+            val song = songUiState.song
+            Column(
+                modifier = modifier.verticalScroll(rememberScrollState()),
             ) {
-                SubcomposeAsyncImage(
-                    modifier = Modifier
-                        .size(82.dp)
-                        .clip(MaterialTheme.shapes.medium),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(song.artworkUri)
-                        .crossfade(true)
-                        .size(256)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    error = {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.MusicNote,
-                                contentDescription = null,
-                                modifier = Modifier.size(50.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                )
-                Column(
-                    verticalArrangement = Arrangement.SpaceEvenly,
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        text = song.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                    SubcomposeAsyncImage(
+                        modifier = Modifier
+                            .size(82.dp)
+                            .clip(MaterialTheme.shapes.medium),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(song.artworkUri)
+                            .crossfade(true)
+                            .size(256)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        error = {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                            ) {
+                                Icon(
+                                    imageVector = MuzIcons.Rounded.MusicNote,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(50.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        },
                     )
-                    Text(
-                        text = song.artist,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = song.album,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        Text(
+                            text = song.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = song.artist,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = song.album,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
+                TagPanel(
+                    song = song,
+                    modifier = Modifier.padding(16.dp),
+                )
+                HorizontalDivider()
+                ActionPanel(
+                    song = song,
+                    modifier = Modifier.padding(16.dp),
+                    onPlayNextClick = { song ->
+                        onPlayNextClick(song)
+                        onDismiss()
+                    },
+                    onFavoriteChange = onFavoriteChange,
+                )
             }
-            TagPanel(
-                song = song,
-                modifier = Modifier.padding(16.dp),
-            )
-            HorizontalDivider()
-            ActionPanel(
-                song = song,
-                modifier = Modifier.padding(16.dp),
-                onPlayNextClick = { song ->
-                    onPlayNextClick(song)
-                    onDismiss()
-                },
-                onFavoriteChange = onFavoriteChange,
-            )
         }
     }
 }

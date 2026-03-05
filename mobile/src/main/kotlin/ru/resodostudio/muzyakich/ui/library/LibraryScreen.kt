@@ -71,6 +71,7 @@ data object PlaylistsNavKey : NavKey
 fun LibraryScreen(
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
+    onSongLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -126,7 +127,7 @@ fun LibraryScreen(
                 entry<PlaylistsNavKey> {
                     LoadingState(Modifier.fillMaxSize())
                 }
-                songsEntry()
+                songsEntry(onSongLongClick)
                 albumsEntry(onAlbumClick)
                 artistsEntry(onArtistClick)
             }

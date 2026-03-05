@@ -42,6 +42,7 @@ fun QueuePanel(
     lazyListState: LazyListState = rememberLazyListState(),
     onQueueItemClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
+    onSongLongClick: (String) -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -100,7 +101,7 @@ fun QueuePanel(
                         ),
                 )
                 MoreIconButton(
-                    song = currentSong,
+                    onClick = { onSongLongClick(currentSong.mediaId) },
                     modifier = Modifier
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,

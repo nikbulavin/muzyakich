@@ -16,9 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -49,7 +47,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.ui.song.detail.SongBottomSheet
 import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -68,7 +65,7 @@ fun SongItem(
         shapes = shapes,
         selected = isPlaying,
         onClick = onClick,
-        onLongClick = onMenuClick,
+        onLongClick = dropUnlessResumed { onMenuClick() },
         onLongClickLabel = stringResource(localesR.string.open_menu),
         modifier = modifier,
         content = {
@@ -169,7 +166,7 @@ fun LazyGridScope.songs(
     songs: List<Song>,
     currentMediaId: String?,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onPlayNextClick: (Song) -> Unit,
+    onSongLongClick: (String) -> Unit,
     isPlaying: Boolean = false,
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
@@ -178,14 +175,12 @@ fun LazyGridScope.songs(
         key = { _, song -> song.mediaId },
         contentType = { _, _ -> "Song" },
     ) { index, song ->
-        var showSongDetails by rememberSaveable { mutableStateOf(false) }
-
         SongItem(
             song = song,
             isPlaying = currentMediaId == song.mediaId && isPlaying,
             modifier = Modifier.animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
-            onMenuClick = { showSongDetails = true },
+            onMenuClick = { onSongLongClick(song.mediaId) },
             shapes = if (songs.size == 1) {
                 ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
             } else {
@@ -193,14 +188,6 @@ fun LazyGridScope.songs(
             },
             onFavoriteChange = onFavoriteChange,
         )
-
-        if (showSongDetails) {
-            SongBottomSheet(
-                song = song,
-                onDismiss = { showSongDetails = false },
-                onPlayNextClick = onPlayNextClick,
-            )
-        }
     }
 }
 

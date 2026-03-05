@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -124,10 +123,8 @@ fun MuzApp(
                         playerEntry(navigator, motionScheme)
                         albumEntry(navigator)
                         artistEntry(navigator)
-                        songEntry()
+                        songEntry(navigator)
                     }
-
-                    val bottomSheetStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
 
                     NavDisplay(
                         modifier = Modifier.hazeSource(hazeState),
@@ -146,7 +143,9 @@ fun MuzApp(
                                     slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
                         },
                         sharedTransitionScope = LocalSharedTransitionScope.current,
-                        sceneStrategies = listOf(bottomSheetStrategy),
+                        sceneStrategies = listOf(
+                            remember { BottomSheetSceneStrategy() },
+                        ),
                     )
                 }
             }

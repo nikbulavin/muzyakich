@@ -70,10 +70,6 @@ class SongsViewModel @Inject constructor(
         }
     }
 
-    fun playSongNext(song: Song) {
-        musicServiceConnection.playSongNext(song)
-    }
-
     fun updateSortByPreference(sortBy: SortBy) {
         viewModelScope.launch {
             userDataRepository.setSortByPreference(sortBy)

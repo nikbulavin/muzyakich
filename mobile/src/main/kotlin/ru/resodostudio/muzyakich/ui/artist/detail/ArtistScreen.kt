@@ -29,6 +29,7 @@ import ru.resodostudio.muzyakich.ui.component.songsInfo
 @Composable
 fun ArtistScreen(
     onBackClick: () -> Unit,
+    onSongLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ArtistViewModel = hiltViewModel(),
 ) {
@@ -37,9 +38,9 @@ fun ArtistScreen(
     ArtistScreen(
         artistUiState = artistUiState.value,
         onBackClick = onBackClick,
+        onSongLongClick = onSongLongClick,
         modifier = modifier,
         onPlaySongsClick = viewModel::playSongs,
-        onPlayNextClick = viewModel::playSongNext,
         onFavoriteChange = viewModel::setSongFavorite,
     )
 }
@@ -49,9 +50,9 @@ fun ArtistScreen(
 fun ArtistScreen(
     artistUiState: ArtistUiState,
     onBackClick: () -> Unit,
+    onSongLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
-    onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     when (artistUiState) {
@@ -95,9 +96,9 @@ fun ArtistScreen(
                         songs = artistUiState.artist.songs,
                         currentMediaId = artistUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
                         onPlaySongsClick = onPlaySongsClick,
-                        onPlayNextClick = onPlayNextClick,
                         isPlaying = artistUiState.nowPlayingState.player?.isPlaying ?: false,
                         onFavoriteChange = onFavoriteChange,
+                        onSongLongClick = onSongLongClick,
                     )
                     songsInfo(
                         songs = artistUiState.artist.songs,

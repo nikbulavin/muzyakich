@@ -12,6 +12,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.ui.player.PlayerScreen
+import ru.resodostudio.muzyakich.ui.song.detail.navigation.navigateToSong
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator, motionScheme: MotionScheme) {
@@ -29,6 +30,7 @@ fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator, motionScheme: M
     ) {
         PlayerScreen(
             onBackClick = navigator::goBack,
+            onSongLongClick = navigator::navigateToSong,
         )
     }
 }
