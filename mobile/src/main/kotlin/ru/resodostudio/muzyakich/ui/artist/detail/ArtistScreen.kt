@@ -91,6 +91,7 @@ fun ArtistScreen(
                     ),
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     songs(
                         songs = artistUiState.artist.songs,

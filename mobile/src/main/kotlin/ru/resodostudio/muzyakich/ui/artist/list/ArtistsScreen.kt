@@ -76,6 +76,7 @@ private fun ArtistsScreen(
                     bottom = 104.dp + WindowInsets.navigationBars.asPaddingValues()
                         .calculateBottomPadding(),
                 ),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 artists(
                     artists = artistsUiState.artists,

@@ -101,6 +101,7 @@ private fun SongsScreen(
                 ),
                 modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 actionButtons(
                     songs = songsUiState.songs,

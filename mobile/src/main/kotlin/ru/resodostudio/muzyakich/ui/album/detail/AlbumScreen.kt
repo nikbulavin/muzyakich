@@ -107,6 +107,7 @@ private fun AlbumScreen(
                     ),
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     val groupedSongs = albumUiState.album.songs.groupBy { it.trackNumber / 1000 }
                     val hasMultipleDiscs = albumUiState.album.songs.isNotEmpty() &&
