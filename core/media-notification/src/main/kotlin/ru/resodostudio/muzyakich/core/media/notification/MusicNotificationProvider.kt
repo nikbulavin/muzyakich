@@ -50,7 +50,7 @@ class MusicNotificationProvider @Inject constructor(
         val player = mediaSession.player
 
         val builder = NotificationCompat.Builder(context, MUSIC_NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_music_note)
+            .setSmallIcon(R.drawable.ic_muzyakich)
             .setStyle(MediaStyle(mediaSession))
             .setContentIntent(mediaSession.sessionActivity)
 
