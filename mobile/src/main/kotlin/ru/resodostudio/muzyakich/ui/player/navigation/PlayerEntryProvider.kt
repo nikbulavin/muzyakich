@@ -14,8 +14,7 @@ fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator) {
         metadata = BottomSheetSceneStrategy.bottomSheet(),
     ) {
         PlayerScreen(
-            onBackClick = navigator::goBack,
-            onSongLongClick = navigator::navigateToSong,
+            onSongMenuClick = navigator::navigateToSong,
         )
     }
 }

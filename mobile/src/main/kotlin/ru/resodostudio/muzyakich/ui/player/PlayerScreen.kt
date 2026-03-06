@@ -80,16 +80,14 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun PlayerScreen(
-    onBackClick: () -> Unit,
-    onSongLongClick: (String) -> Unit,
+    onSongMenuClick: (String) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
 
     PlayerScreen(
         playerUiState = playerUiState,
-        onBackClick = onBackClick,
-        onSongLongClick = onSongLongClick,
+        onSongMenuClick = onSongMenuClick,
         onSkipToSongClick = viewModel::skipToSong,
         onFavoriteChange = viewModel::setSongFavorite,
     )
@@ -99,16 +97,14 @@ fun PlayerScreen(
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
-    onBackClick: () -> Unit,
-    onSongLongClick: (String) -> Unit,
+    onSongMenuClick: (String) -> Unit,
     onSkipToSongClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     SharedTransitionLayout {
         var queueOpened by rememberSaveable { mutableStateOf(false) }
         when (playerUiState) {
-            PlayerUiState.Error -> onBackClick()
-            PlayerUiState.Loading -> Unit
+            PlayerUiState.Error, PlayerUiState.Loading -> Unit
             is PlayerUiState.Success -> {
                 val currentSong = playerUiState.currentSong
                 Column(
@@ -136,7 +132,7 @@ private fun PlayerScreen(
                                     animatedVisibilityScope = this,
                                     onQueueItemClick = onSkipToSongClick,
                                     onFavoriteChange = onFavoriteChange,
-                                    onSongLongClick = onSongLongClick,
+                                    onSongLongClick = onSongMenuClick,
                                     sharedTransitionScope = this@SharedTransitionLayout,
                                 )
                             } else {
@@ -144,7 +140,9 @@ private fun PlayerScreen(
                                     modifier = Modifier.requiredHeight(maxHeight / 2 + 80.dp),
                                 ) {
                                     Box(
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         SongArtwork(
@@ -208,7 +206,7 @@ private fun PlayerScreen(
                                                 ),
                                         )
                                         MoreIconButton(
-                                            onClick = { onSongLongClick(currentSong.mediaId) },
+                                            onClick = { onSongMenuClick(currentSong.mediaId) },
                                             modifier = Modifier
                                                 .sharedBounds(
                                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
