@@ -10,9 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
-import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.domain.GetArtistUseCase
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.Artist
@@ -25,7 +23,6 @@ class ArtistViewModel @AssistedInject constructor(
     @Assisted val artistId: Long,
     getArtistUseCase: GetArtistUseCase,
     private val musicServiceConnection: MusicServiceConnection,
-    private val songsRepository: SongsRepository,
 ) : ViewModel() {
 
     val artistUiState = combine(
@@ -49,12 +46,6 @@ class ArtistViewModel @AssistedInject constructor(
 
     fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
-    }
-
-    fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
-        viewModelScope.launch {
-            songsRepository.toggleFavorite(mediaId, isFavorite)
-        }
     }
 
     @AssistedFactory

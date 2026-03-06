@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
@@ -25,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel(assistedFactory = AlbumViewModel.Factory::class)
 class AlbumViewModel @AssistedInject constructor(
     @Assisted val albumId: Long,
-    private val songsRepository: SongsRepository,
+    songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
@@ -54,12 +53,6 @@ class AlbumViewModel @AssistedInject constructor(
 
     fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
-    }
-
-    fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
-        viewModelScope.launch {
-            songsRepository.toggleFavorite(mediaId, isFavorite)
-        }
     }
 
     @AssistedFactory

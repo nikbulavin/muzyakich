@@ -12,7 +12,7 @@ fun EntryProviderScope<NavKey>.artistEntry(navigator: Navigator) {
     entry<ArtistNavKey> { artistKey ->
         ArtistScreen(
             onBackClick = navigator::goBack,
-            onSongLongClick = navigator::navigateToSong,
+            onSongMenuClick = navigator::navigateToSong,
             viewModel = hiltViewModel<ArtistViewModel, ArtistViewModel.Factory> {
                 it.create(artistKey.artistId)
             },

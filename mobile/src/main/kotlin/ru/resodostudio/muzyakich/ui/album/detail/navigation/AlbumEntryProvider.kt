@@ -12,7 +12,7 @@ fun EntryProviderScope<NavKey>.albumEntry(navigator: Navigator) {
     entry<AlbumNavKey> { albumKey ->
         AlbumScreen(
             onBackClick = navigator::goBack,
-            onSongLongClick = navigator::navigateToSong,
+            onSongMenuClick = navigator::navigateToSong,
             viewModel = hiltViewModel<AlbumViewModel, AlbumViewModel.Factory> {
                 it.create(albumKey.albumId)
             },

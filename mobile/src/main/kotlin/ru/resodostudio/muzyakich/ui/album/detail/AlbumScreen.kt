@@ -35,7 +35,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun AlbumScreen(
     onBackClick: () -> Unit,
-    onSongLongClick: (String) -> Unit,
+    onSongMenuClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AlbumViewModel = hiltViewModel(),
 ) {
@@ -44,9 +44,8 @@ fun AlbumScreen(
     AlbumScreen(
         albumUiState = albumUiState,
         onBackClick = onBackClick,
-        onSongLongClick = onSongLongClick,
+        onSongMenuClick = onSongMenuClick,
         onPlaySongsClick = viewModel::playSongs,
-        onFavoriteChange = viewModel::setSongFavorite,
         modifier = modifier,
     )
 }
@@ -56,9 +55,8 @@ fun AlbumScreen(
 private fun AlbumScreen(
     albumUiState: AlbumUiState,
     onBackClick: () -> Unit,
-    onSongLongClick: (String) -> Unit,
+    onSongMenuClick: (String) -> Unit,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onFavoriteChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (albumUiState) {
@@ -139,8 +137,7 @@ private fun AlbumScreen(
                                     )
                                 },
                                 isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
-                                onFavoriteChange = onFavoriteChange,
-                                onSongLongClick = onSongLongClick,
+                                onSongMenuClick = onSongMenuClick,
                             )
                         }
                     } else {
@@ -149,8 +146,7 @@ private fun AlbumScreen(
                             currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
                             onPlaySongsClick = onPlaySongsClick,
                             isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
-                            onFavoriteChange = onFavoriteChange,
-                            onSongLongClick = onSongLongClick,
+                            onSongMenuClick = onSongMenuClick,
                         )
                     }
                     songsInfo(

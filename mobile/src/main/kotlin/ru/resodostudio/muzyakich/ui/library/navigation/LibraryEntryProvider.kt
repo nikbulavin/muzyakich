@@ -13,7 +13,7 @@ fun EntryProviderScope<NavKey>.libraryEntry(navigator: Navigator) {
         LibraryScreen(
             onAlbumClick = navigator::navigateToAlbum,
             onArtistClick = navigator::navigateToArtist,
-            onSongLongClick = navigator::navigateToSong,
+            onSongMenuClick = navigator::navigateToSong,
         )
     }
 }

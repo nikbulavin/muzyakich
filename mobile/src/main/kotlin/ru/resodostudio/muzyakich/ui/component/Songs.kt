@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
@@ -40,12 +41,11 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import ru.resodostudio.muzyakich.R
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconToggleButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -59,7 +59,6 @@ fun SongItem(
     isPlaying: Boolean = false,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
-    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     MuzSelectableListItem(
         shapes = shapes,
@@ -146,16 +145,11 @@ fun SongItem(
             }
         },
         trailingContent = {
-            val (icon, contentDescription) = if (song.isFavorite) {
-                MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
-            } else {
-                MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
-            }
-            MuzIconToggleButton(
-                checked = song.isFavorite,
-                onCheckedChange = { onFavoriteChange(song.mediaId, it) },
-                icon = icon,
-                contentDescription = contentDescription,
+            MuzIconButton(
+                onClick = onMenuClick,
+                icon = MuzIcons.Rounded.MoreVert,
+                contentDescription = stringResource(localesR.string.open_menu),
+                modifier = Modifier.size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
             )
         },
     )
@@ -166,9 +160,8 @@ fun LazyGridScope.songs(
     songs: List<Song>,
     currentMediaId: String?,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onSongLongClick: (String) -> Unit,
+    onSongMenuClick: (String) -> Unit,
     isPlaying: Boolean = false,
-    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     itemsIndexed(
         items = songs,
@@ -180,13 +173,12 @@ fun LazyGridScope.songs(
             isPlaying = currentMediaId == song.mediaId && isPlaying,
             modifier = Modifier.animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
-            onMenuClick = { onSongLongClick(song.mediaId) },
+            onMenuClick = { onSongMenuClick(song.mediaId) },
             shapes = if (songs.size == 1) {
                 ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
             } else {
                 ListItemDefaults.segmentedShapes(index, songs.size)
             },
-            onFavoriteChange = onFavoriteChange,
         )
     }
 }

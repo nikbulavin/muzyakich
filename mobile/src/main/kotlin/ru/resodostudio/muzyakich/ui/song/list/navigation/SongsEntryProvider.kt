@@ -4,10 +4,10 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudio.muzyakich.ui.song.list.SongsScreen
 
-fun EntryProviderScope<NavKey>.songsEntry(onSongLongClick: (String) -> Unit) {
+fun EntryProviderScope<NavKey>.songsEntry(onSongMenuClick: (String) -> Unit) {
     entry<SongsNavKey> {
         SongsScreen(
-            onSongLongClick = onSongLongClick,
+            onSongMenuClick = onSongMenuClick,
         )
     }
 }

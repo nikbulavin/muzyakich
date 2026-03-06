@@ -81,12 +81,6 @@ class SongsViewModel @Inject constructor(
             userDataRepository.setSortOrderPreference(sortOrder)
         }
     }
-
-    fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
-        viewModelScope.launch {
-            songsRepository.toggleFavorite(mediaId, isFavorite)
-        }
-    }
 }
 
 sealed interface SongsUiState {
