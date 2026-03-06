@@ -1,32 +1,17 @@
 package ru.resodostudio.muzyakich.ui.player.navigation
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MotionScheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.ui.NavDisplay
+import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.ui.player.PlayerScreen
 import ru.resodostudio.muzyakich.ui.song.detail.navigation.navigateToSong
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator, motionScheme: MotionScheme) {
+@OptIn(ExperimentalMaterial3Api::class)
+fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator) {
     entry<PlayerNavKey>(
-        metadata = NavDisplay.transitionSpec {
-            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { it } togetherWith
-                    fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { -it }
-        } + NavDisplay.popTransitionSpec {
-            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { -it } togetherWith
-                    fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { -it }
-        } + NavDisplay.predictivePopTransitionSpec {
-            fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { -it } togetherWith
-                    fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.defaultSpatialSpec()) { it }
-        },
+        metadata = BottomSheetSceneStrategy.bottomSheet(),
     ) {
         PlayerScreen(
             onBackClick = navigator::goBack,

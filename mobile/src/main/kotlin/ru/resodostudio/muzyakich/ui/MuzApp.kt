@@ -120,7 +120,7 @@ fun MuzApp(
                 PermissionStatus.Granted -> {
                     val entryProvider = entryProvider {
                         libraryEntry(navigator)
-                        playerEntry(navigator, motionScheme)
+                        playerEntry(navigator)
                         albumEntry(navigator)
                         artistEntry(navigator)
                         songEntry(navigator)

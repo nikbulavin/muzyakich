@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,10 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
@@ -38,27 +39,35 @@ fun QueuePanel(
     currentSong: Song,
     playingQueue: List<Song>,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     onQueueItemClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onSongLongClick: (String) -> Unit = {},
 ) {
-    Column(
-        modifier = modifier,
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp),
-            verticalAlignment = Alignment.CenterVertically,
+    with(sharedTransitionScope) {
+        Column(
+            modifier = modifier,
         ) {
-            with(LocalSharedTransitionScope.current) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 SongArtworkMini(
                     artworkUri = currentSong.artworkUri,
                     size = 64.dp,
-                    animatedVisibilityScope = animatedVisibilityScope,
+                    modifier = Modifier
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(currentSong.artworkUri.toString()),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                        )
+                        .clip(MaterialTheme.shapes.small),
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -110,31 +119,31 @@ fun QueuePanel(
                         ),
                 )
             }
-        }
-        Text(
-            text = stringResource(localesR.string.next_in_queue),
-            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        LazyColumn(
-            state = lazyListState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 14.dp,
-                end = 14.dp,
-                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+            Text(
+                text = stringResource(localesR.string.next_in_queue),
+                modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-        ) {
-            items(
-                items = playingQueue,
-                key = { it.uuid },
-            ) { song ->
-                QueueItem(
-                    song = song,
-                    modifier = Modifier.animateItem(),
-                    onClick = { onQueueItemClick(song.uuid) },
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 14.dp,
+                    end = 14.dp,
+                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
                 )
+            ) {
+                items(
+                    items = playingQueue,
+                    key = { it.uuid },
+                ) { song ->
+                    QueueItem(
+                        song = song,
+                        modifier = Modifier.animateItem(),
+                        onClick = { onQueueItemClick(song.uuid) },
+                    )
+                }
             }
         }
     }
