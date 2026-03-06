@@ -151,7 +151,7 @@ fun MuzApp(
             }
 
             AnimatedVisibility(
-                visible = appState.navigationState.currentKey !is PlayerNavKey && player?.currentMediaItem != null,
+                visible = PlayerNavKey !in appState.navigationState.backStack && player?.currentMediaItem != null,
                 enter = fadeIn(motionScheme.defaultEffectsSpec()) +
                         scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
                         slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
