@@ -27,5 +27,5 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
 }
 
 internal fun getCustomInstance() = userPreferences {
-    useDynamicColor = true
+    useDynamicColor = false
 }
