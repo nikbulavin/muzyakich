@@ -80,6 +80,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun PlayerScreen(
+    onDismiss: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
@@ -87,6 +88,7 @@ fun PlayerScreen(
 
     PlayerScreen(
         playerUiState = playerUiState,
+        onDismiss = onDismiss,
         onSongMenuClick = onSongMenuClick,
         onSkipToSongClick = viewModel::skipToSong,
         onFavoriteChange = viewModel::setSongFavorite,
@@ -97,6 +99,7 @@ fun PlayerScreen(
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
+    onDismiss: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     onSkipToSongClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
@@ -104,7 +107,8 @@ private fun PlayerScreen(
     SharedTransitionLayout {
         var queueOpened by rememberSaveable { mutableStateOf(false) }
         when (playerUiState) {
-            PlayerUiState.Error, PlayerUiState.Loading -> Unit
+            PlayerUiState.Error -> onDismiss()
+            PlayerUiState.Loading -> Unit
             is PlayerUiState.Success -> {
                 val currentSong = playerUiState.currentSong
                 Column(

@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.song.detail
 
+import android.app.Activity.RESULT_OK
 import android.os.Build
 import android.os.ext.SdkExtensions
 import android.provider.MediaStore
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -90,8 +92,7 @@ private fun SongBottomSheet(
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
 ) {
     when (songUiState) {
-        SongUiState.Error -> LoadingIndicator()
-        SongUiState.Loading -> LoadingIndicator()
+        SongUiState.Error, SongUiState.Loading -> LoadingIndicator(Modifier.fillMaxWidth())
         is SongUiState.Success -> {
             val song = songUiState.song
             Column(
@@ -163,6 +164,7 @@ private fun SongBottomSheet(
                         onDismiss()
                     },
                     onFavoriteChange = onFavoriteChange,
+                    onDismiss = onDismiss,
                 )
             }
         }
@@ -176,6 +178,7 @@ private fun ActionPanel(
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
+    onDismiss: () -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -184,7 +187,9 @@ private fun ActionPanel(
         val context = LocalContext.current
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartIntentSenderForResult(),
-        ) {}
+        ) { result ->
+            if (result.resultCode == RESULT_OK) onDismiss()
+        }
         MuzToggableListItem(
             checked = song.isFavorite,
             onCheckedChange = { checked -> onFavoriteChange(song.mediaId, checked) },
