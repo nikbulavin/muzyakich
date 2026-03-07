@@ -293,13 +293,18 @@ fun LibraryTopAppBar(
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {
+                val contentDescriptionRes = when (inAppUpdateState) {
+                    is AppUpdateResult.Available -> localesR.string.download_update
+                    is AppUpdateResult.InProgress -> localesR.string.downloading_update
+                    else -> localesR.string.install_update
+                }
                 val activity = LocalActivity.current
                 val scope = rememberCoroutineScope()
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
                         positioning = TooltipAnchorPosition.Left,
                     ),
-                    tooltip = { PlainTooltip { Text("Download update") } },
+                    tooltip = { PlainTooltip { Text(stringResource(contentDescriptionRes)) } },
                     state = rememberTooltipState(),
                 ) {
                     FilledTonalIconButton(
@@ -338,7 +343,7 @@ fun LibraryTopAppBar(
                                 } else {
                                     MuzIcons.Rounded.ApkInstall
                                 },
-                                contentDescription = "Download update",
+                                contentDescription = stringResource(contentDescriptionRes),
                             )
                         }
                     }

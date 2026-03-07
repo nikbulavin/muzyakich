@@ -12,11 +12,14 @@
     <string name="disable_repeat_mode">Disable repeat mode</string>
     <string name="disable_shuffle_mode">Disable shuffle mode</string>
     <string name="disc_number">Disc %1$d</string>
+    <string name="download_update">Download update</string>
+    <string name="downloading_update">Downloading update</string>
     <string name="enable_repeat_mode_all">Enable repeat mode for all songs</string>
     <string name="enable_repeat_mode_one">Enable single song repeat mode</string>
     <string name="enable_shuffle_mode">Enable shuffle mode</string>
     <string name="favorites">Favorites</string>
     <string name="filters">Filters</string>
+    <string name="install_update">Install update</string>
     <string name="high_quality">High quality</string>
     <string name="library_empty">You don\'t have any songs yet. Add your favorite music and enjoy listening!</string>
     <string name="more_options">More options</string>
