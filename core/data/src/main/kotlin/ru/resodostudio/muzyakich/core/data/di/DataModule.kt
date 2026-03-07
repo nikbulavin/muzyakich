@@ -8,18 +8,19 @@ import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.data.repository.impl.SongsRepositoryImpl
 import ru.resodostudio.muzyakich.core.data.repository.impl.UserDataRepositoryImpl
+import ru.resodostudio.muzyakich.core.data.repository.util.InAppUpdateManager
+import ru.resodostudio.muzyakich.core.data.repository.util.InAppUpdateManagerImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class DataModule {
+internal interface DataModule {
 
     @Binds
-    internal abstract fun bindsUserDataRepository(
-        impl: UserDataRepositoryImpl,
-    ): UserDataRepository
+    fun bindsUserDataRepository(impl: UserDataRepositoryImpl): UserDataRepository
 
     @Binds
-    internal abstract fun bindsSongsRepository(
-        impl: SongsRepositoryImpl,
-    ): SongsRepository
+    fun bindsSongsRepository(impl: SongsRepositoryImpl): SongsRepository
+
+    @Binds
+    fun bindsInAppUpdateManager(impl: InAppUpdateManagerImpl): InAppUpdateManager
 }

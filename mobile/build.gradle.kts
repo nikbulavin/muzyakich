@@ -77,6 +77,8 @@ dependencies {
     implementation(libs.haze)
     implementation(libs.haze.materials)
     implementation(libs.lottie.compose)
+    implementation(libs.play.app.update)
+    implementation(libs.play.app.update.ktx)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 
