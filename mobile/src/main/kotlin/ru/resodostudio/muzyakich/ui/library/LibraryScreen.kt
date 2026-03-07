@@ -274,7 +274,7 @@ fun LazyGridScope.actionButtons(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LibraryTopAppBar(
+private fun LibraryTopAppBar(
     @StringRes titleRes: Int,
     inAppUpdateState: AppUpdateResult,
     modifier: Modifier = Modifier,
@@ -353,7 +353,7 @@ fun LibraryTopAppBar(
     )
 }
 
-enum class LibraryTab(
+private enum class LibraryTab(
     @StringRes val titleRes: Int,
     val icon: ImageVector,
     val navKey: NavKey,
