@@ -30,9 +30,22 @@ internal val ShantellSansFontFamily = FontFamily(
         ),
     ),
 )
+@OptIn(ExperimentalTextApi::class)
 internal val NunitoFontFamily = FontFamily(
-    Font(resId = R.font.nunito_bold, weight = FontWeight.Bold),
-    Font(resId = R.font.nunito_extra_bold, weight = FontWeight.ExtraBold),
+    Font(
+        resId = R.font.nunito_variable,
+        weight = FontWeight.Bold,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.Bold.weight),
+        ),
+    ),
+    Font(
+        resId = R.font.nunito_variable,
+        weight = FontWeight.ExtraBold,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.ExtraBold.weight),
+        ),
+    ),
 )
 
 internal val MuzTypography = Typography(
