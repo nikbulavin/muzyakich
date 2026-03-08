@@ -8,8 +8,10 @@ import androidx.core.os.bundleOf
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.common.C.USAGE_MEDIA
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaConstants
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -17,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
 import javax.inject.Inject
+import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
@@ -30,6 +33,15 @@ class MusicService : MediaSessionService() {
 
     private var mediaSession: MediaSession? = null
 
+    private val playerListener = object : Player.Listener {
+
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            mediaSession?.let { session ->
+                updateMediaButtonPreferences(session, session.player)
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         initializePlayerAndSession()
@@ -40,6 +52,7 @@ class MusicService : MediaSessionService() {
 
     override fun onDestroy() {
         mediaSession?.run {
+            player.removeListener(playerListener)
             player.release()
             release()
             clearListener()
@@ -64,6 +77,8 @@ class MusicService : MediaSessionService() {
             .setHandleAudioBecomingNoisy(true)
             .build()
 
+        player.addListener(playerListener)
+
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
             addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
@@ -78,6 +93,22 @@ class MusicService : MediaSessionService() {
                     MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_PREV to true,
                     MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_NEXT to true,
                 )
+                updateMediaButtonPreferences(mediaSession, player)
             }
+    }
+
+    private fun updateMediaButtonPreferences(session: MediaSession, player: Player) {
+        val shuffleIcon = if (player.shuffleModeEnabled) {
+            CommandButton.ICON_SHUFFLE_ON
+        } else {
+            CommandButton.ICON_SHUFFLE_OFF
+        }
+
+        val shuffleButton = CommandButton.Builder(shuffleIcon)
+            .setDisplayName(getString(localesR.string.shuffle))
+            .setPlayerCommand(Player.COMMAND_SET_SHUFFLE_MODE)
+            .build()
+
+        session.setMediaButtonPreferences(listOf(shuffleButton))
     }
 }
