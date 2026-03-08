@@ -295,7 +295,7 @@ fun MoreIconButton(
         onClick = dropUnlessResumed { onClick() },
         containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
         icon = MuzIcons.Rounded.MoreVert,
-        contentDescription = stringResource(localesR.string.more_options),
+        contentDescription = stringResource(localesR.string.open_menu),
     )
 }
 
