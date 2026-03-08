@@ -2,6 +2,7 @@ package ru.resodostudio.muzyakich.core.media.notification
 
 import android.app.Notification
 import android.content.Context
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
@@ -28,14 +29,14 @@ class MusicNotificationProvider @Inject constructor(
     ): MediaNotification {
 
         val wrappedCallback = MediaNotification.Provider.Callback { notification ->
-            onNotificationChangedCallback.onNotificationChanged(replaceSmallIcon(notification))
+            onNotificationChangedCallback.onNotificationChanged(replaceIcons(notification))
         }
 
         val defaultNotification = defaultProvider.createNotification(
             mediaSession, customLayout, actionFactory, wrappedCallback
         )
 
-        return replaceSmallIcon(defaultNotification)
+        return replaceIcons(defaultNotification)
     }
 
     override fun handleCustomCommand(session: MediaSession, action: String, extras: Bundle): Boolean {
@@ -46,9 +47,16 @@ class MusicNotificationProvider @Inject constructor(
         return defaultProvider.notificationChannelInfo
     }
 
-    private fun replaceSmallIcon(mediaNotification: MediaNotification): MediaNotification {
+    private fun replaceIcons(mediaNotification: MediaNotification): MediaNotification {
         val builder = Notification.Builder.recoverBuilder(context, mediaNotification.notification)
+
         builder.setSmallIcon(R.drawable.ic_muzyakich)
+
+        if (mediaNotification.notification.getLargeIcon() == null) {
+            val fallbackIcon = Icon.createWithResource(context, R.drawable.ic_placeholder)
+            builder.setLargeIcon(fallbackIcon)
+        }
+
         return MediaNotification(mediaNotification.notificationId, builder.build())
     }
 }
