@@ -1,14 +1,14 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
@@ -30,14 +31,16 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 @Composable
 fun QueueItem(
     song: Song,
+    shapes: ListItemShapes,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
-    ListItem(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick),
-        headlineContent = {
+    MuzSelectableListItem(
+        shapes = shapes,
+        selected = false,
+        onClick = onClick,
+        modifier = modifier,
+        content = {
             Text(
                 text = song.title,
                 maxLines = 1,
@@ -88,5 +91,8 @@ fun QueueItem(
                 )
             }
         },
+        colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
     )
 }

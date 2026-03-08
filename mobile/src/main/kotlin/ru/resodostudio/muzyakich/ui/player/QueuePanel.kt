@@ -15,9 +15,10 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -132,16 +133,23 @@ fun QueuePanel(
                     start = 14.dp,
                     end = 14.dp,
                     bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
-                )
+                ),
+                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
             ) {
-                items(
+                itemsIndexed(
                     items = playingQueue,
-                    key = { it.uuid },
-                ) { song ->
+                    key = { _, song -> song.uuid },
+                    contentType = { _, _ -> "QueueSong" },
+                ) { index, song ->
                     QueueItem(
                         song = song,
                         modifier = Modifier.animateItem(),
                         onClick = { onQueueItemClick(song.uuid) },
+                        shapes = if (playingQueue.size == 1) {
+                            ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
+                        } else {
+                            ListItemDefaults.segmentedShapes(index, playingQueue.size)
+                        },
                     )
                 }
             }
