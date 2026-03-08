@@ -78,14 +78,14 @@ internal val MuzTypography = Typography(
         fontFamily = ShantellSansFontFamily,
     ),
     headlineMedium = TextStyle(
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
         fontFamily = ShantellSansFontFamily,
     ),
     headlineSmall = TextStyle(
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,

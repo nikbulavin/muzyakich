@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +42,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -56,6 +59,7 @@ import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.component.songsInfo
 import ru.resodostudio.muzyakich.core.locales.R as localesR
+import ru.resodostudio.muzyakich.core.model.data.Album as MuzAlbum
 
 @Composable
 fun AlbumScreen(
@@ -118,50 +122,8 @@ private fun AlbumScreen(
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
-                        val artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri
-                        SubcomposeAsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(artworkUri)
-                                .crossfade(true)
-                                .placeholderMemoryCacheKey(artworkUri.toString())
-                                .memoryCacheKey(artworkUri.toString())
-                                .build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .fillMaxWidth()
-                                .aspectRatio(1f)
-                                .drawWithCache {
-                                    val brush = Brush.verticalGradient(
-                                        colors = listOf(brushColor, Color.Transparent),
-                                        endY = 150.dp.toPx(),
-                                    )
-                                    onDrawWithContent {
-                                        drawContent()
-                                        drawRect(brush)
-                                    }
-                                }
-                                .clip(MaterialTheme.shapes.large),
-                            error = {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                                ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.Album,
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxSize(0.5f),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            },
-                        )
-                    }
+                    header(albumUiState.album)
+
                     val groupedSongs = albumUiState.album.songs.groupBy { it.trackNumber / 1000 }
                     val hasMultipleDiscs = albumUiState.album.songs.isNotEmpty() &&
                             albumUiState.album.songs.all { it.trackNumber >= 1000 } &&
@@ -216,6 +178,91 @@ private fun AlbumScreen(
     }
 }
 
+private fun LazyGridScope.header(album: MuzAlbum) {
+    item(span = { GridItemSpan(maxLineSpan) }) {
+        Column {
+            val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
+            val artworkUri = album.songs.firstOrNull()?.artworkUri
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(artworkUri)
+                    .crossfade(true)
+                    .placeholderMemoryCacheKey(artworkUri.toString())
+                    .memoryCacheKey(artworkUri.toString())
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .drawWithCache {
+                        val brush = Brush.verticalGradient(
+                            colors = listOf(brushColor, Color.Transparent),
+                            endY = 150.dp.toPx(),
+                        )
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(brush)
+                        }
+                    }
+                    .clip(MaterialTheme.shapes.large),
+                error = {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                    ) {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.Album,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(0.5f),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                },
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = album.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = album.artist,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                val year = album.songs.albumYear
+                if (year != null) {
+                    Text(
+                        text = year.toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 4.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AlbumTopAppBar(
@@ -243,8 +290,8 @@ private fun AlbumTopAppBar(
             }
         },
         subtitle = {
-            val firstYear = songs.firstOrNull()?.year ?: 0
-            if (firstYear != 0 && songs.all { it.year == firstYear }) {
+            val year = songs.albumYear
+            if (year != null) {
                 AnimatedVisibility(
                     visible = isScrolled,
                     enter = fadeIn(),
@@ -252,7 +299,7 @@ private fun AlbumTopAppBar(
                     modifier = Modifier.padding(start = 8.dp),
                 ) {
                     Text(
-                        text = firstYear.toString(),
+                        text = year.toString(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -276,3 +323,9 @@ private fun AlbumTopAppBar(
         modifier = modifier,
     )
 }
+
+private val List<Song>.albumYear: Int?
+    get() {
+        val firstYear = firstOrNull()?.year ?: 0
+        return if (firstYear != 0 && all { it.year == firstYear }) firstYear else null
+    }
