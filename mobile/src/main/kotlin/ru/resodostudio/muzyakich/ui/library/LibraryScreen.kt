@@ -10,17 +10,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,9 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -48,7 +40,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -64,18 +55,12 @@ import androidx.navigation3.ui.NavDisplay
 import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Download
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FilterList
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
-import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
@@ -199,74 +184,6 @@ private fun LibraryScreen(
                             fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
                             fadeOut(snap())
                 },
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun LazyGridScope.actionButtons(
-    songs: List<Song>,
-    onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onShuffleSongsClick: (List<Song>, Int) -> Unit,
-    onFilterClick: () -> Unit,
-) {
-    item(
-        span = { GridItemSpan(maxLineSpan) },
-        contentType = { "ActionButtons" },
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp - ListItemDefaults.SegmentedGap)
-                .animateItem(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Button(
-                shapes = ButtonDefaults.shapes(),
-                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX) },
-                modifier = Modifier.weight(1f),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.PlayArrow,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = stringResource(localesR.string.play_audio),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
-            OutlinedButton(
-                shapes = ButtonDefaults.shapes(),
-                onClick = { onShuffleSongsClick(songs, DEFAULT_INDEX) },
-                modifier = Modifier.weight(1f),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.Shuffle,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = stringResource(localesR.string.shuffle),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
-            MuzIconButton(
-                onClick = onFilterClick,
-                icon = MuzIcons.Rounded.FilterList,
-                contentDescription = stringResource(localesR.string.open_filter_menu),
             )
         }
     }
