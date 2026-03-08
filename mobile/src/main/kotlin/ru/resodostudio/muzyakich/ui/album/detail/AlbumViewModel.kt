@@ -47,10 +47,14 @@ class AlbumViewModel @AssistedInject constructor(
             year = year,
             songs = albumSongs.sortedBy { it.trackNumber },
         )
-        AlbumUiState.Success(
-            album = album,
-            nowPlayingState = nowPlaying,
-        )
+        if (albumSongs.isEmpty()) {
+            AlbumUiState.Error
+        } else {
+            AlbumUiState.Success(
+                album = album,
+                nowPlayingState = nowPlaying,
+            )
+        }
     }
         .catch { AlbumUiState.Error }
         .flowOn(defaultDispatcher)
