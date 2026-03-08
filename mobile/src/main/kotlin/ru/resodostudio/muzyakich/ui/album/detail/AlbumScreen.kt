@@ -119,6 +119,7 @@ private fun AlbumScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
+                        val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.65f)
                         val artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
@@ -135,10 +136,7 @@ private fun AlbumScreen(
                                 .aspectRatio(1f)
                                 .drawWithCache {
                                     val brush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color.Black.copy(alpha = 0.4f),
-                                            Color.Transparent,
-                                        ),
+                                        colors = listOf(brushColor, Color.Transparent),
                                         endY = 120.dp.toPx(),
                                     )
                                     onDrawWithContent {
