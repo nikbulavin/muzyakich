@@ -140,51 +140,13 @@ private fun AlbumScreen(
                         onPlaySongsClick = { onPlaySongsClick(albumUiState.album.songs, 0) },
                         onShuffleSongsClick = { onShuffleSongsClick(albumUiState.album.songs, 0) },
                     )
-
-                    val groupedSongs = albumUiState.album.songs.groupBy { it.trackNumber / 1000 }
-                    val hasMultipleDiscs = albumUiState.album.songs.isNotEmpty() &&
-                            albumUiState.album.songs.all { it.trackNumber >= 1000 } &&
-                            groupedSongs.size > 1
-
-                    if (hasMultipleDiscs) {
-                        groupedSongs.forEach { (discNumber, groupSongs) ->
-                            item(span = { GridItemSpan(maxLineSpan) }) {
-                                Text(
-                                    text = stringResource(localesR.string.disc_number, discNumber),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier = Modifier.padding(
-                                        start = 32.dp,
-                                        end = 16.dp,
-                                        top = 16.dp,
-                                        bottom = 8.dp,
-                                    ),
-                                )
-                            }
-                            songs(
-                                songs = groupSongs,
-                                currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
-                                onPlaySongsClick = { _, index ->
-                                    val songToPlay = groupSongs[index]
-                                    onPlaySongsClick(
-                                        albumUiState.album.songs,
-                                        albumUiState.album.songs.indexOf(songToPlay),
-                                    )
-                                },
-                                isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
-                                onSongMenuClick = onSongMenuClick,
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                            )
-                        }
-                    } else {
-                        songs(
-                            songs = albumUiState.album.songs,
-                            currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
-                            onPlaySongsClick = onPlaySongsClick,
-                            isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
-                            onSongMenuClick = onSongMenuClick,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
-                    }
+                    groupedSongs(
+                        songs = albumUiState.album.songs,
+                        currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
+                        isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
+                        onPlaySongsClick = onPlaySongsClick,
+                        onSongMenuClick = onSongMenuClick,
+                    )
                     songsInfo(
                         songs = albumUiState.album.songs,
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -192,6 +154,56 @@ private fun AlbumScreen(
                 }
             }
         }
+    }
+}
+
+private fun LazyGridScope.groupedSongs(
+    songs: List<Song>,
+    currentMediaId: String?,
+    isPlaying: Boolean,
+    onPlaySongsClick: (List<Song>, Int) -> Unit,
+    onSongMenuClick: (String) -> Unit,
+) {
+    val groupedSongs = songs.groupBy { it.trackNumber / 1000 }
+    val hasMultipleDiscs = songs.isNotEmpty() &&
+            songs.all { it.trackNumber >= 1000 } &&
+            groupedSongs.size > 1
+
+    if (hasMultipleDiscs) {
+        groupedSongs.forEach { (discNumber, groupSongs) ->
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(
+                    text = stringResource(localesR.string.disc_number, discNumber),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(
+                        start = 32.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 8.dp,
+                    ),
+                )
+            }
+            songs(
+                songs = groupSongs,
+                currentMediaId = currentMediaId,
+                onPlaySongsClick = { _, index ->
+                    val songToPlay = groupSongs[index]
+                    onPlaySongsClick(songs, songs.indexOf(songToPlay))
+                },
+                isPlaying = isPlaying,
+                onSongMenuClick = onSongMenuClick,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+    } else {
+        songs(
+            songs = songs,
+            currentMediaId = currentMediaId,
+            onPlaySongsClick = onPlaySongsClick,
+            isPlaying = isPlaying,
+            onSongMenuClick = onSongMenuClick,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
     }
 }
 
