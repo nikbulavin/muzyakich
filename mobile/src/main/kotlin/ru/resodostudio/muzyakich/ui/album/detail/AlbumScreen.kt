@@ -54,12 +54,12 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconB
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
+import ru.resodostudio.muzyakich.core.model.data.Album
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.component.songsInfo
 import ru.resodostudio.muzyakich.core.locales.R as localesR
-import ru.resodostudio.muzyakich.core.model.data.Album as MuzAlbum
 
 @Composable
 fun AlbumScreen(
@@ -104,7 +104,7 @@ private fun AlbumScreen(
                 topBar = {
                     AlbumTopAppBar(
                         title = albumUiState.album.title,
-                        songs = albumUiState.album.songs,
+                        year = albumUiState.album.year,
                         isScrolled = isScrolled,
                         onBackClick = onBackClick,
                         scrollBehavior = scrollBehavior,
@@ -178,7 +178,7 @@ private fun AlbumScreen(
     }
 }
 
-private fun LazyGridScope.header(album: MuzAlbum) {
+private fun LazyGridScope.header(album: Album) {
     item(span = { GridItemSpan(maxLineSpan) }) {
         Column {
             val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
@@ -246,7 +246,7 @@ private fun LazyGridScope.header(album: MuzAlbum) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                val year = album.songs.albumYear
+                val year = album.year
                 if (year != null) {
                     Text(
                         text = year.toString(),
@@ -267,7 +267,7 @@ private fun LazyGridScope.header(album: MuzAlbum) {
 @Composable
 private fun AlbumTopAppBar(
     title: String,
-    songs: List<Song>,
+    year: Int?,
     isScrolled: Boolean,
     onBackClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
@@ -290,7 +290,6 @@ private fun AlbumTopAppBar(
             }
         },
         subtitle = {
-            val year = songs.albumYear
             if (year != null) {
                 AnimatedVisibility(
                     visible = isScrolled,
@@ -323,9 +322,3 @@ private fun AlbumTopAppBar(
         modifier = modifier,
     )
 }
-
-private val List<Song>.albumYear: Int?
-    get() {
-        val firstYear = firstOrNull()?.year ?: 0
-        return if (firstYear != 0 && all { it.year == firstYear }) firstYear else null
-    }

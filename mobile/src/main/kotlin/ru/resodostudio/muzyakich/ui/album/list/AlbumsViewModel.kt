@@ -32,6 +32,7 @@ class AlbumsViewModel @Inject constructor(
                             title = songs.firstOrNull()?.album ?: "<unknown>",
                             artist = songs.firstOrNull()?.artist ?: "<unknown>",
                             songs = songs,
+                            year = null,
                         )
                     }
                 )

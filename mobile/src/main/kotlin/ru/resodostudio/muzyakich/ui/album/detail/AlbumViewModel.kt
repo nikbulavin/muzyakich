@@ -6,12 +6,16 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
+import ru.resodostudio.muzyakich.core.common.Dispatcher
+import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Default
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.data.Album
@@ -26,6 +30,7 @@ class AlbumViewModel @AssistedInject constructor(
     @Assisted val albumId: Long,
     songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
+    @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     val albumUiState = combine(
@@ -33,10 +38,13 @@ class AlbumViewModel @AssistedInject constructor(
         musicServiceConnection.nowPlayingState,
     ) { songs, nowPlaying ->
         val albumSongs = songs.filter { it.albumId == albumId }
+        val firstYear = albumSongs.firstOrNull()?.year ?: 0
+        val year = if (firstYear != 0 && albumSongs.all { it.year == firstYear }) firstYear else null
         val album = Album(
             id = albumId,
             title = albumSongs.firstOrNull()?.album ?: "<unknown>",
             artist = albumSongs.firstOrNull()?.artist ?: "<unknown>",
+            year = year,
             songs = albumSongs.sortedBy { it.trackNumber },
         )
         AlbumUiState.Success(
@@ -45,6 +53,7 @@ class AlbumViewModel @AssistedInject constructor(
         )
     }
         .catch { AlbumUiState.Error }
+        .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
