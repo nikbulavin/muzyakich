@@ -103,9 +103,14 @@ class MusicService : MediaSessionService() {
         } else {
             CommandButton.ICON_SHUFFLE_OFF
         }
+        val shuffleDisplayName = if (player.shuffleModeEnabled) {
+            getString(localesR.string.disable_shuffle_mode)
+        } else {
+            getString(localesR.string.enable_shuffle_mode)
+        }
 
         val shuffleButton = CommandButton.Builder(shuffleIcon)
-            .setDisplayName(getString(localesR.string.shuffle))
+            .setDisplayName(shuffleDisplayName)
             .setPlayerCommand(Player.COMMAND_SET_SHUFFLE_MODE)
             .build()
 
