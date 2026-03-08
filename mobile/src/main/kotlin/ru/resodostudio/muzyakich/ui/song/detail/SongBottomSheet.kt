@@ -76,6 +76,7 @@ fun SongBottomSheet(
     SongBottomSheet(
         songUiState = songUiState,
         onDismiss = onDismiss,
+        onSongRemove = viewModel::removeSong,
         modifier = modifier,
         onPlayNextClick = viewModel::playSongNext,
         onFavoriteChange = viewModel::setSongFavorite,
@@ -90,6 +91,7 @@ private fun SongBottomSheet(
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
+    onSongRemove: (String) -> Unit,
 ) {
     when (songUiState) {
         SongUiState.Error, SongUiState.Loading -> LoadingIndicator(Modifier.fillMaxWidth())
@@ -165,6 +167,7 @@ private fun SongBottomSheet(
                     },
                     onFavoriteChange = onFavoriteChange,
                     onDismiss = onDismiss,
+                    onSongRemove = onSongRemove,
                 )
             }
         }
@@ -178,7 +181,8 @@ private fun ActionPanel(
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
-    onDismiss: () -> Unit = {},
+    onDismiss: () -> Unit,
+    onSongRemove: (String) -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -188,7 +192,10 @@ private fun ActionPanel(
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartIntentSenderForResult(),
         ) { result ->
-            if (result.resultCode == RESULT_OK) onDismiss()
+            if (result.resultCode == RESULT_OK) {
+                onSongRemove(song.mediaId)
+                onDismiss()
+            }
         }
         MuzToggableListItem(
             checked = song.isFavorite,

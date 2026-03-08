@@ -92,16 +92,28 @@ class MusicServiceConnection @Inject constructor(
         songs: List<Song>,
         startIndex: Int = DEFAULT_INDEX,
         startPositionMs: Long = DEFAULT_POSITION_MS,
-    ) = playSongs(
-        songs = songs.shuffled(),
-        startIndex = startIndex,
-        startPositionMs = startPositionMs,
-    )
+    ) {
+        playSongs(
+            songs = songs.shuffled(),
+            startIndex = startIndex,
+            startPositionMs = startPositionMs,
+        )
+    }
 
     fun playSongNext(song: Song) {
         mediaController?.let { controller ->
             val mediaItem = song.asMediaItem()
             controller.addMediaItem(controller.currentMediaItemIndex + 1, mediaItem)
+        }
+    }
+
+    fun removeSong(mediaId: String) {
+        mediaController?.let { controller ->
+            for (i in controller.mediaItemCount - 1 downTo 0) {
+                if (controller.getMediaItemAt(i).mediaId == mediaId) {
+                    controller.removeMediaItem(i)
+                }
+            }
         }
     }
 
