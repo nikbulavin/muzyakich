@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -84,7 +85,7 @@ private fun AlbumScreen(
     modifier: Modifier = Modifier,
 ) {
     when (albumUiState) {
-        AlbumUiState.Error -> LoadingState(modifier.fillMaxSize())
+        AlbumUiState.Error -> onBackClick()
         AlbumUiState.Loading -> LoadingState(modifier.fillMaxSize())
         is AlbumUiState.Success -> {
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -97,51 +98,11 @@ private fun AlbumScreen(
 
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        title = {
-                            AnimatedVisibility(
-                                visible = isScrolled,
-                                enter = fadeIn(),
-                                exit = fadeOut(),
-                                modifier = Modifier.padding(start = 8.dp),
-                            ) {
-                                Text(
-                                    text = albumUiState.album.title,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        },
-                        subtitle = {
-                            val firstYear = albumUiState.album.songs.firstOrNull()?.year ?: 0
-                            if (firstYear != 0 && albumUiState.album.songs.all { it.year == firstYear }) {
-                                AnimatedVisibility(
-                                    visible = isScrolled,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    modifier = Modifier.padding(start = 8.dp),
-                                ) {
-                                    Text(
-                                        text = firstYear.toString(),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
-                            }
-                        },
-                        navigationIcon = {
-                            MuzFilledTonalIconButton(
-                                icon = MuzIcons.Rounded.ArrowBack,
-                                onClick = onBackClick,
-                                contentDescription = stringResource(localesR.string.back),
-                                modifier = Modifier.padding(start = 8.dp),
-                                tooltipPosition = TooltipAnchorPosition.Right,
-                            )
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.Transparent,
-                            scrolledContainerColor = MaterialTheme.colorScheme.surface,
-                        ),
+                    AlbumTopAppBar(
+                        title = albumUiState.album.title,
+                        songs = albumUiState.album.songs,
+                        isScrolled = isScrolled,
+                        onBackClick = onBackClick,
                         scrollBehavior = scrollBehavior,
                     )
                 },
@@ -178,7 +139,7 @@ private fun AlbumScreen(
                                             Color.Black.copy(alpha = 0.4f),
                                             Color.Transparent,
                                         ),
-                                        endY = 120.dp.toPx()
+                                        endY = 120.dp.toPx(),
                                     )
                                     onDrawWithContent {
                                         drawContent()
@@ -255,4 +216,64 @@ private fun AlbumScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun AlbumTopAppBar(
+    title: String,
+    songs: List<Song>,
+    isScrolled: Boolean,
+    onBackClick: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        title = {
+            AnimatedVisibility(
+                visible = isScrolled,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.padding(start = 8.dp),
+            ) {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        },
+        subtitle = {
+            val firstYear = songs.firstOrNull()?.year ?: 0
+            if (firstYear != 0 && songs.all { it.year == firstYear }) {
+                AnimatedVisibility(
+                    visible = isScrolled,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier.padding(start = 8.dp),
+                ) {
+                    Text(
+                        text = firstYear.toString(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            MuzFilledTonalIconButton(
+                icon = MuzIcons.Rounded.ArrowBack,
+                onClick = onBackClick,
+                contentDescription = stringResource(localesR.string.back),
+                modifier = Modifier.padding(start = 8.dp),
+                tooltipPosition = TooltipAnchorPosition.Right,
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent,
+            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+        ),
+        scrollBehavior = scrollBehavior,
+        modifier = modifier,
+    )
 }
