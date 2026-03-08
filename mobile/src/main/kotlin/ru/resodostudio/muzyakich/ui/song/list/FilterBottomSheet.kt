@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -124,15 +125,19 @@ fun FilterBottomSheet(
                         modifier = Modifier
                             .semantics { role = Role.RadioButton }
                             .weight(1f),
-                        shapes =
-                            when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                sortByOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
+                        shapes = when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            sortByOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                        contentPadding = ButtonDefaults.contentPaddingFor(
+                            buttonHeight = ToggleButtonDefaults.MinHeight,
+                            hasStartIcon = true,
+                        ),
                     ) {
                         AnimatedIcon(
                             icon = if (checked) MuzIcons.Rounded.Check else sortByIcons[index],
+                            iconSize = ToggleButtonDefaults.IconSize,
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
                         Text(
@@ -172,15 +177,19 @@ fun FilterBottomSheet(
                         modifier = Modifier
                             .semantics { role = Role.RadioButton }
                             .weight(1f),
-                        shapes =
-                            when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                sortByOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
+                        shapes = when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            sortByOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                        contentPadding = ButtonDefaults.contentPaddingFor(
+                            buttonHeight = ToggleButtonDefaults.MinHeight,
+                            hasStartIcon = true,
+                        ),
                     ) {
                         AnimatedIcon(
                             icon = if (checked) MuzIcons.Rounded.Check else sortOrderIcons[index],
+                            iconSize = ToggleButtonDefaults.IconSize,
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
                         Text(
