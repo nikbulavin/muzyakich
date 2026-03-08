@@ -40,6 +40,12 @@ class MusicService : MediaSessionService() {
                 updateMediaButtonPreferences(session, session.player)
             }
         }
+
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            mediaSession?.let { session ->
+                updateMediaButtonPreferences(session, session.player)
+            }
+        }
     }
 
     override fun onCreate() {
@@ -114,6 +120,27 @@ class MusicService : MediaSessionService() {
             .setPlayerCommand(Player.COMMAND_SET_SHUFFLE_MODE)
             .build()
 
-        session.setMediaButtonPreferences(listOf(shuffleButton))
+        val repeatIcon = when (player.repeatMode) {
+            Player.REPEAT_MODE_ALL -> CommandButton.ICON_REPEAT_ALL
+            Player.REPEAT_MODE_ONE -> CommandButton.ICON_REPEAT_ONE
+            else -> CommandButton.ICON_REPEAT_OFF
+        }
+        val repeatDisplayName = when (player.repeatMode) {
+            Player.REPEAT_MODE_ALL -> getString(localesR.string.enable_repeat_mode_one)
+            Player.REPEAT_MODE_ONE -> getString(localesR.string.disable_repeat_mode)
+            else -> getString(localesR.string.enable_repeat_mode_all)
+        }
+        val nextRepeatMode = when (player.repeatMode) {
+            Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
+            Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_OFF
+            else -> Player.REPEAT_MODE_ALL
+        }
+
+        val repeatButton = CommandButton.Builder(repeatIcon)
+            .setDisplayName(repeatDisplayName)
+            .setPlayerCommand(Player.COMMAND_SET_REPEAT_MODE, nextRepeatMode)
+            .build()
+
+        session.setMediaButtonPreferences(listOf(shuffleButton, repeatButton))
     }
 }
