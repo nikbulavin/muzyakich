@@ -3,7 +3,9 @@ package ru.resodostudio.muzyakich.ui.album.detail
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,8 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -37,11 +43,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
@@ -133,6 +140,7 @@ private fun AlbumScreen(
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surface,
                         ),
                         scrollBehavior = scrollBehavior,
                     )
@@ -151,10 +159,12 @@ private fun AlbumScreen(
                 ) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         val artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri
-                        AsyncImage(
+                        SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(artworkUri)
                                 .crossfade(true)
+                                .placeholderMemoryCacheKey(artworkUri.toString())
+                                .memoryCacheKey(artworkUri.toString())
                                 .build(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
@@ -162,7 +172,35 @@ private fun AlbumScreen(
                                 .padding(bottom = 16.dp)
                                 .fillMaxWidth()
                                 .aspectRatio(1f)
+                                .drawWithCache {
+                                    val brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Black.copy(alpha = 0.4f),
+                                            Color.Transparent,
+                                        ),
+                                        endY = 120.dp.toPx()
+                                    )
+                                    onDrawWithContent {
+                                        drawContent()
+                                        drawRect(brush)
+                                    }
+                                }
                                 .clip(MaterialTheme.shapes.large),
+                            error = {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.Album,
+                                        contentDescription = null,
+                                        modifier = Modifier.fillMaxSize(0.5f),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            },
                         )
                     }
                     val groupedSongs = albumUiState.album.songs.groupBy { it.trackNumber / 1000 }
