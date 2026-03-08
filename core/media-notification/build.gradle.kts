@@ -8,10 +8,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.locales)
-
     implementation(libs.androidx.media3.session)
-    implementation(platform(libs.coil.bom))
-    implementation(libs.coil)
 }

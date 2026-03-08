@@ -1,43 +1,24 @@
 package ru.resodostudio.muzyakich.core.media.notification
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.Notification
 import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.OptIn
-import androidx.core.app.NotificationCompat
-import androidx.core.content.getSystemService
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.CommandButton
+import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaStyleNotificationHelper.MediaStyle
 import com.google.common.collect.ImmutableList
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import ru.resodostudio.muzyakich.core.common.Dispatcher
-import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
-import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.media.notification.util.asArtworkBitmap
 import javax.inject.Inject
-import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(UnstableApi::class)
 class MusicNotificationProvider @Inject constructor(
-    @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
     @ApplicationContext private val context: Context,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : MediaNotification.Provider {
 
-    private val notificationManager = checkNotNull(context.getSystemService<NotificationManager>())
-    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
+    private val defaultProvider = DefaultMediaNotificationProvider.Builder(context).build()
 
     override fun createNotification(
         mediaSession: MediaSession,
@@ -45,60 +26,29 @@ class MusicNotificationProvider @Inject constructor(
         actionFactory: MediaNotification.ActionFactory,
         onNotificationChangedCallback: MediaNotification.Provider.Callback,
     ): MediaNotification {
-        ensureNotificationChannelExists()
 
-        val player = mediaSession.player
+        val wrappedCallback = MediaNotification.Provider.Callback { notification ->
+            onNotificationChangedCallback.onNotificationChanged(replaceSmallIcon(notification))
+        }
 
-        val builder = NotificationCompat.Builder(context, MUSIC_NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_muzyakich)
-            .setStyle(MediaStyle(mediaSession))
-            .setContentIntent(mediaSession.sessionActivity)
-
-        setupArtwork(
-            uri = player.mediaMetadata.artworkUri,
-            setLargeIcon = builder::setLargeIcon,
-            updateNotification = {
-                val notification = MediaNotification(MUSIC_NOTIFICATION_ID, builder.build())
-                onNotificationChangedCallback.onNotificationChanged(notification)
-            }
+        val defaultNotification = defaultProvider.createNotification(
+            mediaSession, customLayout, actionFactory, wrappedCallback
         )
 
-        return MediaNotification(MUSIC_NOTIFICATION_ID, builder.build())
+        return replaceSmallIcon(defaultNotification)
     }
 
-    override fun handleCustomCommand(session: MediaSession, action: String, extras: Bundle) = false
+    override fun handleCustomCommand(session: MediaSession, action: String, extras: Bundle): Boolean {
+        return defaultProvider.handleCustomCommand(session, action, extras)
+    }
+
     override fun getNotificationChannelInfo(): MediaNotification.Provider.NotificationChannelInfo {
-        TODO("Not yet implemented")
+        return defaultProvider.notificationChannelInfo
     }
 
-    fun cancelCoroutineScope() = coroutineScope.cancel()
-
-    private fun ensureNotificationChannelExists() {
-
-        if (notificationManager.getNotificationChannel(MUSIC_NOTIFICATION_CHANNEL_ID) != null) return
-
-        val notificationChannel = NotificationChannel(
-            MUSIC_NOTIFICATION_CHANNEL_ID,
-            context.getString(localesR.string.music_notification_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT,
-        )
-        notificationManager.createNotificationChannel(notificationChannel)
-    }
-
-    private fun setupArtwork(
-        uri: Uri?,
-        setLargeIcon: (Bitmap?) -> Unit,
-        updateNotification: () -> Unit,
-    ) = coroutineScope.launch {
-        val bitmap = loadArtworkBitmap(uri)
-        setLargeIcon(bitmap)
-        updateNotification()
-    }
-
-    private suspend fun loadArtworkBitmap(uri: Uri?): Bitmap? {
-        return withContext(ioDispatcher) { uri?.asArtworkBitmap(context) }
+    private fun replaceSmallIcon(mediaNotification: MediaNotification): MediaNotification {
+        val builder = Notification.Builder.recoverBuilder(context, mediaNotification.notification)
+        builder.setSmallIcon(R.drawable.ic_muzyakich)
+        return MediaNotification(mediaNotification.notificationId, builder.build())
     }
 }
-
-private const val MUSIC_NOTIFICATION_ID = 1
-private const val MUSIC_NOTIFICATION_CHANNEL_ID = ""
