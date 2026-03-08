@@ -8,20 +8,27 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -54,6 +61,8 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconB
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.model.data.Album
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
@@ -75,6 +84,7 @@ fun AlbumScreen(
         onBackClick = onBackClick,
         onSongMenuClick = onSongMenuClick,
         onPlaySongsClick = viewModel::playSongs,
+        onShuffleSongsClick = viewModel::shuffleSongs,
         modifier = modifier,
     )
 }
@@ -86,6 +96,7 @@ private fun AlbumScreen(
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
+    onShuffleSongsClick: (List<Song>, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (albumUiState) {
@@ -122,7 +133,13 @@ private fun AlbumScreen(
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    header(albumUiState.album)
+                    header(
+                        album = albumUiState.album,
+                    )
+                    actionButtons(
+                        onPlaySongsClick = { onPlaySongsClick(albumUiState.album.songs, 0) },
+                        onShuffleSongsClick = { onShuffleSongsClick(albumUiState.album.songs, 0) },
+                    )
 
                     val groupedSongs = albumUiState.album.songs.groupBy { it.trackNumber / 1000 }
                     val hasMultipleDiscs = albumUiState.album.songs.isNotEmpty() &&
@@ -241,7 +258,7 @@ private fun LazyGridScope.header(album: Album) {
                 Text(
                     text = album.artist,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -258,6 +275,73 @@ private fun LazyGridScope.header(album: Album) {
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun LazyGridScope.actionButtons(
+    onPlaySongsClick: () -> Unit,
+    onShuffleSongsClick: () -> Unit,
+) {
+    item(
+        span = { GridItemSpan(maxLineSpan) },
+        contentType = { "ActionButtons" },
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            val buttonSize = ButtonDefaults.MediumContainerHeight
+            val buttonContentPadding = ButtonDefaults.contentPaddingFor(
+                buttonHeight = buttonSize,
+                hasStartIcon = true,
+            )
+            Button(
+                shapes = ButtonDefaults.shapes(),
+                onClick = onPlaySongsClick,
+                modifier = Modifier
+                    .heightIn(buttonSize)
+                    .weight(1f),
+                contentPadding = buttonContentPadding,
+            ) {
+                Icon(
+                    imageVector = MuzIcons.Rounded.PlayArrow,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
+                )
+                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
+                Text(
+                    text = stringResource(localesR.string.play_audio),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = ButtonDefaults.textStyleFor(buttonSize),
+                )
+            }
+            OutlinedButton(
+                shapes = ButtonDefaults.shapes(),
+                onClick = onShuffleSongsClick,
+                modifier = Modifier
+                    .heightIn(buttonSize)
+                    .weight(1f),
+                contentPadding = buttonContentPadding,
+            ) {
+                Icon(
+                    imageVector = MuzIcons.Rounded.Shuffle,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
+                )
+                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
+                Text(
+                    text = stringResource(localesR.string.shuffle),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = ButtonDefaults.textStyleFor(buttonSize),
+                )
             }
         }
     }

@@ -64,6 +64,10 @@ class AlbumViewModel @AssistedInject constructor(
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
     }
 
+    fun shuffleSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
+        musicServiceConnection.shuffleSongs(songs = songs, startIndex = startIndex)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
