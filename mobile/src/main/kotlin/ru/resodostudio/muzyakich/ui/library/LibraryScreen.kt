@@ -55,7 +55,9 @@ import androidx.navigation3.ui.NavDisplay
 import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
@@ -203,10 +205,18 @@ private fun LibraryTopAppBar(
         modifier = modifier.testTag("libraryTopAppBar"),
         scrollBehavior = scrollBehavior,
         colors = colors,
+        navigationIcon = {
+            MuzIconButton(
+                onClick = {},
+                icon = MuzIcons.Filled.Settings,
+                contentDescription = stringResource(localesR.string.settings),
+                tooltipPosition = TooltipAnchorPosition.Right,
+            )
+        },
         actions = {
             AnimatedVisibility(
                 visible = inAppUpdateState !is AppUpdateResult.NotAvailable,
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end = 8.dp),
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {
@@ -238,6 +248,11 @@ private fun LibraryTopAppBar(
                         shapes = IconButtonDefaults.shapes(),
                         colors = IconButtonDefaults.filledTonalIconButtonColors(),
                         enabled = inAppUpdateState !is AppUpdateResult.InProgress,
+                        modifier = Modifier.size(
+                            IconButtonDefaults.smallContainerSize(
+                                IconButtonDefaults.IconButtonWidthOption.Wide
+                            )
+                        ),
                     ) {
                         if (inAppUpdateState is AppUpdateResult.InProgress) {
                             val downloaded = inAppUpdateState.installState.bytesDownloaded().toFloat()

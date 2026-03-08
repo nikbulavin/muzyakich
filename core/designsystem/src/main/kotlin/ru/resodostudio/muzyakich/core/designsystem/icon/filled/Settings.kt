@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.core.designsystem.icon.rounded
+package ru.resodostudio.muzyakich.core.designsystem.icon.filled
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -7,19 +7,19 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 
-val MuzIcons.Rounded.Settings: ImageVector
+val MuzIcons.Filled.Settings: ImageVector
     get() {
         if (_Settings != null) {
             return _Settings!!
         }
         _Settings = ImageVector.Builder(
-            name = "Rounded.Settings",
+            name = "Filled.Settings",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
             viewportHeight = 960f,
         ).apply {
-            path(fill = SolidColor(Color(0xFF000000))) {
+            path(fill = SolidColor(Color.White)) {
                 moveTo(433f, 880f)
                 quadTo(406f, 880f, 386.5f, 862f)
                 quadTo(367f, 844f, 363f, 818f)
@@ -80,42 +80,6 @@ val MuzIcons.Rounded.Settings: ImageVector
                 quadTo(554f, 880f, 527f, 880f)
                 lineTo(433f, 880f)
                 close()
-                moveTo(440f, 800f)
-                lineTo(519f, 800f)
-                lineTo(533f, 694f)
-                quadTo(564f, 686f, 590.5f, 670.5f)
-                quadTo(617f, 655f, 639f, 633f)
-                lineTo(738f, 674f)
-                lineTo(777f, 606f)
-                lineTo(691f, 541f)
-                quadTo(696f, 527f, 698f, 511.5f)
-                quadTo(700f, 496f, 700f, 480f)
-                quadTo(700f, 464f, 698f, 448.5f)
-                quadTo(696f, 433f, 691f, 419f)
-                lineTo(777f, 354f)
-                lineTo(738f, 286f)
-                lineTo(639f, 328f)
-                quadTo(617f, 305f, 590.5f, 289.5f)
-                quadTo(564f, 274f, 533f, 266f)
-                lineTo(520f, 160f)
-                lineTo(441f, 160f)
-                lineTo(427f, 266f)
-                quadTo(396f, 274f, 369.5f, 289.5f)
-                quadTo(343f, 305f, 321f, 327f)
-                lineTo(222f, 286f)
-                lineTo(183f, 354f)
-                lineTo(269f, 418f)
-                quadTo(264f, 433f, 262f, 448f)
-                quadTo(260f, 463f, 260f, 480f)
-                quadTo(260f, 496f, 262f, 511f)
-                quadTo(264f, 526f, 269f, 541f)
-                lineTo(183f, 606f)
-                lineTo(222f, 674f)
-                lineTo(321f, 632f)
-                quadTo(343f, 655f, 369.5f, 670.5f)
-                quadTo(396f, 686f, 427f, 694f)
-                lineTo(440f, 800f)
-                close()
                 moveTo(482f, 620f)
                 quadTo(540f, 620f, 581f, 579f)
                 quadTo(622f, 538f, 622f, 480f)
@@ -125,41 +89,6 @@ val MuzIcons.Rounded.Settings: ImageVector
                 quadTo(342f, 422f, 342f, 480f)
                 quadTo(342f, 538f, 382.5f, 579f)
                 quadTo(423f, 620f, 482f, 620f)
-                close()
-                moveTo(480f, 480f)
-                lineTo(480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                lineTo(480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                quadTo(480f, 480f, 480f, 480f)
-                lineTo(480f, 480f)
                 close()
             }
         }.build()
