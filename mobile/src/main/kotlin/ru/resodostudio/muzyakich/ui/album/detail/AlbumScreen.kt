@@ -92,7 +92,7 @@ private fun AlbumScreen(
             val listState = rememberLazyGridState()
             val isScrolled by remember {
                 derivedStateOf {
-                    listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+                    listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 250
                 }
             }
 
@@ -119,7 +119,7 @@ private fun AlbumScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.65f)
+                        val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
                         val artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
@@ -137,7 +137,7 @@ private fun AlbumScreen(
                                 .drawWithCache {
                                     val brush = Brush.verticalGradient(
                                         colors = listOf(brushColor, Color.Transparent),
-                                        endY = 120.dp.toPx(),
+                                        endY = 150.dp.toPx(),
                                     )
                                     onDrawWithContent {
                                         drawContent()
@@ -226,6 +226,7 @@ private fun AlbumTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 ) {
+    val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
     TopAppBar(
         title = {
             AnimatedVisibility(
@@ -268,8 +269,8 @@ private fun AlbumTopAppBar(
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+            containerColor = containerColor,
+            scrolledContainerColor = containerColor,
         ),
         scrollBehavior = scrollBehavior,
         modifier = modifier,
