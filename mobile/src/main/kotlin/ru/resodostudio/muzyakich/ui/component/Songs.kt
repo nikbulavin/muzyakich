@@ -162,6 +162,7 @@ fun LazyGridScope.songs(
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onSongMenuClick: (String) -> Unit,
     isPlaying: Boolean = false,
+    modifier: Modifier = Modifier,
 ) {
     itemsIndexed(
         items = songs,
@@ -171,7 +172,7 @@ fun LazyGridScope.songs(
         SongItem(
             song = song,
             isPlaying = currentMediaId == song.mediaId && isPlaying,
-            modifier = Modifier.animateItem(),
+            modifier = modifier.animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
             onMenuClick = { onSongMenuClick(song.mediaId) },
             shapes = if (songs.size == 1) {
@@ -185,6 +186,7 @@ fun LazyGridScope.songs(
 
 fun LazyGridScope.songsInfo(
     songs: List<Song>,
+    modifier: Modifier = Modifier,
 ) {
     item(
         span = { GridItemSpan(maxLineSpan) },
@@ -200,7 +202,7 @@ fun LazyGridScope.songsInfo(
         val songsInfo = listOf(count, overallDuration, sizeOnDisk)
         Text(
             text = songsInfo.joinToString(),
-            modifier = Modifier
+            modifier = modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .animateItem(),
             maxLines = 1,
