@@ -155,7 +155,7 @@ private fun PlayerScreen(
                                             sharedTransitionScope = this@SharedTransitionLayout,
                                         )
                                     }
-
+                                    Spacer(Modifier.height(16.dp))
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                                         modifier = Modifier
