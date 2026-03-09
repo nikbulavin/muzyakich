@@ -48,6 +48,10 @@
     <string name="sort_order_ascending">Ascending</string>
     <string name="sort_order_descending">Descending</string>
     <string name="title">Title</string>
+    <string name="theme">Theme</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system_default">System default</string>
 
     <plurals name="number_of_songs">
         <item quantity="one">%d song</item>

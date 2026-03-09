@@ -48,6 +48,10 @@
     <string name="sort_order_ascending">По возрастанию</string>
     <string name="sort_order_descending">По убыванию</string>
     <string name="title">Название</string>
+    <string name="theme">Тема</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_system_default">Как в системе</string>
 
     <plurals name="number_of_songs">
         <item quantity="one">%d трек</item>

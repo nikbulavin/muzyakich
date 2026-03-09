@@ -48,6 +48,10 @@
     <string name="sort_order_ascending">오름차순</string>
     <string name="sort_order_descending">내림차순</string>
     <string name="title">제목</string>
+    <string name="theme">테마</string>
+    <string name="theme_dark">어두운 테마</string>
+    <string name="theme_light">밝은 테마</string>
+    <string name="theme_system_default">시스템 기본값</string>
 
     <plurals name="number_of_songs">
         <item quantity="other">%d곡</item>
