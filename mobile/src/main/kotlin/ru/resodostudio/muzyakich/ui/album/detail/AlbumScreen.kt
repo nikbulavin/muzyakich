@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -33,7 +34,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -116,7 +116,6 @@ private fun AlbumScreen(
                 topBar = {
                     AlbumTopAppBar(
                         title = albumUiState.album.title,
-                        year = albumUiState.album.year,
                         isScrolled = isScrolled,
                         onBackClick = onBackClick,
                         scrollBehavior = scrollBehavior,
@@ -364,42 +363,24 @@ private fun LazyGridScope.actionButtons(
 @Composable
 private fun AlbumTopAppBar(
     title: String,
-    year: Int?,
     isScrolled: Boolean,
     onBackClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 ) {
     val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
             AnimatedVisibility(
                 visible = isScrolled,
                 enter = fadeIn(),
                 exit = fadeOut(),
-                modifier = Modifier.padding(start = 8.dp),
             ) {
                 Text(
                     text = title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-            }
-        },
-        subtitle = {
-            if (year != null) {
-                AnimatedVisibility(
-                    visible = isScrolled,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    modifier = Modifier.padding(start = 8.dp),
-                ) {
-                    Text(
-                        text = year.toString(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
             }
         },
         navigationIcon = {
