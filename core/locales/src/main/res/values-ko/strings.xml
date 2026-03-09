@@ -4,6 +4,7 @@
 
     <string name="add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="albums">앨범</string>
+    <string name="appearance">외관</string>
     <string name="artist">아티스트</string>
     <string name="artists">아티스트들</string>
     <string name="back">뒤로</string>
@@ -14,6 +15,7 @@
     <string name="disc_number">디스크 %1$d</string>
     <string name="download_update">업데이트 다운로드</string>
     <string name="downloading_update">업데이트 다운로드 중</string>
+    <string name="dynamic_color">다이내믹 색상</string>
     <string name="enable_repeat_mode_all">전체 반복</string>
     <string name="enable_repeat_mode_one">한 곡 반복</string>
     <string name="enable_shuffle_mode">셔플 모드 활성화</string>

@@ -4,6 +4,7 @@
 
     <string name="add_to_favorites">Добавить в избранное</string>
     <string name="albums">Альбомы</string>
+    <string name="appearance">Оформление</string>
     <string name="artist">Исполнитель</string>
     <string name="artists">Исполнители</string>
     <string name="back">Назад</string>
@@ -14,6 +15,7 @@
     <string name="disc_number">Диск %1$d</string>
     <string name="download_update">Скачать обновление</string>
     <string name="downloading_update">Загрузка обновления</string>
+    <string name="dynamic_color">Динамический цвет</string>
     <string name="enable_repeat_mode_all">Включить режим повтора для всех треков</string>
     <string name="enable_repeat_mode_one">Включить одиночный режим повтора</string>
     <string name="enable_shuffle_mode">Включить режим перетасовки</string>

@@ -51,7 +51,9 @@ fun MuzToggableListItem(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    colors: ListItemColors = ListItemDefaults.segmentedColors(),
+    colors: ListItemColors = ListItemDefaults.segmentedColors(
+        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+    ),
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     SegmentedListItem(
