@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -408,6 +409,11 @@ private fun AlbumTopAppBar(
                 contentDescription = stringResource(localesR.string.back),
                 modifier = Modifier.padding(start = 8.dp),
                 tooltipPosition = TooltipAnchorPosition.Right,
+                colors = if (isScrolled) {
+                    IconButtonDefaults.iconButtonVibrantColors()
+                } else {
+                    IconButtonDefaults.filledTonalIconButtonColors()
+                },
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(

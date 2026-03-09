@@ -43,7 +43,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -202,7 +201,7 @@ private fun LibraryTopAppBar(
 ) {
     CenterAlignedTopAppBar(
         title = { Text(stringResource(titleRes)) },
-        modifier = modifier.testTag("libraryTopAppBar"),
+        modifier = modifier,
         scrollBehavior = scrollBehavior,
         colors = colors,
         navigationIcon = {
