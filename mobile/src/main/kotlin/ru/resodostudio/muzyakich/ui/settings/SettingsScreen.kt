@@ -105,6 +105,7 @@ private fun SettingsScreen(
             modifier = modifier
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             when (settingsUiState) {
                 SettingsUiState.Loading -> LoadingState(modifier = Modifier.fillMaxSize())
