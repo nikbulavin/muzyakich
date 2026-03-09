@@ -83,6 +83,7 @@ fun LibraryScreen(
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
@@ -93,6 +94,7 @@ fun LibraryScreen(
         onAlbumClick = onAlbumClick,
         onArtistClick = onArtistClick,
         onSongMenuClick = onSongMenuClick,
+        onSettingsClick = onSettingsClick,
         modifier = modifier,
     )
 }
@@ -104,6 +106,7 @@ private fun LibraryScreen(
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -114,6 +117,7 @@ private fun LibraryScreen(
             LibraryTopAppBar(
                 inAppUpdateState = inAppUpdateState,
                 titleRes = localesR.string.app_name,
+                onSettingsClick = onSettingsClick,
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.topAppBarColors().copy(
                     scrolledContainerColor = MaterialTheme.colorScheme.surface,
@@ -195,6 +199,7 @@ private fun LibraryScreen(
 private fun LibraryTopAppBar(
     @StringRes titleRes: Int,
     inAppUpdateState: AppUpdateResult,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
@@ -206,7 +211,7 @@ private fun LibraryTopAppBar(
         colors = colors,
         navigationIcon = {
             MuzIconButton(
-                onClick = {},
+                onClick = onSettingsClick,
                 icon = MuzIcons.Filled.Settings,
                 contentDescription = stringResource(localesR.string.settings),
                 tooltipPosition = TooltipAnchorPosition.Right,

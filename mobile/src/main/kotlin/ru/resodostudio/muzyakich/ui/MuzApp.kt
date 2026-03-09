@@ -62,6 +62,7 @@ import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.player.navigation.PlayerNavKey
 import ru.resodostudio.muzyakich.ui.player.navigation.navigateToPlayer
 import ru.resodostudio.muzyakich.ui.player.navigation.playerEntry
+import ru.resodostudio.muzyakich.ui.settings.navigation.settingsEntry
 import ru.resodostudio.muzyakich.ui.song.detail.navigation.songEntry
 
 @OptIn(
@@ -124,6 +125,7 @@ fun MuzApp(
                         albumEntry(navigator)
                         artistEntry(navigator)
                         songEntry(navigator)
+                        settingsEntry(navigator)
                     }
 
                     NavDisplay(
