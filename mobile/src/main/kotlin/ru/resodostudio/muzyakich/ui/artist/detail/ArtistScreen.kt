@@ -7,24 +7,25 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.component.songs
 import ru.resodostudio.muzyakich.ui.component.songsInfo
+import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun ArtistScreen(
@@ -68,12 +69,11 @@ fun ArtistScreen(
                             )
                         },
                         navigationIcon = {
-                            IconButton(onClick = onBackClick) {
-                                Icon(
-                                    imageVector = MuzIcons.Rounded.ArrowBack,
-                                    contentDescription = null,
-                                )
-                            }
+                            MuzIconButton(
+                                onClick = onBackClick,
+                                icon = MuzIcons.Rounded.ArrowBack,
+                                contentDescription = stringResource(localesR.string.back),
+                            )
                         },
                     )
                 },
