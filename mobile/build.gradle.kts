@@ -63,6 +63,7 @@ dependencies {
 
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.browser)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewModelNavigation3)

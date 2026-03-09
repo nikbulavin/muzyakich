@@ -1,6 +1,11 @@
 package ru.resodostudio.muzyakich.ui.settings
 
+import android.content.Context
+import android.net.Uri
+import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,24 +30,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSwitch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DarkMode
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Feedback
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Info
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Palette
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Policy
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Android
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DarkMode
@@ -89,7 +99,7 @@ private fun SettingsScreen(
                     )
                 },
             )
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = modifier
@@ -233,6 +243,47 @@ private fun About(
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
         val context = LocalContext.current
+        val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+        MuzListItem(
+            content = { Text(stringResource(localesR.string.feedback)) },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.Feedback,
+                    contentDescription = null,
+                )
+            },
+            shapes = ListItemDefaults.segmentedShapes(0, 3),
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+            ),
+            onClick = {
+                launchBrowserTab(
+                    context = context,
+                    uri = FEEDBACK_URL.toUri(),
+                    toolbarColor = backgroundColor,
+                )
+            },
+        )
+        MuzListItem(
+            content = { Text(stringResource(localesR.string.privacy_policy)) },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.Policy,
+                    contentDescription = null,
+                )
+            },
+            shapes = ListItemDefaults.segmentedShapes(1, 3),
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+            ),
+            onClick = {
+                launchBrowserTab(
+                    context = context,
+                    uri = PRIVACY_POLICY_URL.toUri(),
+                    toolbarColor = backgroundColor,
+                )
+            },
+        )
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = packageInfo?.versionName ?: "?.?.?"
         val versionCode = "(${packageInfo?.longVersionCode})"
@@ -245,7 +296,7 @@ private fun About(
                 )
             },
             supportingContent = { Text("$versionName $versionCode") },
-            modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+            modifier = Modifier.clip(ListItemDefaults.segmentedShapes(2, 3).shape),
             colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             ),
@@ -267,3 +318,22 @@ private fun SectionTitle(
         overflow = TextOverflow.Ellipsis,
     )
 }
+
+private fun launchBrowserTab(
+    context: Context,
+    uri: Uri,
+    @ColorInt toolbarColor: Int,
+) {
+    val customTabBarColor = CustomTabColorSchemeParams.Builder()
+        .setToolbarColor(toolbarColor)
+        .build()
+    val customTabsIntent = CustomTabsIntent.Builder()
+        .setDefaultColorSchemeParams(customTabBarColor)
+        .build()
+    customTabsIntent.launchUrl(context, uri)
+}
+
+private const val FEEDBACK_URL =
+    "https://trusted-cowl-779.notion.site/31c66ebc684d812c9161eef501af353a?pvs=105"
+private const val PRIVACY_POLICY_URL =
+    "https://trusted-cowl-779.notion.site/Privacy-Policy-31c66ebc684d80d68036c7d79bf1c6fe"

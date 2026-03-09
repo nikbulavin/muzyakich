@@ -21,6 +21,7 @@
     <string name="enable_repeat_mode_one">한 곡 반복</string>
     <string name="enable_shuffle_mode">셔플 모드 활성화</string>
     <string name="favorites">즐겨찾기</string>
+    <string name="feedback">피드백</string>
     <string name="filters">필터</string>
     <string name="high_quality">고화질</string>
     <string name="install_update">업데이트 설치</string>
@@ -36,6 +37,7 @@
     <string name="play_audio">재생</string>
     <string name="play_next">다음 곡 재생</string>
     <string name="playlists">재생 목록</string>
+    <string name="privacy_policy">개인정보 처리방침</string>
     <string name="queue">대기열</string>
     <string name="remove_from_favorites">즐겨찾기에서 제거</string>
     <string name="search">검색</string>
