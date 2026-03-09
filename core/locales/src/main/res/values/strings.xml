@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Muzyakich</string>
 
+    <string name="about">About</string>
     <string name="add_to_favorites">Add to favorites</string>
     <string name="albums">Albums</string>
     <string name="appearance">Appearance</string>
@@ -52,6 +53,7 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_light">Light</string>
     <string name="theme_system_default">System default</string>
+    <string name="version">Version</string>
 
     <plurals name="number_of_songs">
         <item quantity="one">%d song</item>

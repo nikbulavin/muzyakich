@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">뮤지큥</string>
 
+    <string name="about">정보</string>
     <string name="add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="albums">앨범</string>
     <string name="appearance">외관</string>
@@ -52,6 +53,7 @@
     <string name="theme_dark">어두운 테마</string>
     <string name="theme_light">밝은 테마</string>
     <string name="theme_system_default">시스템 기본값</string>
+    <string name="version">버전</string>
 
     <plurals name="number_of_songs">
         <item quantity="other">%d곡</item>

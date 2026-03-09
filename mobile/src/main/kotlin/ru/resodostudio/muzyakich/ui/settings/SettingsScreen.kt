@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,6 +40,7 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.FormatPaint
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Info
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Palette
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Android
@@ -103,6 +105,7 @@ private fun SettingsScreen(
                         onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
                         onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
                     )
+                    About()
                 }
             }
         }
@@ -213,6 +216,40 @@ private fun Appearance(
                 onCheckedChange = onDynamicColorPreferenceUpdate,
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun About(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+    ) {
+        SectionTitle(
+            titleRes = localesR.string.about,
+            modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
+        )
+        val context = LocalContext.current
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo?.versionName ?: "?.?.?"
+        val versionCode = "(${packageInfo?.longVersionCode})"
+        ListItem(
+            headlineContent = { Text(stringResource(localesR.string.version)) },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.Info,
+                    contentDescription = null,
+                )
+            },
+            supportingContent = { Text("$versionName $versionCode") },
+            modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+            ),
+        )
     }
 }
 

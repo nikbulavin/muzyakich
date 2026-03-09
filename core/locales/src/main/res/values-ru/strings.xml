@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Музякич</string>
 
+    <string name="about">О нас</string>
     <string name="add_to_favorites">Добавить в избранное</string>
     <string name="albums">Альбомы</string>
     <string name="appearance">Оформление</string>
@@ -52,6 +53,7 @@
     <string name="theme_dark">Тёмная</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_system_default">Как в системе</string>
+    <string name="version">Версия</string>
 
     <plurals name="number_of_songs">
         <item quantity="one">%d трек</item>
