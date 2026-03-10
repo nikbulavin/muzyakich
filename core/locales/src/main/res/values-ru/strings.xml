@@ -8,6 +8,7 @@
     <string name="appearance">Оформление</string>
     <string name="artist">Исполнитель</string>
     <string name="artists">Исполнители</string>
+    <string name="audio">Аудио</string>
     <string name="back">Назад</string>
     <string name="bitrate_format">%1$d кбит/с</string>
     <string name="delete">Удалить</string>
@@ -20,6 +21,7 @@
     <string name="enable_repeat_mode_all">Включить режим повтора для всех треков</string>
     <string name="enable_repeat_mode_one">Включить одиночный режим повтора</string>
     <string name="enable_shuffle_mode">Включить режим перетасовки</string>
+    <string name="equalizer">Эквалайзер</string>
     <string name="favorites">Избранное</string>
     <string name="feedback">Обратная связь</string>
     <string name="filters">Фильтры</string>
