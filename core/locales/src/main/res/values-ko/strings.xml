@@ -8,6 +8,7 @@
     <string name="appearance">외관</string>
     <string name="artist">아티스트</string>
     <string name="artists">아티스트들</string>
+    <string name="audio">오디오</string>
     <string name="back">뒤로</string>
     <string name="bitrate_format">%1$dkbps</string>
     <string name="delete">삭제</string>
@@ -20,6 +21,7 @@
     <string name="enable_repeat_mode_all">전체 반복</string>
     <string name="enable_repeat_mode_one">한 곡 반복</string>
     <string name="enable_shuffle_mode">셔플 모드 활성화</string>
+    <string name="equalizer">이퀄라이저</string>
     <string name="favorites">즐겨찾기</string>
     <string name="feedback">피드백</string>
     <string name="filters">필터</string>

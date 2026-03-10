@@ -8,6 +8,7 @@
     <string name="appearance">Appearance</string>
     <string name="artist">Artist</string>
     <string name="artists">Artists</string>
+    <string name="audio">Audio</string>
     <string name="back">Back</string>
     <string name="bitrate_format">%1$d kbps</string>
     <string name="delete">Delete</string>
@@ -20,6 +21,7 @@
     <string name="enable_repeat_mode_all">Enable repeat mode for all songs</string>
     <string name="enable_repeat_mode_one">Enable single song repeat mode</string>
     <string name="enable_shuffle_mode">Enable shuffle mode</string>
+    <string name="equalizer">Equalizer</string>
     <string name="favorites">Favorites</string>
     <string name="feedback">Feedback</string>
     <string name="filters">Filters</string>

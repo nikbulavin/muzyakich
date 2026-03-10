@@ -1,7 +1,11 @@
 package ru.resodostudio.muzyakich.ui.settings
 
 import android.content.Context
+import android.content.Intent
+import android.media.audiofx.AudioEffect
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.browser.customtabs.CustomTabColorSchemeParams
@@ -57,6 +61,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Android
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FormatPaint
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.GraphicEq
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
@@ -110,6 +115,9 @@ private fun SettingsScreen(
             when (settingsUiState) {
                 SettingsUiState.Loading -> LoadingState(modifier = Modifier.fillMaxSize())
                 is SettingsUiState.Success -> {
+                    Audio(
+                        audioSessionId = settingsUiState.audioSessionId,
+                    )
                     Appearance(
                         darkThemeConfig = settingsUiState.darkThemeConfig,
                         useDynamicColor = settingsUiState.useDynamicColor,
@@ -227,6 +235,51 @@ private fun Appearance(
                 onCheckedChange = onDynamicColorPreferenceUpdate,
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun Audio(
+    audioSessionId: Int?,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+    ) {
+        SectionTitle(
+            titleRes = localesR.string.audio,
+            modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
+        )
+        val context = LocalContext.current
+        val equalizerLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+        ) { _ -> }
+
+        MuzListItem(
+            content = { Text(stringResource(localesR.string.equalizer)) },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Rounded.GraphicEq,
+                    contentDescription = null,
+                )
+            },
+            shapes = ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp)),
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+            ),
+            onClick = {
+                runCatching {
+                    val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
+                        putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
+                        putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
+                        putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+                    }
+                    equalizerLauncher.launch(intent)
+                }.onFailure { error("Failed to open equalizer") }
+            },
+        )
     }
 }
 
