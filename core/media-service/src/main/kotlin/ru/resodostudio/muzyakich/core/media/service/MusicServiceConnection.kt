@@ -51,7 +51,7 @@ class MusicServiceConnection @Inject constructor(
         coroutineScope.launch {
             mediaController = MediaController.Builder(
                 context,
-                SessionToken(context, ComponentName(context, MusicService::class.java))
+                SessionToken(context, ComponentName(context, MusicService::class.java)),
             ).buildAsync().await().apply { addListener(PlayerListener()) }
         }
     }
@@ -103,7 +103,30 @@ class MusicServiceConnection @Inject constructor(
     fun playSongNext(song: Song) {
         mediaController?.let { controller ->
             val mediaItem = song.asMediaItem()
-            controller.addMediaItem(controller.currentMediaItemIndex + 1, mediaItem)
+            if (controller.shuffleModeEnabled && !controller.currentTimeline.isEmpty) {
+                val timeline = controller.currentTimeline
+                val window = Timeline.Window()
+                var newIndex = 0
+
+                val fullQueue = buildList {
+                    var index = timeline.getFirstWindowIndex(true)
+                    while (index != C.INDEX_UNSET) {
+                        add(timeline.getWindow(index, window).mediaItem)
+                        if (index == controller.currentMediaItemIndex) {
+                            newIndex = lastIndex
+                            add(mediaItem)
+                        }
+                        index = timeline.getNextWindowIndex(index, Player.REPEAT_MODE_OFF, true)
+                    }
+                }
+
+                controller.shuffleModeEnabled = false
+                controller.setMediaItems(fullQueue, newIndex, controller.currentPosition)
+                controller.prepare()
+                controller.play()
+            } else {
+                controller.addMediaItem(controller.currentMediaItemIndex + 1, mediaItem)
+            }
         }
     }
 
