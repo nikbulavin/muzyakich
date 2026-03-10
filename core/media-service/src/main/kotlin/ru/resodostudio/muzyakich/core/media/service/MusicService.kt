@@ -8,7 +8,6 @@ import androidx.annotation.OptIn
 import androidx.core.os.bundleOf
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
-import androidx.media3.common.C.AUDIO_SESSION_ID_UNSET
 import androidx.media3.common.C.USAGE_MEDIA
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -35,25 +34,15 @@ class MusicService : MediaSessionService() {
 
     private var mediaSession: MediaSession? = null
 
-    private var currentAudioSessionId: Int = AUDIO_SESSION_ID_UNSET
-
     private val playerListener = object : Player.Listener {
 
         override fun onAudioSessionIdChanged(audioSessionId: Int) {
-            if (currentAudioSessionId != AUDIO_SESSION_ID_UNSET) {
-                val intent = Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION).apply {
-                    putExtra(AudioEffect.EXTRA_AUDIO_SESSION, currentAudioSessionId)
-                    putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
-                }
-                sendBroadcast(intent)
-            }
             val intent = Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION).apply {
                 putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
                 putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
                 putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
             }
             sendBroadcast(intent)
-            currentAudioSessionId = audioSessionId
         }
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
@@ -78,14 +67,6 @@ class MusicService : MediaSessionService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
-        if (currentAudioSessionId != AUDIO_SESSION_ID_UNSET) {
-            val intent = Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION).apply {
-                putExtra(AudioEffect.EXTRA_AUDIO_SESSION, currentAudioSessionId)
-                putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
-            }
-            sendBroadcast(intent)
-            currentAudioSessionId = AUDIO_SESSION_ID_UNSET
-        }
         mediaSession?.run {
             player.removeListener(playerListener)
             player.release()
