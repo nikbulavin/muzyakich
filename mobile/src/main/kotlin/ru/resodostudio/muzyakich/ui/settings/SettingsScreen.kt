@@ -115,7 +115,9 @@ private fun SettingsScreen(
             when (settingsUiState) {
                 SettingsUiState.Loading -> LoadingState(modifier = Modifier.fillMaxSize())
                 is SettingsUiState.Success -> {
-                    Audio()
+                    Audio(
+                        audioSessionId = settingsUiState.audioSessionId,
+                    )
                     Appearance(
                         darkThemeConfig = settingsUiState.darkThemeConfig,
                         useDynamicColor = settingsUiState.useDynamicColor,
@@ -239,6 +241,7 @@ private fun Appearance(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Audio(
+    audioSessionId: Int?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -269,6 +272,7 @@ private fun Audio(
             onClick = {
                 runCatching {
                     val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
+                        putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
                         putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
                         putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
                     }
