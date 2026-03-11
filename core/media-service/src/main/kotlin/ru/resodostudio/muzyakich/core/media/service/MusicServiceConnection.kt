@@ -120,11 +120,11 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    fun removeSong(mediaId: String) {
+    fun removeSongs(mediaIds: List<String>) {
         mediaController?.let { controller ->
-            for (i in controller.mediaItemCount - 1 downTo 0) {
-                if (controller.getMediaItemAt(i).mediaId == mediaId) {
-                    controller.removeMediaItem(i)
+            for (index in controller.mediaItemCount - 1 downTo 0) {
+                if (controller.getMediaItemAt(index).mediaId in mediaIds) {
+                    controller.removeMediaItem(index)
                 }
             }
         }

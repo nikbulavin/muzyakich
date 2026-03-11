@@ -50,7 +50,7 @@ class SongViewModel @AssistedInject constructor(
     }
 
     fun removeSong(mediaId: String) {
-        musicServiceConnection.removeSong(mediaId)
+        musicServiceConnection.removeSongs(listOf(mediaId))
     }
 
     @AssistedFactory

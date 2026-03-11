@@ -1,5 +1,10 @@
 package ru.resodostudio.muzyakich.ui.album.detail
 
+import android.app.Activity.RESULT_OK
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -95,6 +100,7 @@ fun AlbumScreen(
         onSongMenuClick = onSongMenuClick,
         onPlaySongsClick = viewModel::playSongs,
         onPlaySongsNextClick = viewModel::playSongsNext,
+        onRemoveSongsClick = viewModel::removeSongs,
         modifier = modifier,
     )
 }
@@ -107,6 +113,7 @@ private fun AlbumScreen(
     onSongMenuClick: (String) -> Unit,
     onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
     onPlaySongsNextClick: (List<Song>) -> Unit,
+    onRemoveSongsClick: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (albumUiState) {
@@ -129,6 +136,7 @@ private fun AlbumScreen(
                         songs = albumUiState.album.songs,
                         onBackClick = onBackClick,
                         onPlaySongsNextClick = onPlaySongsNextClick,
+                        onRemoveSongsClick = onRemoveSongsClick,
                         scrollBehavior = scrollBehavior,
                     )
                 },
@@ -380,6 +388,7 @@ private fun AlbumTopAppBar(
     songs: List<Song>,
     onBackClick: () -> Unit,
     onPlaySongsNextClick: (List<Song>) -> Unit,
+    onRemoveSongsClick: (List<String>) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 
@@ -414,65 +423,12 @@ private fun AlbumTopAppBar(
             )
         },
         actions = {
-            var expanded by remember { mutableStateOf(false) }
-            Box(
-                modifier = Modifier.wrapContentSize(Alignment.TopStart),
-            ) {
-                MuzFilledTonalIconButton(
-                    onClick = { expanded = true },
-                    icon = MuzIcons.Rounded.MoreVert,
-                    contentDescription = stringResource(localesR.string.open_menu),
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                    tooltipPosition = TooltipAnchorPosition.Left,
-                    colors = if (isScrolled) {
-                        IconButtonDefaults.iconButtonVibrantColors()
-                    } else {
-                        IconButtonDefaults.filledTonalIconButtonColors()
-                    },
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    shape = MenuDefaults.standaloneGroupShape,
-                    containerColor = MenuDefaults.groupVibrantContainerColor,
-                ) {
-                    DropdownMenuItem(
-                        selected = false,
-                        text = { Text(stringResource(localesR.string.play_next)) },
-                        shapes = MenuDefaults.itemShape(0, 2),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = MuzIcons.Filled.PlaylistPlay,
-                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = {
-                            onPlaySongsNextClick(songs)
-                            expanded = false
-                        },
-                        colors = MenuDefaults.selectableItemVibrantColors(),
-                    )
-                    DropdownMenuItem(
-                        selected = false,
-                        text = { Text(stringResource(localesR.string.move_to_trash)) },
-                        shapes = MenuDefaults.itemShape(1, 2),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = MuzIcons.Filled.Delete,
-                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = {
-
-                        },
-                        colors = MenuDefaults.selectableItemVibrantColors(),
-                    )
-                }
-            }
+            AlbumDropdownMenu(
+                isScrolled = isScrolled,
+                songs = songs,
+                onPlaySongsNextClick = onPlaySongsNextClick,
+                onRemoveSongsClick = onRemoveSongsClick,
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
@@ -481,4 +437,86 @@ private fun AlbumTopAppBar(
         scrollBehavior = scrollBehavior,
         modifier = modifier,
     )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun AlbumDropdownMenu(
+    isScrolled: Boolean,
+    songs: List<Song>,
+    onPlaySongsNextClick: (List<Song>) -> Unit,
+    onRemoveSongsClick: (List<String>) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier.wrapContentSize(Alignment.TopStart),
+    ) {
+        MuzFilledTonalIconButton(
+            onClick = { expanded = true },
+            icon = MuzIcons.Rounded.MoreVert,
+            contentDescription = stringResource(localesR.string.open_menu),
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+            tooltipPosition = TooltipAnchorPosition.Left,
+            colors = if (isScrolled) {
+                IconButtonDefaults.iconButtonVibrantColors()
+            } else {
+                IconButtonDefaults.filledTonalIconButtonColors()
+            },
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            shape = MenuDefaults.standaloneGroupShape,
+            containerColor = MenuDefaults.groupVibrantContainerColor,
+        ) {
+            DropdownMenuItem(
+                selected = false,
+                text = { Text(stringResource(localesR.string.play_next)) },
+                shapes = MenuDefaults.itemShape(0, 2),
+                leadingIcon = {
+                    Icon(
+                        imageVector = MuzIcons.Filled.PlaylistPlay,
+                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                        contentDescription = null,
+                    )
+                },
+                onClick = {
+                    onPlaySongsNextClick(songs)
+                    expanded = false
+                },
+                colors = MenuDefaults.selectableItemVibrantColors(),
+            )
+            val context = LocalContext.current
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartIntentSenderForResult(),
+            ) { result ->
+                if (result.resultCode == RESULT_OK) onRemoveSongsClick(songs.map { it.mediaId })
+            }
+            DropdownMenuItem(
+                selected = false,
+                text = { Text(stringResource(localesR.string.move_to_trash)) },
+                shapes = MenuDefaults.itemShape(1, 2),
+                leadingIcon = {
+                    Icon(
+                        imageVector = MuzIcons.Filled.Delete,
+                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                        contentDescription = null,
+                    )
+                },
+                onClick = {
+                    runCatching {
+                        val pendingIntent = MediaStore.createTrashRequest(
+                            context.contentResolver,
+                            songs.map { it.mediaUri },
+                            true,
+                        )
+                        launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+                    }
+                },
+                colors = MenuDefaults.selectableItemVibrantColors(),
+            )
+        }
+    }
 }

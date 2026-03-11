@@ -72,6 +72,10 @@ class AlbumViewModel @AssistedInject constructor(
         musicServiceConnection.playSongsNext(songs)
     }
 
+    fun removeSongs(mediaIds: List<String>) {
+        musicServiceConnection.removeSongs(mediaIds)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
