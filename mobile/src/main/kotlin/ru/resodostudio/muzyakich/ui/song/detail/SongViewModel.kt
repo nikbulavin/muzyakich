@@ -40,7 +40,7 @@ class SongViewModel @AssistedInject constructor(
         )
 
     fun playSongNext(song: Song) {
-        musicServiceConnection.playSongNext(song)
+        musicServiceConnection.playSongsNext(listOf(song))
     }
 
     fun setSongFavorite(mediaId: String, isFavorite: Boolean) {

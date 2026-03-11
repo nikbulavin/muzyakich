@@ -88,21 +88,9 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    fun shuffleSongs(
-        songs: List<Song>,
-        startIndex: Int = DEFAULT_INDEX,
-        startPositionMs: Long = DEFAULT_POSITION_MS,
-    ) {
-        playSongs(
-            songs = songs.shuffled(),
-            startIndex = startIndex,
-            startPositionMs = startPositionMs,
-        )
-    }
-
-    fun playSongNext(song: Song) {
+    fun playSongsNext(songs: List<Song>) {
         mediaController?.let { controller ->
-            val mediaItem = song.asMediaItem()
+            val mediaItems = songs.map(Song::asMediaItem)
             if (controller.shuffleModeEnabled && !controller.currentTimeline.isEmpty) {
                 val timeline = controller.currentTimeline
                 val window = Timeline.Window()
@@ -114,7 +102,7 @@ class MusicServiceConnection @Inject constructor(
                         add(timeline.getWindow(index, window).mediaItem)
                         if (index == controller.currentMediaItemIndex) {
                             newIndex = lastIndex
-                            add(mediaItem)
+                            addAll(mediaItems)
                         }
                         index = timeline.getNextWindowIndex(index, Player.REPEAT_MODE_OFF, true)
                     }
@@ -125,7 +113,7 @@ class MusicServiceConnection @Inject constructor(
                 controller.prepare()
                 controller.play()
             } else {
-                controller.addMediaItem(controller.currentMediaItemIndex + 1, mediaItem)
+                controller.addMediaItems(controller.currentMediaItemIndex + 1, mediaItems)
             }
         }
     }
