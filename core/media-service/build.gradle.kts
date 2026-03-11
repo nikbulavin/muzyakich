@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.mediaNotification)
 
+    implementation(libs.androidx.media3.cast)
     implementation(libs.androidx.media3.exoPlayer)
     implementation(libs.androidx.media3.session)
     implementation(libs.kotlinx.coroutines.guava)

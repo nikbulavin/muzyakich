@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.audiofx.AudioEffect
 import androidx.annotation.OptIn
 import androidx.core.os.bundleOf
+import androidx.media3.cast.CastPlayer
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.common.C.USAGE_MEDIA
@@ -88,19 +89,23 @@ class MusicService : MediaSessionService() {
             .setUsage(USAGE_MEDIA)
             .build()
 
-        val player = ExoPlayer.Builder(this)
+        val exoPlayer = ExoPlayer.Builder(this)
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
             .build()
 
-        player.addListener(playerListener)
+        val castPlayer = CastPlayer.Builder(this)
+            .setLocalPlayer(exoPlayer)
+            .build()
+
+        exoPlayer.addListener(playerListener)
 
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
             addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        mediaSession = MediaSession.Builder(this, player)
+        mediaSession = MediaSession.Builder(this, castPlayer)
             .setCallback(musicSessionCallback)
             .setSessionActivity(sessionActivityPendingIntent)
             .build()
@@ -109,7 +114,7 @@ class MusicService : MediaSessionService() {
                     MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_PREV to true,
                     MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_NEXT to true,
                 )
-                updateMediaButtonPreferences(mediaSession, player)
+                updateMediaButtonPreferences(mediaSession, exoPlayer)
             }
     }
 
