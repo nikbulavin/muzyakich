@@ -85,7 +85,6 @@ fun AlbumScreen(
         onBackClick = onBackClick,
         onSongMenuClick = onSongMenuClick,
         onPlaySongsClick = viewModel::playSongs,
-        onShuffleSongsClick = viewModel::shuffleSongs,
         modifier = modifier,
     )
 }
@@ -96,8 +95,7 @@ private fun AlbumScreen(
     albumUiState: AlbumUiState,
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,
-    onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onShuffleSongsClick: (List<Song>, Int) -> Unit,
+    onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (albumUiState) {
@@ -137,14 +135,14 @@ private fun AlbumScreen(
                         album = albumUiState.album,
                     )
                     actionButtons(
-                        onPlaySongsClick = { onPlaySongsClick(albumUiState.album.songs, 0) },
-                        onShuffleSongsClick = { onShuffleSongsClick(albumUiState.album.songs, 0) },
+                        onPlaySongsClick = { onPlaySongsClick(albumUiState.album.songs, 0, false) },
+                        onShuffleSongsClick = { onPlaySongsClick(albumUiState.album.songs, 0, true) },
                     )
                     groupedSongs(
                         songs = albumUiState.album.songs,
                         currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
                         isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
-                        onPlaySongsClick = onPlaySongsClick,
+                        onPlaySongsClick = { songs, index -> onPlaySongsClick(songs, index, false) },
                         onSongMenuClick = onSongMenuClick,
                     )
                     songsInfo(

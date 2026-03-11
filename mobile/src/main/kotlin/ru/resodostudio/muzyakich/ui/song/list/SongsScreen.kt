@@ -63,7 +63,6 @@ fun SongsScreen(
         onSongMenuClick = onSongMenuClick,
         modifier = modifier,
         onPlaySongsClick = viewModel::playSongs,
-        onShuffleSongsClick = viewModel::shuffleSongs,
         onToggleFilterFavorites = viewModel::toggleFilterFavorites,
         onSortByUpdate = viewModel::updateSortByPreference,
         onSortOrderUpdate = viewModel::updateSortOrderPreference,
@@ -76,8 +75,7 @@ private fun SongsScreen(
     songsUiState: SongsUiState,
     onSongMenuClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onPlaySongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
-    onShuffleSongsClick: (songs: List<Song>, startIndex: Int) -> Unit = { _, _ -> },
+    onPlaySongsClick: (songs: List<Song>, startIndex: Int, shuffle: Boolean) -> Unit = { _, _, _ -> },
     onToggleFilterFavorites: (Boolean) -> Unit = {},
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
@@ -123,13 +121,12 @@ private fun SongsScreen(
                 actionButtons(
                     songs = songsUiState.songs,
                     onPlaySongsClick = onPlaySongsClick,
-                    onShuffleSongsClick = onShuffleSongsClick,
                     onFilterClick = { shouldShowFilterBottomSheet = true },
                 )
                 songs(
                     songs = songsUiState.songs,
                     currentMediaId = songsUiState.currentMediaId,
-                    onPlaySongsClick = onPlaySongsClick,
+                    onPlaySongsClick = { songs, index -> onPlaySongsClick(songs, index, false) },
                     isPlaying = songsUiState.isPlaying,
                     onSongMenuClick = onSongMenuClick,
                 )
@@ -144,8 +141,7 @@ private fun SongsScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.actionButtons(
     songs: List<Song>,
-    onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onShuffleSongsClick: (List<Song>, Int) -> Unit,
+    onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
     onFilterClick: () -> Unit,
 ) {
     item(
@@ -162,7 +158,7 @@ private fun LazyGridScope.actionButtons(
         ) {
             Button(
                 shapes = ButtonDefaults.shapes(),
-                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX) },
+                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX, false) },
                 modifier = Modifier.weight(1f),
                 contentPadding = ButtonDefaults.contentPaddingFor(
                     buttonHeight = ButtonDefaults.MinHeight,
@@ -183,7 +179,7 @@ private fun LazyGridScope.actionButtons(
             }
             OutlinedButton(
                 shapes = ButtonDefaults.shapes(),
-                onClick = { onShuffleSongsClick(songs, DEFAULT_INDEX) },
+                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX, true) },
                 modifier = Modifier.weight(1f),
                 contentPadding = ButtonDefaults.contentPaddingFor(
                     buttonHeight = ButtonDefaults.MinHeight,

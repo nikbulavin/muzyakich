@@ -64,12 +64,8 @@ class AlbumViewModel @AssistedInject constructor(
             initialValue = AlbumUiState.Loading,
         )
 
-    fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
-        musicServiceConnection.playSongs(songs = songs, startIndex = startIndex)
-    }
-
-    fun shuffleSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX) {
-        musicServiceConnection.shuffleSongs(songs = songs, startIndex = startIndex)
+    fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX, shuffle: Boolean = false) {
+        musicServiceConnection.playSongs(songs = songs, startIndex = startIndex, shuffle = shuffle)
     }
 
     @AssistedFactory

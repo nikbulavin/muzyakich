@@ -80,9 +80,11 @@ class MusicServiceConnection @Inject constructor(
         songs: List<Song>,
         startIndex: Int = DEFAULT_INDEX,
         startPositionMs: Long = DEFAULT_POSITION_MS,
+        shuffle: Boolean = false,
     ) {
         mediaController?.run {
-            setMediaItems(songs.map(Song::asMediaItem), startIndex, startPositionMs)
+            val finalSongs = if (shuffle) songs.shuffled() else songs
+            setMediaItems(finalSongs.map(Song::asMediaItem), startIndex, startPositionMs)
             prepare()
             play()
         }

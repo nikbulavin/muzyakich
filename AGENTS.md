@@ -35,4 +35,4 @@ within them are stored strictly in alphabetical order.
 The app and Android libraries have two product flavors: `demo` and `prod`, and two build types:
 `debug` and `release`.
 
-- Build: `./gradlew assemble{Variant}`. Typically `assembleDemoDebug`.
+- Build: `./gradlew assembleDemoDebug`.
