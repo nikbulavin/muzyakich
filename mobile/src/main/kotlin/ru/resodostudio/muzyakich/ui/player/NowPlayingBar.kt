@@ -142,7 +142,7 @@ private fun SongProgressIndicator(
         animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
     )
 
-    if (progressState.bufferedPositionProgress == 0f) {
+    if (player.isLoading) {
         LinearProgressIndicator(
             modifier = modifier,
         )
