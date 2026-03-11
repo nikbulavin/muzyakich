@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -24,12 +25,15 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,7 +43,9 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,8 +66,11 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.model.data.Album
@@ -85,6 +94,7 @@ fun AlbumScreen(
         onBackClick = onBackClick,
         onSongMenuClick = onSongMenuClick,
         onPlaySongsClick = viewModel::playSongs,
+        onPlaySongsNextClick = viewModel::playSongsNext,
         modifier = modifier,
     )
 }
@@ -96,6 +106,7 @@ private fun AlbumScreen(
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
+    onPlaySongsNextClick: (List<Song>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (albumUiState) {
@@ -115,7 +126,9 @@ private fun AlbumScreen(
                     AlbumTopAppBar(
                         title = albumUiState.album.title,
                         isScrolled = isScrolled,
+                        songs = albumUiState.album.songs,
                         onBackClick = onBackClick,
+                        onPlaySongsNextClick = onPlaySongsNextClick,
                         scrollBehavior = scrollBehavior,
                     )
                 },
@@ -142,7 +155,9 @@ private fun AlbumScreen(
                         songs = albumUiState.album.songs,
                         currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
                         isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
-                        onPlaySongsClick = { songs, index -> onPlaySongsClick(songs, index, false) },
+                        onPlaySongsClick = { songs, index ->
+                            onPlaySongsClick(songs, index, false)
+                        },
                         onSongMenuClick = onSongMenuClick,
                     )
                     songsInfo(
@@ -362,10 +377,13 @@ private fun LazyGridScope.actionButtons(
 private fun AlbumTopAppBar(
     title: String,
     isScrolled: Boolean,
+    songs: List<Song>,
     onBackClick: () -> Unit,
+    onPlaySongsNextClick: (List<Song>) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
-) {
+
+    ) {
     val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
     CenterAlignedTopAppBar(
         title = {
@@ -394,6 +412,67 @@ private fun AlbumTopAppBar(
                     IconButtonDefaults.filledTonalIconButtonColors()
                 },
             )
+        },
+        actions = {
+            var expanded by remember { mutableStateOf(false) }
+            Box(
+                modifier = Modifier.wrapContentSize(Alignment.TopStart),
+            ) {
+                MuzFilledTonalIconButton(
+                    onClick = { expanded = true },
+                    icon = MuzIcons.Rounded.MoreVert,
+                    contentDescription = stringResource(localesR.string.open_menu),
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                    tooltipPosition = TooltipAnchorPosition.Left,
+                    colors = if (isScrolled) {
+                        IconButtonDefaults.iconButtonVibrantColors()
+                    } else {
+                        IconButtonDefaults.filledTonalIconButtonColors()
+                    },
+                )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    shape = MenuDefaults.standaloneGroupShape,
+                    containerColor = MenuDefaults.groupVibrantContainerColor,
+                ) {
+                    DropdownMenuItem(
+                        selected = false,
+                        text = { Text(stringResource(localesR.string.play_next)) },
+                        shapes = MenuDefaults.itemShape(0, 2),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = MuzIcons.Filled.PlaylistPlay,
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            onPlaySongsNextClick(songs)
+                            expanded = false
+                        },
+                        colors = MenuDefaults.selectableItemVibrantColors(),
+                    )
+                    DropdownMenuItem(
+                        selected = false,
+                        text = { Text(stringResource(localesR.string.move_to_trash)) },
+                        shapes = MenuDefaults.itemShape(1, 2),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = MuzIcons.Filled.Delete,
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+
+                        },
+                        colors = MenuDefaults.selectableItemVibrantColors(),
+                    )
+                }
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,

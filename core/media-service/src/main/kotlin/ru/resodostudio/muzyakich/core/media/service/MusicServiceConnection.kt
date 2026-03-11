@@ -131,6 +131,7 @@ class MusicServiceConnection @Inject constructor(
     }
 
     private inner class PlayerListener : Player.Listener {
+
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.containsAny(
                     EVENT_PLAYBACK_STATE_CHANGED,
