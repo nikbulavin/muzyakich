@@ -25,7 +25,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
-class MusicService : MediaSessionService() {
+internal class MusicService : MediaSessionService() {
 
     @Inject
     lateinit var musicNotificationProvider: MusicNotificationProvider
@@ -76,11 +76,6 @@ class MusicService : MediaSessionService() {
             mediaSession = null
         }
         super.onDestroy()
-    }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
-        pauseAllPlayersAndStopSelf()
     }
 
     private fun initializePlayerAndSession() {

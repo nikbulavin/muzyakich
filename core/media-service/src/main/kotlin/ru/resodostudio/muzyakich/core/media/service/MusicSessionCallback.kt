@@ -6,7 +6,7 @@ import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import javax.inject.Inject
 
-class MusicSessionCallback @Inject constructor(
+internal class MusicSessionCallback @Inject constructor(
 ) : MediaSession.Callback {
 
     override fun onAddMediaItems(
