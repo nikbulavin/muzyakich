@@ -98,7 +98,7 @@ class MusicService : MediaSessionService() {
             .setLocalPlayer(exoPlayer)
             .build()
 
-        exoPlayer.addListener(playerListener)
+        castPlayer.addListener(playerListener)
 
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
             addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
@@ -114,7 +114,7 @@ class MusicService : MediaSessionService() {
                     MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_PREV to true,
                     MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_NEXT to true,
                 )
-                updateMediaButtonPreferences(mediaSession, exoPlayer)
+                updateMediaButtonPreferences(mediaSession, castPlayer)
             }
     }
 
