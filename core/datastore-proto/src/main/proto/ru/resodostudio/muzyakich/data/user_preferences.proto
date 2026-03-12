@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "ru/resodostudio/muzyakich/data/dark_theme_config.proto";
-import "ru/resodostudio/muzyakich/data/repeat_mode.proto";
 import "ru/resodostudio/muzyakich/data/sort_by.proto";
 import "ru/resodostudio/muzyakich/data/sort_order.proto";
 
@@ -10,13 +9,12 @@ option java_multiple_files = true;
 
 message UserPreferences {
 
+    reserved 3, 4;
+    reserved "shuffle_mode_enabled", "repeat_mode";
+
     DarkThemeConfigProto dark_theme_config = 1;
 
     bool use_dynamic_color = 2;
-
-    bool shuffle_mode_enabled = 3;
-
-    RepeatModeProto repeat_mode = 4;
 
     SortByProto sort_by = 5;
 

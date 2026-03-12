@@ -8,8 +8,6 @@ import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.DARK
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.LIGHT
 import ru.resodostudio.muzyakich.core.model.data.FilterConfig
-import ru.resodostudio.muzyakich.core.model.data.PlaybackConfig
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.core.model.data.UserData
@@ -33,18 +31,6 @@ class MuzPreferencesDataSource @Inject constructor(
                     DarkThemeConfigProto.DARK_THEME_CONFIG_DARK -> DARK
                 },
                 useDynamicColor = it.useDynamicColor,
-                playbackConfig = PlaybackConfig(
-                    repeatMode = when (it.repeatMode) {
-                        null,
-                        RepeatModeProto.REPEAT_MODE_OFF,
-                        RepeatModeProto.UNRECOGNIZED,
-                            -> RepeatMode.REPEAT_OFF
-
-                        RepeatModeProto.REPEAT_MODE_ALL -> RepeatMode.REPEAT_ALL
-                        RepeatModeProto.REPEAT_MODE_ONE -> RepeatMode.REPEAT_ONE
-                    },
-                    shuffleModeEnabled = it.shuffleModeEnabled
-                ),
                 filterConfig = FilterConfig(
                     sortOrder = when (it.sortOrder) {
                         null,
@@ -83,28 +69,6 @@ class MuzPreferencesDataSource @Inject constructor(
                         FOLLOW_SYSTEM -> DarkThemeConfigProto.DARK_THEME_CONFIG_FOLLOW_SYSTEM
                         LIGHT -> DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT
                         DARK -> DarkThemeConfigProto.DARK_THEME_CONFIG_DARK
-                    }
-                }
-            }
-        }
-    }
-
-    suspend fun setShuffleModePreference(shuffleModeEnabled: Boolean) {
-        runCatching {
-            userPreferences.updateData {
-                it.copy { this.shuffleModeEnabled = shuffleModeEnabled }
-            }
-        }
-    }
-
-    suspend fun setRepeatModePreference(repeatMode: RepeatMode) {
-        runCatching {
-            userPreferences.updateData {
-                it.copy {
-                    this.repeatMode = when (repeatMode) {
-                        RepeatMode.REPEAT_OFF -> RepeatModeProto.REPEAT_MODE_OFF
-                        RepeatMode.REPEAT_ALL -> RepeatModeProto.REPEAT_MODE_ALL
-                        RepeatMode.REPEAT_ONE -> RepeatModeProto.REPEAT_MODE_ONE
                     }
                 }
             }

@@ -38,14 +38,11 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.QueueMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Repeat
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.RepeatOne
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ALL
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_OFF
-import ru.resodostudio.muzyakich.core.model.data.RepeatMode.REPEAT_ONE
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @androidx.annotation.OptIn(UnstableApi::class)
-@Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
 fun PlaybackButtonGroup(
     player: Player,
     modifier: Modifier = Modifier,
@@ -73,7 +70,9 @@ fun PlaybackButtonGroup(
             icon = MuzIcons.Rounded.Shuffle,
             contentDescription = stringResource(localesR.string.shuffle),
         )
-        val contentDescription = stringResource(repeatModeContentDescription(repeatButtonState.repeatModeState))
+        val contentDescription = stringResource(
+            repeatModeContentDescription(repeatButtonState.repeatModeState)
+        )
         TooltipBox(
             modifier = modifier,
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
@@ -88,20 +87,9 @@ fun PlaybackButtonGroup(
                 checked = repeatButtonState.repeatModeState != REPEAT_MODE_OFF,
                 onCheckedChange = {
                     when (repeatButtonState.repeatModeState) {
-                        REPEAT_MODE_OFF -> {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            REPEAT_ALL
-                        }
-
-                        REPEAT_MODE_ALL -> {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            REPEAT_ONE
-                        }
-
-                        REPEAT_MODE_ONE -> {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            REPEAT_OFF
-                        }
+                        REPEAT_MODE_OFF -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        REPEAT_MODE_ALL -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        REPEAT_MODE_ONE -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                     }
                     repeatButtonState.onClick()
                 },
