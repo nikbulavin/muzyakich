@@ -284,6 +284,7 @@ fun MuzIconToggleButton(
     colors: IconToggleButtonColors = IconButtonDefaults.iconToggleButtonVibrantColors(),
     containerSize: DpSize = smallContainerSize(),
     iconSize: Dp = IconButtonDefaults.smallIconSize,
+    enabled: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -295,6 +296,7 @@ fun MuzIconToggleButton(
     ) {
         val hapticFeedback = LocalHapticFeedback.current
         IconToggleButton(
+            enabled = enabled,
             checked = checked,
             onCheckedChange = {
                 hapticFeedback.performHapticFeedback(
