@@ -393,43 +393,37 @@ private fun ProgressSlider(
             player = player,
             modifier = Modifier.height(32.dp),
         )
-
-        Box(
-            contentAlignment = Alignment.Center,
-        ) {
-            TimeText(player) {
-                val currentPosition = Util.getStringForTime(currentPositionMs)
-                    .removePrefix("0")
-                val remainingDuration = Util.getStringForTime(durationMs - currentPositionMs)
-                    .removePrefix("0")
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+        TimeText(player) {
+            val currentPosition = Util.getStringForTime(currentPositionMs)
+                .removePrefix("0")
+            val remainingDuration = Util.getStringForTime(durationMs - currentPositionMs)
+                .removePrefix("0")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = currentPosition,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                AnimatedVisibility(
+                    visible = bitrate >= 256,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
                 ) {
-                    Text(
-                        text = currentPosition,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-
-                    Text(
-                        text = "-$remainingDuration",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Icon(
+                        imageVector = MuzIcons.Rounded.HighQuality,
+                        contentDescription = stringResource(localesR.string.high_quality),
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-            }
-            this@Column.AnimatedVisibility(
-                visible = bitrate >= 256,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut(),
-            ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.HighQuality,
-                    contentDescription = stringResource(localesR.string.high_quality),
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                Text(
+                    text = "-$remainingDuration",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
