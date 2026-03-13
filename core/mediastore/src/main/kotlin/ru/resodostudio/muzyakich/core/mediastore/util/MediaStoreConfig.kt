@@ -23,13 +23,13 @@ internal object MediaStoreConfig {
             add(MediaStore.Audio.Media.DATA)
             add(MediaStore.Audio.Media.BITRATE)
             add(MediaStore.Audio.Media.SIZE)
-
             if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
                 add(MediaStore.Audio.Media.BITS_PER_SAMPLE)
                 add(MediaStore.Audio.Media.SAMPLERATE)
             }
             add(MediaStore.Audio.Media.TRACK)
             add(MediaStore.Audio.Media.YEAR)
+            add(MediaStore.Audio.Media.GENRE)
         }.toTypedArray()
     }
 }

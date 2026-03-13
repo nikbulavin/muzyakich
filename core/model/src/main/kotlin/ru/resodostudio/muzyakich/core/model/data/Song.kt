@@ -22,4 +22,5 @@ data class Song(
     val sampleRate: Int,
     val trackNumber: Int,
     val year: Int,
+    val genre: String?,
 )

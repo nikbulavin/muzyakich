@@ -44,5 +44,6 @@ fun MediaItem.asSong(): Song {
         sampleRate = 0,
         trackNumber = 0,
         year = 0,
+        genre = null,
     )
 }

@@ -296,10 +296,10 @@ private fun LazyGridScope.header(album: Album) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                val year = album.year
-                if (year != null) {
+                val labels = listOfNotNull(album.genre, album.year)
+                if (labels.isNotEmpty()) {
                     Text(
-                        text = year.toString(),
+                        text = labels.joinToString(" • "),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,

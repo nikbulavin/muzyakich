@@ -33,6 +33,7 @@ class AlbumsViewModel @Inject constructor(
                             artist = songs.firstOrNull()?.artist ?: "<unknown>",
                             songs = songs,
                             year = null,
+                            genre = null,
                         )
                     }
                 )

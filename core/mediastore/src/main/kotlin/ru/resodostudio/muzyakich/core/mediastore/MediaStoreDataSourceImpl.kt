@@ -33,6 +33,7 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getBitrate
 import ru.resodostudio.muzyakich.core.mediastore.util.getBitsPerSample
 import ru.resodostudio.muzyakich.core.mediastore.util.getDataFolder
 import ru.resodostudio.muzyakich.core.mediastore.util.getDuration
+import ru.resodostudio.muzyakich.core.mediastore.util.getGenre
 import ru.resodostudio.muzyakich.core.mediastore.util.getMediaId
 import ru.resodostudio.muzyakich.core.mediastore.util.getSampleRate
 import ru.resodostudio.muzyakich.core.mediastore.util.getSize
@@ -96,6 +97,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                 sampleRate = cursor.getSampleRate(),
                                 trackNumber = cursor.getTrackNumber(),
                                 year = cursor.getYear(),
+                                genre = cursor.getGenre(),
                             )
                         )
                     }

@@ -6,4 +6,5 @@ data class Album(
     val artist: String,
     val year: Int?,
     val songs: List<Song>,
+    val genre: String?,
 )

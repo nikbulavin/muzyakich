@@ -42,3 +42,8 @@ internal fun Cursor.getSampleRate() =
     }
 
 internal fun Cursor.getTrackNumber() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK))
+
+internal fun Cursor.getGenre(): String? {
+    val index = getColumnIndex(MediaStore.Audio.Media.GENRE)
+    return if (index != -1) getString(index) else null
+}

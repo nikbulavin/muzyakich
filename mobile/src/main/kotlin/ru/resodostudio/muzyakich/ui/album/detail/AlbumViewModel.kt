@@ -39,6 +39,7 @@ class AlbumViewModel @AssistedInject constructor(
     ) { songs, nowPlaying ->
         val albumSongs = songs.filter { it.albumId == albumId }
         val firstYear = albumSongs.firstOrNull()?.year ?: 0
+        val firstGenre = albumSongs.firstOrNull()?.genre
         val year = if (firstYear != 0 && albumSongs.all { it.year == firstYear }) firstYear else null
         val album = Album(
             id = albumId,
@@ -46,6 +47,7 @@ class AlbumViewModel @AssistedInject constructor(
             artist = albumSongs.firstOrNull()?.artist ?: "<unknown>",
             year = year,
             songs = albumSongs.sortedBy { it.trackNumber },
+            genre = firstGenre.takeIf { albumSongs.all { it.genre == firstGenre } },
         )
         if (albumSongs.isEmpty()) {
             AlbumUiState.Error
