@@ -18,6 +18,7 @@ internal class CastOptionsProvider : OptionsProvider {
         return CastOptions.Builder()
             .setReceiverApplicationId(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
             .setCastMediaOptions(castMediaOptions)
+            .setStopReceiverApplicationWhenEndingSession(true)
             .build()
     }
 
