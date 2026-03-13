@@ -1,28 +1,24 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.media3.cast.MediaRouteButton
 import androidx.media3.common.Player
@@ -32,7 +28,7 @@ import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberRepeatButtonState
 import androidx.media3.ui.compose.state.rememberShuffleButtonState
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconToggleButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzOutlinedIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.QueueMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Repeat
@@ -61,52 +57,51 @@ fun PlaybackButtonGroup(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
-            MediaRouteButton()
+            MediaRouteButton(
+                modifier = Modifier
+                    .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+                    .border(
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        shape = IconButtonDefaults.smallSquareShape,
+                    )
+                    .clip(IconButtonDefaults.smallSquareShape),
+            )
         }
-        MuzIconToggleButton(
+        MuzOutlinedIconToggleButton(
             enabled = shuffleButtonState.isEnabled,
+            size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
             checked = shuffleButtonState.shuffleOn,
             onCheckedChange = { shuffleButtonState.onClick() },
+            shape = IconButtonDefaults.smallSquareShape,
             icon = MuzIcons.Rounded.Shuffle,
-            contentDescription = stringResource(localesR.string.shuffle),
+            contentDescriptionRes = localesR.string.shuffle,
         )
-        val contentDescription = stringResource(
-            repeatModeContentDescription(repeatButtonState.repeatModeState)
+        val icon = repeatModeIcon(repeatButtonState.repeatModeState)
+        val contentDescriptionRes = repeatModeContentDescription(repeatButtonState.repeatModeState)
+        val hapticFeedback = LocalHapticFeedback.current
+        MuzOutlinedIconToggleButton(
+            enabled = repeatButtonState.isEnabled,
+            size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+            checked = repeatButtonState.repeatModeState != REPEAT_MODE_OFF,
+            icon = icon,
+            contentDescriptionRes = contentDescriptionRes,
+            onCustomCheckedChange = {
+                when (repeatButtonState.repeatModeState) {
+                    REPEAT_MODE_OFF -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                    REPEAT_MODE_ALL -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                    REPEAT_MODE_ONE -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                }
+                repeatButtonState.onClick()
+            },
+            shape = IconButtonDefaults.smallSquareShape,
         )
-        TooltipBox(
-            modifier = modifier,
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                positioning = TooltipAnchorPosition.Above,
-            ),
-            tooltip = { PlainTooltip { Text(contentDescription) } },
-            state = rememberTooltipState(),
-        ) {
-            val hapticFeedback = LocalHapticFeedback.current
-            IconToggleButton(
-                enabled = repeatButtonState.isEnabled,
-                checked = repeatButtonState.repeatModeState != REPEAT_MODE_OFF,
-                onCheckedChange = {
-                    when (repeatButtonState.repeatModeState) {
-                        REPEAT_MODE_OFF -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        REPEAT_MODE_ALL -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        REPEAT_MODE_ONE -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    }
-                    repeatButtonState.onClick()
-                },
-                shapes = IconButtonDefaults.toggleableShapes(),
-                colors = IconButtonDefaults.iconToggleButtonVibrantColors(),
-            ) {
-                Icon(
-                    imageVector = repeatModeIcon(repeatButtonState.repeatModeState),
-                    contentDescription = contentDescription,
-                )
-            }
-        }
-        MuzIconToggleButton(
+        MuzOutlinedIconToggleButton(
+            size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
             checked = queueOpened,
             icon = MuzIcons.Rounded.QueueMusic,
-            contentDescription = stringResource(localesR.string.queue),
+            contentDescriptionRes = localesR.string.queue,
             onCheckedChange = onQueueClick,
+            shape = IconButtonDefaults.smallSquareShape,
         )
     }
 }
