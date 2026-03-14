@@ -95,7 +95,8 @@ private fun SongBottomSheet(
     onSongRemove: (String) -> Unit,
 ) {
     when (songUiState) {
-        SongUiState.Error, SongUiState.Loading -> LoadingIndicator(Modifier.fillMaxWidth())
+        SongUiState.Error -> onDismiss()
+        SongUiState.Loading -> LoadingIndicator(Modifier.fillMaxWidth())
         is SongUiState.Success -> {
             val song = songUiState.song
             Column(
@@ -113,7 +114,6 @@ private fun SongBottomSheet(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(song.artworkUri)
                             .crossfade(true)
-                            .size(256)
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
@@ -277,6 +277,8 @@ private fun ActionPanel(
                         true,
                     )
                     launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+                }.onFailure { exception ->
+                    exception.printStackTrace()
                 }
             },
             shapes = ListItemDefaults.segmentedShapes(2, 3),
@@ -331,15 +333,9 @@ private fun AudioQualityTag(
 ) {
     if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
         val audioQualityText = buildString {
-            if (song.bitsPerSample > 0) {
-                append(song.bitsPerSample.asFormattedBitDepth())
-            }
-            if (song.bitsPerSample > 0 && song.sampleRate > 0) {
-                append(" ")
-            }
-            if (song.sampleRate > 0) {
-                append((song.sampleRate / 1000f).asFormattedSampleRate())
-            }
+            if (song.bitsPerSample > 0) append(song.bitsPerSample.asFormattedBitDepth())
+            if (song.bitsPerSample > 0 && song.sampleRate > 0) append(" ")
+            if (song.sampleRate > 0) append((song.sampleRate / 1000f).asFormattedSampleRate())
         }
         MuzTag(
             text = audioQualityText,
