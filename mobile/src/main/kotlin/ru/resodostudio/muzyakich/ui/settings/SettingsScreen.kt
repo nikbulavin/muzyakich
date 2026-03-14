@@ -270,16 +270,14 @@ private fun Audio(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             ),
             onClick = {
-                if (audioSessionId != null && audioSessionId != 0) {
-                    runCatching {
-                        val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
-                            putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
-                            putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
-                            putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
-                        }
-                        equalizerLauncher.launch(intent)
-                    }.onFailure { error("Failed to open equalizer") }
-                }
+                runCatching {
+                    val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
+                        putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
+                        putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
+                        putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+                    }
+                    equalizerLauncher.launch(intent)
+                }.onFailure { error("Failed to open equalizer") }
             },
         )
     }

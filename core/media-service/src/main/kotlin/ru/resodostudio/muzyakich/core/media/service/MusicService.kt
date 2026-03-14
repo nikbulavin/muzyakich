@@ -38,7 +38,7 @@ internal class MusicService : MediaLibraryService() {
 
     private var mediaLibrarySession: MediaLibrarySession? = null
 
-    private val playbackPlayerListener = object : Player.Listener {
+    private val castPlayerListener = object : Player.Listener {
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
             mediaLibrarySession?.let { session ->
@@ -53,7 +53,7 @@ internal class MusicService : MediaLibraryService() {
         }
     }
 
-    private val equalizerPlayerListener = object : Player.Listener {
+    private val exoPlayerListener = object : Player.Listener {
 
         override fun onAudioSessionIdChanged(audioSessionId: Int) {
             musicServiceConnection.updateAudioSessionId(audioSessionId)
@@ -71,8 +71,8 @@ internal class MusicService : MediaLibraryService() {
 
     override fun onDestroy() {
         mediaLibrarySession?.run {
-            player.removeListener(playbackPlayerListener)
-            player.removeListener(equalizerPlayerListener)
+            player.removeListener(castPlayerListener)
+            player.removeListener(exoPlayerListener)
             player.release()
             release()
             clearListener()
@@ -86,8 +86,7 @@ internal class MusicService : MediaLibraryService() {
     private fun initializePlayerAndSession() {
         val player = buildPlayer()
 
-        player.addListener(playbackPlayerListener)
-        musicServiceConnection.updateAudioSessionId(player.audioSessionId)
+        player.addListener(castPlayerListener)
 
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
             addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
@@ -118,7 +117,7 @@ internal class MusicService : MediaLibraryService() {
             .setHandleAudioBecomingNoisy(true)
             .build()
 
-        exoPlayer.addListener(equalizerPlayerListener)
+        exoPlayer.addListener(exoPlayerListener)
 
         return CastPlayer.Builder(this)
             .setLocalPlayer(exoPlayer)
