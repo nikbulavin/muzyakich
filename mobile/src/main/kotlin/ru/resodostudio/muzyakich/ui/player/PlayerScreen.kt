@@ -119,9 +119,7 @@ private fun PlayerScreen(
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         val lazyListState = rememberLazyListState()
-                        val isPlayerActionsVisible by remember {
-                            derivedStateOf { lazyListState.firstVisibleItemIndex == 0 }
-                        }
+                        val isQueueScrolled by remember { derivedStateOf { lazyListState.lastScrolledForward } }
                         val animSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
                         AnimatedContent(
                             targetState = queueOpened,
@@ -228,7 +226,7 @@ private fun PlayerScreen(
                         val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
                         val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
                         this@Column.AnimatedVisibility(
-                            visible = isPlayerActionsVisible || !queueOpened,
+                            visible = !isQueueScrolled || !queueOpened,
                             modifier = Modifier.align(Alignment.BottomCenter),
                             enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
                             exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
