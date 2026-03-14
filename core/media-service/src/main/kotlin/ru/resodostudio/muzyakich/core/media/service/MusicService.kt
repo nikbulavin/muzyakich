@@ -35,16 +35,7 @@ internal class MusicService : MediaLibraryService() {
 
     private var mediaLibrarySession: MediaLibrarySession? = null
 
-    private val playerListener = object : Player.Listener {
-
-        override fun onAudioSessionIdChanged(audioSessionId: Int) {
-            val intent = Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION).apply {
-                putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
-                putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
-                putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
-            }
-            sendBroadcast(intent)
-        }
+    private val playbackPlayerListener = object : Player.Listener {
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
             mediaLibrarySession?.let { session ->
@@ -59,6 +50,13 @@ internal class MusicService : MediaLibraryService() {
         }
     }
 
+    private val equalizerPlayerListener = object : Player.Listener {
+
+        override fun onAudioSessionIdChanged(audioSessionId: Int) {
+            sendAudioEffectIntent(audioSessionId, true)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         initializePlayerAndSession()
@@ -69,11 +67,13 @@ internal class MusicService : MediaLibraryService() {
 
     override fun onDestroy() {
         mediaLibrarySession?.run {
-            player.removeListener(playerListener)
+            player.removeListener(playbackPlayerListener)
+            player.removeListener(equalizerPlayerListener)
             player.release()
             release()
             clearListener()
             mediaLibrarySession = null
+            sendAudioEffectIntent(player.audioSessionId, false)
         }
         super.onDestroy()
     }
@@ -81,7 +81,7 @@ internal class MusicService : MediaLibraryService() {
     private fun initializePlayerAndSession() {
         val player = buildPlayer()
 
-        player.addListener(playerListener)
+        player.addListener(playbackPlayerListener)
 
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
             addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
@@ -111,6 +111,8 @@ internal class MusicService : MediaLibraryService() {
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
             .build()
+
+        exoPlayer.addListener(equalizerPlayerListener)
 
         return CastPlayer.Builder(this)
             .setLocalPlayer(exoPlayer)
@@ -156,5 +158,20 @@ internal class MusicService : MediaLibraryService() {
             .build()
 
         session.setMediaButtonPreferences(listOf(shuffleButton, repeatButton))
+    }
+
+    private fun sendAudioEffectIntent(sessionId: Int, open: Boolean) {
+        val action = if (open) {
+            AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION
+        } else {
+            AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION
+        }
+
+        val intent = Intent(action)
+        intent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
+        intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
+        intent.putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+
+        sendBroadcast(intent)
     }
 }
