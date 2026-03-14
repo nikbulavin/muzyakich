@@ -33,6 +33,9 @@ internal class MusicService : MediaLibraryService() {
     @Inject
     lateinit var musicSessionCallback: MusicSessionCallback
 
+    @Inject
+    lateinit var musicServiceConnection: MusicServiceConnection
+
     private var mediaLibrarySession: MediaLibrarySession? = null
 
     private val playbackPlayerListener = object : Player.Listener {
@@ -53,6 +56,7 @@ internal class MusicService : MediaLibraryService() {
     private val equalizerPlayerListener = object : Player.Listener {
 
         override fun onAudioSessionIdChanged(audioSessionId: Int) {
+            musicServiceConnection.updateAudioSessionId(audioSessionId)
             sendAudioEffectIntent(audioSessionId, true)
         }
     }
@@ -73,6 +77,7 @@ internal class MusicService : MediaLibraryService() {
             release()
             clearListener()
             mediaLibrarySession = null
+            musicServiceConnection.updateAudioSessionId(null)
             sendAudioEffectIntent(player.audioSessionId, false)
         }
         super.onDestroy()
@@ -82,6 +87,7 @@ internal class MusicService : MediaLibraryService() {
         val player = buildPlayer()
 
         player.addListener(playbackPlayerListener)
+        musicServiceConnection.updateAudioSessionId(player.audioSessionId)
 
         val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
             addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))

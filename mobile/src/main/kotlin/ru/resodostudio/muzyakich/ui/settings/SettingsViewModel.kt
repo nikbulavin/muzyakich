@@ -26,12 +26,12 @@ class SettingsViewModel @Inject constructor(
 
     val settingsUiState: StateFlow<SettingsUiState> = combine(
         userDataRepository.userData,
-        musicServiceConnection.nowPlayingState,
-    ) { userData, nowPlayingState ->
+        musicServiceConnection.audioSessionId,
+    ) { userData, audioSessionId ->
         SettingsUiState.Success(
             darkThemeConfig = userData.darkThemeConfig,
             useDynamicColor = userData.useDynamicColor,
-            audioSessionId = nowPlayingState.player?.audioSessionId,
+            audioSessionId = audioSessionId,
         )
     }
         .stateIn(

@@ -47,6 +47,9 @@ class MusicServiceConnection @Inject constructor(
     private val _nowPlayingState = MutableStateFlow(NowPlayingState())
     val nowPlayingState = _nowPlayingState.asStateFlow()
 
+    private val _audioSessionId = MutableStateFlow<Int?>(null)
+    val audioSessionId = _audioSessionId.asStateFlow()
+
     init {
         coroutineScope.launch {
             mediaController = MediaController.Builder(
@@ -54,6 +57,10 @@ class MusicServiceConnection @Inject constructor(
                 SessionToken(context, ComponentName(context, MusicService::class.java)),
             ).buildAsync().await().apply { addListener(PlayerListener()) }
         }
+    }
+
+    fun updateAudioSessionId(id: Int?) {
+        _audioSessionId.update { id }
     }
 
     fun skipToSong(uuid: Uuid, position: Long = C.TIME_UNSET) {

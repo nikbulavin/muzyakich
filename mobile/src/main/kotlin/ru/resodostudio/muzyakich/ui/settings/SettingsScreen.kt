@@ -270,7 +270,7 @@ private fun Audio(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             ),
             onClick = {
-                if (audioSessionId != 0) {
+                if (audioSessionId != null && audioSessionId != 0) {
                     runCatching {
                         val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
                             putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
