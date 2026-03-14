@@ -1,8 +1,6 @@
 package ru.resodostudio.muzyakich.ui.song.detail
 
 import android.app.Activity.RESULT_OK
-import android.os.Build
-import android.os.ext.SdkExtensions
 import android.provider.MediaStore
 import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -331,14 +329,13 @@ private fun AudioQualityTag(
     song: Song,
     modifier: Modifier = Modifier,
 ) {
-    if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
-        val audioQualityText = buildString {
-            if (song.bitsPerSample > 0) append(song.bitsPerSample.asFormattedBitDepth())
-            if (song.bitsPerSample > 0 && song.sampleRate > 0) append(" ")
-            if (song.sampleRate > 0) append((song.sampleRate / 1000f).asFormattedSampleRate())
-        }
+    val resolutionLabels = listOfNotNull(
+        song.bitsPerSample?.asFormattedBitDepth(),
+        (song.sampleRate?.div(1000f))?.asFormattedSampleRate(),
+    )
+    if (resolutionLabels.isNotEmpty()) {
         MuzTag(
-            text = audioQualityText,
+            text = resolutionLabels.joinToString(" "),
             icon = MuzIcons.Filled.Cadence,
             modifier = modifier,
         )

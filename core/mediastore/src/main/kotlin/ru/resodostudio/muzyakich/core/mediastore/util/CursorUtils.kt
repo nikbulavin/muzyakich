@@ -27,19 +27,21 @@ internal fun Cursor.getSize() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Me
 
 internal fun Cursor.getYear() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR))
 
-internal fun Cursor.getBitsPerSample() =
-    if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
-        getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.BITS_PER_SAMPLE))
+internal fun Cursor.getBitsPerSample(): Int? {
+    return if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
+        getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.BITS_PER_SAMPLE)).takeIf { it != 0 }
     } else {
-        0
+        null
     }
+}
 
-internal fun Cursor.getSampleRate() =
-    if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
-        getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.SAMPLERATE))
+internal fun Cursor.getSampleRate(): Int? {
+    return if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {
+        getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.SAMPLERATE)).takeIf { it != 0 }
     } else {
-        0
+        null
     }
+}
 
 internal fun Cursor.getTrackNumber() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK))
 
