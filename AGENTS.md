@@ -32,7 +32,7 @@ within them are stored strictly in alphabetical order.
 
 ## Commands to Build & Test
 
-The app and Android libraries have two product flavors: `demo` and `prod`, and two build types:
+The `mobile/` folder have two product flavors: `demo` and `prod`, and two build types:
 `debug` and `release`.
 
 - Build: `./gradlew assembleDemoDebug`.

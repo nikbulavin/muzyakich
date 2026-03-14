@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.ext.SdkExtensions
 import android.provider.MediaStore
 
-internal fun Cursor.getDataFolder() = getString(getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)).asFolder()
+internal fun Cursor.getPath() = getString(getColumnIndexOrThrow(MediaStore.Audio.Media.DATA))
 
 internal fun Cursor.getMediaId() = getLong(getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
 

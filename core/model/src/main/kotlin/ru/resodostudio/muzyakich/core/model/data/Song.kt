@@ -13,7 +13,7 @@ data class Song(
     val title: String,
     val artist: String,
     val album: String,
-    val folder: String,
+    val path: String,
     val duration: Long,
     val bitrate: Int,
     val isFavorite: Boolean,

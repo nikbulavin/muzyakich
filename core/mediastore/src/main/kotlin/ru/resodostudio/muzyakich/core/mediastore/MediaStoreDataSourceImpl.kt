@@ -31,10 +31,10 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getArtist
 import ru.resodostudio.muzyakich.core.mediastore.util.getArtistId
 import ru.resodostudio.muzyakich.core.mediastore.util.getBitrate
 import ru.resodostudio.muzyakich.core.mediastore.util.getBitsPerSample
-import ru.resodostudio.muzyakich.core.mediastore.util.getDataFolder
 import ru.resodostudio.muzyakich.core.mediastore.util.getDuration
 import ru.resodostudio.muzyakich.core.mediastore.util.getGenre
 import ru.resodostudio.muzyakich.core.mediastore.util.getMediaId
+import ru.resodostudio.muzyakich.core.mediastore.util.getPath
 import ru.resodostudio.muzyakich.core.mediastore.util.getSampleRate
 import ru.resodostudio.muzyakich.core.mediastore.util.getSize
 import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
@@ -88,7 +88,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                 title = cursor.getTitle(),
                                 artist = cursor.getArtist(),
                                 album = cursor.getAlbum(),
-                                folder = cursor.getDataFolder(),
+                                path = cursor.getPath(),
                                 duration = cursor.getDuration(),
                                 bitrate = cursor.getBitrate() / 1000,
                                 isFavorite = false,
