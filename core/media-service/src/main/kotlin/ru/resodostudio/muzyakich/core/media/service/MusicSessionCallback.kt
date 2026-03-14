@@ -1,13 +1,14 @@
 package ru.resodostudio.muzyakich.core.media.service
 
 import androidx.media3.common.MediaItem
+import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import javax.inject.Inject
 
 internal class MusicSessionCallback @Inject constructor(
-) : MediaSession.Callback {
+) : MediaLibraryService.MediaLibrarySession.Callback {
 
     override fun onAddMediaItems(
         mediaSession: MediaSession,

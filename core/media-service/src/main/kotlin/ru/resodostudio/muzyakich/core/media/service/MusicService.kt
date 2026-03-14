@@ -15,8 +15,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaConstants
+import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
 import dagger.hilt.android.AndroidEntryPoint
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
@@ -25,7 +25,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
-internal class MusicService : MediaSessionService() {
+internal class MusicService : MediaLibraryService() {
 
     @Inject
     lateinit var musicNotificationProvider: MusicNotificationProvider
@@ -33,7 +33,7 @@ internal class MusicService : MediaSessionService() {
     @Inject
     lateinit var musicSessionCallback: MusicSessionCallback
 
-    private var mediaSession: MediaSession? = null
+    private var mediaLibrarySession: MediaLibrarySession? = null
 
     private val playerListener = object : Player.Listener {
 
@@ -47,13 +47,13 @@ internal class MusicService : MediaSessionService() {
         }
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            mediaSession?.let { session ->
+            mediaLibrarySession?.let { session ->
                 updateMediaButtonPreferences(session, session.player)
             }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
-            mediaSession?.let { session ->
+            mediaLibrarySession?.let { session ->
                 updateMediaButtonPreferences(session, session.player)
             }
         }
@@ -65,20 +65,43 @@ internal class MusicService : MediaSessionService() {
         setMediaNotificationProvider(musicNotificationProvider)
     }
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaLibrarySession
 
     override fun onDestroy() {
-        mediaSession?.run {
+        mediaLibrarySession?.run {
             player.removeListener(playerListener)
             player.release()
             release()
             clearListener()
-            mediaSession = null
+            mediaLibrarySession = null
         }
         super.onDestroy()
     }
 
     private fun initializePlayerAndSession() {
+        val player = buildPlayer()
+
+        player.addListener(playerListener)
+
+        val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
+            addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
+            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        mediaLibrarySession = MediaLibrarySession.Builder(this, player, musicSessionCallback)
+            .setSessionActivity(sessionActivityPendingIntent)
+            .build()
+            .also { mediaLibrarySession ->
+                mediaLibrarySession.sessionExtras = bundleOf(
+                    MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_PREV to true,
+                    MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_NEXT to true,
+                )
+                updateMediaButtonPreferences(mediaLibrarySession, player)
+            }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun buildPlayer(): Player {
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(USAGE_MEDIA)
@@ -89,31 +112,12 @@ internal class MusicService : MediaSessionService() {
             .setHandleAudioBecomingNoisy(true)
             .build()
 
-        val castPlayer = CastPlayer.Builder(this)
+        return CastPlayer.Builder(this)
             .setLocalPlayer(exoPlayer)
             .build()
-
-        castPlayer.addListener(playerListener)
-
-        val sessionActivityPendingIntent = TaskStackBuilder.create(this).run {
-            addNextIntent(Intent(this@MusicService, Class.forName(TARGET_ACTIVITY_NAME)))
-            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        mediaSession = MediaSession.Builder(this, castPlayer)
-            .setCallback(musicSessionCallback)
-            .setSessionActivity(sessionActivityPendingIntent)
-            .build()
-            .also { mediaSession ->
-                mediaSession.sessionExtras = bundleOf(
-                    MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_PREV to true,
-                    MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_NEXT to true,
-                )
-                updateMediaButtonPreferences(mediaSession, castPlayer)
-            }
     }
 
-    private fun updateMediaButtonPreferences(session: MediaSession, player: Player) {
+    private fun updateMediaButtonPreferences(session: MediaLibrarySession, player: Player) {
         val shuffleIcon = if (player.shuffleModeEnabled) {
             CommandButton.ICON_SHUFFLE_ON
         } else {
