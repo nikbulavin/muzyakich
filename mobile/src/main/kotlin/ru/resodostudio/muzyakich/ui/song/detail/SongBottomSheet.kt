@@ -57,6 +57,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Genres
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.data.Song
@@ -301,6 +302,12 @@ private fun TagPanel(
             MuzTag(
                 text = song.year.toString(),
                 icon = MuzIcons.Filled.Event,
+            )
+        }
+        song.genre?.let { genre ->
+            MuzTag(
+                text = genre,
+                icon = MuzIcons.Rounded.Genres,
             )
         }
         MuzTag(
