@@ -2,7 +2,12 @@ package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -74,11 +79,6 @@ fun NowPlayingBar(
 
     val shapes = remember {
         listOf(
-            MaterialShapes.Circle,
-            MaterialShapes.Square,
-            MaterialShapes.Slanted,
-            MaterialShapes.Arch,
-            MaterialShapes.Oval,
             MaterialShapes.Pill,
             MaterialShapes.Pentagon,
             MaterialShapes.Gem,
@@ -89,8 +89,6 @@ fun NowPlayingBar(
             MaterialShapes.Cookie7Sided,
             MaterialShapes.Cookie9Sided,
             MaterialShapes.Cookie12Sided,
-            MaterialShapes.Ghostish,
-            MaterialShapes.Clover4Leaf,
             MaterialShapes.Clover8Leaf,
             MaterialShapes.Burst,
             MaterialShapes.SoftBurst,
@@ -98,7 +96,6 @@ fun NowPlayingBar(
             MaterialShapes.Flower,
             MaterialShapes.Puffy,
             MaterialShapes.PuffyDiamond,
-            MaterialShapes.Bun,
             MaterialShapes.Heart,
         )
     }
@@ -106,8 +103,6 @@ fun NowPlayingBar(
     var targetShape by remember { mutableStateOf(shapes.random()) }
     var previousShape by remember { mutableStateOf(targetShape) }
     val progress = remember { Animatable(1f) }
-    var rotationAngle by remember { mutableStateOf(0f) }
-    var targetRotation by remember { mutableStateOf(0f) }
     var isInitial by remember { mutableStateOf(true) }
 
     LaunchedEffect(currentSong.mediaId) {
@@ -116,9 +111,6 @@ fun NowPlayingBar(
         } else {
             previousShape = targetShape
             targetShape = shapes.random()
-
-            rotationAngle = targetRotation
-            targetRotation = rotationAngle + 360f
 
             progress.snapTo(0f)
             progress.animateTo(1f, animationSpec = tween(500))
@@ -129,10 +121,15 @@ fun NowPlayingBar(
         Morph(previousShape, targetShape)
     }
 
-    val currentRotation by animateFloatAsState(
-        targetValue = targetRotation,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
-        label = "ShapeRotation"
+    val infiniteTransition = rememberInfiniteTransition("infinite outline movement")
+    val currentRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            tween(9000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "animatedRotation"
     )
 
     val currentShape = remember(morph, progress.value, currentRotation) {
