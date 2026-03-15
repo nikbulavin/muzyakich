@@ -20,9 +20,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
@@ -48,7 +50,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.Morph
@@ -141,11 +142,17 @@ fun NowPlayingBar(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.padding(vertical = 12.dp),
         ) {
-            val animSpec = motionScheme.defaultSpatialSpec<IntOffset>()
+            SongArtworkMini(
+                artworkUri = currentSong.artworkUri,
+                size = 46.dp,
+                modifier = Modifier.clip(currentShape),
+            )
+            Spacer(Modifier.size(6.dp))
             AnimatedContent(
                 targetState = currentSong,
                 transitionSpec = {
-                    fadeIn() + slideInHorizontally(animSpec) { it / 16 } togetherWith
+                    fadeIn(motionScheme.fastEffectsSpec()) +
+                            slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 12 } togetherWith
                             fadeOut(snap())
                 },
                 contentKey = { it.mediaId },
@@ -153,7 +160,6 @@ fun NowPlayingBar(
             ) { songState ->
                 SongInfo(
                     song = songState,
-                    shape = currentShape,
                 )
             }
             ActionButtons(
@@ -174,38 +180,26 @@ fun NowPlayingBar(
 @Composable
 private fun SongInfo(
     song: Song,
-    shape: Shape,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        modifier = modifier.padding(bottom = 2.dp, end = 12.dp),
     ) {
-        SongArtworkMini(
-            artworkUri = song.artworkUri,
-            size = 46.dp,
-            modifier = Modifier.clip(shape),
+        Text(
+            text = song.title,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.basicMarquee(),
         )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier.padding(bottom = 2.dp, end = 12.dp),
-        ) {
-            Text(
-                text = song.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee(),
-            )
-            Text(
-                text = song.artist,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        Text(
+            text = song.artist,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.basicMarquee(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
