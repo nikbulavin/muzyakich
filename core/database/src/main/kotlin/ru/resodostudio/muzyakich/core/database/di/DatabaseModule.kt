@@ -24,6 +24,7 @@ internal object DatabaseModule {
             klass = MuzDatabase::class.java,
             name = "muz-database",
         )
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 }

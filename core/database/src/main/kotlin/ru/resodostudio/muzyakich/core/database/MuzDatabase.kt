@@ -2,17 +2,24 @@ package ru.resodostudio.muzyakich.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import ru.resodostudio.muzyakich.core.database.dao.FavoriteSongDao
-import ru.resodostudio.muzyakich.core.database.model.FavoriteSongEntity
+import androidx.room.TypeConverters
+import ru.resodostudio.muzyakich.core.database.dao.SongDao
+import ru.resodostudio.muzyakich.core.database.model.SongEntity
+import ru.resodostudio.muzyakich.core.database.util.InstantConverter
+import ru.resodostudio.muzyakich.core.database.util.UuidConverter
 
 @Database(
     entities = [
-        FavoriteSongEntity::class,
+        SongEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
+)
+@TypeConverters(
+    InstantConverter::class,
+    UuidConverter::class,
 )
 internal abstract class MuzDatabase : RoomDatabase() {
 
-    abstract fun favoriteSongDao(): FavoriteSongDao
+    abstract fun songDao(): SongDao
 }

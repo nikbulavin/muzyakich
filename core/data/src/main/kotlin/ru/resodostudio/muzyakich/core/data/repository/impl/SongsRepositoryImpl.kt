@@ -2,27 +2,29 @@ package ru.resodostudio.muzyakich.core.data.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
-import ru.resodostudio.muzyakich.core.database.dao.FavoriteSongDao
-import ru.resodostudio.muzyakich.core.database.model.FavoriteSongEntity
+import ru.resodostudio.muzyakich.core.database.dao.SongDao
+import ru.resodostudio.muzyakich.core.database.model.SongEntity
 import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSource
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 internal class SongsRepositoryImpl @Inject constructor(
     private val mediaStoreDataSource: MediaStoreDataSource,
-    private val favoriteSongDao: FavoriteSongDao,
+    private val songDao: SongDao,
 ) : SongsRepository {
 
     override fun getSong(mediaId: String): Flow<Song?> {
         return combine(
             mediaStoreDataSource.songs,
-            favoriteSongDao.getFavoriteMediaIds(),
-        ) { songs, favoriteMediaIds ->
-            val song = songs.find { it.mediaId == mediaId }
-            song?.copy(isFavorite = song.mediaId in favoriteMediaIds.toSet())
+            songDao.getSong(mediaId),
+        ) { mediaStoreSongs, songEntity ->
+            val song = mediaStoreSongs.find { it.mediaId == mediaId }
+            song?.copy(isFavorite = songEntity?.isFavorite ?: false)
         }
     }
 
@@ -32,10 +34,14 @@ internal class SongsRepositoryImpl @Inject constructor(
     ): Flow<List<Song>> {
         return combine(
             mediaStoreDataSource.songs,
-            favoriteSongDao.getFavoriteMediaIds(),
-        ) { songs, favoriteMediaIds ->
-            songs.mapTo(ArrayList(songs.size)) { song ->
-                song.copy(isFavorite = song.mediaId in favoriteMediaIds.toSet())
+            songDao.getSongs(),
+        ) { mediaStoreSongs, songEntities ->
+            mediaStoreSongs.mapTo(ArrayList(mediaStoreSongs.size)) { song ->
+                song.copy(
+                    isFavorite = songEntities
+                        .find { it.mediaId == song.mediaId }
+                        ?.isFavorite ?: false,
+                )
             }.apply {
                 val comparator = when (sortBy) {
                     SortBy.ARTIST -> compareBy(Song::artist)
@@ -47,10 +53,15 @@ internal class SongsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun toggleFavorite(mediaId: String, isFavorite: Boolean) {
-        if (isFavorite) {
-            favoriteSongDao.upsertFavoriteSong(FavoriteSongEntity(mediaId))
-        } else {
-            favoriteSongDao.deleteFavoriteSong(mediaId)
-        }
+        val songEntity = songDao.getSong(mediaId).first()
+        songDao.upsertSong(
+            SongEntity(
+                uuid = songEntity?.uuid ?: Uuid.random(),
+                mediaId = mediaId,
+                isFavorite = isFavorite,
+                playCount = songEntity?.playCount ?: 0,
+                lastPlayed = songEntity?.lastPlayed,
+            )
+        )
     }
 }
