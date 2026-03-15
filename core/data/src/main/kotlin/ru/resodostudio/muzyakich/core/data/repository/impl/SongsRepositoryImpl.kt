@@ -7,6 +7,7 @@ import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.database.dao.SongDao
 import ru.resodostudio.muzyakich.core.database.model.SongEntity
 import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSource
+import ru.resodostudio.muzyakich.core.mediastore.model.asExternalModel
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
@@ -23,8 +24,11 @@ internal class SongsRepositoryImpl @Inject constructor(
             mediaStoreDataSource.songs,
             songDao.getSong(mediaId),
         ) { mediaStoreSongs, songEntity ->
-            val song = mediaStoreSongs.find { it.mediaId == mediaId }
-            song?.copy(isFavorite = songEntity?.isFavorite ?: false)
+            mediaStoreSongs
+                .find { it.mediaId == mediaId }
+                ?.asExternalModel(
+                    isFavorite = songEntity?.isFavorite ?: false,
+                )
         }
     }
 
@@ -37,7 +41,7 @@ internal class SongsRepositoryImpl @Inject constructor(
             songDao.getSongs(),
         ) { mediaStoreSongs, songEntities ->
             mediaStoreSongs.mapTo(ArrayList(mediaStoreSongs.size)) { song ->
-                song.copy(
+                song.asExternalModel(
                     isFavorite = songEntities
                         .find { it.mediaId == song.mediaId }
                         ?.isFavorite ?: false,

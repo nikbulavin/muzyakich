@@ -23,6 +23,7 @@ import kotlinx.coroutines.sync.withPermit
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
 import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
+import ru.resodostudio.muzyakich.core.mediastore.model.MediaStoreSong
 import ru.resodostudio.muzyakich.core.mediastore.util.MediaStoreConfig
 import ru.resodostudio.muzyakich.core.mediastore.util.asArtworkUri
 import ru.resodostudio.muzyakich.core.mediastore.util.getAlbum
@@ -41,11 +42,9 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getTitle
 import ru.resodostudio.muzyakich.core.mediastore.util.getTrackNumber
 import ru.resodostudio.muzyakich.core.mediastore.util.getYear
 import ru.resodostudio.muzyakich.core.mediastore.util.observe
-import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
-import kotlin.uuid.Uuid
 
 @Singleton
 internal class MediaStoreDataSourceImpl @Inject constructor(
@@ -57,7 +56,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
     private val isMusicSelectionArgs = arrayOf("1")
     private val retrieverSemaphore = Semaphore(10)
 
-    override val songs: Flow<List<Song>> = context.contentResolver
+    override val songs: Flow<List<MediaStoreSong>> = context.contentResolver
         .observe(uri = MediaStoreConfig.Song.Collection)
         .map {
             val songs = buildList {
@@ -78,8 +77,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                         )
 
                         add(
-                            Song(
-                                uuid = Uuid.random(),
+                            MediaStoreSong(
                                 mediaId = cursor.getMediaId().toString(),
                                 artistId = cursor.getArtistId(),
                                 albumId = albumId,
@@ -91,7 +89,6 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                 path = cursor.getPath(),
                                 duration = cursor.getDuration(),
                                 bitrate = cursor.getBitrate() / 1000,
-                                isFavorite = false,
                                 size = cursor.getSize(),
                                 bitsPerSample = cursor.getBitsPerSample(),
                                 sampleRate = cursor.getSampleRate(),
