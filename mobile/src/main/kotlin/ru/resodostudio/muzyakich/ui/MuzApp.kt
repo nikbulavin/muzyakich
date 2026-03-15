@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -68,7 +69,7 @@ import ru.resodostudio.muzyakich.ui.song.detail.navigation.songEntry
 @OptIn(
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class,
+    ExperimentalHazeApi::class, ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
 fun MuzApp(
@@ -177,7 +178,7 @@ fun MuzApp(
                         .navigationBarsPadding()
                         .padding(16.dp)
                         .dropShadow(
-                            shape = MaterialTheme.shapes.medium,
+                            shape = MaterialTheme.shapes.largeIncreased,
                             shadow = Shadow(
                                 radius = 10.dp,
                                 spread = 6.dp,
@@ -186,7 +187,7 @@ fun MuzApp(
                             ),
                         )
                         .align(Alignment.BottomCenter)
-                        .clip(MaterialTheme.shapes.medium)
+                        .clip(MaterialTheme.shapes.largeIncreased)
                         .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
                             inputScale = HazeInputScale.Auto
                             blurEnabled = true

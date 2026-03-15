@@ -1,8 +1,10 @@
 package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -20,16 +22,31 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.toPath
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
+import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.Morph
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberNextButtonState
@@ -54,6 +71,74 @@ fun NowPlayingBar(
     modifier: Modifier = Modifier,
 ) {
     val motionScheme = MaterialTheme.motionScheme
+
+    val shapes = remember {
+        listOf(
+            MaterialShapes.Circle,
+            MaterialShapes.Square,
+            MaterialShapes.Slanted,
+            MaterialShapes.Arch,
+            MaterialShapes.Oval,
+            MaterialShapes.Pill,
+            MaterialShapes.Pentagon,
+            MaterialShapes.Gem,
+            MaterialShapes.Sunny,
+            MaterialShapes.VerySunny,
+            MaterialShapes.Cookie4Sided,
+            MaterialShapes.Cookie6Sided,
+            MaterialShapes.Cookie7Sided,
+            MaterialShapes.Cookie9Sided,
+            MaterialShapes.Cookie12Sided,
+            MaterialShapes.Ghostish,
+            MaterialShapes.Clover4Leaf,
+            MaterialShapes.Clover8Leaf,
+            MaterialShapes.Burst,
+            MaterialShapes.SoftBurst,
+            MaterialShapes.SoftBoom,
+            MaterialShapes.Flower,
+            MaterialShapes.Puffy,
+            MaterialShapes.PuffyDiamond,
+            MaterialShapes.Bun,
+            MaterialShapes.Heart,
+        )
+    }
+
+    var targetShape by remember { mutableStateOf(shapes.random()) }
+    var previousShape by remember { mutableStateOf(targetShape) }
+    val progress = remember { Animatable(1f) }
+    var rotationAngle by remember { mutableStateOf(0f) }
+    var targetRotation by remember { mutableStateOf(0f) }
+    var isInitial by remember { mutableStateOf(true) }
+
+    LaunchedEffect(currentSong.mediaId) {
+        if (isInitial) {
+            isInitial = false
+        } else {
+            previousShape = targetShape
+            targetShape = shapes.random()
+
+            rotationAngle = targetRotation
+            targetRotation = rotationAngle + 360f
+
+            progress.snapTo(0f)
+            progress.animateTo(1f, animationSpec = tween(500))
+        }
+    }
+
+    val morph = remember(previousShape, targetShape) {
+        Morph(previousShape, targetShape)
+    }
+
+    val currentRotation by animateFloatAsState(
+        targetValue = targetRotation,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+        label = "ShapeRotation"
+    )
+
+    val currentShape = remember(morph, progress.value, currentRotation) {
+        MorphPolygonShape(morph, progress.value, currentRotation)
+    }
+
     Box(
         modifier = modifier
             .clickable { onClick() }
@@ -76,6 +161,7 @@ fun NowPlayingBar(
             ) { songState ->
                 SongInfo(
                     song = songState,
+                    shape = currentShape,
                 )
             }
             ActionButtons(
@@ -92,9 +178,11 @@ fun NowPlayingBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SongInfo(
     song: Song,
+    shape: Shape,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -105,6 +193,7 @@ private fun SongInfo(
         SongArtworkMini(
             artworkUri = song.artworkUri,
             size = 46.dp,
+            modifier = Modifier.clip(shape),
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -181,4 +270,29 @@ private fun ActionButtons(
         icon = MuzIcons.Rounded.SkipNext,
         contentDescription = stringResource(localesR.string.skip_next),
     )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+class MorphPolygonShape(
+    private val morph: Morph,
+    private val percentage: Float,
+    private val rotation: Float = 0f,
+) : Shape {
+    private val matrix = Matrix()
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline {
+        matrix.reset()
+        matrix.scale(size.width, size.height)
+        matrix.translate(0.5f, 0.5f)
+        matrix.rotateZ(rotation)
+        matrix.translate(-0.5f, -0.5f)
+
+        val path = morph.toPath(progress = percentage)
+        path.transform(matrix)
+        path.translate(size.center - path.getBounds().center)
+        return Outline.Generic(path)
+    }
 }
