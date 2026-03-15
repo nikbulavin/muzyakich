@@ -8,6 +8,7 @@ import androidx.media3.common.Player.EVENT_MEDIA_ITEM_TRANSITION
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
 import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
 import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
+import androidx.media3.common.Player.EVENT_POSITION_DISCONTINUITY
 import androidx.media3.common.Player.EVENT_REPEAT_MODE_CHANGED
 import androidx.media3.common.Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED
 import androidx.media3.common.Player.EVENT_TIMELINE_CHANGED
@@ -148,9 +149,13 @@ class MusicServiceConnection @Inject constructor(
     private inner class PlayerListener : Player.Listener {
 
         override fun onEvents(player: Player, events: Player.Events) {
-            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)) {
+            if (EVENT_MEDIA_ITEM_TRANSITION in events ||
+                EVENT_POSITION_DISCONTINUITY in events &&
+                player.currentPosition < 1000L
+            ) {
                 lastIncrementedMediaId = null
             }
+
             if (events.containsAny(
                     EVENT_PLAYBACK_STATE_CHANGED,
                     EVENT_MEDIA_METADATA_CHANGED,
@@ -191,7 +196,9 @@ class MusicServiceConnection @Inject constructor(
             if (playCountJob?.isActive != true) {
                 playCountJob = coroutineScope.launch {
                     while (true) {
-                        if (player.duration > 0 && player.currentPosition >= player.duration / 2) {
+                        val duration = player.duration
+                        val threshold = if (duration in 1..<30_000L) duration else 30_000L
+                        if (duration > 0 && player.currentPosition >= threshold) {
                             lastIncrementedMediaId = currentMediaId
                             songsRepository.incrementPlayCount(currentMediaId)
                             break
