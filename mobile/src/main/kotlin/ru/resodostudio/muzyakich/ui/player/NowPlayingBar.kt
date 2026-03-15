@@ -217,16 +217,10 @@ private fun SongProgressIndicator(
         animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
     )
 
-    if (player.isLoading) {
-        LinearProgressIndicator(
-            modifier = modifier,
-        )
-    } else {
-        LinearProgressIndicator(
-            progress = { progress },
-            modifier = modifier,
-        )
-    }
+    LinearProgressIndicator(
+        progress = { progress },
+        modifier = modifier,
+    )
 }
 
 @androidx.annotation.OptIn(UnstableApi::class)
