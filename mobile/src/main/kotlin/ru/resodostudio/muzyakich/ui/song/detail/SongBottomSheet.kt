@@ -40,7 +40,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSwitch
@@ -113,7 +112,6 @@ private fun SongBottomSheet(
                             .clip(MaterialTheme.shapes.medium),
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(song.artworkUri)
-                            .crossfade(true)
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,

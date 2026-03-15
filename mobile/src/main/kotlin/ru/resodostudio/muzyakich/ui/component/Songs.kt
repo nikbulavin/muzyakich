@@ -31,7 +31,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -123,7 +122,6 @@ fun SongItem(
                         .clip(MaterialTheme.shapes.small),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(song.artworkUri)
-                        .crossfade(true)
                         .size(128)
                         .build(),
                     contentDescription = null,

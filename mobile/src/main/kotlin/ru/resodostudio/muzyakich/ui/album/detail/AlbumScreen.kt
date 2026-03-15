@@ -68,7 +68,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
@@ -236,7 +235,6 @@ private fun LazyGridScope.header(album: Album) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(artworkUri)
-                    .crossfade(true)
                     .placeholderMemoryCacheKey(artworkUri.toString())
                     .memoryCacheKey(artworkUri.toString())
                     .build(),

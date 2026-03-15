@@ -64,7 +64,6 @@ import androidx.media3.ui.compose.indicators.TimeText
 import androidx.media3.ui.compose.material3.indicator.ProgressSlider
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -349,7 +348,6 @@ private fun SongArtwork(
                 .clip(MaterialTheme.shapes.large),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(artworkUri)
-                .crossfade(true)
                 .placeholderMemoryCacheKey(artworkUri.toString())
                 .memoryCacheKey(artworkUri.toString())
                 .build(),

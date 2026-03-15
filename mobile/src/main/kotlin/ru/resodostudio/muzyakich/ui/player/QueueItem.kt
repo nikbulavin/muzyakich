@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
@@ -62,7 +61,6 @@ fun QueueItem(
                     .clip(MaterialTheme.shapes.small),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(song.artworkUri)
-                    .crossfade(true)
                     .size(128)
                     .build(),
                 contentDescription = null,
