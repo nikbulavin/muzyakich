@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -324,6 +325,7 @@ private fun SongArtwork(
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
+    shape: Shape = MaterialTheme.shapes.large,
 ) {
     with(sharedTransitionScope) {
         SubcomposeAsyncImage(
@@ -331,7 +333,7 @@ private fun SongArtwork(
                 .padding(horizontal = 24.dp)
                 .aspectRatio(1f)
                 .dropShadow(
-                    shape = MaterialTheme.shapes.large,
+                    shape = shape,
                     shadow = Shadow(
                         radius = 14.dp,
                         spread = 6.dp,
@@ -345,7 +347,7 @@ private fun SongArtwork(
                     animatedVisibilityScope = animatedVisibilityScope,
                     resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                 )
-                .clip(MaterialTheme.shapes.large),
+                .clip(shape),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(artworkUri)
                 .placeholderMemoryCacheKey(artworkUri.toString())

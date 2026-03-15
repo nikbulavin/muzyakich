@@ -91,12 +91,9 @@ fun NowPlayingBar(
             MaterialShapes.Cookie9Sided,
             MaterialShapes.Cookie12Sided,
             MaterialShapes.Clover8Leaf,
-            MaterialShapes.Burst,
             MaterialShapes.SoftBurst,
             MaterialShapes.SoftBoom,
             MaterialShapes.Flower,
-            MaterialShapes.Puffy,
-            MaterialShapes.PuffyDiamond,
             MaterialShapes.Heart,
         )
     }

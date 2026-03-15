@@ -82,12 +82,13 @@ fun SongItem(
         },
         leadingContent = {
             Box {
+                val shape = MaterialTheme.shapes.medium
                 if (isPlaying) {
                     Box(
                         modifier = Modifier
                             .zIndex(1f)
                             .size(56.dp)
-                            .clip(MaterialTheme.shapes.small)
+                            .clip(shape)
                             .background(MaterialTheme.colorScheme.surface.copy(0.6f)),
                     ) {
                         val dynamicProperties = rememberLottieDynamicProperties(
@@ -119,7 +120,7 @@ fun SongItem(
                 SubcomposeAsyncImage(
                     modifier = Modifier
                         .size(56.dp)
-                        .clip(MaterialTheme.shapes.small),
+                        .clip(shape),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(song.artworkUri)
                         .size(128)
