@@ -99,10 +99,12 @@ private fun SongBottomSheet(
         is SongUiState.Success -> {
             val song = songUiState.song
             Column(
-                modifier = modifier.verticalScroll(rememberScrollState()),
+                modifier = modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -154,12 +156,10 @@ private fun SongBottomSheet(
                 }
                 TagPanel(
                     song = song,
-                    modifier = Modifier.padding(16.dp),
                 )
                 HorizontalDivider()
                 ActionPanel(
                     song = song,
-                    modifier = Modifier.padding(16.dp),
                     onPlayNextClick = { song ->
                         onPlayNextClick(song)
                         onDismiss()
