@@ -103,18 +103,13 @@ fun NowPlayingBar(
     var targetShape by remember { mutableStateOf(shapes.random()) }
     var previousShape by remember { mutableStateOf(targetShape) }
     val progress = remember { Animatable(1f) }
-    var isInitial by remember { mutableStateOf(true) }
 
     LaunchedEffect(currentSong.mediaId) {
-        if (isInitial) {
-            isInitial = false
-        } else {
-            previousShape = targetShape
-            targetShape = shapes.random()
+        previousShape = targetShape
+        targetShape = shapes.random()
 
-            progress.snapTo(0f)
-            progress.animateTo(1f, animationSpec = tween(500))
-        }
+        progress.snapTo(0f)
+        progress.animateTo(1f, animationSpec = tween(500))
     }
 
     val morph = remember(previousShape, targetShape) {
@@ -129,7 +124,7 @@ fun NowPlayingBar(
             tween(9000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart,
         ),
-        label = "animatedRotation"
+        label = "animatedRotation",
     )
 
     val currentShape = remember(morph, progress.value, currentRotation) {
@@ -270,7 +265,7 @@ private fun ActionButtons(
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-class MorphPolygonShape(
+private class MorphPolygonShape(
     private val morph: Morph,
     private val percentage: Float,
     private val rotation: Float = 0f,
