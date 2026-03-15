@@ -65,4 +65,11 @@
         <item quantity="many">%d треков</item>
         <item quantity="other">%d трека</item>
     </plurals>
+
+    <plurals name="plays_count">
+        <item quantity="one">%d прослушивание</item>
+        <item quantity="few">%d прослушивания</item>
+        <item quantity="many">%d прослушиваний</item>
+        <item quantity="other">%d прослушивания</item>
+    </plurals>
 </resources>

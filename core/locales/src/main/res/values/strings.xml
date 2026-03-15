@@ -63,4 +63,9 @@
         <item quantity="one">%d song</item>
         <item quantity="other">%d songs</item>
     </plurals>
+
+    <plurals name="plays_count">
+        <item quantity="one">%d play</item>
+        <item quantity="other">%d plays</item>
+    </plurals>
 </resources>

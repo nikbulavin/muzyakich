@@ -12,6 +12,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import javax.inject.Inject
+import kotlin.time.Clock
 import kotlin.uuid.Uuid
 
 internal class SongsRepositoryImpl @Inject constructor(
@@ -28,6 +29,7 @@ internal class SongsRepositoryImpl @Inject constructor(
                 .find { it.mediaId == mediaId }
                 ?.asExternalModel(
                     isFavorite = songEntity?.isFavorite ?: false,
+                    playCount = songEntity?.playCount ?: 0,
                 )
         }
     }
@@ -41,10 +43,10 @@ internal class SongsRepositoryImpl @Inject constructor(
             songDao.getSongs(),
         ) { mediaStoreSongs, songEntities ->
             mediaStoreSongs.mapTo(ArrayList(mediaStoreSongs.size)) { song ->
+                val songEntity = songEntities.find { it.mediaId == song.mediaId }
                 song.asExternalModel(
-                    isFavorite = songEntities
-                        .find { it.mediaId == song.mediaId }
-                        ?.isFavorite ?: false,
+                    isFavorite = songEntity?.isFavorite ?: false,
+                    playCount = songEntity?.playCount ?: 0,
                 )
             }.apply {
                 val comparator = when (sortBy) {
@@ -67,5 +69,21 @@ internal class SongsRepositoryImpl @Inject constructor(
                 lastPlayed = songEntity?.lastPlayed,
             )
         )
+    }
+
+    override suspend fun incrementPlayCount(mediaId: String) {
+        val lastPlayed = Clock.System.now()
+        val updatedRows = songDao.incrementPlayCount(mediaId, lastPlayed)
+        if (updatedRows == 0) {
+            songDao.upsertSong(
+                SongEntity(
+                    uuid = Uuid.random(),
+                    mediaId = mediaId,
+                    isFavorite = false,
+                    playCount = 1,
+                    lastPlayed = lastPlayed,
+                )
+            )
+        }
     }
 }

@@ -62,4 +62,8 @@
     <plurals name="number_of_songs">
         <item quantity="other">%d곡</item>
     </plurals>
+
+    <plurals name="plays_count">
+        <item quantity="other">%d회 재생</item>
+    </plurals>
 </resources>

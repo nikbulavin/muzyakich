@@ -17,6 +17,7 @@ data class Song(
     val duration: Long,
     val bitrate: Int,
     val isFavorite: Boolean,
+    val playCount: Int,
     val size: Int,
     val bitsPerSample: Int?,
     val sampleRate: Int?,

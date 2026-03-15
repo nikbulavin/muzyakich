@@ -15,4 +15,6 @@ interface SongsRepository {
     ): Flow<List<Song>>
 
     suspend fun toggleFavorite(mediaId: String, isFavorite: Boolean)
+
+    suspend fun incrementPlayCount(mediaId: String)
 }

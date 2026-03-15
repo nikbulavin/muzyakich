@@ -26,9 +26,11 @@ data class MediaStoreSong(
 
 fun MediaStoreSong.asExternalModel(
     isFavorite: Boolean,
+    playCount: Int,
 ): Song {
     return Song(
         isFavorite = isFavorite,
+        playCount = playCount,
         uuid = Uuid.random(),
         mediaId = mediaId,
         artistId = artistId,

@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,6 +53,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Event
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlayCircle
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
@@ -308,6 +310,16 @@ private fun TagPanel(
             MuzTag(
                 text = genre,
                 icon = MuzIcons.Rounded.Genres,
+            )
+        }
+        if (song.playCount > 0) {
+            MuzTag(
+                text = pluralStringResource(
+                    id = localesR.plurals.plays_count,
+                    count = song.playCount,
+                    song.playCount,
+                ),
+                icon = MuzIcons.Filled.PlayCircle,
             )
         }
         MuzTag(
