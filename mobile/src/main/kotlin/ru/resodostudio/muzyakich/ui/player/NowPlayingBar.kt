@@ -38,11 +38,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
@@ -93,7 +96,6 @@ fun NowPlayingBar(
             MaterialShapes.Cookie12Sided,
             MaterialShapes.Clover8Leaf,
             MaterialShapes.SoftBurst,
-            MaterialShapes.SoftBoom,
             MaterialShapes.Flower,
             MaterialShapes.Heart,
         )
@@ -151,10 +153,18 @@ fun NowPlayingBar(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.padding(vertical = 12.dp),
         ) {
+            val shadowColor = MaterialTheme.colorScheme.inverseSurface
             SongArtworkMini(
                 artworkUri = currentSong.artworkUri,
                 size = 46.dp,
-                modifier = Modifier.clip(currentShape),
+                modifier = Modifier
+                    .graphicsLayer {
+                        this.clip = true
+                        this.shape = currentShape
+                        this.shadowElevation = 3.dp.toPx()
+                        this.ambientShadowColor = shadowColor
+                        this.spotShadowColor = shadowColor
+                    },
             )
             Spacer(Modifier.size(6.dp))
             AnimatedContent(

@@ -25,12 +25,10 @@ fun SongArtworkMini(
     artworkUri: Uri,
     size: Dp,
     modifier: Modifier = Modifier,
-    shape: Shape = MaterialTheme.shapes.small,
 ) {
     SubcomposeAsyncImage(
         modifier = modifier
-            .size(size)
-            .clip(shape),
+            .size(size),
         model = ImageRequest.Builder(LocalContext.current)
             .data(artworkUri)
             .size(256)
