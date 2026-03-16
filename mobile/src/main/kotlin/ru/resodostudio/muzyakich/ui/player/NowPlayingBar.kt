@@ -3,11 +3,7 @@ package ru.resodostudio.muzyakich.ui.player
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -66,8 +62,10 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.component.SongArtworkMini
+import kotlin.math.roundToInt
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NowPlayingBar(
@@ -77,6 +75,9 @@ fun NowPlayingBar(
     modifier: Modifier = Modifier,
 ) {
     val motionScheme = MaterialTheme.motionScheme
+
+    val playPauseButtonState = rememberPlayPauseButtonState(player)
+    val isPlaying = !playPauseButtonState.showPlay
 
     val shapes = remember {
         listOf(
@@ -98,13 +99,14 @@ fun NowPlayingBar(
         )
     }
 
-    var targetShape by remember { mutableStateOf(shapes.random()) }
+    var targetShape by remember { mutableStateOf(if (isPlaying) shapes.random() else MaterialShapes.Square) }
     var previousShape by remember { mutableStateOf(targetShape) }
     val progress = remember { Animatable(1f) }
 
-    LaunchedEffect(currentSong.mediaId) {
+    LaunchedEffect(currentSong.mediaId, isPlaying) {
+        val newTarget = if (isPlaying) shapes.random() else MaterialShapes.Square
         previousShape = targetShape
-        targetShape = shapes.random()
+        targetShape = newTarget
 
         progress.snapTo(0f)
         progress.animateTo(1f, animationSpec = tween(500))
@@ -114,19 +116,29 @@ fun NowPlayingBar(
         Morph(previousShape, targetShape)
     }
 
-    val infiniteTransition = rememberInfiniteTransition("infinite outline movement")
-    val currentRotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            tween(9000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "animatedRotation",
-    )
+    val currentRotation = remember { Animatable(0f) }
+    LaunchedEffect(isPlaying) {
+        if (isPlaying) {
+            while (true) {
+                currentRotation.animateTo(
+                    targetValue = 360f,
+                    animationSpec = tween(
+                        durationMillis = (9000 * (1f - (currentRotation.value / 360f))).toInt()
+                            .coerceAtLeast(1),
+                        easing = LinearEasing,
+                    )
+                )
+                currentRotation.snapTo(0f)
+            }
+        } else {
+            val target = (currentRotation.value / 90f).roundToInt() * 90f
+            currentRotation.animateTo(target, motionScheme.fastSpatialSpec())
+            if (currentRotation.value >= 360f) currentRotation.snapTo(currentRotation.value % 360f)
+        }
+    }
 
-    val currentShape = remember(morph, progress.value, currentRotation) {
-        MorphPolygonShape(morph, progress.value, currentRotation)
+    val currentShape = remember(morph, progress.value, currentRotation.value) {
+        MorphPolygonShape(morph, progress.value, currentRotation.value)
     }
 
     Box(
