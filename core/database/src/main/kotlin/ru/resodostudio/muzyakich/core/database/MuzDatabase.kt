@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.core.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import ru.resodostudio.muzyakich.core.database.dao.PlaylistDao
 import ru.resodostudio.muzyakich.core.database.dao.SongDao
 import ru.resodostudio.muzyakich.core.database.model.PlaylistEntity
 import ru.resodostudio.muzyakich.core.database.model.PlaylistSongCrossRef
@@ -26,4 +27,6 @@ import ru.resodostudio.muzyakich.core.database.util.UuidConverter
 internal abstract class MuzDatabase : RoomDatabase() {
 
     abstract fun songDao(): SongDao
+
+    abstract fun playlistDao(): PlaylistDao
 }

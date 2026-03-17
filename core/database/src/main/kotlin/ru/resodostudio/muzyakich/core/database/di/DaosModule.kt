@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudio.muzyakich.core.database.MuzDatabase
+import ru.resodostudio.muzyakich.core.database.dao.PlaylistDao
 import ru.resodostudio.muzyakich.core.database.dao.SongDao
 
 @Module
@@ -15,4 +16,9 @@ internal object DaosModule {
     fun providesFavoriteSongDao(
         database: MuzDatabase,
     ): SongDao = database.songDao()
+
+    @Provides
+    fun providesPlaylistDao(
+        database: MuzDatabase,
+    ): PlaylistDao = database.playlistDao()
 }
