@@ -1,0 +1,24 @@
+package ru.resodostudio.muzyakich.core.data.model
+
+import ru.resodostudio.muzyakich.core.database.model.PlaylistEntity
+import ru.resodostudio.muzyakich.core.model.data.Playlist
+import ru.resodostudio.muzyakich.core.model.data.Song
+
+fun PlaylistEntity.asExternalModel(songs: List<Song> = emptyList()): Playlist {
+    return Playlist(
+        uuid = uuid,
+        name = name,
+        timestamp = timestamp,
+        coverFileName = coverFileName,
+        songs = songs,
+    )
+}
+
+fun Playlist.asEntity(): PlaylistEntity {
+    return PlaylistEntity(
+        uuid = uuid,
+        name = name,
+        timestamp = timestamp,
+        coverFileName = coverFileName,
+    )
+}
