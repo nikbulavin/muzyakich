@@ -46,6 +46,7 @@ fun QueuePanel(
     onQueueItemClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onSongLongClick: (String) -> Unit = {},
+    onRemoveFromQueue: (Uuid) -> Unit = {},
 ) {
     with(sharedTransitionScope) {
         Column(
@@ -145,6 +146,7 @@ fun QueuePanel(
                         song = song,
                         modifier = Modifier.animateItem(),
                         onClick = { onQueueItemClick(song.uuid) },
+                        onDismiss = { onRemoveFromQueue(song.uuid) },
                         shapes = if (playingQueue.size == 1) {
                             ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
                         } else {

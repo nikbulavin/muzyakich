@@ -92,6 +92,7 @@ fun PlayerScreen(
         onSongMenuClick = onSongMenuClick,
         onSkipToSongClick = viewModel::skipToSong,
         onFavoriteChange = viewModel::setSongFavorite,
+        onRemoveFromQueue = viewModel::removeSong,
     )
 }
 
@@ -103,6 +104,7 @@ private fun PlayerScreen(
     onSongMenuClick: (String) -> Unit,
     onSkipToSongClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
+    onRemoveFromQueue: (Uuid) -> Unit = {},
 ) {
     SharedTransitionLayout {
         var queueOpened by rememberSaveable { mutableStateOf(false) }
@@ -135,6 +137,7 @@ private fun PlayerScreen(
                                     onQueueItemClick = onSkipToSongClick,
                                     onFavoriteChange = onFavoriteChange,
                                     onSongLongClick = onSongMenuClick,
+                                    onRemoveFromQueue = onRemoveFromQueue,
                                     sharedTransitionScope = this@SharedTransitionLayout,
                                 )
                             } else {

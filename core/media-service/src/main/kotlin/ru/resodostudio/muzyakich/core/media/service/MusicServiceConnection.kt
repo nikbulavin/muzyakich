@@ -136,6 +136,22 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
+    fun removeSongFromQueue(uuid: Uuid) {
+        mediaController?.let { controller ->
+            val timeline = controller.currentTimeline
+            if (timeline.isEmpty) return
+            val window = Timeline.Window()
+            for (index in timeline.windowCount - 1 downTo 0) {
+                timeline.getWindow(index, window)
+                val itemUuid = Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+                if (itemUuid == uuid) {
+                    controller.removeMediaItem(index)
+                    break
+                }
+            }
+        }
+    }
+
     fun removeSongs(mediaIds: List<String>) {
         mediaController?.let { controller ->
             for (index in controller.mediaItemCount - 1 downTo 0) {
