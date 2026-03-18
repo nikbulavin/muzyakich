@@ -2,8 +2,8 @@ package ru.resodostudio.muzyakich.ui.player
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -45,33 +48,53 @@ fun QueueItem(
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
 
-    LaunchedEffect(dismissState.currentValue) {
-        if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd || dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+    LaunchedEffect(dismissState.settledValue) {
+        if (dismissState.settledValue == SwipeToDismissBoxValue.StartToEnd || dismissState.settledValue == SwipeToDismissBoxValue.EndToStart) {
             onDismiss()
         }
     }
 
     SwipeToDismissBox(
         state = dismissState,
-        modifier = modifier.clip(shapes.shape),
+        modifier = modifier,
         backgroundContent = {
-            val alignment = when (dismissState.dismissDirection) {
-                SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-                SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
-                else -> Alignment.Center
-            }
+            val direction = dismissState.dismissDirection
+
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.errorContainer)
-                    .padding(horizontal = 24.dp),
-                contentAlignment = alignment
+                modifier = Modifier.fillMaxSize()
             ) {
-                Icon(
-                    imageVector = MuzIcons.Filled.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onErrorContainer,
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .layout { measurable, constraints ->
+                            val offset = try {
+                                dismissState.requireOffset().let { if (it.isNaN()) 0f else it }.absoluteValue.roundToInt()
+                            } catch (e: Exception) {
+                                0
+                            }
+
+                            val width = offset.coerceIn(0, constraints.maxWidth)
+                            val placeable = measurable.measure(
+                                constraints.copy(minWidth = width, maxWidth = width)
+                            )
+                            layout(constraints.maxWidth, constraints.maxHeight) {
+                                if (direction == SwipeToDismissBoxValue.EndToStart) {
+                                    placeable.placeRelative(constraints.maxWidth - width, 0)
+                                } else {
+                                    placeable.placeRelative(0, 0)
+                                }
+                            }
+                        }
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.errorContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Filled.Delete,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                    )
+                }
             }
         },
         content = {
