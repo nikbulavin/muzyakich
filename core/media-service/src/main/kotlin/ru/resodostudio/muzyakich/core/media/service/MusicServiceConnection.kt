@@ -8,7 +8,6 @@ import androidx.media3.common.Player.EVENT_MEDIA_ITEM_TRANSITION
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
 import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
 import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
-import androidx.media3.common.Player.EVENT_POSITION_DISCONTINUITY
 import androidx.media3.common.Player.EVENT_REPEAT_MODE_CHANGED
 import androidx.media3.common.Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED
 import androidx.media3.common.Player.EVENT_TIMELINE_CHANGED
@@ -18,9 +17,7 @@ import androidx.media3.session.SessionToken
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -30,7 +27,6 @@ import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_POSITION_MS
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.media.service.util.UUID
@@ -45,7 +41,6 @@ import kotlin.uuid.Uuid
 class MusicServiceConnection @Inject constructor(
     @ApplicationContext context: Context,
     @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
-    private val songsRepository: SongsRepository,
 ) {
     private var mediaController: MediaController? = null
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
@@ -55,9 +50,6 @@ class MusicServiceConnection @Inject constructor(
 
     private val _audioSessionId = MutableStateFlow<Int?>(null)
     val audioSessionId = _audioSessionId.asStateFlow()
-
-    private var playCountJob: Job? = null
-    private var lastIncrementedMediaId: String? = null
 
     init {
         coroutineScope.launch {
@@ -165,13 +157,6 @@ class MusicServiceConnection @Inject constructor(
     private inner class PlayerListener : Player.Listener {
 
         override fun onEvents(player: Player, events: Player.Events) {
-            if (EVENT_MEDIA_ITEM_TRANSITION in events ||
-                EVENT_POSITION_DISCONTINUITY in events &&
-                player.currentPosition < 1000L
-            ) {
-                lastIncrementedMediaId = null
-            }
-
             if (events.containsAny(
                     EVENT_PLAYBACK_STATE_CHANGED,
                     EVENT_MEDIA_METADATA_CHANGED,
@@ -184,7 +169,6 @@ class MusicServiceConnection @Inject constructor(
             ) {
                 updateNowPlayingState(player)
             }
-            updatePlayCountTracking(player)
         }
     }
 
@@ -197,35 +181,6 @@ class MusicServiceConnection @Inject constructor(
                 playingQueue = getCurrentPlayingQueue(this),
                 player = this,
             )
-        }
-    }
-
-    private fun updatePlayCountTracking(player: Player) {
-        val currentMediaId = player.currentMediaItem?.mediaId
-        if (currentMediaId == null || currentMediaId == lastIncrementedMediaId) {
-            playCountJob?.cancel()
-            playCountJob = null
-            return
-        }
-
-        if (player.playWhenReady && player.playbackState == Player.STATE_READY) {
-            if (playCountJob?.isActive != true) {
-                playCountJob = coroutineScope.launch {
-                    while (true) {
-                        val duration = player.duration
-                        val threshold = if (duration in 1..<30_000L) duration else 30_000L
-                        if (duration > 0 && player.currentPosition >= threshold) {
-                            lastIncrementedMediaId = currentMediaId
-                            songsRepository.incrementPlayCount(currentMediaId)
-                            break
-                        }
-                        delay(1000)
-                    }
-                }
-            }
-        } else {
-            playCountJob?.cancel()
-            playCountJob = null
         }
     }
 

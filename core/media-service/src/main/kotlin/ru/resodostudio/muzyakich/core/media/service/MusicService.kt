@@ -8,6 +8,7 @@ import androidx.annotation.OptIn
 import androidx.core.os.bundleOf
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.common.C.USAGE_MEDIA
 import androidx.media3.common.Player
@@ -18,7 +19,15 @@ import androidx.media3.session.MediaConstants
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.notification.MusicNotificationProvider
 import javax.inject.Inject
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -36,7 +45,14 @@ internal class MusicService : MediaLibraryService() {
     @Inject
     lateinit var musicServiceConnection: MusicServiceConnection
 
+    @Inject
+    lateinit var songsRepository: SongsRepository
+
     private var mediaLibrarySession: MediaLibrarySession? = null
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var playCountJob: Job? = null
+    private var lastIncrementedMediaId: String? = null
 
     private val castPlayerListener = object : Player.Listener {
 
@@ -50,6 +66,16 @@ internal class MusicService : MediaLibraryService() {
             mediaLibrarySession?.let { session ->
                 updateMediaButtonPreferences(session, session.player)
             }
+        }
+
+        override fun onEvents(player: Player, events: Player.Events) {
+            if (Player.EVENT_MEDIA_ITEM_TRANSITION in events ||
+                Player.EVENT_POSITION_DISCONTINUITY in events &&
+                player.currentPosition < 1000L
+            ) {
+                lastIncrementedMediaId = null
+            }
+            updatePlayCountTracking(player)
         }
     }
 
@@ -70,6 +96,7 @@ internal class MusicService : MediaLibraryService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaLibrarySession
 
     override fun onDestroy() {
+        coroutineScope.cancel()
         mediaLibrarySession?.run {
             player.removeListener(castPlayerListener)
             player.removeListener(exoPlayerListener)
@@ -178,5 +205,34 @@ internal class MusicService : MediaLibraryService() {
         intent.putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
 
         sendBroadcast(intent)
+    }
+
+    private fun updatePlayCountTracking(player: Player) {
+        val currentMediaId = player.currentMediaItem?.mediaId
+        if (currentMediaId == null || currentMediaId == lastIncrementedMediaId) {
+            playCountJob?.cancel()
+            playCountJob = null
+            return
+        }
+
+        if (player.playWhenReady && player.playbackState == Player.STATE_READY) {
+            if (playCountJob?.isActive != true) {
+                playCountJob = coroutineScope.launch {
+                    while (true) {
+                        val duration = player.duration
+                        val threshold = if (duration != C.TIME_UNSET && duration in 1..<30_000L) duration else 30_000L
+                        if (duration > 0 && player.currentPosition >= threshold) {
+                            lastIncrementedMediaId = currentMediaId
+                            songsRepository.incrementPlayCount(currentMediaId)
+                            break
+                        }
+                        delay(1000)
+                    }
+                }
+            }
+        } else {
+            playCountJob?.cancel()
+            playCountJob = null
+        }
     }
 }
