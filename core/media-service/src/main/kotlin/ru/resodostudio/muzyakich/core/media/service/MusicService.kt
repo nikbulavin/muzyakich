@@ -50,6 +50,8 @@ internal class MusicService : MediaLibraryService() {
 
     private var mediaLibrarySession: MediaLibrarySession? = null
 
+    private var exoPlayer: ExoPlayer? = null
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var playCountJob: Job? = null
     private var lastIncrementedMediaId: String? = null
@@ -99,14 +101,17 @@ internal class MusicService : MediaLibraryService() {
         coroutineScope.cancel()
         mediaLibrarySession?.run {
             player.removeListener(castPlayerListener)
-            player.removeListener(exoPlayerListener)
+            exoPlayer?.removeListener(exoPlayerListener)
+            
+            val audioSessionId = exoPlayer?.audioSessionId ?: player.audioSessionId
             player.release()
             release()
             clearListener()
-            mediaLibrarySession = null
             musicServiceConnection.updateAudioSessionId(null)
-            sendAudioEffectIntent(player.audioSessionId, false)
+            sendAudioEffectIntent(audioSessionId, false)
         }
+        exoPlayer = null
+        mediaLibrarySession = null
         super.onDestroy()
     }
 
@@ -139,15 +144,16 @@ internal class MusicService : MediaLibraryService() {
             .setUsage(USAGE_MEDIA)
             .build()
 
-        val exoPlayer = ExoPlayer.Builder(this)
+        val exoPlayerInstance = ExoPlayer.Builder(this)
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
             .build()
 
-        exoPlayer.addListener(exoPlayerListener)
+        exoPlayerInstance.addListener(exoPlayerListener)
+        exoPlayer = exoPlayerInstance
 
         return CastPlayer.Builder(this)
-            .setLocalPlayer(exoPlayer)
+            .setLocalPlayer(exoPlayerInstance)
             .build()
     }
 
@@ -189,7 +195,12 @@ internal class MusicService : MediaLibraryService() {
             .setPlayerCommand(Player.COMMAND_SET_REPEAT_MODE, nextRepeatMode)
             .build()
 
-        session.setMediaButtonPreferences(listOf(shuffleButton, repeatButton))
+        session.setMediaButtonPreferences(
+            listOf(
+                shuffleButton,
+                repeatButton,
+            )
+        )
     }
 
     private fun sendAudioEffectIntent(sessionId: Int, open: Boolean) {
