@@ -67,13 +67,12 @@ fun QueueItem(
                     modifier = Modifier
                         .fillMaxHeight()
                         .layout { measurable, constraints ->
-                            val offset = try {
+                            val offset = runCatching {
                                 dismissState.requireOffset().let { if (it.isNaN()) 0f else it }.absoluteValue.roundToInt()
-                            } catch (e: Exception) {
-                                0
-                            }
+                            }.getOrDefault(0)
 
-                            val width = offset.coerceIn(0, constraints.maxWidth)
+                            val gap = 2.dp.roundToPx()
+                            val width = (offset - gap).coerceIn(0, constraints.maxWidth)
                             val placeable = measurable.measure(
                                 constraints.copy(minWidth = width, maxWidth = width)
                             )
