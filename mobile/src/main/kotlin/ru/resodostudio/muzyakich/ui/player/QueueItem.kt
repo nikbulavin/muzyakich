@@ -17,7 +17,6 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,20 +47,15 @@ fun QueueItem(
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
 
-    LaunchedEffect(dismissState.settledValue) {
-        if (dismissState.settledValue == SwipeToDismissBoxValue.StartToEnd || dismissState.settledValue == SwipeToDismissBoxValue.EndToStart) {
-            onDismiss()
-        }
-    }
-
     SwipeToDismissBox(
         state = dismissState,
         modifier = modifier,
+        onDismiss = { onDismiss() },
         backgroundContent = {
             val direction = dismissState.dismissDirection
 
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 Box(
                     modifier = Modifier
@@ -86,7 +80,7 @@ fun QueueItem(
                         }
                         .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.errorContainer),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = MuzIcons.Filled.Delete,
