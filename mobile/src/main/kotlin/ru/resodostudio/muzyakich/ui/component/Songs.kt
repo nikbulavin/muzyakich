@@ -17,6 +17,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -50,6 +51,7 @@ import ru.resodostudio.muzyakich.R
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
@@ -76,14 +78,22 @@ fun SongItem(
     SwipeToDismissBox(
         state = dismissState,
         modifier = modifier,
-        enableDismissFromEndToStart = false,
-        onDismiss = {
-            onLeftToRightSwipe(song)
+        onDismiss = { dismissDirection ->
+            if (dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
+                onLeftToRightSwipe(song)
+            }
             scope.launch {
                 dismissState.reset()
             }
         },
         backgroundContent = {
+            val isStartToEnd = dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd
+            val icon = if (isStartToEnd) MuzIcons.Filled.PlaylistPlay else MuzIcons.Filled.Delete
+            val (backgroundColor, iconColor) = if (isStartToEnd) {
+                MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
+            } else {
+                MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
+            }
             Box(
                 modifier = Modifier.fillMaxSize(),
             ) {
@@ -102,17 +112,21 @@ fun SongItem(
                                 constraints.copy(minWidth = width, maxWidth = width)
                             )
                             layout(constraints.maxWidth, constraints.maxHeight) {
-                                placeable.placeRelative(0, 0)
+                                if (isStartToEnd) {
+                                    placeable.placeRelative(0, 0)
+                                } else {
+                                    placeable.placeRelative(constraints.maxWidth - width, 0)
+                                }
                             }
                         }
                         .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.tertiaryContainer),
+                        .background(backgroundColor),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        imageVector = MuzIcons.Filled.PlaylistPlay,
+                        imageVector = icon,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = iconColor,
                     )
                 }
             }
