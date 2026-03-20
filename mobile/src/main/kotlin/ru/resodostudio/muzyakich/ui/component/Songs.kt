@@ -3,6 +3,8 @@ package ru.resodostudio.muzyakich.ui.component
 import android.text.format.Formatter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -14,14 +16,18 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -39,14 +45,18 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
+import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.R
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -58,99 +68,153 @@ fun SongItem(
     isPlaying: Boolean = false,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
+    onLeftToRightSwipe: (Song) -> Unit = {},
 ) {
-    MuzSelectableListItem(
-        shapes = shapes,
-        selected = isPlaying,
-        onClick = onClick,
-        onLongClick = dropUnlessResumed { onMenuClick() },
-        onLongClickLabel = stringResource(localesR.string.open_menu),
+    val dismissState = rememberSwipeToDismissBoxState()
+    val scope = rememberCoroutineScope()
+
+    SwipeToDismissBox(
+        state = dismissState,
         modifier = modifier,
-        content = {
-            Text(
-                text = song.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        supportingContent = {
-            Text(
-                text = song.artist,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        leadingContent = {
-            Box {
-                val shape = MaterialTheme.shapes.medium
-                if (isPlaying) {
-                    Box(
-                        modifier = Modifier
-                            .zIndex(1f)
-                            .size(56.dp)
-                            .clip(shape)
-                            .background(MaterialTheme.colorScheme.surface.copy(0.6f)),
-                    ) {
-                        val dynamicProperties = rememberLottieDynamicProperties(
-                            rememberLottieDynamicProperty(
-                                property = LottieProperty.COLOR,
-                                value = MaterialTheme.colorScheme.secondary.toArgb(),
-                                keyPath = arrayOf("**"),
-                            )
-                        )
-                        val lottieComposition by rememberLottieComposition(
-                            LottieCompositionSpec.RawRes(R.raw.equalizer_anim)
-                        )
-                        val progress by animateLottieCompositionAsState(
-                            composition = lottieComposition,
-                            iterations = LottieConstants.IterateForever,
-                            speed = 0.4f,
-                        )
-                        LottieAnimation(
-                            modifier = Modifier
-                                .zIndex(2f)
-                                .align(Alignment.Center)
-                                .size(40.dp),
-                            composition = lottieComposition,
-                            progress = { progress },
-                            dynamicProperties = dynamicProperties,
-                        )
-                    }
-                }
-                SubcomposeAsyncImage(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(shape),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(song.artworkUri)
-                        .size(128)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    error = {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.MusicNote,
-                                contentDescription = null,
-                                modifier = Modifier.size(32.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                )
+        enableDismissFromEndToStart = false,
+        onDismiss = {
+            onLeftToRightSwipe(song)
+            scope.launch {
+                dismissState.reset()
             }
         },
-        trailingContent = {
-            MuzIconButton(
-                onClick = onMenuClick,
-                icon = MuzIcons.Rounded.MoreVert,
-                contentDescription = stringResource(localesR.string.open_menu),
-                modifier = Modifier.size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-            )
+        backgroundContent = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .layout { measurable, constraints ->
+                            val offset = runCatching {
+                                dismissState.requireOffset()
+                                    .let { if (it.isNaN()) 0f else it }.absoluteValue.roundToInt()
+                            }.getOrDefault(0)
+
+                            val gap = 2.dp.roundToPx()
+                            val width = (offset - gap).coerceIn(0, constraints.maxWidth)
+                            val placeable = measurable.measure(
+                                constraints.copy(minWidth = width, maxWidth = width)
+                            )
+                            layout(constraints.maxWidth, constraints.maxHeight) {
+                                placeable.placeRelative(0, 0)
+                            }
+                        }
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.tertiaryContainer),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Filled.PlaylistPlay,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    )
+                }
+            }
         },
+        content = {
+            MuzSelectableListItem(
+                shapes = shapes,
+                selected = isPlaying,
+                onClick = onClick,
+                onLongClick = dropUnlessResumed { onMenuClick() },
+                onLongClickLabel = stringResource(localesR.string.open_menu),
+                content = {
+                    Text(
+                        text = song.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        text = song.artist,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                leadingContent = {
+                    Box {
+                        val shape = MaterialTheme.shapes.medium
+                        if (isPlaying) {
+                            Box(
+                                modifier = Modifier
+                                    .zIndex(1f)
+                                    .size(56.dp)
+                                    .clip(shape)
+                                    .background(MaterialTheme.colorScheme.surface.copy(0.6f)),
+                            ) {
+                                val dynamicProperties = rememberLottieDynamicProperties(
+                                    rememberLottieDynamicProperty(
+                                        property = LottieProperty.COLOR,
+                                        value = MaterialTheme.colorScheme.secondary.toArgb(),
+                                        keyPath = arrayOf("**"),
+                                    )
+                                )
+                                val lottieComposition by rememberLottieComposition(
+                                    LottieCompositionSpec.RawRes(R.raw.equalizer_anim)
+                                )
+                                val progress by animateLottieCompositionAsState(
+                                    composition = lottieComposition,
+                                    iterations = LottieConstants.IterateForever,
+                                    speed = 0.4f,
+                                )
+                                LottieAnimation(
+                                    modifier = Modifier
+                                        .zIndex(2f)
+                                        .align(Alignment.Center)
+                                        .size(40.dp),
+                                    composition = lottieComposition,
+                                    progress = { progress },
+                                    dynamicProperties = dynamicProperties,
+                                )
+                            }
+                        }
+                        SubcomposeAsyncImage(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(shape),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(song.artworkUri)
+                                .size(128)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            error = {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.MusicNote,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(32.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            },
+                        )
+                    }
+                },
+                trailingContent = {
+                    MuzIconButton(
+                        onClick = onMenuClick,
+                        icon = MuzIcons.Rounded.MoreVert,
+                        contentDescription = stringResource(localesR.string.open_menu),
+                        modifier = Modifier.size(
+                            IconButtonDefaults.smallContainerSize(
+                                IconButtonDefaults.IconButtonWidthOption.Narrow
+                            )
+                        ),
+                    )
+                },
+            )
+        }
     )
 }
 
@@ -162,6 +226,7 @@ fun LazyGridScope.songs(
     onSongMenuClick: (String) -> Unit,
     isPlaying: Boolean = false,
     modifier: Modifier = Modifier,
+    onSongLeftToRightSwipe: (Song) -> Unit = {},
 ) {
     itemsIndexed(
         items = songs,
@@ -179,6 +244,7 @@ fun LazyGridScope.songs(
             } else {
                 ListItemDefaults.segmentedShapes(index, songs.size)
             },
+            onLeftToRightSwipe = onSongLeftToRightSwipe,
         )
     }
 }

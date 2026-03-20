@@ -77,6 +77,10 @@ class SongsViewModel @Inject constructor(
             userDataRepository.setSortOrderPreference(sortOrder)
         }
     }
+
+    fun playSongNext(song: Song) {
+        musicServiceConnection.playSongsNext(listOf(song))
+    }
 }
 
 sealed interface SongsUiState {
