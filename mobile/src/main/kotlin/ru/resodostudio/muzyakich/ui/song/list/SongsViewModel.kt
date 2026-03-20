@@ -81,6 +81,10 @@ class SongsViewModel @Inject constructor(
     fun playSongNext(song: Song) {
         musicServiceConnection.playSongsNext(listOf(song))
     }
+
+    fun removeSong(mediaId: String) {
+        musicServiceConnection.removeSongs(listOf(mediaId))
+    }
 }
 
 sealed interface SongsUiState {

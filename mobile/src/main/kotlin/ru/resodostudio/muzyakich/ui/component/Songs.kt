@@ -1,6 +1,11 @@
 package ru.resodostudio.muzyakich.ui.component
 
+import android.app.Activity.RESULT_OK
+import android.provider.MediaStore
 import android.text.format.Formatter
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -71,9 +76,18 @@ fun SongItem(
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     onLeftToRightSwipe: (Song) -> Unit = {},
+    onSongRemove: (String) -> Unit = {},
 ) {
+    val context = LocalContext.current
     val dismissState = rememberSwipeToDismissBoxState()
     val scope = rememberCoroutineScope()
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            onSongRemove(song.mediaId)
+        }
+    }
 
     SwipeToDismissBox(
         state = dismissState,
@@ -81,6 +95,17 @@ fun SongItem(
         onDismiss = { dismissDirection ->
             if (dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
                 onLeftToRightSwipe(song)
+            } else if (dismissDirection == SwipeToDismissBoxValue.EndToStart) {
+                runCatching {
+                    val pendingIntent = MediaStore.createTrashRequest(
+                        context.contentResolver,
+                        listOf(song.mediaUri),
+                        true,
+                    )
+                    launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+                }.onFailure { exception ->
+                    exception.printStackTrace()
+                }
             }
             scope.launch {
                 dismissState.reset()
@@ -241,6 +266,7 @@ fun LazyGridScope.songs(
     isPlaying: Boolean = false,
     modifier: Modifier = Modifier,
     onSongLeftToRightSwipe: (Song) -> Unit = {},
+    onSongRemove: (String) -> Unit = {},
 ) {
     itemsIndexed(
         items = songs,
@@ -259,6 +285,7 @@ fun LazyGridScope.songs(
                 ListItemDefaults.segmentedShapes(index, songs.size)
             },
             onLeftToRightSwipe = onSongLeftToRightSwipe,
+            onSongRemove = onSongRemove,
         )
     }
 }

@@ -67,6 +67,7 @@ fun SongsScreen(
         onSortByUpdate = viewModel::updateSortByPreference,
         onSortOrderUpdate = viewModel::updateSortOrderPreference,
         onSongLeftToRightSwipe = viewModel::playSongNext,
+        onSongRemove = viewModel::removeSong,
     )
 }
 
@@ -81,6 +82,7 @@ private fun SongsScreen(
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
     onSongLeftToRightSwipe: (Song) -> Unit = {},
+    onSongRemove: (String) -> Unit = {},
 ) {
     when (songsUiState) {
         SongsUiState.Empty -> {
@@ -132,6 +134,7 @@ private fun SongsScreen(
                     isPlaying = songsUiState.isPlaying,
                     onSongMenuClick = onSongMenuClick,
                     onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+                    onSongRemove = onSongRemove,
                 )
                 songsInfo(
                     songs = songsUiState.songs,
