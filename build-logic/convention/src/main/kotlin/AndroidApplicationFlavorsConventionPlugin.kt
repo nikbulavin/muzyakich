@@ -5,6 +5,7 @@ import org.gradle.kotlin.dsl.configure
 import ru.resodostudio.muzyakich.configureFlavors
 
 class AndroidApplicationFlavorsConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             extensions.configure<ApplicationExtension> {

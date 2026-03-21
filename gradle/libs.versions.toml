@@ -124,6 +124,8 @@ muzyakich-android-application = { id = "muzyakich.android.application" }
 muzyakich-android-application-compose = { id = "muzyakich.android.application.compose" }
 muzyakich-android-application-firebase = { id = "muzyakich.android.application.firebase" }
 muzyakich-android-application-flavors = { id = "muzyakich.android.application.flavors" }
+muzyakich-android-feature-api = { id = "muzyakich.android.feature.api" }
+muzyakich-android-feature-impl = { id = "muzyakich.android.feature.impl" }
 muzyakich-android-library = { id = "muzyakich.android.library" }
 muzyakich-android-library-compose = { id = "muzyakich.android.library.compose" }
 muzyakich-android-room = { id = "muzyakich.android.room" }

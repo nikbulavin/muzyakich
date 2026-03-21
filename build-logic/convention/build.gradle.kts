@@ -43,6 +43,14 @@ gradlePlugin {
             id = libs.plugins.muzyakich.android.application.flavors.get().pluginId
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
         }
+        register("androidFeatureApi") {
+            id = libs.plugins.muzyakich.android.feature.api.get().pluginId
+            implementationClass = "AndroidFeatureApiConventionPlugin"
+        }
+        register("androidFeatureImpl") {
+            id = libs.plugins.muzyakich.android.feature.impl.get().pluginId
+            implementationClass = "AndroidFeatureImplConventionPlugin"
+        }
         register("androidLibrary") {
             id = libs.plugins.muzyakich.android.library.asProvider().get().pluginId
             implementationClass = "AndroidLibraryConventionPlugin"
