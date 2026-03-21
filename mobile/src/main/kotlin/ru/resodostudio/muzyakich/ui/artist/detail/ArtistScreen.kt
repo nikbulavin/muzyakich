@@ -19,13 +19,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.songs
+import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.ui.component.LoadingState
-import ru.resodostudio.muzyakich.ui.component.songs
-import ru.resodostudio.muzyakich.ui.component.songsInfo
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -60,7 +60,7 @@ fun ArtistScreen(
     onSongRemove: (String) -> Unit = {},
 ) {
     when (artistUiState) {
-        ArtistUiState.Error -> LoadingState(modifier.fillMaxSize())
+        ArtistUiState.Error -> onBackClick()
         ArtistUiState.Loading -> LoadingState(modifier.fillMaxSize())
         is ArtistUiState.Success -> {
             Scaffold(

@@ -60,6 +60,7 @@ dependencies {
     implementation(projects.core.mediaService)
     implementation(projects.core.model)
     implementation(projects.core.navigation)
+    implementation(projects.core.ui)
 
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)

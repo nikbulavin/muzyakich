@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItem
@@ -65,7 +66,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.GraphicEq
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
-import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

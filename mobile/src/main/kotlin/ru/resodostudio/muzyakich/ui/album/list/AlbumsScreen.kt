@@ -37,11 +37,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import ru.resodostudio.cashsense.core.ui.EmptyState
+import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.model.data.Album
-import ru.resodostudio.muzyakich.ui.component.EmptyState
-import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

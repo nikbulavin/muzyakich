@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.component
+package ru.resodostudio.cashsense.core.ui
 
 import android.app.Activity.RESULT_OK
 import android.provider.MediaStore
@@ -52,7 +52,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import kotlinx.coroutines.launch
-import ru.resodostudio.muzyakich.R
+import ru.resodostudio.cashsense.core.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -61,7 +61,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.ui.util.asFormattedDuration
+import ru.resodostudio.muzyakich.core.ui.R
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import ru.resodostudio.muzyakich.core.locales.R as localesR

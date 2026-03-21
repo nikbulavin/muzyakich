@@ -54,6 +54,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
@@ -69,7 +70,6 @@ import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsNavKey
 import ru.resodostudio.muzyakich.ui.album.list.navigation.albumsEntry
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsNavKey
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.artistsEntry
-import ru.resodostudio.muzyakich.ui.component.LoadingState
 import ru.resodostudio.muzyakich.ui.song.list.navigation.SongsNavKey
 import ru.resodostudio.muzyakich.ui.song.list.navigation.songsEntry
 import ru.resodostudio.muzyakich.core.locales.R as localesR
