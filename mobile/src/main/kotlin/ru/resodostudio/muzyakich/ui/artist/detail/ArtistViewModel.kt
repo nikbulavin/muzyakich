@@ -48,6 +48,14 @@ class ArtistViewModel @AssistedInject constructor(
         musicServiceConnection.playSongs(songs = songs, startIndex = startIndex, shuffle = shuffle)
     }
 
+    fun playSongNext(song: Song) {
+        musicServiceConnection.playSongsNext(listOf(song))
+    }
+
+    fun removeSong(mediaId: String) {
+        musicServiceConnection.removeSongs(listOf(mediaId))
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

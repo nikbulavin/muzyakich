@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,14 +35,16 @@ fun ArtistScreen(
     modifier: Modifier = Modifier,
     viewModel: ArtistViewModel = hiltViewModel(),
 ) {
-    val artistUiState = viewModel.artistUiState.collectAsStateWithLifecycle()
+    val artistUiState by viewModel.artistUiState.collectAsStateWithLifecycle()
 
     ArtistScreen(
-        artistUiState = artistUiState.value,
+        artistUiState = artistUiState,
         onBackClick = onBackClick,
         onSongMenuClick = onSongMenuClick,
         modifier = modifier,
         onPlaySongsClick = viewModel::playSongs,
+        onSongLeftToRightSwipe = viewModel::playSongNext,
+        onSongRemove = viewModel::removeSong,
     )
 }
 
@@ -53,6 +56,8 @@ fun ArtistScreen(
     onSongMenuClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int, shuffle: Boolean) -> Unit = { _, _, _ -> },
+    onSongLeftToRightSwipe: (Song) -> Unit = {},
+    onSongRemove: (String) -> Unit = {},
 ) {
     when (artistUiState) {
         ArtistUiState.Error -> LoadingState(modifier.fillMaxSize())
@@ -97,6 +102,8 @@ fun ArtistScreen(
                         onPlaySongsClick = { songs, index -> onPlaySongsClick(songs, index, false) },
                         isPlaying = artistUiState.nowPlayingState.player?.isPlaying ?: false,
                         onSongMenuClick = onSongMenuClick,
+                        onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+                        onSongRemove = onSongRemove,
                     )
                     songsInfo(
                         songs = artistUiState.artist.songs,

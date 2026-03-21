@@ -100,6 +100,8 @@ fun AlbumScreen(
         onPlaySongsClick = viewModel::playSongs,
         onPlaySongsNextClick = viewModel::playSongsNext,
         onRemoveSongsClick = viewModel::removeSongs,
+        onSongLeftToRightSwipe = viewModel::playSongNext,
+        onSongRemove = { viewModel.removeSongs(listOf(it)) },
         modifier = modifier,
     )
 }
@@ -114,6 +116,8 @@ private fun AlbumScreen(
     onPlaySongsNextClick: (List<Song>) -> Unit,
     onRemoveSongsClick: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
+    onSongLeftToRightSwipe: (Song) -> Unit = {},
+    onSongRemove: (String) -> Unit = {},
 ) {
     when (albumUiState) {
         AlbumUiState.Error -> onBackClick()
@@ -166,6 +170,8 @@ private fun AlbumScreen(
                             onPlaySongsClick(songs, index, false)
                         },
                         onSongMenuClick = onSongMenuClick,
+                        onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+                        onSongRemove = onSongRemove,
                     )
                     songsInfo(
                         songs = albumUiState.album.songs,
@@ -183,6 +189,8 @@ private fun LazyGridScope.groupedSongs(
     isPlaying: Boolean,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onSongMenuClick: (String) -> Unit,
+    onSongLeftToRightSwipe: (Song) -> Unit = {},
+    onSongRemove: (String) -> Unit = {},
 ) {
     val groupedSongs = songs.groupBy { it.trackNumber / 1000 }
     val hasMultipleDiscs = songs.isNotEmpty() &&
@@ -213,6 +221,8 @@ private fun LazyGridScope.groupedSongs(
                 isPlaying = isPlaying,
                 onSongMenuClick = onSongMenuClick,
                 modifier = Modifier.padding(horizontal = 16.dp),
+                onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+                onSongRemove = onSongRemove,
             )
         }
     } else {
@@ -223,6 +233,8 @@ private fun LazyGridScope.groupedSongs(
             isPlaying = isPlaying,
             onSongMenuClick = onSongMenuClick,
             modifier = Modifier.padding(horizontal = 16.dp),
+            onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+            onSongRemove = onSongRemove,
         )
     }
 }
