@@ -1,12 +1,11 @@
-package ru.resodostudio.muzyakich.ui.settings.navigation
+package ru.resodostudio.muzyakich.feature.settings.impl.navigation
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudio.muzyakich.core.navigation.Navigator
-import ru.resodostudio.muzyakich.ui.settings.SettingsScreen
+import ru.resodostudio.muzyakich.feature.settings.impl.SettingsScreen
+import ru.resodostudio.muzyakich.ui.settings.navigation.SettingsNavKey
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.settingsEntry(navigator: Navigator) {
     entry<SettingsNavKey> {
         SettingsScreen(

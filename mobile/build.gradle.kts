@@ -62,6 +62,9 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.ui)
 
+    implementation(projects.feature.settings.api)
+    implementation(projects.feature.settings.impl)
+
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.browser)

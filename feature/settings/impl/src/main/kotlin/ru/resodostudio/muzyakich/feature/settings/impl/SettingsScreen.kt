@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.settings
+package ru.resodostudio.muzyakich.feature.settings.impl
 
 import android.content.Context
 import android.content.Intent
@@ -69,7 +69,7 @@ import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun SettingsScreen(
+internal fun SettingsScreen(
     onBackClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {

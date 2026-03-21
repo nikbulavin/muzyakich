@@ -1,9 +1,7 @@
-package ru.resodostudio.muzyakich.ui.settings
+package ru.resodostudio.muzyakich.feature.settings.impl
 
-import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.util.UnstableApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,9 +15,8 @@ import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(UnstableApi::class)
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
+internal class SettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {

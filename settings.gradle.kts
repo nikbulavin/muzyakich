@@ -42,3 +42,6 @@ include(":core:mediastore")
 include(":core:model")
 include(":core:navigation")
 include(":core:ui")
+
+include(":feature:settings:api")
+include(":feature:settings:impl")

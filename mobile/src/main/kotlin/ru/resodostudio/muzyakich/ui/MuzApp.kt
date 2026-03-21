@@ -56,6 +56,7 @@ import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.toEntries
+import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
 import ru.resodostudio.muzyakich.ui.artist.detail.navigation.artistEntry
 import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
@@ -63,7 +64,6 @@ import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.player.navigation.PlayerNavKey
 import ru.resodostudio.muzyakich.ui.player.navigation.navigateToPlayer
 import ru.resodostudio.muzyakich.ui.player.navigation.playerEntry
-import ru.resodostudio.muzyakich.ui.settings.navigation.settingsEntry
 import ru.resodostudio.muzyakich.ui.song.detail.navigation.songEntry
 
 @OptIn(
