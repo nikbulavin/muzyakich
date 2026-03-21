@@ -54,6 +54,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Feedback
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.FormatPaint
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Gavel
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Info
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Palette
@@ -71,6 +72,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 internal fun SettingsScreen(
     onBackClick: () -> Unit,
+    onLicensesClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
@@ -78,6 +80,7 @@ internal fun SettingsScreen(
     SettingsScreen(
         settingsUiState = settingsUiState,
         onBackClick = onBackClick,
+        onLicensesClick = onLicensesClick,
         onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
         onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
     )
@@ -88,6 +91,7 @@ internal fun SettingsScreen(
 private fun SettingsScreen(
     settingsUiState: SettingsUiState,
     onBackClick: () -> Unit,
+    onLicensesClick: () -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -124,7 +128,9 @@ private fun SettingsScreen(
                         onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
                         onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
                     )
-                    About()
+                    About(
+                        onLicensesClick = onLicensesClick,
+                    )
                 }
             }
         }
@@ -286,6 +292,7 @@ private fun Audio(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun About(
+    onLicensesClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -306,7 +313,7 @@ private fun About(
                     contentDescription = null,
                 )
             },
-            shapes = ListItemDefaults.segmentedShapes(0, 3),
+            shapes = ListItemDefaults.segmentedShapes(0, 4),
             colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             ),
@@ -326,7 +333,7 @@ private fun About(
                     contentDescription = null,
                 )
             },
-            shapes = ListItemDefaults.segmentedShapes(1, 3),
+            shapes = ListItemDefaults.segmentedShapes(1, 4),
             colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             ),
@@ -337,6 +344,20 @@ private fun About(
                     toolbarColor = backgroundColor,
                 )
             },
+        )
+        MuzListItem(
+            content = { Text(stringResource(localesR.string.licenses)) },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.Gavel,
+                    contentDescription = null,
+                )
+            },
+            shapes = ListItemDefaults.segmentedShapes(2, 4),
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+            ),
+            onClick = onLicensesClick,
         )
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = packageInfo?.versionName ?: "?.?.?"
@@ -350,7 +371,7 @@ private fun About(
                 )
             },
             supportingContent = { Text("$versionName $versionCode") },
-            modifier = Modifier.clip(ListItemDefaults.segmentedShapes(2, 3).shape),
+            modifier = Modifier.clip(ListItemDefaults.segmentedShapes(3, 4).shape),
             colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             ),

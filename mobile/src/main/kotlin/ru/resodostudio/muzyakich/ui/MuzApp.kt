@@ -56,6 +56,7 @@ import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.toEntries
+import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
 import ru.resodostudio.muzyakich.ui.artist.detail.navigation.artistEntry
@@ -127,6 +128,7 @@ fun MuzApp(
                         artistEntry(navigator)
                         songEntry(navigator)
                         settingsEntry(navigator)
+                        licensesEntry(navigator)
                     }
 
                     NavDisplay(

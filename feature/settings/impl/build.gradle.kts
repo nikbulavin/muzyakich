@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.muzyakich.android.feature.impl)
     alias(libs.plugins.muzyakich.android.library.compose)
+    alias(libs.plugins.aboutlibraries)
 }
 
 android {
@@ -14,6 +15,8 @@ dependencies {
 
     implementation(projects.feature.settings.api)
 
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.browser)
 }
