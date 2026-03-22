@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.song.list
+package ru.resodostudio.muzyakich.feature.song.list.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,7 +51,7 @@ import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun SongsScreen(
+internal fun SongsScreen(
     onSongMenuClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SongsViewModel = hiltViewModel(),

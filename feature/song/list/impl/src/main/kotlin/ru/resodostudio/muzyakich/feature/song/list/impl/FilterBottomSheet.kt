@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.song.list
+package ru.resodostudio.muzyakich.feature.song.list.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,7 +49,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
     ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
-fun FilterBottomSheet(
+internal fun FilterBottomSheet(
     filterConfig: FilterConfig,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,

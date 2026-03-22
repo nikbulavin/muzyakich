@@ -67,11 +67,11 @@ import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
+import ru.resodostudio.muzyakich.feature.song.list.impl.navigation.songsEntry
 import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsNavKey
 import ru.resodostudio.muzyakich.ui.album.list.navigation.albumsEntry
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsNavKey
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.artistsEntry
-import ru.resodostudio.muzyakich.ui.song.list.navigation.songsEntry
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Serializable
