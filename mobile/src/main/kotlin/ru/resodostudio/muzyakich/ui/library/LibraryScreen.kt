@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.ui.library
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
@@ -96,10 +97,10 @@ fun LibraryScreen(
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
-    val inAppUpdateState by viewModel.inAppUpdateState.collectAsStateWithLifecycle()
+    val libraryUiState by viewModel.libraryUiState.collectAsStateWithLifecycle()
 
     LibraryScreen(
-        inAppUpdateState = inAppUpdateState,
+        libraryUiState = libraryUiState,
         onPlaylistClick = onPlaylistClick,
         onAlbumClick = onAlbumClick,
         onArtistClick = onArtistClick,
@@ -112,7 +113,7 @@ fun LibraryScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun LibraryScreen(
-    inAppUpdateState: AppUpdateResult,
+    libraryUiState: LibraryUiState,
     onPlaylistClick: (Uuid) -> Unit,
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
@@ -120,117 +121,125 @@ private fun LibraryScreen(
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    when (libraryUiState) {
+        LibraryUiState.Error, LibraryUiState.Loading -> Unit
+        is LibraryUiState.Success -> {
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val libraryTabs = LibraryTab.entries
-    val navigationState = rememberNavigationState(
-        initialBackStack = listOf(libraryTabs.first().navKey),
-    )
-    val navigator = remember { Navigator(navigationState) }
-    val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
-        ?: libraryTabs.first()
-
-    val bottomPadding = 88.dp + WindowInsets.navigationBars.asPaddingValues()
-        .calculateBottomPadding()
-
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            LibraryTopAppBar(
-                inAppUpdateState = inAppUpdateState,
-                titleRes = localesR.string.core_locales_app_name,
-                onSettingsClick = onSettingsClick,
-                scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors().copy(
-                    scrolledContainerColor = MaterialTheme.colorScheme.surface,
-                ),
+            val libraryTabs = LibraryTab.entries
+            val navigationState = rememberNavigationState(
+                initialBackStack = listOf(libraryTabs.first().navKey),
             )
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        floatingActionButton = {
-            val contentDescription = stringResource(localesR.string.core_locales_new_playlist)
-            TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipAnchorPosition.Above,
-                ),
-                tooltip = { PlainTooltip { Text(contentDescription) } },
-                state = rememberTooltipState(),
-                modifier = Modifier
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Horizontal,
+            val navigator = remember { Navigator(navigationState) }
+            val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
+                ?: libraryTabs.first()
+
+            val bottomPadding by animateDpAsState(
+                targetValue = (if (libraryUiState.isCurrentMediaItemExists) 88.dp else 0.dp) +
+                        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+            )
+
+            Scaffold(
+                modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = {
+                    LibraryTopAppBar(
+                        inAppUpdateState = libraryUiState.appUpdateResult,
+                        titleRes = localesR.string.core_locales_app_name,
+                        onSettingsClick = onSettingsClick,
+                        scrollBehavior = scrollBehavior,
+                        colors = TopAppBarDefaults.topAppBarColors().copy(
+                            scrolledContainerColor = MaterialTheme.colorScheme.surface,
                         ),
                     )
-                    .padding(bottom = bottomPadding)
-                    .animateFloatingActionButton(
-                        visible = PlaylistsNavKey in navigationState.backStack,
-                        alignment = Alignment.BottomEnd,
-                    ),
-            ) {
-                FloatingActionButton(onClick = { /* do something */ }) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.Add,
-                        contentDescription = contentDescription,
-                    )
-                }
-            }
-        },
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
-        ) {
-            PrimaryScrollableTabRow(
-                selectedTabIndex = currentTab.ordinal,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                libraryTabs.forEach { tab ->
-                    Tab(
-                        selected = currentTab == tab,
-                        onClick = { navigator.navigateAndClearStack(tab.navKey) },
-                        icon = {
+                },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                floatingActionButton = {
+                    val contentDescription =
+                        stringResource(localesR.string.core_locales_new_playlist)
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                            TooltipAnchorPosition.Above,
+                        ),
+                        tooltip = { PlainTooltip { Text(contentDescription) } },
+                        state = rememberTooltipState(),
+                        modifier = Modifier
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(
+                                    WindowInsetsSides.Horizontal,
+                                ),
+                            )
+                            .padding(bottom = bottomPadding)
+                            .animateFloatingActionButton(
+                                visible = PlaylistsNavKey in navigationState.backStack,
+                                alignment = Alignment.BottomEnd,
+                            ),
+                    ) {
+                        FloatingActionButton(onClick = { /* do something */ }) {
                             Icon(
-                                imageVector = tab.icon,
-                                contentDescription = null,
+                                imageVector = MuzIcons.Rounded.Add,
+                                contentDescription = contentDescription,
                             )
+                        }
+                    }
+                },
+            ) { paddingValues ->
+                Column(
+                    modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
+                ) {
+                    PrimaryScrollableTabRow(
+                        selectedTabIndex = currentTab.ordinal,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        libraryTabs.forEach { tab ->
+                            Tab(
+                                selected = currentTab == tab,
+                                onClick = { navigator.navigateAndClearStack(tab.navKey) },
+                                icon = {
+                                    Icon(
+                                        imageVector = tab.icon,
+                                        contentDescription = null,
+                                    )
+                                },
+                                text = {
+                                    Text(
+                                        text = stringResource(tab.titleRes),
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                },
+                            )
+                        }
+                    }
+                    val entryProvider = entryProvider {
+                        playlistsEntry(onPlaylistClick)
+                        songsEntry(onSongMenuClick)
+                        albumsEntry(onAlbumClick)
+                        artistsEntry(onArtistClick)
+                    }
+
+                    val motionScheme = MaterialTheme.motionScheme
+
+                    NavDisplay(
+                        entries = navigationState.toEntries(entryProvider),
+                        onBack = navigator::goBack,
+                        transitionSpec = {
+                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                                    fadeOut(snap())
                         },
-                        text = {
-                            Text(
-                                text = stringResource(tab.titleRes),
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                        popTransitionSpec = {
+                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                                    fadeOut(snap())
+                        },
+                        predictivePopTransitionSpec = {
+                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                                    fadeOut(snap())
                         },
                     )
                 }
             }
-            val entryProvider = entryProvider {
-                playlistsEntry(onPlaylistClick)
-                songsEntry(onSongMenuClick)
-                albumsEntry(onAlbumClick)
-                artistsEntry(onArtistClick)
-            }
-
-            val motionScheme = MaterialTheme.motionScheme
-
-            NavDisplay(
-                entries = navigationState.toEntries(entryProvider),
-                onBack = navigator::goBack,
-                transitionSpec = {
-                    scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                            fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                            fadeOut(snap())
-                },
-                popTransitionSpec = {
-                    scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                            fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                            fadeOut(snap())
-                },
-                predictivePopTransitionSpec = {
-                    scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                            fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                            fadeOut(snap())
-                },
-            )
         }
     }
 }
