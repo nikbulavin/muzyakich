@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.player
+package ru.resodostudio.muzyakich.ui.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable

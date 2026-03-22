@@ -58,8 +58,8 @@ import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
 import ru.resodostudio.muzyakich.ui.artist.detail.navigation.artistEntry
+import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
-import ru.resodostudio.muzyakich.ui.player.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.player.navigation.PlayerNavKey
 import ru.resodostudio.muzyakich.ui.player.navigation.navigateToPlayer
 import ru.resodostudio.muzyakich.ui.player.navigation.playerEntry
