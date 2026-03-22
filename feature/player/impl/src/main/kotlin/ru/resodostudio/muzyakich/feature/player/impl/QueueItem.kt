@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.player
+package ru.resodostudio.muzyakich.feature.player.impl
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,7 +38,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun QueueItem(
+internal fun QueueItem(
     song: Song,
     shapes: ListItemShapes,
     modifier: Modifier = Modifier,

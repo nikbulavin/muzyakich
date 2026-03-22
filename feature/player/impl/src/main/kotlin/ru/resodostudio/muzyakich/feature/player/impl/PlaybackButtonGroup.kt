@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.player
+package ru.resodostudio.muzyakich.feature.player.impl
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -39,7 +39,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PlaybackButtonGroup(
+internal fun PlaybackButtonGroup(
     player: Player,
     modifier: Modifier = Modifier,
     queueOpened: Boolean = false,

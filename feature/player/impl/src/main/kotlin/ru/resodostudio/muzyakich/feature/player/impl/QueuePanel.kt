@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.player
+package ru.resodostudio.muzyakich.feature.player.impl
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -36,7 +36,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun QueuePanel(
+internal fun QueuePanel(
     currentSong: Song,
     playingQueue: List<Song>,
     animatedVisibilityScope: AnimatedVisibilityScope,

@@ -58,7 +58,6 @@ androidx-lifecycle-viewModelNavigation3 = { module = "androidx.lifecycle:lifecyc
 androidx-media3-cast = { group = "androidx.media3", name = "media3-cast", version.ref = "androidxMedia3" }
 androidx-media3-exoPlayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }
-androidx-media3-ui-compose = { group = "androidx.media3", name = "media3-ui-compose", version.ref = "androidxMedia3" }
 androidx-media3-ui-compose-material3 = { group = "androidx.media3", name = "media3-ui-compose-material3", version.ref = "androidxMedia3" }
 androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "androidxNavigation3" }
 androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "androidxNavigation3" }

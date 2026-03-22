@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.player
+package ru.resodostudio.muzyakich.feature.player.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -27,7 +27,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun PlayerControlButtonGroup(
+internal fun PlayerControlButtonGroup(
     player: Player,
     modifier: Modifier = Modifier,
 ) {

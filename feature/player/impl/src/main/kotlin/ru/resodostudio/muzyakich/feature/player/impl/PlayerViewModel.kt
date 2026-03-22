@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.player
+package ru.resodostudio.muzyakich.feature.player.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor(
+internal class PlayerViewModel @Inject constructor(
     private val songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {

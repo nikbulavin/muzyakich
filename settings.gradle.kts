@@ -43,5 +43,7 @@ include(":core:model")
 include(":core:navigation")
 include(":core:ui")
 
+include(":feature:player:api")
+include(":feature:player:impl")
 include(":feature:settings:api")
 include(":feature:settings:impl")

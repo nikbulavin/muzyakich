@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.player
+package ru.resodostudio.muzyakich.feature.player.impl
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedContent
@@ -79,7 +79,7 @@ import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun PlayerScreen(
+internal fun PlayerScreen(
     onDismiss: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
@@ -287,7 +287,7 @@ private fun PlayerScreen(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun MoreIconButton(
+internal fun MoreIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -302,7 +302,7 @@ fun MoreIconButton(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun FavoriteToggleButton(
+internal fun FavoriteToggleButton(
     song: Song,
     onFavoriteChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
