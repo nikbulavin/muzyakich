@@ -246,26 +246,32 @@ private fun ActionButtons(
     player: Player,
     modifier: Modifier = Modifier,
 ) {
-    val playPauseButtonState = rememberPlayPauseButtonState(player)
-    val nextButtonState = rememberNextButtonState(player)
-    MuzFilledIconToggleButton(
-        checked = !playPauseButtonState.showPlay,
-        onCheckedChange = { playPauseButtonState.onClick() },
-        icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
-        contentDescription = if (playPauseButtonState.showPlay) {
-            stringResource(localesR.string.core_locales_play_audio)
-        } else {
-            stringResource(localesR.string.core_locales_pause_audio)
-        },
-        containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
-    )
-    MuzIconButton(
-        onClick = nextButtonState::onClick,
-        modifier = modifier,
-        enabled = nextButtonState.isEnabled,
-        icon = MuzIcons.Rounded.SkipNext,
-        contentDescription = stringResource(localesR.string.core_locales_skip_next),
-    )
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val playPauseButtonState = rememberPlayPauseButtonState(player)
+        val nextButtonState = rememberNextButtonState(player)
+        MuzFilledIconToggleButton(
+            checked = !playPauseButtonState.showPlay,
+            onCheckedChange = { playPauseButtonState.onClick() },
+            icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
+            contentDescription = if (playPauseButtonState.showPlay) {
+                stringResource(localesR.string.core_locales_play_audio)
+            } else {
+                stringResource(localesR.string.core_locales_pause_audio)
+            },
+            containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+        )
+        MuzIconButton(
+            onClick = nextButtonState::onClick,
+            modifier = modifier,
+            enabled = nextButtonState.isEnabled,
+            icon = MuzIcons.Rounded.SkipNext,
+            contentDescription = stringResource(localesR.string.core_locales_skip_next),
+            containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

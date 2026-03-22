@@ -89,6 +89,8 @@ fun MuzIconButton(
     tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     colors: IconButtonColors = IconButtonDefaults.iconButtonVibrantColors(),
     enabled: Boolean = true,
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -103,10 +105,12 @@ fun MuzIconButton(
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
             enabled = enabled,
+            modifier = Modifier.size(containerSize),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
+                modifier = Modifier.size(iconSize),
             )
         }
     }
