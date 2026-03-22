@@ -148,9 +148,12 @@ private fun LibraryScreen(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
+            val contentDescription = stringResource(localesR.string.core_locales_new_playlist)
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-                tooltip = { PlainTooltip { Text("New playlist") } },
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                    TooltipAnchorPosition.Above,
+                ),
+                tooltip = { PlainTooltip { Text(contentDescription) } },
                 state = rememberTooltipState(),
                 modifier = Modifier
                     .windowInsetsPadding(
@@ -167,7 +170,7 @@ private fun LibraryScreen(
                 FloatingActionButton(onClick = { /* do something */ }) {
                     Icon(
                         imageVector = MuzIcons.Filled.PlaylistAdd,
-                        contentDescription = "New playlist",
+                        contentDescription = contentDescription,
                     )
                 }
             }
@@ -297,8 +300,10 @@ private fun LibraryTopAppBar(
                         ),
                     ) {
                         if (inAppUpdateState is AppUpdateResult.InProgress) {
-                            val downloaded = inAppUpdateState.installState.bytesDownloaded().toFloat()
-                            val total = inAppUpdateState.installState.totalBytesToDownload().toFloat()
+                            val downloaded =
+                                inAppUpdateState.installState.bytesDownloaded().toFloat()
+                            val total =
+                                inAppUpdateState.installState.totalBytesToDownload().toFloat()
 
                             val animatedProgress by animateFloatAsState(
                                 targetValue = if (total > 0f) downloaded / total else 0f,
@@ -323,7 +328,7 @@ private fun LibraryTopAppBar(
                     }
                 }
             }
-        }
+        },
     )
 }
 
@@ -332,8 +337,24 @@ enum class LibraryTab(
     val icon: ImageVector,
     val navKey: NavKey,
 ) {
-    PLAYLISTS(localesR.string.core_locales_playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
-    SONGS(localesR.string.core_locales_songs, MuzIcons.Rounded.MusicNote, SongsNavKey),
-    ALBUMS(localesR.string.core_locales_albums, MuzIcons.Rounded.Album, AlbumsNavKey),
-    ARTISTS(localesR.string.core_locales_artists, MuzIcons.Rounded.Artist, ArtistsNavKey),
+    PLAYLISTS(
+        titleRes = localesR.string.core_locales_playlists,
+        icon = MuzIcons.Rounded.LibraryMusic,
+        navKey = PlaylistsNavKey,
+    ),
+    SONGS(
+        titleRes = localesR.string.core_locales_songs,
+        icon = MuzIcons.Rounded.MusicNote,
+        navKey = SongsNavKey,
+    ),
+    ALBUMS(
+        titleRes = localesR.string.core_locales_albums,
+        icon = MuzIcons.Rounded.Album,
+        navKey = AlbumsNavKey,
+    ),
+    ARTISTS(
+        titleRes = localesR.string.core_locales_artists,
+        icon = MuzIcons.Rounded.Artist,
+        navKey = ArtistsNavKey,
+    ),
 }

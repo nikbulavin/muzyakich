@@ -32,6 +32,7 @@
     <string name="core_locales_more_options">More options</string>
     <string name="core_locales_move_to_trash">Move to trash</string>
     <string name="core_locales_move_to_trash_description">Will be permanently deleted after 30 days</string>
+    <string name="core_locales_new_playlist">New playlist</string>
     <string name="core_locales_next_in_queue">Next in queue</string>
     <string name="core_locales_open_filter_menu">Open filter menu</string>
     <string name="core_locales_open_menu">Open menu</string>
