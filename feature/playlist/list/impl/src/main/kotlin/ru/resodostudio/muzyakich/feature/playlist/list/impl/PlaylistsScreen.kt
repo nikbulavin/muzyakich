@@ -71,7 +71,7 @@ private fun PlaylistsScreen(
     when (playlistsUiState) {
         PlaylistsUiState.Empty -> {
             EmptyState(
-                messageRes = localesR.string.core_locales_library_empty,
+                messageRes = localesR.string.core_locales_playlists_empty,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(32.dp)

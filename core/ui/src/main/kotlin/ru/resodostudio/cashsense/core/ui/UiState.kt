@@ -38,7 +38,7 @@ fun EmptyState(
         Text(
             text = stringResource(messageRes),
             maxLines = 4,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

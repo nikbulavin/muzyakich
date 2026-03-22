@@ -39,6 +39,7 @@
     <string name="core_locales_play_audio">Врубить</string>
     <string name="core_locales_play_next">Воспроизвести далее</string>
     <string name="core_locales_playlists">Плейлисты</string>
+    <string name="core_locales_playlists_empty">У вас пока нет плейлистов. Создайте новый плейлист и добавьте в него свою любимую музыку!</string>
     <string name="core_locales_privacy_policy">Политика конфиденциальности</string>
     <string name="core_locales_queue">Очередь</string>
     <string name="core_locales_remove_from_favorites">Удалить из избранного</string>
