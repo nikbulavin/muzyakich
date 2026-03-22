@@ -74,7 +74,7 @@ internal fun FilterBottomSheet(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = stringResource(localesR.string.filters),
+                text = stringResource(localesR.string.core_locales_filters),
                 style = MaterialTheme.typography.titleMedium,
             )
             FlowRow(
@@ -90,7 +90,7 @@ internal fun FilterBottomSheet(
                         )
                         onToggleFilterFavorites(!selected)
                     },
-                    label = { Text(stringResource(localesR.string.favorites)) },
+                    label = { Text(stringResource(localesR.string.core_locales_favorites)) },
                     leadingIcon = {
                         AnimatedIcon(
                             icon = if (selected) MuzIcons.Rounded.Check else MuzIcons.Filled.Star,
@@ -101,12 +101,12 @@ internal fun FilterBottomSheet(
             }
 
             Text(
-                text = stringResource(localesR.string.sort_by),
+                text = stringResource(localesR.string.core_locales_sort_by),
                 style = MaterialTheme.typography.titleMedium,
             )
             val sortByOptions = listOf(
-                stringResource(localesR.string.artist),
-                stringResource(localesR.string.title),
+                stringResource(localesR.string.core_locales_artist),
+                stringResource(localesR.string.core_locales_title),
             )
             val sortByIcons = listOf(MuzIcons.Filled.Artist, MuzIcons.Rounded.Title)
 
@@ -150,12 +150,12 @@ internal fun FilterBottomSheet(
             }
 
             Text(
-                text = stringResource(localesR.string.sort_order),
+                text = stringResource(localesR.string.core_locales_sort_order),
                 style = MaterialTheme.typography.titleMedium,
             )
             val sortOrderOptions = listOf(
-                stringResource(localesR.string.sort_order_ascending),
-                stringResource(localesR.string.sort_order_descending),
+                stringResource(localesR.string.core_locales_sort_order_ascending),
+                stringResource(localesR.string.core_locales_sort_order_descending),
             )
             val sortOrderIcons = listOf(
                 MuzIcons.Rounded.ArrowUpwardAlt,

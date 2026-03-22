@@ -20,7 +20,7 @@
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/core_locales_app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Muz.Splash"
         tools:targetApi="35">

@@ -87,7 +87,7 @@ private fun SongsScreen(
     when (songsUiState) {
         SongsUiState.Empty -> {
             EmptyState(
-                messageRes = localesR.string.library_empty,
+                messageRes = localesR.string.core_locales_library_empty,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(32.dp)
@@ -178,7 +178,7 @@ private fun LazyGridScope.actionButtons(
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(ButtonDefaults.MinHeight)))
                 Text(
-                    text = stringResource(localesR.string.play_audio),
+                    text = stringResource(localesR.string.core_locales_play_audio),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -199,7 +199,7 @@ private fun LazyGridScope.actionButtons(
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(ButtonDefaults.MinHeight)))
                 Text(
-                    text = stringResource(localesR.string.shuffle),
+                    text = stringResource(localesR.string.core_locales_shuffle),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -207,7 +207,7 @@ private fun LazyGridScope.actionButtons(
             MuzIconButton(
                 onClick = onFilterClick,
                 icon = MuzIcons.Rounded.FilterList,
-                contentDescription = stringResource(localesR.string.open_filter_menu),
+                contentDescription = stringResource(localesR.string.core_locales_open_filter_menu),
             )
         }
     }

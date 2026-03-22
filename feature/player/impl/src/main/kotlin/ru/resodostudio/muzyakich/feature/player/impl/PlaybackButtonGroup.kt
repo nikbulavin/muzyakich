@@ -74,7 +74,7 @@ internal fun PlaybackButtonGroup(
             onCheckedChange = { shuffleButtonState.onClick() },
             shape = IconButtonDefaults.smallSquareShape,
             icon = MuzIcons.Rounded.Shuffle,
-            contentDescriptionRes = localesR.string.shuffle,
+            contentDescriptionRes = localesR.string.core_locales_shuffle,
         )
         val icon = repeatModeIcon(repeatButtonState.repeatModeState)
         val contentDescriptionRes = repeatModeContentDescription(repeatButtonState.repeatModeState)
@@ -99,7 +99,7 @@ internal fun PlaybackButtonGroup(
             size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
             checked = queueOpened,
             icon = MuzIcons.Rounded.QueueMusic,
-            contentDescriptionRes = localesR.string.queue,
+            contentDescriptionRes = localesR.string.core_locales_queue,
             onCheckedChange = onQueueClick,
             shape = IconButtonDefaults.smallSquareShape,
         )
@@ -117,8 +117,8 @@ private fun repeatModeIcon(repeatMode: @Player.RepeatMode Int): ImageVector {
 @StringRes
 private fun repeatModeContentDescription(repeatMode: @Player.RepeatMode Int): Int {
     return when (repeatMode) {
-        REPEAT_MODE_OFF -> localesR.string.enable_repeat_mode_all
-        REPEAT_MODE_ALL -> localesR.string.enable_repeat_mode_one
-        else -> localesR.string.disable_repeat_mode
+        REPEAT_MODE_OFF -> localesR.string.core_locales_enable_repeat_mode_all
+        REPEAT_MODE_ALL -> localesR.string.core_locales_enable_repeat_mode_one
+        else -> localesR.string.core_locales_disable_repeat_mode
     }
 }

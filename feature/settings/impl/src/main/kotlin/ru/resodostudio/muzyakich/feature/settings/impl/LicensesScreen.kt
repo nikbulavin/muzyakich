@@ -25,14 +25,14 @@ internal fun LicensesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(localesR.string.licenses)) },
+                title = { Text(stringResource(localesR.string.core_locales_licenses)) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBackClick,
                     ) {
                         Icon(
                             imageVector = MuzIcons.Rounded.ArrowBack,
-                            contentDescription = stringResource(localesR.string.back),
+                            contentDescription = stringResource(localesR.string.core_locales_back),
                         )
                     }
                 }

@@ -99,12 +99,12 @@ private fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(localesR.string.settings)) },
+                title = { Text(stringResource(localesR.string.core_locales_settings)) },
                 navigationIcon = {
                     MuzIconButton(
                         onClick = onBackClick,
                         icon = MuzIcons.Rounded.ArrowBack,
-                        contentDescription = stringResource(localesR.string.back),
+                        contentDescription = stringResource(localesR.string.core_locales_back),
                     )
                 },
             )
@@ -152,11 +152,11 @@ private fun Appearance(
         verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
         SectionTitle(
-            titleRes = localesR.string.appearance,
+            titleRes = localesR.string.core_locales_appearance,
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
         ListItem(
-            headlineContent = { Text(stringResource(localesR.string.theme)) },
+            headlineContent = { Text(stringResource(localesR.string.core_locales_theme)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Filled.Palette,
@@ -165,9 +165,9 @@ private fun Appearance(
             },
             trailingContent = {
                 val themeOptions = listOf(
-                    stringResource(localesR.string.theme_system_default),
-                    stringResource(localesR.string.theme_light),
-                    stringResource(localesR.string.theme_dark),
+                    stringResource(localesR.string.core_locales_theme_system_default),
+                    stringResource(localesR.string.core_locales_theme_light),
+                    stringResource(localesR.string.core_locales_theme_dark),
                 )
                 val uncheckedIcons = listOf(
                     MuzIcons.Rounded.Android,
@@ -224,7 +224,7 @@ private fun Appearance(
         if (supportDynamicColor) {
             MuzToggableListItem(
                 shapes = ListItemDefaults.segmentedShapes(1, 2),
-                content = { Text(stringResource(localesR.string.dynamic_color)) },
+                content = { Text(stringResource(localesR.string.core_locales_dynamic_color)) },
                 leadingContent = {
                     AnimatedIcon(
                         icon = if (useDynamicColor) MuzIcons.Filled.FormatPaint else MuzIcons.Rounded.FormatPaint,
@@ -255,7 +255,7 @@ private fun Audio(
         verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
         SectionTitle(
-            titleRes = localesR.string.audio,
+            titleRes = localesR.string.core_locales_audio,
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
         val context = LocalContext.current
@@ -264,7 +264,7 @@ private fun Audio(
         ) { _ -> }
 
         MuzListItem(
-            content = { Text(stringResource(localesR.string.equalizer)) },
+            content = { Text(stringResource(localesR.string.core_locales_equalizer)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Rounded.GraphicEq,
@@ -300,13 +300,13 @@ private fun About(
         verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
         SectionTitle(
-            titleRes = localesR.string.about,
+            titleRes = localesR.string.core_locales_about,
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
         MuzListItem(
-            content = { Text(stringResource(localesR.string.feedback)) },
+            content = { Text(stringResource(localesR.string.core_locales_feedback)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Filled.Feedback,
@@ -326,7 +326,7 @@ private fun About(
             },
         )
         MuzListItem(
-            content = { Text(stringResource(localesR.string.privacy_policy)) },
+            content = { Text(stringResource(localesR.string.core_locales_privacy_policy)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Filled.Policy,
@@ -346,7 +346,7 @@ private fun About(
             },
         )
         MuzListItem(
-            content = { Text(stringResource(localesR.string.licenses)) },
+            content = { Text(stringResource(localesR.string.core_locales_licenses)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Filled.Gavel,
@@ -363,7 +363,7 @@ private fun About(
         val versionName = packageInfo?.versionName ?: "?.?.?"
         val versionCode = "(${packageInfo?.longVersionCode})"
         ListItem(
-            headlineContent = { Text(stringResource(localesR.string.version)) },
+            headlineContent = { Text(stringResource(localesR.string.core_locales_version)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Filled.Info,

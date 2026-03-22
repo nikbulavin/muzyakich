@@ -201,7 +201,7 @@ private fun ActionPanel(
             onCheckedChange = { checked -> onFavoriteChange(song.mediaId, checked) },
             content = {
                 Text(
-                    text = stringResource(localesR.string.favorites),
+                    text = stringResource(localesR.string.core_locales_favorites),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -226,7 +226,7 @@ private fun ActionPanel(
         MuzListItem(
             content = {
                 Text(
-                    text = stringResource(localesR.string.play_next),
+                    text = stringResource(localesR.string.core_locales_play_next),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -246,7 +246,7 @@ private fun ActionPanel(
         MuzListItem(
             content = {
                 Text(
-                    text = stringResource(localesR.string.move_to_trash),
+                    text = stringResource(localesR.string.core_locales_move_to_trash),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -259,7 +259,7 @@ private fun ActionPanel(
             },
             supportingContent = {
                 Text(
-                    text = stringResource(localesR.string.move_to_trash_description),
+                    text = stringResource(localesR.string.core_locales_move_to_trash_description),
                     maxLines = 1,
                     overflow = TextOverflow.StartEllipsis,
                 )
@@ -313,7 +313,7 @@ private fun TagPanel(
         if (song.playCount > 0) {
             MuzTag(
                 text = pluralStringResource(
-                    id = localesR.plurals.plays_count,
+                    id = localesR.plurals.core_locales_plays_count,
                     count = song.playCount,
                     song.playCount,
                 ),
@@ -321,7 +321,7 @@ private fun TagPanel(
             )
         }
         MuzTag(
-            text = stringResource(localesR.string.bitrate_format, song.bitrate),
+            text = stringResource(localesR.string.core_locales_bitrate_format, song.bitrate),
             icon = if (song.bitrate >= 256) MuzIcons.Filled.HighQuality else MuzIcons.Filled.BarChart,
         )
         AudioQualityTag(

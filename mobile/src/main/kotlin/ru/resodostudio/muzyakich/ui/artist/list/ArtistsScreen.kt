@@ -55,7 +55,7 @@ private fun ArtistsScreen(
     when (artistsUiState) {
         ArtistsUiState.Empty -> {
             EmptyState(
-                messageRes = localesR.string.library_empty,
+                messageRes = localesR.string.core_locales_library_empty,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(32.dp)
@@ -110,7 +110,7 @@ private fun LazyGridScope.artists(
             supportingContent = {
                 Text(
                     text = pluralStringResource(
-                        localesR.plurals.number_of_songs,
+                        localesR.plurals.core_locales_number_of_songs,
                         artist.songs.size,
                         artist.songs.size,
                     ),

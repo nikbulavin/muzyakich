@@ -77,7 +77,7 @@ fun ArtistScreen(
                             MuzIconButton(
                                 onClick = onBackClick,
                                 icon = MuzIcons.Rounded.ArrowBack,
-                                contentDescription = stringResource(localesR.string.back),
+                                contentDescription = stringResource(localesR.string.core_locales_back),
                             )
                         },
                     )

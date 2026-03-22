@@ -107,7 +107,7 @@ internal fun QueuePanel(
                     modifier = Modifier
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            sharedContentState = rememberSharedContentState(localesR.string.favorites),
+                            sharedContentState = rememberSharedContentState(localesR.string.core_locales_favorites),
                             animatedVisibilityScope = animatedVisibilityScope,
                         ),
                 )
@@ -116,13 +116,13 @@ internal fun QueuePanel(
                     modifier = Modifier
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            sharedContentState = rememberSharedContentState(localesR.string.more_options),
+                            sharedContentState = rememberSharedContentState(localesR.string.core_locales_more_options),
                             animatedVisibilityScope = animatedVisibilityScope,
                         ),
                 )
             }
             Text(
-                text = stringResource(localesR.string.next_in_queue),
+                text = stringResource(localesR.string.core_locales_next_in_queue),
                 modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

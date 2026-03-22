@@ -69,7 +69,7 @@ private fun AlbumsScreen(
     when (albumsUiState) {
         AlbumsUiState.Empty -> {
             EmptyState(
-                messageRes = localesR.string.library_empty,
+                messageRes = localesR.string.core_locales_library_empty,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(32.dp)

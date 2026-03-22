@@ -116,7 +116,7 @@ private fun LibraryScreen(
         topBar = {
             LibraryTopAppBar(
                 inAppUpdateState = inAppUpdateState,
-                titleRes = localesR.string.app_name,
+                titleRes = localesR.string.core_locales_app_name,
                 onSettingsClick = onSettingsClick,
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.topAppBarColors().copy(
@@ -213,7 +213,7 @@ private fun LibraryTopAppBar(
             MuzIconButton(
                 onClick = onSettingsClick,
                 icon = MuzIcons.Filled.Settings,
-                contentDescription = stringResource(localesR.string.settings),
+                contentDescription = stringResource(localesR.string.core_locales_settings),
                 tooltipPosition = TooltipAnchorPosition.Right,
             )
         },
@@ -225,9 +225,9 @@ private fun LibraryTopAppBar(
                 exit = fadeOut() + scaleOut(),
             ) {
                 val contentDescriptionRes = when (inAppUpdateState) {
-                    is AppUpdateResult.Available -> localesR.string.download_update
-                    is AppUpdateResult.InProgress -> localesR.string.downloading_update
-                    else -> localesR.string.install_update
+                    is AppUpdateResult.Available -> localesR.string.core_locales_download_update
+                    is AppUpdateResult.InProgress -> localesR.string.core_locales_downloading_update
+                    else -> localesR.string.core_locales_install_update
                 }
                 val activity = LocalActivity.current
                 val scope = rememberCoroutineScope()
@@ -294,8 +294,8 @@ private enum class LibraryTab(
     val icon: ImageVector,
     val navKey: NavKey,
 ) {
-    //PLAYLISTS(localesR.string.playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
-    SONGS(localesR.string.songs, MuzIcons.Rounded.MusicNote, SongsNavKey),
-    ALBUMS(localesR.string.albums, MuzIcons.Rounded.Album, AlbumsNavKey),
-    ARTISTS(localesR.string.artists, MuzIcons.Rounded.Artist, ArtistsNavKey),
+    //PLAYLISTS(localesR.string.core_locales_playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
+    SONGS(localesR.string.core_locales_songs, MuzIcons.Rounded.MusicNote, SongsNavKey),
+    ALBUMS(localesR.string.core_locales_albums, MuzIcons.Rounded.Album, AlbumsNavKey),
+    ARTISTS(localesR.string.core_locales_artists, MuzIcons.Rounded.Artist, ArtistsNavKey),
 }

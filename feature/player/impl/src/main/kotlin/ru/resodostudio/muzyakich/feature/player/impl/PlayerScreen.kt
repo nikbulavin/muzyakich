@@ -205,7 +205,7 @@ private fun PlayerScreen(
                                                 .sharedBounds(
                                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                     sharedContentState = rememberSharedContentState(
-                                                        localesR.string.favorites
+                                                        localesR.string.core_locales_favorites
                                                     ),
                                                     animatedVisibilityScope = this@AnimatedContent,
                                                 ),
@@ -216,7 +216,7 @@ private fun PlayerScreen(
                                                 .sharedBounds(
                                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                     sharedContentState = rememberSharedContentState(
-                                                        localesR.string.more_options
+                                                        localesR.string.core_locales_more_options
                                                     ),
                                                     animatedVisibilityScope = this@AnimatedContent,
                                                 ),
@@ -296,7 +296,7 @@ internal fun MoreIconButton(
         onClick = dropUnlessResumed { onClick() },
         containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
         icon = MuzIcons.Rounded.MoreVert,
-        contentDescription = stringResource(localesR.string.open_menu),
+        contentDescription = stringResource(localesR.string.core_locales_open_menu),
     )
 }
 
@@ -308,9 +308,9 @@ internal fun FavoriteToggleButton(
     modifier: Modifier = Modifier,
 ) {
     val (icon, contentDescription) = if (song.isFavorite) {
-        MuzIcons.Filled.Star to stringResource(localesR.string.remove_from_favorites)
+        MuzIcons.Filled.Star to stringResource(localesR.string.core_locales_remove_from_favorites)
     } else {
-        MuzIcons.Rounded.Star to stringResource(localesR.string.add_to_favorites)
+        MuzIcons.Rounded.Star to stringResource(localesR.string.core_locales_add_to_favorites)
     }
     MuzFilledTonalIconToggleButton(
         checked = song.isFavorite,
@@ -416,7 +416,7 @@ private fun ProgressSlider(
                 ) {
                     Icon(
                         imageVector = MuzIcons.Rounded.HighQuality,
-                        contentDescription = stringResource(localesR.string.high_quality),
+                        contentDescription = stringResource(localesR.string.core_locales_high_quality),
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

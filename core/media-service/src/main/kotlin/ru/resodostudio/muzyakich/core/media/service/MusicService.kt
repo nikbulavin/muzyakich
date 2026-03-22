@@ -151,9 +151,9 @@ internal class MusicService : MediaLibraryService() {
             CommandButton.ICON_SHUFFLE_OFF
         }
         val shuffleDisplayName = if (player.shuffleModeEnabled) {
-            getString(localesR.string.disable_shuffle_mode)
+            getString(localesR.string.core_locales_disable_shuffle_mode)
         } else {
-            getString(localesR.string.enable_shuffle_mode)
+            getString(localesR.string.core_locales_enable_shuffle_mode)
         }
 
         val shuffleButton = CommandButton.Builder(shuffleIcon)
@@ -167,9 +167,9 @@ internal class MusicService : MediaLibraryService() {
             else -> CommandButton.ICON_REPEAT_OFF
         }
         val repeatDisplayName = when (player.repeatMode) {
-            Player.REPEAT_MODE_ALL -> getString(localesR.string.enable_repeat_mode_one)
-            Player.REPEAT_MODE_ONE -> getString(localesR.string.disable_repeat_mode)
-            else -> getString(localesR.string.enable_repeat_mode_all)
+            Player.REPEAT_MODE_ALL -> getString(localesR.string.core_locales_enable_repeat_mode_one)
+            Player.REPEAT_MODE_ONE -> getString(localesR.string.core_locales_disable_repeat_mode)
+            else -> getString(localesR.string.core_locales_enable_repeat_mode_all)
         }
         val nextRepeatMode = when (player.repeatMode) {
             Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE

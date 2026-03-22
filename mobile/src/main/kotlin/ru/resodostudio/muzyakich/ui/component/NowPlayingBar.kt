@@ -253,9 +253,9 @@ private fun ActionButtons(
         onCheckedChange = { playPauseButtonState.onClick() },
         icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
         contentDescription = if (playPauseButtonState.showPlay) {
-            stringResource(localesR.string.play_audio)
+            stringResource(localesR.string.core_locales_play_audio)
         } else {
-            stringResource(localesR.string.pause_audio)
+            stringResource(localesR.string.core_locales_pause_audio)
         },
         containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
     )
@@ -264,7 +264,7 @@ private fun ActionButtons(
         modifier = modifier,
         enabled = nextButtonState.isEnabled,
         icon = MuzIcons.Rounded.SkipNext,
-        contentDescription = stringResource(localesR.string.skip_next),
+        contentDescription = stringResource(localesR.string.core_locales_skip_next),
     )
 }
 

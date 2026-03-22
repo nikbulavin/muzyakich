@@ -45,16 +45,16 @@ internal fun PlayerControlButtonGroup(
             containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
             iconSize = IconButtonDefaults.largeIconSize,
             icon = MuzIcons.Rounded.SkipPrevious,
-            contentDescription = stringResource(localesR.string.skip_previous),
+            contentDescription = stringResource(localesR.string.core_locales_skip_previous),
         )
         MuzFilledIconToggleButton(
             checked = !playPauseButtonState.showPlay,
             onCheckedChange = { playPauseButtonState.onClick() },
             icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
             contentDescription = if (playPauseButtonState.showPlay) {
-                stringResource(localesR.string.play_audio)
+                stringResource(localesR.string.core_locales_play_audio)
             } else {
-                stringResource(localesR.string.pause_audio)
+                stringResource(localesR.string.core_locales_pause_audio)
             },
             containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
             iconSize = IconButtonDefaults.largeIconSize,
@@ -65,7 +65,7 @@ internal fun PlayerControlButtonGroup(
             containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
             icon = MuzIcons.Rounded.SkipNext,
             iconSize = IconButtonDefaults.largeIconSize,
-            contentDescription = stringResource(localesR.string.skip_next),
+            contentDescription = stringResource(localesR.string.core_locales_skip_next),
         )
     }
 }

@@ -201,7 +201,7 @@ private fun LazyGridScope.groupedSongs(
         groupedSongs.forEach { (discNumber, groupSongs) ->
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
-                    text = stringResource(localesR.string.disc_number, discNumber),
+                    text = stringResource(localesR.string.core_locales_disc_number, discNumber),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(
                         start = 32.dp,
@@ -359,7 +359,7 @@ private fun LazyGridScope.actionButtons(
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
                 Text(
-                    text = stringResource(localesR.string.play_audio),
+                    text = stringResource(localesR.string.core_locales_play_audio),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = ButtonDefaults.textStyleFor(buttonSize),
@@ -380,7 +380,7 @@ private fun LazyGridScope.actionButtons(
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
                 Text(
-                    text = stringResource(localesR.string.shuffle),
+                    text = stringResource(localesR.string.core_locales_shuffle),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = ButtonDefaults.textStyleFor(buttonSize),
@@ -422,7 +422,7 @@ private fun AlbumTopAppBar(
             MuzFilledTonalIconButton(
                 icon = MuzIcons.Rounded.ArrowBack,
                 onClick = onBackClick,
-                contentDescription = stringResource(localesR.string.back),
+                contentDescription = stringResource(localesR.string.core_locales_back),
                 modifier = Modifier.padding(start = 8.dp),
                 tooltipPosition = TooltipAnchorPosition.Right,
                 colors = if (isScrolled) {
@@ -464,7 +464,7 @@ private fun AlbumDropdownMenu(
         MuzFilledTonalIconButton(
             onClick = { expanded = true },
             icon = MuzIcons.Rounded.MoreVert,
-            contentDescription = stringResource(localesR.string.open_menu),
+            contentDescription = stringResource(localesR.string.core_locales_open_menu),
             modifier = Modifier
                 .padding(end = 8.dp)
                 .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
@@ -483,7 +483,7 @@ private fun AlbumDropdownMenu(
         ) {
             DropdownMenuItem(
                 selected = false,
-                text = { Text(stringResource(localesR.string.play_next)) },
+                text = { Text(stringResource(localesR.string.core_locales_play_next)) },
                 shapes = MenuDefaults.itemShape(0, 2),
                 leadingIcon = {
                     Icon(
@@ -506,7 +506,7 @@ private fun AlbumDropdownMenu(
             }
             DropdownMenuItem(
                 selected = false,
-                text = { Text(stringResource(localesR.string.move_to_trash)) },
+                text = { Text(stringResource(localesR.string.core_locales_move_to_trash)) },
                 shapes = MenuDefaults.itemShape(1, 2),
                 leadingIcon = {
                     Icon(

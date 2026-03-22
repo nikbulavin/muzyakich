@@ -162,7 +162,7 @@ fun SongItem(
                 selected = isPlaying,
                 onClick = onClick,
                 onLongClick = dropUnlessResumed { onMenuClick() },
-                onLongClickLabel = stringResource(localesR.string.open_menu),
+                onLongClickLabel = stringResource(localesR.string.core_locales_open_menu),
                 content = {
                     Text(
                         text = song.title,
@@ -244,7 +244,7 @@ fun SongItem(
                     MuzIconButton(
                         onClick = onMenuClick,
                         icon = MuzIcons.Rounded.MoreVert,
-                        contentDescription = stringResource(localesR.string.open_menu),
+                        contentDescription = stringResource(localesR.string.core_locales_open_menu),
                         modifier = Modifier.size(
                             IconButtonDefaults.smallContainerSize(
                                 IconButtonDefaults.IconButtonWidthOption.Narrow
@@ -297,7 +297,7 @@ fun LazyGridScope.songsInfo(
     item(
         span = { GridItemSpan(maxLineSpan) },
     ) {
-        val count = pluralStringResource(localesR.plurals.number_of_songs, songs.size, songs.size)
+        val count = pluralStringResource(localesR.plurals.core_locales_number_of_songs, songs.size, songs.size)
         val overallDuration = songs
             .sumOf { it.duration }
             .asFormattedDuration()
