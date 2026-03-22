@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.song.detail
+package ru.resodostudio.muzyakich.feature.song.detail.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +17,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = SongViewModel.Factory::class)
-class SongViewModel @AssistedInject constructor(
+internal class SongViewModel @AssistedInject constructor(
     @Assisted val mediaId: String,
     private val musicServiceConnection: MusicServiceConnection,
     private val songsRepository: SongsRepository,

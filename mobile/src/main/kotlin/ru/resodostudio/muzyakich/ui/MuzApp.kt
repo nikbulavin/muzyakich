@@ -59,11 +59,11 @@ import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
 import ru.resodostudio.muzyakich.feature.player.impl.navigation.playerEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
+import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
 import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
 import ru.resodostudio.muzyakich.ui.artist.detail.navigation.artistEntry
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
-import ru.resodostudio.muzyakich.ui.song.detail.navigation.songEntry
 
 @OptIn(
     ExperimentalPermissionsApi::class,

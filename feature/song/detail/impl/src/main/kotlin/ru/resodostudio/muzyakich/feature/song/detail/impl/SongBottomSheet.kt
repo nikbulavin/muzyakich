@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.song.detail
+package ru.resodostudio.muzyakich.feature.song.detail.impl
 
 import android.app.Activity.RESULT_OK
 import android.provider.MediaStore
@@ -66,7 +66,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun SongBottomSheet(
+internal fun SongBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SongViewModel = hiltViewModel(),
