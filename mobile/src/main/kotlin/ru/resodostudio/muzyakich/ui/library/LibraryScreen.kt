@@ -24,7 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -53,7 +53,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -62,10 +61,12 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Download
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
+import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
 import ru.resodostudio.muzyakich.feature.song.list.impl.navigation.songsEntry
 import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsNavKey
@@ -73,9 +74,6 @@ import ru.resodostudio.muzyakich.ui.album.list.navigation.albumsEntry
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsNavKey
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.artistsEntry
 import ru.resodostudio.muzyakich.core.locales.R as localesR
-
-@Serializable
-data object PlaylistsNavKey : NavKey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,7 +134,7 @@ private fun LibraryScreen(
             val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
                 ?: libraryTabs.first()
 
-            PrimaryTabRow(
+            PrimaryScrollableTabRow(
                 selectedTabIndex = currentTab.ordinal,
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -294,7 +292,7 @@ private enum class LibraryTab(
     val icon: ImageVector,
     val navKey: NavKey,
 ) {
-    //PLAYLISTS(localesR.string.core_locales_playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
+    PLAYLISTS(localesR.string.core_locales_playlists, MuzIcons.Rounded.LibraryMusic, PlaylistsNavKey),
     SONGS(localesR.string.core_locales_songs, MuzIcons.Rounded.MusicNote, SongsNavKey),
     ALBUMS(localesR.string.core_locales_albums, MuzIcons.Rounded.Album, AlbumsNavKey),
     ARTISTS(localesR.string.core_locales_artists, MuzIcons.Rounded.Artist, ArtistsNavKey),
