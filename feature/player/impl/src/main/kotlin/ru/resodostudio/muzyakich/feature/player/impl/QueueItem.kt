@@ -113,7 +113,7 @@ internal fun QueueItem(
                     SubcomposeAsyncImage(
                         modifier = Modifier
                             .size(56.dp)
-                            .clip(MaterialTheme.shapes.small),
+                            .clip(MaterialTheme.shapes.medium),
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(song.artworkUri)
                             .size(128)
