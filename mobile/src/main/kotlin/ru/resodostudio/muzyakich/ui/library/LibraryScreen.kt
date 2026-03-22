@@ -64,8 +64,8 @@ import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistAdd
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Add
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
@@ -169,7 +169,7 @@ private fun LibraryScreen(
             ) {
                 FloatingActionButton(onClick = { /* do something */ }) {
                     Icon(
-                        imageVector = MuzIcons.Filled.PlaylistAdd,
+                        imageVector = MuzIcons.Rounded.Add,
                         contentDescription = contentDescription,
                     )
                 }
