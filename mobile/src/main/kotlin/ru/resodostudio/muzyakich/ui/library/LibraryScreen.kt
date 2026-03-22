@@ -11,14 +11,22 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,11 +42,13 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -54,6 +64,7 @@ import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistAdd
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
@@ -75,7 +86,6 @@ import ru.resodostudio.muzyakich.ui.artist.list.navigation.artistsEntry
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
     onPlaylistClick: (Uuid) -> Unit,
@@ -99,7 +109,7 @@ fun LibraryScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun LibraryScreen(
     inAppUpdateState: AppUpdateResult,
@@ -111,6 +121,17 @@ private fun LibraryScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    val libraryTabs = LibraryTab.entries
+    val navigationState = rememberNavigationState(
+        initialBackStack = listOf(libraryTabs.first().navKey),
+    )
+    val navigator = remember { Navigator(navigationState) }
+    val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
+        ?: libraryTabs.first()
+
+    val bottomPadding = 88.dp + WindowInsets.navigationBars.asPaddingValues()
+        .calculateBottomPadding()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -125,18 +146,36 @@ private fun LibraryScreen(
                 ),
             )
         },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        floatingActionButton = {
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+                tooltip = { PlainTooltip { Text("New playlist") } },
+                state = rememberTooltipState(),
+                modifier = Modifier
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(
+                            WindowInsetsSides.Horizontal,
+                        ),
+                    )
+                    .padding(bottom = bottomPadding)
+                    .animateFloatingActionButton(
+                        visible = PlaylistsNavKey in navigationState.backStack,
+                        alignment = Alignment.BottomEnd,
+                    ),
+            ) {
+                FloatingActionButton(onClick = { /* do something */ }) {
+                    Icon(
+                        imageVector = MuzIcons.Filled.PlaylistAdd,
+                        contentDescription = "New playlist",
+                    )
+                }
+            }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
         ) {
-            val libraryTabs = LibraryTab.entries
-            val navigationState = rememberNavigationState(
-                initialBackStack = listOf(libraryTabs.first().navKey),
-            )
-            val navigator = remember { Navigator(navigationState) }
-            val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
-                ?: libraryTabs.first()
-
             PrimaryScrollableTabRow(
                 selectedTabIndex = currentTab.ordinal,
                 modifier = Modifier.fillMaxWidth(),
@@ -253,8 +292,8 @@ private fun LibraryTopAppBar(
                         enabled = inAppUpdateState !is AppUpdateResult.InProgress,
                         modifier = Modifier.size(
                             IconButtonDefaults.smallContainerSize(
-                                IconButtonDefaults.IconButtonWidthOption.Wide
-                            )
+                                IconButtonDefaults.IconButtonWidthOption.Wide,
+                            ),
                         ),
                     ) {
                         if (inAppUpdateState is AppUpdateResult.InProgress) {
@@ -288,7 +327,7 @@ private fun LibraryTopAppBar(
     )
 }
 
-private enum class LibraryTab(
+enum class LibraryTab(
     @StringRes val titleRes: Int,
     val icon: ImageVector,
     val navKey: NavKey,

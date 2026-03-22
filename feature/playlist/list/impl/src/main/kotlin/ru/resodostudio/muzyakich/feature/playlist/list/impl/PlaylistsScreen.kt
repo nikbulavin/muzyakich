@@ -79,11 +79,18 @@ private fun PlaylistsScreen(
             )
         }
 
-        PlaylistsUiState.Loading -> LoadingState(modifier.fillMaxSize())
+        PlaylistsUiState.Loading -> {
+            LoadingState(
+                modifier = modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding(),
+            )
+        }
+
         is PlaylistsUiState.Success -> {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(150.dp),
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(

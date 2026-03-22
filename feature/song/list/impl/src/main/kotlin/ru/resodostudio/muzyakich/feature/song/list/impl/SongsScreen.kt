@@ -95,7 +95,14 @@ private fun SongsScreen(
             )
         }
 
-        SongsUiState.Loading -> LoadingState(modifier.fillMaxSize())
+        SongsUiState.Loading -> {
+            LoadingState(
+                modifier = modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding(),
+            )
+        }
+
         is SongsUiState.Success -> {
             var shouldShowFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
 

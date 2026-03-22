@@ -77,7 +77,14 @@ private fun AlbumsScreen(
             )
         }
 
-        AlbumsUiState.Loading -> LoadingState(modifier.fillMaxSize())
+        AlbumsUiState.Loading -> {
+            LoadingState(
+                modifier = modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding(),
+            )
+        }
+
         is AlbumsUiState.Success -> {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(150.dp),

@@ -63,7 +63,14 @@ private fun ArtistsScreen(
             )
         }
 
-        ArtistsUiState.Loading -> LoadingState(modifier.fillMaxSize())
+        ArtistsUiState.Loading -> {
+            LoadingState(
+                modifier = modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding(),
+            )
+        }
+
         is ArtistsUiState.Success -> {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(300.dp),
