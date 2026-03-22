@@ -11,7 +11,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -53,7 +52,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
-import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
@@ -67,17 +65,20 @@ import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
+import ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation.playlistsEntry
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
 import ru.resodostudio.muzyakich.feature.song.list.impl.navigation.songsEntry
 import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsNavKey
 import ru.resodostudio.muzyakich.ui.album.list.navigation.albumsEntry
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsNavKey
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.artistsEntry
+import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
+    onPlaylistClick: (Uuid) -> Unit,
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
@@ -89,6 +90,7 @@ fun LibraryScreen(
 
     LibraryScreen(
         inAppUpdateState = inAppUpdateState,
+        onPlaylistClick = onPlaylistClick,
         onAlbumClick = onAlbumClick,
         onArtistClick = onArtistClick,
         onSongMenuClick = onSongMenuClick,
@@ -101,6 +103,7 @@ fun LibraryScreen(
 @Composable
 private fun LibraryScreen(
     inAppUpdateState: AppUpdateResult,
+    onPlaylistClick: (Uuid) -> Unit,
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
@@ -159,9 +162,7 @@ private fun LibraryScreen(
                 }
             }
             val entryProvider = entryProvider {
-                entry<PlaylistsNavKey> {
-                    LoadingState(Modifier.fillMaxSize())
-                }
+                playlistsEntry(onPlaylistClick)
                 songsEntry(onSongMenuClick)
                 albumsEntry(onAlbumClick)
                 artistsEntry(onArtistClick)

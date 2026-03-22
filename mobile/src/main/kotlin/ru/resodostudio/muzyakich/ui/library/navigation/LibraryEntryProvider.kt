@@ -12,6 +12,7 @@ import ru.resodostudio.muzyakich.ui.library.LibraryScreen
 fun EntryProviderScope<NavKey>.libraryEntry(navigator: Navigator) {
     entry<LibraryNavKey> {
         LibraryScreen(
+            onPlaylistClick = { },
             onAlbumClick = navigator::navigateToAlbum,
             onArtistClick = navigator::navigateToArtist,
             onSongMenuClick = navigator::navigateToSong,
