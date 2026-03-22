@@ -5,8 +5,6 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -70,7 +68,8 @@ import ru.resodostudio.muzyakich.ui.song.detail.navigation.songEntry
 @OptIn(
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalHazeApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
 fun MuzApp(
@@ -165,12 +164,7 @@ fun MuzApp(
                             expandFrom = Alignment.CenterHorizontally,
                         ),
                 exit = fadeOut(motionScheme.fastEffectsSpec()) +
-                        scaleOut(motionScheme.fastSpatialSpec()) +
-                        slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 } +
-                        shrinkHorizontally(
-                            animationSpec = motionScheme.fastSpatialSpec(),
-                            shrinkTowards = Alignment.CenterHorizontally,
-                        ),
+                        slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                 modifier = Modifier.align(Alignment.BottomCenter),
             ) {
                 NowPlayingBar(
