@@ -7,6 +7,7 @@ import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.feature.player.api.PlayerNavKey
 import ru.resodostudio.muzyakich.feature.player.impl.PlayerScreen
+import ru.resodostudio.muzyakich.feature.song.detail.api.navigateToSong
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator) {
@@ -15,7 +16,7 @@ fun EntryProviderScope<NavKey>.playerEntry(navigator: Navigator) {
     ) {
         PlayerScreen(
             onDismiss = navigator::goBack,
-            onSongMenuClick = {},
+            onSongMenuClick = navigator::navigateToSong,
         )
     }
 }

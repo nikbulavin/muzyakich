@@ -4,9 +4,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.feature.song.detail.api.navigateToSong
 import ru.resodostudio.muzyakich.ui.artist.detail.ArtistScreen
 import ru.resodostudio.muzyakich.ui.artist.detail.ArtistViewModel
-import ru.resodostudio.muzyakich.ui.song.detail.navigation.navigateToSong
 
 fun EntryProviderScope<NavKey>.artistEntry(navigator: Navigator) {
     entry<ArtistNavKey> { artistKey ->

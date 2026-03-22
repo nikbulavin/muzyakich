@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.core.mediaService)
 
     implementation(projects.feature.player.api)
+    implementation(projects.feature.song.detail.api)
 
     implementation(platform(libs.coil.bom))
     implementation(libs.androidx.media3.cast)

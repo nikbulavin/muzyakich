@@ -6,6 +6,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.feature.song.detail.api.SongNavKey
 import ru.resodostudio.muzyakich.ui.song.detail.SongBottomSheet
 import ru.resodostudio.muzyakich.ui.song.detail.SongViewModel
 

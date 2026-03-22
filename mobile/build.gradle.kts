@@ -66,6 +66,7 @@ dependencies {
     implementation(projects.feature.player.impl)
     implementation(projects.feature.settings.api)
     implementation(projects.feature.settings.impl)
+    implementation(projects.feature.song.detail.api)
 
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
