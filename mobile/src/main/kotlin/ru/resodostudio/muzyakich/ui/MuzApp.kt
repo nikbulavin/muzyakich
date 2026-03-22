@@ -31,9 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
@@ -171,19 +169,14 @@ fun MuzApp(
                     currentSong = player?.currentMediaItem!!.asSong(),
                     player = player,
                     modifier = Modifier
+                        .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
                         .padding(16.dp)
-                        .dropShadow(
+                        .shadow(
+                            elevation = 6.dp,
                             shape = MaterialTheme.shapes.largeIncreased,
-                            shadow = Shadow(
-                                radius = 10.dp,
-                                spread = 6.dp,
-                                color = MaterialTheme.colorScheme.inverseSurface,
-                                alpha = 0.1f,
-                            ),
+                            clip = true,
                         )
-                        .align(Alignment.BottomCenter)
-                        .clip(MaterialTheme.shapes.largeIncreased)
                         .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
                             inputScale = HazeInputScale.Auto
                             blurEnabled = true
