@@ -196,7 +196,7 @@ fun SongItem(
                                     )
                                 )
                                 val lottieComposition by rememberLottieComposition(
-                                    LottieCompositionSpec.RawRes(R.raw.equalizer_anim)
+                                    LottieCompositionSpec.RawRes(R.raw.core_ui_equalizer_anim)
                                 )
                                 val progress by animateLottieCompositionAsState(
                                     composition = lottieComposition,

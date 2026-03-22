@@ -32,7 +32,6 @@
     <string name="core_locales_more_options">Дополнительно</string>
     <string name="core_locales_move_to_trash">Переместить в корзину</string>
     <string name="core_locales_move_to_trash_description">Будет удален навсегда через 30 дней</string>
-    <string name="core_locales_music_notification_channel_name">Сейчас играет</string>
     <string name="core_locales_next_in_queue">Следующие в очереди</string>
     <string name="core_locales_open_filter_menu">Открыть меню фильтров</string>
     <string name="core_locales_open_menu">Открыть меню</string>

@@ -50,10 +50,10 @@ class MusicNotificationProvider @Inject constructor(
     private fun replaceIcons(mediaNotification: MediaNotification): MediaNotification {
         val builder = Notification.Builder.recoverBuilder(context, mediaNotification.notification)
 
-        builder.setSmallIcon(R.drawable.ic_muzyakich)
+        builder.setSmallIcon(R.drawable.core_media_notification_ic_muzyakich)
 
         if (mediaNotification.notification.getLargeIcon() == null) {
-            val fallbackIcon = Icon.createWithResource(context, R.drawable.ic_placeholder)
+            val fallbackIcon = Icon.createWithResource(context, R.drawable.core_media_notification_ic_placeholder)
             builder.setLargeIcon(fallbackIcon)
         }
 

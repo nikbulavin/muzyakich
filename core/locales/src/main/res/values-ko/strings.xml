@@ -32,7 +32,6 @@
     <string name="core_locales_more_options">추가 옵션</string>
     <string name="core_locales_move_to_trash">휴지통으로 이동</string>
     <string name="core_locales_move_to_trash_description">30일 후에 영구적으로 삭제됩니다</string>
-    <string name="core_locales_music_notification_channel_name">현재 재생 중</string>
     <string name="core_locales_next_in_queue">다음 재생</string>
     <string name="core_locales_open_filter_menu">필터 메뉴 열기</string>
     <string name="core_locales_open_menu">메뉴 열기</string>
