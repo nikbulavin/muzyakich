@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -105,6 +106,7 @@ private fun SettingsScreen(
                         onClick = onBackClick,
                         icon = MuzIcons.Rounded.ArrowBack,
                         contentDescription = stringResource(localesR.string.core_locales_back),
+                        tooltipPosition = TooltipAnchorPosition.Right,
                     )
                 },
             )
