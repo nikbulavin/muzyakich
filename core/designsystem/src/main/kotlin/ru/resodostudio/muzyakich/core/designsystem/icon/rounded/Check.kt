@@ -19,7 +19,7 @@ val MuzIcons.Rounded.Check: ImageVector
             viewportWidth = 960f,
             viewportHeight = 960f,
         ).apply {
-            path(fill = SolidColor(Color(0xFF000000))) {
+            path(fill = SolidColor(Color.White)) {
                 moveTo(382f, 606f)
                 lineTo(721f, 267f)
                 quadTo(733f, 255f, 749f, 255f)
