@@ -90,6 +90,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun LibraryScreen(
     onPlaylistClick: (Uuid) -> Unit,
+    onNewPlaylistClick: () -> Unit,
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
@@ -102,6 +103,7 @@ fun LibraryScreen(
     LibraryScreen(
         libraryUiState = libraryUiState,
         onPlaylistClick = onPlaylistClick,
+        onNewPlaylistClick = onNewPlaylistClick,
         onAlbumClick = onAlbumClick,
         onArtistClick = onArtistClick,
         onSongMenuClick = onSongMenuClick,
@@ -115,6 +117,7 @@ fun LibraryScreen(
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
     onPlaylistClick: (Uuid) -> Unit,
+    onNewPlaylistClick: () -> Unit,
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
@@ -174,7 +177,7 @@ private fun LibraryScreen(
                                 alignment = Alignment.BottomEnd,
                             ),
                     ) {
-                        FloatingActionButton(onClick = { /* do something */ }) {
+                        FloatingActionButton(onClick = onNewPlaylistClick) {
                             Icon(
                                 imageVector = MuzIcons.Rounded.Add,
                                 contentDescription = contentDescription,

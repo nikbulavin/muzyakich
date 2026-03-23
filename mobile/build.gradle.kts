@@ -64,6 +64,8 @@ dependencies {
 
     implementation(projects.feature.player.api)
     implementation(projects.feature.player.impl)
+    implementation(projects.feature.playlist.editor.api)
+    implementation(projects.feature.playlist.editor.impl)
     implementation(projects.feature.playlist.list.api)
     implementation(projects.feature.playlist.list.impl)
     implementation(projects.feature.settings.api)
