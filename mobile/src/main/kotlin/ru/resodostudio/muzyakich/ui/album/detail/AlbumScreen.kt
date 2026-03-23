@@ -430,6 +430,7 @@ private fun AlbumTopAppBar(
                 } else {
                     IconButtonDefaults.filledTonalIconButtonColors()
                 },
+                containerSize = IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
             )
         },
         actions = {
