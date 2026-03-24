@@ -14,6 +14,8 @@ dependencies {
     implementation(projects.feature.playlist.editor.api)
     implementation(projects.feature.song.list.api)
 
+    implementation(libs.androidx.activity.compose)
+
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
 }

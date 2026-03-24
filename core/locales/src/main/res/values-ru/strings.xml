@@ -44,8 +44,10 @@
     <string name="core_locales_playlists_empty">У вас пока нет плейлистов. Создайте новый плейлист и добавьте в него свою любимую музыку!</string>
     <string name="core_locales_privacy_policy">Политика конфиденциальности</string>
     <string name="core_locales_queue">Очередь</string>
+    <string name="core_locales_remove_cover">Удалить обложку</string>
     <string name="core_locales_remove_from_favorites">Удалить из избранного</string>
     <string name="core_locales_search">Поиск</string>
+    <string name="core_locales_set_cover">Установить обложку</string>
     <string name="core_locales_settings">Настройки</string>
     <string name="core_locales_shuffle">Микс</string>
     <string name="core_locales_skip_next">Перейти к следующему</string>

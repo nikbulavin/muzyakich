@@ -44,8 +44,10 @@
     <string name="core_locales_playlists_empty">아직 재생 목록이 없습니다. 새 재생 목록을 만들고 좋아하는 음악을 추가하세요!</string>
     <string name="core_locales_privacy_policy">개인정보 처리방침</string>
     <string name="core_locales_queue">대기열</string>
+    <string name="core_locales_remove_cover">표지 제거</string>
     <string name="core_locales_remove_from_favorites">즐겨찾기에서 제거</string>
     <string name="core_locales_search">검색</string>
+    <string name="core_locales_set_cover">표지 설정</string>
     <string name="core_locales_settings">설정</string>
     <string name="core_locales_shuffle">셔플</string>
     <string name="core_locales_skip_next">다음 곡</string>
