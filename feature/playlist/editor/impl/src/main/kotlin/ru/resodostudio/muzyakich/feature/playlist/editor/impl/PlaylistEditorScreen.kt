@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -113,6 +114,8 @@ private fun PlaylistEditorScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
+                        .padding(16.dp)
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                 ) {
                     if (playlistEditorUiState is PlaylistEditorUiState.Success) {
