@@ -56,7 +56,7 @@ internal fun PlaylistEditorScreen(
     PlaylistEditorScreen(
         playlistEditorUiState = playlistEditorUiState,
         onBackClick = onBackClick,
-        onNameChange = viewModel::onNameChange,
+        onTitleChange = viewModel::onTitleChange,
         onCoverSelected = viewModel::updateCover,
         onRemoveCover = viewModel::removeCover,
         onSave = {
@@ -72,7 +72,7 @@ internal fun PlaylistEditorScreen(
 private fun PlaylistEditorScreen(
     playlistEditorUiState: PlaylistEditorUiState,
     onBackClick: () -> Unit,
-    onNameChange: (String) -> Unit,
+    onTitleChange: (String) -> Unit,
     onCoverSelected: (Uri?) -> Unit,
     onRemoveCover: () -> Unit,
     onSave: () -> Unit,
@@ -101,7 +101,7 @@ private fun PlaylistEditorScreen(
                         onClick = onSave,
                         contentDescription = stringResource(localesR.string.core_locales_confirm),
                         tooltipPosition = TooltipAnchorPosition.Left,
-                        enabled = playlistEditorUiState is PlaylistEditorUiState.Success && playlistEditorUiState.name.isNotBlank(),
+                        enabled = playlistEditorUiState is PlaylistEditorUiState.Success && playlistEditorUiState.title.isNotBlank(),
                         containerSize = IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
                         modifier = Modifier.padding(end = 6.dp),
                     )
@@ -181,8 +181,8 @@ private fun PlaylistEditorScreen(
                     }
                     item {
                         OutlinedTextField(
-                            value = playlistEditorUiState.name,
-                            onValueChange = onNameChange,
+                            value = playlistEditorUiState.title,
+                            onValueChange = onTitleChange,
                             label = { Text(stringResource(localesR.string.core_locales_title)) },
                             modifier = Modifier
                                 .fillMaxWidth()

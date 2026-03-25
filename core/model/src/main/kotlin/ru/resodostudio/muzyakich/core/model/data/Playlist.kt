@@ -5,7 +5,7 @@ import kotlin.uuid.Uuid
 
 data class Playlist(
     val uuid: Uuid,
-    val name: String,
+    val title: String,
     val timestamp: Instant,
     val coverFilePath: String?,
     val songs: List<Song>,

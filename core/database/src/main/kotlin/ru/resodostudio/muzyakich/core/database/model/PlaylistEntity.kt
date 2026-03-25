@@ -12,7 +12,7 @@ import kotlin.uuid.Uuid
 data class PlaylistEntity(
     @PrimaryKey
     val uuid: Uuid,
-    val name: String,
+    val title: String,
     @ColumnInfo(name = "timestamp")
     val timestamp: Instant,
     @ColumnInfo(name = "cover_file_path")

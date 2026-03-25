@@ -28,19 +28,19 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     private val _playlist = MutableStateFlow<Playlist?>(null)
-    private val _name = MutableStateFlow("")
+    private val _title = MutableStateFlow("")
     private val _coverFilePath = MutableStateFlow<String?>(null)
     private val _selectedCoverUri = MutableStateFlow<Uri?>(null)
     private val _songs = MutableStateFlow<List<Song>>(emptyList())
 
     val playlistEditorUiState = combine(
-        _name,
+        _title,
         _coverFilePath,
         _songs,
         _selectedCoverUri,
     ) { name, coverFilePath, songs, selectedCoverUri ->
         PlaylistEditorUiState.Success(
-            name = name,
+            title = name,
             coverFilePath = coverFilePath,
             songs = songs,
             selectedCoverUri = selectedCoverUri,
@@ -58,7 +58,7 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
                 val playlist = playlistsRepository.getPlaylist(playlistUuid).firstOrNull()
                 if (playlist != null) {
                     _playlist.value = playlist
-                    _name.value = playlist.name
+                    _title.value = playlist.title
                     _coverFilePath.value = playlist.coverFilePath
                     _songs.value = playlist.songs
                 }
@@ -66,8 +66,8 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
         }
     }
 
-    fun onNameChange(name: String) {
-        _name.value = name
+    fun onTitleChange(title: String) {
+        _title.value = title
     }
 
     fun updateCover(uri: Uri?) {
@@ -81,14 +81,14 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
     }
 
     fun savePlaylist() {
-        val name = _name.value
+        val name = _title.value
         if (name.isBlank()) return
 
         viewModelScope.launch {
             val existing = _playlist.value
             val playlist = Playlist(
                 uuid = playlistUuid ?: Uuid.random(),
-                name = name,
+                title = name,
                 timestamp = existing?.timestamp ?: Clock.System.now(),
                 coverFilePath = _selectedCoverUri.value?.toString() ?: _coverFilePath.value,
                 songs = _songs.value,
@@ -110,7 +110,7 @@ sealed interface PlaylistEditorUiState {
     data object Loading : PlaylistEditorUiState
 
     data class Success(
-        val name: String,
+        val title: String,
         val coverFilePath: String?,
         val songs: List<Song>,
         val selectedCoverUri: Uri? = null,

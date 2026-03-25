@@ -7,7 +7,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 fun PlaylistEntity.asExternalModel(songs: List<Song> = emptyList()): Playlist {
     return Playlist(
         uuid = uuid,
-        name = name,
+        title = title,
         timestamp = timestamp,
         coverFilePath = coverFilePath,
         songs = songs,
@@ -17,7 +17,7 @@ fun PlaylistEntity.asExternalModel(songs: List<Song> = emptyList()): Playlist {
 fun Playlist.asEntity(): PlaylistEntity {
     return PlaylistEntity(
         uuid = uuid,
-        name = name,
+        title = title,
         timestamp = timestamp,
         coverFilePath = coverFilePath,
     )

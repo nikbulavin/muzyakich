@@ -162,7 +162,7 @@ private fun PlaylistCard(
                 modifier = Modifier.padding(12.dp),
             ) {
                 Text(
-                    text = playlist.name,
+                    text = playlist.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyLarge,
