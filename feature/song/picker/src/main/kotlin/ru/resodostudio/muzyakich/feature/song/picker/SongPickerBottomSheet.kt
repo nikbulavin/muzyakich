@@ -2,6 +2,7 @@ package ru.resodostudio.muzyakich.feature.song.picker
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -40,6 +42,7 @@ import ru.resodostudio.muzyakich.core.model.data.Song
 @Composable
 fun SongPickerBottomSheet(
     onDismiss: () -> Unit,
+    onSongsSelected: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SongPickerViewModel = hiltViewModel(),
 ) {
@@ -48,6 +51,8 @@ fun SongPickerBottomSheet(
     SongPickerBottomSheet(
         songPickerUiState = songPickerUiState,
         onDismiss = onDismiss,
+        onToggleSong = viewModel::toggleSong,
+        onSongsSelected = onSongsSelected,
         modifier = modifier,
     )
 }
@@ -57,6 +62,8 @@ fun SongPickerBottomSheet(
 private fun SongPickerBottomSheet(
     songPickerUiState: SongPickerUiState,
     onDismiss: () -> Unit,
+    onToggleSong: (String) -> Unit,
+    onSongsSelected: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ModalBottomSheet(
@@ -74,13 +81,33 @@ private fun SongPickerBottomSheet(
             }
 
             is SongPickerUiState.Success -> {
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                ) {
-                    songs(
-                        songs = songPickerUiState.songs,
-                        onClick = {},
-                    )
+                Column {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.weight(1f, fill = false),
+                    ) {
+                        songs(
+                            songs = songPickerUiState.songs,
+                            selectedSongs = songPickerUiState.selectedSongs,
+                            onClick = onToggleSong,
+                        )
+                    }
+
+                    if (songPickerUiState.selectedSongs.isNotEmpty()) {
+                        Button(
+                            onClick = {
+                                onSongsSelected(songPickerUiState.selectedSongs.toList())
+                                onDismiss()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                        ) {
+                            Text(
+                                text = "Добавить (${songPickerUiState.selectedSongs.size})",
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -90,8 +117,8 @@ private fun SongPickerBottomSheet(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.songs(
     songs: List<Song>,
-    onClick: (Song) -> Unit,
-    selected: Boolean = false,
+    selectedSongs: Set<String>,
+    onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     itemsIndexed(
@@ -99,11 +126,12 @@ private fun LazyListScope.songs(
         key = { _, song -> song.mediaId },
         contentType = { _, _ -> "Song" },
     ) { index, song ->
+        val selected = selectedSongs.contains(song.mediaId)
         SongItem(
             song = song,
             selected = selected,
             modifier = modifier.animateItem(),
-            onClick = onClick,
+            onClick = { onClick(song.mediaId) },
             shapes = if (songs.size == 1) {
                 ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
             } else {
@@ -120,13 +148,13 @@ private fun SongItem(
     shapes: ListItemShapes,
     selected: Boolean,
     modifier: Modifier = Modifier,
-    onClick: (Song) -> Unit,
+    onClick: () -> Unit,
 ) {
     MuzSelectableListItem(
         modifier = modifier,
         shapes = shapes,
         selected = selected,
-        onClick = { onClick(song) },
+        onClick = onClick,
         content = {
             Text(
                 text = song.title,
