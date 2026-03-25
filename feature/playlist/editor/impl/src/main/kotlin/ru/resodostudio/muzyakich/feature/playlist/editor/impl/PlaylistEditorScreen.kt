@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -31,7 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
+import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -39,6 +42,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Edit
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -106,68 +110,86 @@ private fun PlaylistEditorScreen(
         },
         modifier = modifier,
     ) { innerPadding ->
-        LazyColumn(
-            contentPadding = innerPadding,
-        ) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .padding(16.dp)
-                        .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+        when (playlistEditorUiState) {
+            PlaylistEditorUiState.Loading -> {
+                LoadingState(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
+            }
+
+            is PlaylistEditorUiState.Success -> {
+                LazyColumn(
+                    contentPadding = innerPadding,
                 ) {
-                    if (playlistEditorUiState is PlaylistEditorUiState.Success) {
-                        val coverModel = playlistEditorUiState.selectedCoverUri ?: playlistEditorUiState.coverFileName
-                        if (coverModel != null) {
-                            AsyncImage(
+                    item {
+                        Box {
+                            val coverModel = playlistEditorUiState.selectedCoverUri
+                                ?: playlistEditorUiState.coverFileName
+                            SubcomposeAsyncImage(
                                 model = coverModel,
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f)
+                                    .padding(16.dp)
+                                    .clip(MaterialTheme.shapes.large),
+                                error = {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                                    ) {
+                                        Icon(
+                                            imageVector = MuzIcons.Rounded.LibraryMusic,
+                                            contentDescription = null,
+                                            modifier = Modifier.fillMaxSize(0.5f),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                },
                             )
-                        }
 
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(16.dp),
-                        ) {
-                            if (coverModel != null) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(32.dp),
+                            ) {
                                 MuzFilledIconButton(
                                     icon = MuzIcons.Filled.Delete,
                                     onClick = onRemoveCover,
                                     contentDescription = stringResource(localesR.string.core_locales_remove_cover),
+                                    enabled = coverModel != null,
+                                )
+                                MuzFilledIconButton(
+                                    icon = MuzIcons.Filled.Edit,
+                                    onClick = {
+                                        runCatching {
+                                            pickMedia.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                                            )
+                                        }
+                                    },
+                                    contentDescription = stringResource(localesR.string.core_locales_set_cover),
                                 )
                             }
-                            MuzFilledIconButton(
-                                icon = MuzIcons.Filled.Edit,
-                                onClick = {
-                                    runCatching {
-                                        pickMedia.launch(
-                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
-                                        )
-                                    }
-                                },
-                                contentDescription = stringResource(localesR.string.core_locales_set_cover),
-                            )
                         }
                     }
-                }
-            }
-            item {
-                if (playlistEditorUiState is PlaylistEditorUiState.Success) {
-                    OutlinedTextField(
-                        value = playlistEditorUiState.name,
-                        onValueChange = onNameChange,
-                        label = { Text(stringResource(localesR.string.core_locales_title)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        singleLine = true,
-                    )
+                    item {
+                        OutlinedTextField(
+                            value = playlistEditorUiState.name,
+                            onValueChange = onNameChange,
+                            label = { Text(stringResource(localesR.string.core_locales_title)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            singleLine = true,
+                        )
+                    }
                 }
             }
         }
