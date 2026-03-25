@@ -75,8 +75,8 @@ fun SongItem(
     isPlaying: Boolean = false,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
-    onLeftToRightSwipe: (Song) -> Unit = {},
-    onSongRemove: (String) -> Unit = {},
+    onLeftToRightSwipe: ((Song) -> Unit)? = null,
+    onSongRemove: ((String) -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val dismissState = rememberSwipeToDismissBoxState()
@@ -85,16 +85,18 @@ fun SongItem(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            onSongRemove(song.mediaId)
+            onSongRemove?.invoke(song.mediaId)
         }
     }
 
     SwipeToDismissBox(
         state = dismissState,
         modifier = modifier,
+        enableDismissFromStartToEnd = onLeftToRightSwipe != null,
+        enableDismissFromEndToStart = onSongRemove != null,
         onDismiss = { dismissDirection ->
             if (dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
-                onLeftToRightSwipe(song)
+                onLeftToRightSwipe?.invoke(song)
             } else if (dismissDirection == SwipeToDismissBoxValue.EndToStart) {
                 runCatching {
                     val pendingIntent = MediaStore.createTrashRequest(
@@ -265,8 +267,8 @@ fun LazyGridScope.songs(
     onSongMenuClick: (String) -> Unit,
     isPlaying: Boolean = false,
     modifier: Modifier = Modifier,
-    onSongLeftToRightSwipe: (Song) -> Unit = {},
-    onSongRemove: (String) -> Unit = {},
+    onSongLeftToRightSwipe: ((Song) -> Unit)? = null,
+    onSongRemove: ((String) -> Unit)? = null,
 ) {
     itemsIndexed(
         items = songs,
