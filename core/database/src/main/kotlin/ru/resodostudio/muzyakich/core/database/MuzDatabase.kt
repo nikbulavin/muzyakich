@@ -17,7 +17,7 @@ import ru.resodostudio.muzyakich.core.database.util.UuidConverter
         PlaylistEntity::class,
         PlaylistSongCrossRef::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(

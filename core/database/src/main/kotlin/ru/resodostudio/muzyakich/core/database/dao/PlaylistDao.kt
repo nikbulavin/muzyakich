@@ -42,7 +42,7 @@ interface PlaylistDao {
     @Transaction
     suspend fun updatePlaylistWithSongs(
         playlist: PlaylistEntity,
-        crossRefs: List<PlaylistSongCrossRef>
+        crossRefs: List<PlaylistSongCrossRef>,
     ) {
         upsertPlaylist(playlist)
         clearPlaylistSongs(playlist.uuid)

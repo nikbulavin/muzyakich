@@ -29,19 +29,19 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
 
     private val _playlist = MutableStateFlow<Playlist?>(null)
     private val _name = MutableStateFlow("")
-    private val _coverFileName = MutableStateFlow<String?>(null)
+    private val _coverFilePath = MutableStateFlow<String?>(null)
     private val _selectedCoverUri = MutableStateFlow<Uri?>(null)
     private val _songs = MutableStateFlow<List<Song>>(emptyList())
 
     val playlistEditorUiState = combine(
         _name,
-        _coverFileName,
+        _coverFilePath,
         _songs,
         _selectedCoverUri,
-    ) { name, coverFileName, songs, selectedCoverUri ->
+    ) { name, coverFilePath, songs, selectedCoverUri ->
         PlaylistEditorUiState.Success(
             name = name,
-            coverFileName = coverFileName,
+            coverFilePath = coverFilePath,
             songs = songs,
             selectedCoverUri = selectedCoverUri,
         )
@@ -59,7 +59,7 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
                 if (playlist != null) {
                     _playlist.value = playlist
                     _name.value = playlist.name
-                    _coverFileName.value = playlist.coverFileName
+                    _coverFilePath.value = playlist.coverFilePath
                     _songs.value = playlist.songs
                 }
             }
@@ -76,7 +76,7 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
     }
 
     fun removeCover() {
-        _coverFileName.value = null
+        _coverFilePath.value = null
         _selectedCoverUri.value = null
     }
 
@@ -90,7 +90,7 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
                 uuid = playlistUuid ?: Uuid.random(),
                 name = name,
                 timestamp = existing?.timestamp ?: Clock.System.now(),
-                coverFileName = _coverFileName.value,
+                coverFilePath = _selectedCoverUri.value?.toString() ?: _coverFilePath.value,
                 songs = _songs.value,
             )
             playlistsRepository.upsertPlaylist(playlist)
@@ -111,7 +111,7 @@ sealed interface PlaylistEditorUiState {
 
     data class Success(
         val name: String,
-        val coverFileName: String?,
+        val coverFilePath: String?,
         val songs: List<Song>,
         val selectedCoverUri: Uri? = null,
     ) : PlaylistEditorUiState

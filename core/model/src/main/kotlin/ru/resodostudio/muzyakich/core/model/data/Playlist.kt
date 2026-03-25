@@ -7,6 +7,6 @@ data class Playlist(
     val uuid: Uuid,
     val name: String,
     val timestamp: Instant,
-    val coverFileName: String?,
+    val coverFilePath: String?,
     val songs: List<Song>,
 )

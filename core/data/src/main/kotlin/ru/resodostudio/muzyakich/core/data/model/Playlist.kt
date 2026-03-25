@@ -9,7 +9,7 @@ fun PlaylistEntity.asExternalModel(songs: List<Song> = emptyList()): Playlist {
         uuid = uuid,
         name = name,
         timestamp = timestamp,
-        coverFileName = coverFileName,
+        coverFilePath = coverFilePath,
         songs = songs,
     )
 }
@@ -19,6 +19,6 @@ fun Playlist.asEntity(): PlaylistEntity {
         uuid = uuid,
         name = name,
         timestamp = timestamp,
-        coverFileName = coverFileName,
+        coverFilePath = coverFilePath,
     )
 }

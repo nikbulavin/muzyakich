@@ -15,6 +15,6 @@ data class PlaylistEntity(
     val name: String,
     @ColumnInfo(name = "timestamp")
     val timestamp: Instant,
-    @ColumnInfo(name = "cover_file_name")
-    val coverFileName: String?,
+    @ColumnInfo(name = "cover_file_path")
+    val coverFilePath: String?,
 )

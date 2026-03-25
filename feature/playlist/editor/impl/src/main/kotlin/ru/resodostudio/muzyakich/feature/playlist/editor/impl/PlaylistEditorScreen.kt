@@ -126,7 +126,7 @@ private fun PlaylistEditorScreen(
                     item {
                         Box {
                             val coverModel = playlistEditorUiState.selectedCoverUri
-                                ?: playlistEditorUiState.coverFileName
+                                ?: playlistEditorUiState.coverFilePath
                             SubcomposeAsyncImage(
                                 model = coverModel,
                                 contentDescription = null,
