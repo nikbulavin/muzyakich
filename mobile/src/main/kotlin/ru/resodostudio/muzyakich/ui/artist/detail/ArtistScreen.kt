@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.rememberDeleteSwipeAction
+import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
@@ -102,8 +104,8 @@ fun ArtistScreen(
                         onPlaySongsClick = { songs, index -> onPlaySongsClick(songs, index, false) },
                         isPlaying = artistUiState.nowPlayingState.player?.isPlaying ?: false,
                         onSongMenuClick = onSongMenuClick,
-                        onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-                        onSongRemove = onSongRemove,
+                        startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
+                        endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
                     )
                     songsInfo(
                         songs = artistUiState.artist.songs,

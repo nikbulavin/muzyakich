@@ -31,7 +31,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -66,6 +68,71 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
+data class SwipeAction(
+    val icon: ImageVector,
+    val backgroundColor: Color,
+    val iconColor: Color,
+    val action: () -> Unit,
+)
+
+@Composable
+fun rememberDeleteSwipeAction(
+    song: Song,
+    onSongRemove: (String) -> Unit,
+): SwipeAction {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            onSongRemove(song.mediaId)
+        }
+    }
+    return SwipeAction(
+        icon = MuzIcons.Filled.Delete,
+        backgroundColor = MaterialTheme.colorScheme.errorContainer,
+        iconColor = MaterialTheme.colorScheme.onErrorContainer,
+        action = {
+            runCatching {
+                val pendingIntent = MediaStore.createTrashRequest(
+                    context.contentResolver,
+                    listOf(song.mediaUri),
+                    true,
+                )
+                launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+            }.onFailure { exception ->
+                exception.printStackTrace()
+            }
+        },
+    )
+}
+
+@Composable
+fun rememberRemoveSwipeAction(
+    song: Song,
+    onRemove: (Song) -> Unit,
+): SwipeAction {
+    return SwipeAction(
+        icon = MuzIcons.Filled.Delete,
+        backgroundColor = MaterialTheme.colorScheme.errorContainer,
+        iconColor = MaterialTheme.colorScheme.onErrorContainer,
+        action = { onRemove(song) },
+    )
+}
+
+@Composable
+fun rememberPlaylistPlaySwipeAction(
+    song: Song,
+    onSwipe: (Song) -> Unit,
+): SwipeAction {
+    return SwipeAction(
+        icon = MuzIcons.Filled.PlaylistPlay,
+        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+        iconColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        action = { onSwipe(song) },
+    )
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SongItem(
@@ -75,39 +142,22 @@ fun SongItem(
     isPlaying: Boolean = false,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
-    onLeftToRightSwipe: ((Song) -> Unit)? = null,
-    onSongRemove: ((String) -> Unit)? = null,
+    startToEndSwipeAction: SwipeAction? = null,
+    endToStartSwipeAction: SwipeAction? = null,
 ) {
-    val context = LocalContext.current
     val dismissState = rememberSwipeToDismissBoxState()
     val scope = rememberCoroutineScope()
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult(),
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            onSongRemove?.invoke(song.mediaId)
-        }
-    }
 
     SwipeToDismissBox(
         state = dismissState,
         modifier = modifier,
-        enableDismissFromStartToEnd = onLeftToRightSwipe != null,
-        enableDismissFromEndToStart = onSongRemove != null,
+        enableDismissFromStartToEnd = startToEndSwipeAction != null,
+        enableDismissFromEndToStart = endToStartSwipeAction != null,
         onDismiss = { dismissDirection ->
             if (dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
-                onLeftToRightSwipe?.invoke(song)
+                startToEndSwipeAction?.action?.invoke()
             } else if (dismissDirection == SwipeToDismissBoxValue.EndToStart) {
-                runCatching {
-                    val pendingIntent = MediaStore.createTrashRequest(
-                        context.contentResolver,
-                        listOf(song.mediaUri),
-                        true,
-                    )
-                    launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
-                }.onFailure { exception ->
-                    exception.printStackTrace()
-                }
+                endToStartSwipeAction?.action?.invoke()
             }
             scope.launch {
                 dismissState.reset()
@@ -115,46 +165,44 @@ fun SongItem(
         },
         backgroundContent = {
             val isStartToEnd = dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd
-            val icon = if (isStartToEnd) MuzIcons.Filled.PlaylistPlay else MuzIcons.Filled.Delete
-            val (backgroundColor, iconColor) = if (isStartToEnd) {
-                MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
-            } else {
-                MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
-            }
-            Box(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .layout { measurable, constraints ->
-                            val offset = runCatching {
-                                dismissState.requireOffset()
-                                    .let { if (it.isNaN()) 0f else it }.absoluteValue.roundToInt()
-                            }.getOrDefault(0)
+            val swipeAction = if (isStartToEnd) startToEndSwipeAction else endToStartSwipeAction
 
-                            val gap = 2.dp.roundToPx()
-                            val width = (offset - gap).coerceIn(0, constraints.maxWidth)
-                            val placeable = measurable.measure(
-                                constraints.copy(minWidth = width, maxWidth = width)
-                            )
-                            layout(constraints.maxWidth, constraints.maxHeight) {
-                                if (isStartToEnd) {
-                                    placeable.placeRelative(0, 0)
-                                } else {
-                                    placeable.placeRelative(constraints.maxWidth - width, 0)
+            if (swipeAction != null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .layout { measurable, constraints ->
+                                val offset = runCatching {
+                                    dismissState.requireOffset()
+                                        .let { if (it.isNaN()) 0f else it }.absoluteValue.roundToInt()
+                                }.getOrDefault(0)
+
+                                val gap = 2.dp.roundToPx()
+                                val width = (offset - gap).coerceIn(0, constraints.maxWidth)
+                                val placeable = measurable.measure(
+                                    constraints.copy(minWidth = width, maxWidth = width),
+                                )
+                                layout(constraints.maxWidth, constraints.maxHeight) {
+                                    if (isStartToEnd) {
+                                        placeable.placeRelative(0, 0)
+                                    } else {
+                                        placeable.placeRelative(constraints.maxWidth - width, 0)
+                                    }
                                 }
                             }
-                        }
-                        .clip(MaterialTheme.shapes.large)
-                        .background(backgroundColor),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconColor,
-                    )
+                            .clip(MaterialTheme.shapes.large)
+                            .background(swipeAction.backgroundColor),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = swipeAction.icon,
+                            contentDescription = null,
+                            tint = swipeAction.iconColor,
+                        )
+                    }
                 }
             }
         },
@@ -198,7 +246,7 @@ fun SongItem(
                                     )
                                 )
                                 val lottieComposition by rememberLottieComposition(
-                                    LottieCompositionSpec.RawRes(R.raw.core_ui_equalizer_anim)
+                                    LottieCompositionSpec.RawRes(R.raw.core_ui_equalizer_anim),
                                 )
                                 val progress by animateLottieCompositionAsState(
                                     composition = lottieComposition,
@@ -249,13 +297,13 @@ fun SongItem(
                         contentDescription = stringResource(localesR.string.core_locales_open_menu),
                         modifier = Modifier.size(
                             IconButtonDefaults.smallContainerSize(
-                                IconButtonDefaults.IconButtonWidthOption.Narrow
-                            )
+                                IconButtonDefaults.IconButtonWidthOption.Narrow,
+                            ),
                         ),
                     )
                 },
             )
-        }
+        },
     )
 }
 
@@ -267,8 +315,8 @@ fun LazyGridScope.songs(
     onSongMenuClick: (String) -> Unit,
     isPlaying: Boolean = false,
     modifier: Modifier = Modifier,
-    onSongLeftToRightSwipe: ((Song) -> Unit)? = null,
-    onSongRemove: ((String) -> Unit)? = null,
+    startToEndSwipeAction: @Composable ((Song) -> SwipeAction?)? = null,
+    endToStartSwipeAction: @Composable ((Song) -> SwipeAction?)? = null,
 ) {
     itemsIndexed(
         items = songs,
@@ -286,8 +334,8 @@ fun LazyGridScope.songs(
             } else {
                 ListItemDefaults.segmentedShapes(index, songs.size)
             },
-            onLeftToRightSwipe = onSongLeftToRightSwipe,
-            onSongRemove = onSongRemove,
+            startToEndSwipeAction = startToEndSwipeAction?.invoke(song),
+            endToStartSwipeAction = endToStartSwipeAction?.invoke(song),
         )
     }
 }

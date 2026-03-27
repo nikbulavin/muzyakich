@@ -37,6 +37,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.cashsense.core.ui.EmptyState
 import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.rememberDeleteSwipeAction
+import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
@@ -140,8 +142,8 @@ private fun SongsScreen(
                     onPlaySongsClick = { songs, index -> onPlaySongsClick(songs, index, false) },
                     isPlaying = songsUiState.isPlaying,
                     onSongMenuClick = onSongMenuClick,
-                    onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-                    onSongRemove = onSongRemove,
+                    startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
+                    endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
                 )
                 songsInfo(
                     songs = songsUiState.songs,

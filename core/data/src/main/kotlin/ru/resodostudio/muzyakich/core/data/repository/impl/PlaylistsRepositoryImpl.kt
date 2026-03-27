@@ -127,6 +127,13 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun removeSongFromPlaylist(playlistUuid: Uuid, songMediaId: String) {
+        val songUuid = songDao.getSong(songMediaId).first()?.uuid
+        if (songUuid != null) {
+            playlistDao.deletePlaylistSongCrossRef(playlistUuid, songUuid)
+        }
+    }
+
     private suspend fun ensureSongEntityExists(songMediaId: String): Uuid {
         val songEntity = songDao.getSong(songMediaId).first()
         val songUuid = songEntity?.uuid ?: Uuid.random()

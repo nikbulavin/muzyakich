@@ -69,6 +69,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.rememberDeleteSwipeAction
+import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
@@ -221,8 +223,8 @@ private fun LazyGridScope.groupedSongs(
                 isPlaying = isPlaying,
                 onSongMenuClick = onSongMenuClick,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-                onSongRemove = onSongRemove,
+                startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
+                endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
             )
         }
     } else {
@@ -233,8 +235,8 @@ private fun LazyGridScope.groupedSongs(
             isPlaying = isPlaying,
             onSongMenuClick = onSongMenuClick,
             modifier = Modifier.padding(horizontal = 16.dp),
-            onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-            onSongRemove = onSongRemove,
+            startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
+            endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
         )
     }
 }

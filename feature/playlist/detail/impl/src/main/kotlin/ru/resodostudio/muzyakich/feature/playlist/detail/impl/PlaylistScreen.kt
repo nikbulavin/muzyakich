@@ -64,6 +64,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
+import ru.resodostudio.cashsense.core.ui.rememberRemoveSwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
@@ -100,7 +102,7 @@ internal fun PlaylistScreen(
         onPlaySongsNextClick = viewModel::playSongsNext,
         onPlaylistDelete = viewModel::deletePlaylist,
         onSongLeftToRightSwipe = viewModel::playSongNext,
-        onSongRemove = { viewModel.removeSongs(listOf(it)) },
+        onRemoveFromPlaylist = viewModel::removeSongFromPlaylist,
         modifier = modifier,
     )
 }
@@ -117,7 +119,7 @@ private fun PlaylistScreen(
     onPlaylistDelete: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
     onSongLeftToRightSwipe: (Song) -> Unit = {},
-    onSongRemove: (String) -> Unit = {},
+    onRemoveFromPlaylist: (Song) -> Unit = {},
 ) {
     when (playlistUiState) {
         PlaylistUiState.Error -> onBackClick()
@@ -172,8 +174,8 @@ private fun PlaylistScreen(
                         isPlaying = playlistUiState.nowPlayingState.player?.isPlaying ?: false,
                         onSongMenuClick = onSongMenuClick,
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-                        onSongRemove = onSongRemove,
+                        startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
+                        endToStartSwipeAction = { song -> rememberRemoveSwipeAction(song, onRemoveFromPlaylist) },
                     )
                     songsInfo(
                         songs = playlistUiState.playlist.songs,

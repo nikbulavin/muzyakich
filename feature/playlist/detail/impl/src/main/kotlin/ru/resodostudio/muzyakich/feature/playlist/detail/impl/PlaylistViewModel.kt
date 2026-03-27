@@ -63,6 +63,12 @@ internal class PlaylistViewModel @AssistedInject constructor(
         musicServiceConnection.removeSongs(mediaIds)
     }
 
+    fun removeSongFromPlaylist(song: Song) {
+        viewModelScope.launch {
+            playlistsRepository.removeSongFromPlaylist(playlistUuid, song.mediaId)
+        }
+    }
+
     fun deletePlaylist(playlistUuid: Uuid) {
         viewModelScope.launch {
             playlistsRepository.deletePlaylist(playlistUuid)
