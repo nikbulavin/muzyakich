@@ -277,7 +277,7 @@ private fun LazyGridScope.header(album: Album) {
                         Icon(
                             imageVector = MuzIcons.Rounded.Album,
                             contentDescription = null,
-                            modifier = Modifier.fillMaxSize(0.5f),
+                            modifier = Modifier.fillMaxSize(0.35f),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }

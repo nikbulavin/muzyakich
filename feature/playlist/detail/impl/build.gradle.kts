@@ -10,9 +10,13 @@ android {
 dependencies {
     implementation(projects.core.data)
     implementation(projects.core.locales)
+    implementation(projects.core.mediaService)
 
     implementation(projects.feature.playlist.detail.api)
+    implementation(projects.feature.song.detail.api)
 
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
+
+    implementation(libs.androidx.media3.exoPlayer)
 }
