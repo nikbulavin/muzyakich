@@ -54,7 +54,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun SongPickerBottomSheet(
     onDismiss: () -> Unit,
-    onSongsSelected: (List<String>) -> Unit,
+    onSongsSelected: (List<Song>) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SongPickerViewModel = hiltViewModel(),
 ) {
@@ -78,7 +78,7 @@ private fun SongPickerBottomSheet(
     songPickerUiState: SongPickerUiState,
     onDismiss: () -> Unit,
     onToggleSong: (String) -> Unit,
-    onSongsSelected: (List<String>) -> Unit,
+    onSongsSelected: (List<Song>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -113,7 +113,8 @@ private fun SongPickerBottomSheet(
                                 icon = MuzIcons.Rounded.Check,
                                 contentDescription = stringResource(localesR.string.core_locales_confirm),
                                 onClick = {
-                                    onSongsSelected(songPickerUiState.selectedSongs.toList())
+                                    val selectedSongs = songPickerUiState.songs.filter { it.mediaId in songPickerUiState.selectedSongs }
+                                    onSongsSelected(selectedSongs)
                                     onDismiss()
                                 },
                                 enabled = songPickerUiState.selectedSongs.isNotEmpty(),

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
 import ru.resodostudio.muzyakich.core.model.data.Playlist
@@ -78,6 +79,12 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
     fun removeCover() {
         _coverFilePath.value = null
         _selectedCoverUri.value = null
+    }
+
+    fun addSongs(songs: List<Song>) {
+        _songs.update { currentSongs ->
+            (currentSongs + songs).distinctBy { it.mediaId }
+        }
     }
 
     fun savePlaylist() {

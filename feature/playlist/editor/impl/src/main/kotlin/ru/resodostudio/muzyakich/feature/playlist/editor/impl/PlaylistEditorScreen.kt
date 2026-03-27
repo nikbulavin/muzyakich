@@ -17,12 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -38,15 +40,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Edit
@@ -54,6 +59,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.feature.song.picker.SongPickerBottomSheet
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -71,6 +77,7 @@ internal fun PlaylistEditorScreen(
         onTitleChange = viewModel::onTitleChange,
         onCoverSelected = viewModel::updateCover,
         onRemoveCover = viewModel::removeCover,
+        onAddSongs = viewModel::addSongs,
         onSave = {
             viewModel.savePlaylist()
             onBackClick()
@@ -87,6 +94,7 @@ private fun PlaylistEditorScreen(
     onTitleChange: (String) -> Unit,
     onCoverSelected: (Uri?) -> Unit,
     onRemoveCover: () -> Unit,
+    onAddSongs: (List<Song>) -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -132,9 +140,10 @@ private fun PlaylistEditorScreen(
             }
 
             is PlaylistEditorUiState.Success -> {
+                val arrangementPadding = 16.dp - ListItemDefaults.SegmentedGap
                 LazyColumn(
                     contentPadding = innerPadding + PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                 ) {
                     item {
                         Box {
@@ -190,6 +199,7 @@ private fun PlaylistEditorScreen(
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.size(arrangementPadding))
                     }
                     item {
                         OutlinedTextField(
@@ -199,6 +209,7 @@ private fun PlaylistEditorScreen(
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                         )
+                        Spacer(modifier = Modifier.size(arrangementPadding))
                     }
                     item {
                         var shouldShowSongPicker by remember { mutableStateOf(false) }
@@ -223,12 +234,72 @@ private fun PlaylistEditorScreen(
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
+                        Spacer(modifier = Modifier.size(arrangementPadding))
                         if (shouldShowSongPicker) {
                             SongPickerBottomSheet(
                                 onDismiss = { shouldShowSongPicker = false },
-                                onSongsSelected = {},
+                                onSongsSelected = {
+                                    onAddSongs(it)
+                                    shouldShowSongPicker = false
+                                },
                             )
                         }
+                    }
+                    itemsIndexed(
+                        items = playlistEditorUiState.songs,
+                        key = { _, song -> song.mediaId },
+                        contentType = { _, _ -> "Song" },
+                    ){ index, song ->
+                        MuzSelectableListItem(
+                            shapes = if (playlistEditorUiState.songs.size == 1) {
+                                ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
+                            } else {
+                                ListItemDefaults.segmentedShapes(index, playlistEditorUiState.songs.size)
+                            },
+                            onClick = {},
+                            selected = false,
+                            content = {
+                                Text(
+                                    text = song.title,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = song.artist,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            leadingContent = {
+                                SubcomposeAsyncImage(
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .clip(MaterialTheme.shapes.medium),
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(song.artworkUri)
+                                        .size(128)
+                                        .build(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    error = {
+                                        Box(
+                                            contentAlignment = Alignment.Center,
+                                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                        ) {
+                                            Icon(
+                                                imageVector = MuzIcons.Rounded.MusicNote,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(32.dp),
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    },
+                                )
+                            },
+                            modifier = Modifier.animateItem(),
+                        )
                     }
                 }
             }
