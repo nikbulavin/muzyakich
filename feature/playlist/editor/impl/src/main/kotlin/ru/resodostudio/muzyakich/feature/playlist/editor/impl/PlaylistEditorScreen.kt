@@ -199,7 +199,7 @@ private fun PlaylistEditorScreen(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.size(arrangementPadding))
+                        Spacer(Modifier.size(arrangementPadding))
                     }
                     item {
                         OutlinedTextField(
@@ -209,7 +209,7 @@ private fun PlaylistEditorScreen(
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                         )
-                        Spacer(modifier = Modifier.size(arrangementPadding))
+                        Spacer(Modifier.size(arrangementPadding))
                     }
                     item {
                         var shouldShowSongPicker by remember { mutableStateOf(false) }
@@ -234,14 +234,11 @@ private fun PlaylistEditorScreen(
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
-                        Spacer(modifier = Modifier.size(arrangementPadding))
+                        Spacer(Modifier.size(arrangementPadding))
                         if (shouldShowSongPicker) {
                             SongPickerBottomSheet(
                                 onDismiss = { shouldShowSongPicker = false },
-                                onSongsSelected = {
-                                    onAddSongs(it)
-                                    shouldShowSongPicker = false
-                                },
+                                onSongsSelected = onAddSongs,
                             )
                         }
                     }

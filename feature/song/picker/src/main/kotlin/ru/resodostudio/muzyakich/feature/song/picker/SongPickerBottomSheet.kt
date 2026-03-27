@@ -68,6 +68,7 @@ fun SongPickerBottomSheet(
         songPickerUiState = songPickerUiState,
         onDismiss = onDismiss,
         onToggleSong = viewModel::toggleSong,
+        onClearSelectedSongs = viewModel::clearSelectedSongs,
         onSongsSelected = { songs ->
             onSongsSelected(songs)
             viewModel.clearSelectedSongs()
@@ -82,6 +83,7 @@ private fun SongPickerBottomSheet(
     songPickerUiState: SongPickerUiState,
     onDismiss: () -> Unit,
     onToggleSong: (String) -> Unit,
+    onClearSelectedSongs: () -> Unit,
     onSongsSelected: (List<Song>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -133,14 +135,12 @@ private fun SongPickerBottomSheet(
                         leadingContent = {
                             MuzIconButton(
                                 icon = MuzIcons.Rounded.Close,
-                                contentDescription = "Undo",
-                                onClick = {
-
-                                },
+                                contentDescription = stringResource(localesR.string.core_locales_clear),
+                                onClick = onClearSelectedSongs,
                                 enabled = songPickerUiState.selectedSongs.isNotEmpty(),
                             )
                             Spacer(modifier = Modifier.size(4.dp))
-                        }
+                        },
                     )
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
