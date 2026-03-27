@@ -218,7 +218,7 @@ private fun PlaylistEditorScreen(
                             )
                             Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(ButtonDefaults.MinHeight)))
                             Text(
-                                text = "Add songs",
+                                text = stringResource(localesR.string.core_locales_add_songs),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

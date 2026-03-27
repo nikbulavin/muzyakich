@@ -3,6 +3,7 @@
     <string name="core_locales_app_name">Музякич</string>
 
     <string name="core_locales_about">О нас</string>
+    <string name="core_locales_add_songs">Добавить треки</string>
     <string name="core_locales_add_to_favorites">Добавить в избранное</string>
     <string name="core_locales_albums">Альбомы</string>
     <string name="core_locales_appearance">Оформление</string>
