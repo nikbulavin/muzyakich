@@ -65,7 +65,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
-import ru.resodostudio.cashsense.core.ui.rememberRemoveSwipeAction
+import ru.resodostudio.cashsense.core.ui.rememberRemoveFromPlaylistSwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
@@ -116,7 +116,7 @@ private fun PlaylistScreen(
     onPlaylistEdit: (Uuid) -> Unit,
     onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
     onPlaySongsNextClick: (List<Song>) -> Unit,
-    onPlaylistDelete: (Uuid) -> Unit,
+    onPlaylistDelete: () -> Unit,
     modifier: Modifier = Modifier,
     onSongLeftToRightSwipe: (Song) -> Unit = {},
     onRemoveFromPlaylist: (Song) -> Unit = {},
@@ -142,7 +142,7 @@ private fun PlaylistScreen(
                         onBackClick = onBackClick,
                         onPlaylistEdit = { onPlaylistEdit(playlistUiState.playlist.uuid) },
                         onPlaySongsNextClick = onPlaySongsNextClick,
-                        onPlaylistDelete = { onPlaylistDelete(playlistUiState.playlist.uuid) },
+                        onPlaylistDelete = onPlaylistDelete,
                         scrollBehavior = scrollBehavior,
                     )
                 },
@@ -175,7 +175,7 @@ private fun PlaylistScreen(
                         onSongMenuClick = onSongMenuClick,
                         modifier = Modifier.padding(horizontal = 16.dp),
                         startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
-                        endToStartSwipeAction = { song -> rememberRemoveSwipeAction(song, onRemoveFromPlaylist) },
+                        endToStartSwipeAction = { song -> rememberRemoveFromPlaylistSwipeAction(song, onRemoveFromPlaylist) },
                     )
                     songsInfo(
                         songs = playlistUiState.playlist.songs,

@@ -69,7 +69,7 @@ internal class PlaylistViewModel @AssistedInject constructor(
         }
     }
 
-    fun deletePlaylist(playlistUuid: Uuid) {
+    fun deletePlaylist() {
         viewModelScope.launch {
             playlistsRepository.deletePlaylist(playlistUuid)
         }
