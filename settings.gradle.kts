@@ -45,6 +45,8 @@ include(":core:ui")
 
 include(":feature:player:api")
 include(":feature:player:impl")
+include(":feature:playlist:detail:api")
+include(":feature:playlist:detail:impl")
 include(":feature:playlist:editor:api")
 include(":feature:playlist:editor:impl")
 include(":feature:playlist:list:api")

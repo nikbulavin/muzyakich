@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.ui.library.navigation
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.feature.playlist.detail.api.navigateToPlaylist
 import ru.resodostudio.muzyakich.feature.playlist.editor.api.navigateToPlaylistEditor
 import ru.resodostudio.muzyakich.feature.settings.api.navigateToSettings
 import ru.resodostudio.muzyakich.feature.song.detail.api.navigateToSong
@@ -13,7 +14,7 @@ import ru.resodostudio.muzyakich.ui.library.LibraryScreen
 fun EntryProviderScope<NavKey>.libraryEntry(navigator: Navigator) {
     entry<LibraryNavKey> {
         LibraryScreen(
-            onPlaylistClick = {},
+            onPlaylistClick = navigator::navigateToPlaylist,
             onNewPlaylistClick = navigator::navigateToPlaylistEditor,
             onAlbumClick = navigator::navigateToAlbum,
             onArtistClick = navigator::navigateToArtist,

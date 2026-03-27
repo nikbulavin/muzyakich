@@ -55,6 +55,7 @@ import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.feature.player.api.PlayerNavKey
 import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
 import ru.resodostudio.muzyakich.feature.player.impl.navigation.playerEntry
+import ru.resodostudio.muzyakich.feature.playlist.detail.impl.navigation.playlistEntry
 import ru.resodostudio.muzyakich.feature.playlist.editor.impl.navigation.playlistEditorEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
@@ -128,6 +129,7 @@ fun MuzApp(
                         settingsEntry(navigator)
                         licensesEntry(navigator)
                         playlistEditorEntry(navigator)
+                        playlistEntry(navigator)
                     }
 
                     NavDisplay(
