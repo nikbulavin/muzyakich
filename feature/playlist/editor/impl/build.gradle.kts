@@ -13,6 +13,7 @@ dependencies {
 
     implementation(projects.feature.playlist.editor.api)
     implementation(projects.feature.song.list.api)
+    implementation(projects.feature.song.picker)
 
     implementation(libs.androidx.activity.compose)
 

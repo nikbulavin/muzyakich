@@ -110,7 +110,8 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
 
     override suspend fun deletePlaylist(uuid: Uuid) {
         playlistDao.getPlaylistWithSongsEntity(uuid)
-            .first()?.playlist?.coverFilePath?.let { deleteCoverFile(it) }
+            .first()?.playlist?.coverFilePath
+            ?.let { deleteCoverFile(it) }
         playlistDao.deletePlaylist(uuid)
     }
 
