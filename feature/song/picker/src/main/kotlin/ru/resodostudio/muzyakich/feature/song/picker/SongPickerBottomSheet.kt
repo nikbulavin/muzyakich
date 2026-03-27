@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
@@ -44,9 +46,11 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Close
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -109,17 +113,34 @@ private fun SongPickerBottomSheet(
                             .zIndex(1f),
                         expanded = expanded,
                         content = {
+                            Spacer(modifier = Modifier.size(4.dp))
                             MuzFilledIconButton(
                                 icon = MuzIcons.Rounded.Check,
                                 contentDescription = stringResource(localesR.string.core_locales_confirm),
                                 onClick = {
-                                    val selectedSongs = songPickerUiState.songs.filter { it.mediaId in songPickerUiState.selectedSongs }
+                                    val selectedSongs = songPickerUiState.songs
+                                        .filter { it.mediaId in songPickerUiState.selectedSongs }
                                     onSongsSelected(selectedSongs)
                                     onDismiss()
                                 },
                                 enabled = songPickerUiState.selectedSongs.isNotEmpty(),
+                                containerSize = IconButtonDefaults.smallContainerSize(
+                                    IconButtonDefaults.IconButtonWidthOption.Wide,
+                                ),
                             )
+                            Spacer(modifier = Modifier.size(4.dp))
                         },
+                        leadingContent = {
+                            MuzIconButton(
+                                icon = MuzIcons.Rounded.Close,
+                                contentDescription = "Undo",
+                                onClick = {
+
+                                },
+                                enabled = songPickerUiState.selectedSongs.isNotEmpty(),
+                            )
+                            Spacer(modifier = Modifier.size(4.dp))
+                        }
                     )
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
