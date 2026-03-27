@@ -21,6 +21,7 @@
     <string name="core_locales_download_update">Download update</string>
     <string name="core_locales_downloading_update">Downloading update</string>
     <string name="core_locales_dynamic_color">Dynamic Color</string>
+    <string name="core_locales_edit">Edit</string>
     <string name="core_locales_enable_repeat_mode_all">Enable repeat mode for all songs</string>
     <string name="core_locales_enable_repeat_mode_one">Enable single song repeat mode</string>
     <string name="core_locales_enable_shuffle_mode">Enable shuffle mode</string>

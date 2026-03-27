@@ -21,6 +21,7 @@
     <string name="core_locales_download_update">Скачать обновление</string>
     <string name="core_locales_downloading_update">Загрузка обновления</string>
     <string name="core_locales_dynamic_color">Динамический цвет</string>
+    <string name="core_locales_edit">Изменить</string>
     <string name="core_locales_enable_repeat_mode_all">Включить режим повтора для всех треков</string>
     <string name="core_locales_enable_repeat_mode_one">Включить одиночный режим повтора</string>
     <string name="core_locales_enable_shuffle_mode">Включить режим перетасовки</string>

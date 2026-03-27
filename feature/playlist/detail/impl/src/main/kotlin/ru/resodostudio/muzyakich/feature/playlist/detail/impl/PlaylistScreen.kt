@@ -69,6 +69,7 @@ import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Edit
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
@@ -84,6 +85,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 internal fun PlaylistScreen(
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,
+    onPlaylistEdit: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PlaylistViewModel = hiltViewModel(),
 ) {
@@ -93,6 +95,7 @@ internal fun PlaylistScreen(
         playlistUiState = playlistUiState,
         onBackClick = onBackClick,
         onSongMenuClick = onSongMenuClick,
+        onPlaylistEdit = onPlaylistEdit,
         onPlaySongsClick = viewModel::playSongs,
         onPlaySongsNextClick = viewModel::playSongsNext,
         onPlaylistDelete = viewModel::deletePlaylist,
@@ -108,6 +111,7 @@ private fun PlaylistScreen(
     playlistUiState: PlaylistUiState,
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,
+    onPlaylistEdit: (Uuid) -> Unit,
     onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
     onPlaySongsNextClick: (List<Song>) -> Unit,
     onPlaylistDelete: (Uuid) -> Unit,
@@ -134,6 +138,7 @@ private fun PlaylistScreen(
                         isScrolled = isScrolled,
                         songs = playlistUiState.playlist.songs,
                         onBackClick = onBackClick,
+                        onPlaylistEdit = { onPlaylistEdit(playlistUiState.playlist.uuid) },
                         onPlaySongsNextClick = onPlaySongsNextClick,
                         onPlaylistDelete = { onPlaylistDelete(playlistUiState.playlist.uuid) },
                         scrollBehavior = scrollBehavior,
@@ -318,6 +323,7 @@ private fun PlaylistTopAppBar(
     isScrolled: Boolean,
     songs: List<Song>,
     onBackClick: () -> Unit,
+    onPlaylistEdit: () -> Unit,
     onPlaySongsNextClick: (List<Song>) -> Unit,
     onPlaylistDelete: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
@@ -357,6 +363,7 @@ private fun PlaylistTopAppBar(
             PlaylistDropdownMenu(
                 isScrolled = isScrolled,
                 songs = songs,
+                onPlaylistEdit = onPlaylistEdit,
                 onPlaySongsNextClick = onPlaySongsNextClick,
                 onPlaylistDelete = onPlaylistDelete,
             )
@@ -375,6 +382,7 @@ private fun PlaylistTopAppBar(
 private fun PlaylistDropdownMenu(
     isScrolled: Boolean,
     songs: List<Song>,
+    onPlaylistEdit: () -> Unit,
     onPlaySongsNextClick: (List<Song>) -> Unit,
     onPlaylistDelete: () -> Unit,
 ) {
@@ -405,7 +413,7 @@ private fun PlaylistDropdownMenu(
             DropdownMenuItem(
                 selected = false,
                 text = { Text(stringResource(localesR.string.core_locales_play_next)) },
-                shapes = MenuDefaults.itemShape(0, 2),
+                shapes = MenuDefaults.itemShape(0, 3),
                 leadingIcon = {
                     Icon(
                         imageVector = MuzIcons.Filled.PlaylistPlay,
@@ -421,8 +429,25 @@ private fun PlaylistDropdownMenu(
             )
             DropdownMenuItem(
                 selected = false,
+                text = { Text(stringResource(localesR.string.core_locales_edit)) },
+                shapes = MenuDefaults.itemShape(1, 3),
+                leadingIcon = {
+                    Icon(
+                        imageVector = MuzIcons.Filled.Edit,
+                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                        contentDescription = null,
+                    )
+                },
+                onClick = {
+                    onPlaylistEdit()
+                    expanded = false
+                },
+                colors = MenuDefaults.selectableItemVibrantColors(),
+            )
+            DropdownMenuItem(
+                selected = false,
                 text = { Text(stringResource(localesR.string.core_locales_delete)) },
-                shapes = MenuDefaults.itemShape(1, 2),
+                shapes = MenuDefaults.itemShape(2, 3),
                 leadingIcon = {
                     Icon(
                         imageVector = MuzIcons.Filled.Delete,
@@ -430,7 +455,10 @@ private fun PlaylistDropdownMenu(
                         contentDescription = null,
                     )
                 },
-                onClick = onPlaylistDelete,
+                onClick = {
+                    onPlaylistDelete()
+                    expanded = false
+                },
                 colors = MenuDefaults.selectableItemVibrantColors(),
             )
         }

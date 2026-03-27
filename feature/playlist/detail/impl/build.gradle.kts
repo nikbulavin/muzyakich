@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.core.mediaService)
 
     implementation(projects.feature.playlist.detail.api)
+    implementation(projects.feature.playlist.editor.api)
     implementation(projects.feature.song.detail.api)
 
     implementation(platform(libs.coil.bom))

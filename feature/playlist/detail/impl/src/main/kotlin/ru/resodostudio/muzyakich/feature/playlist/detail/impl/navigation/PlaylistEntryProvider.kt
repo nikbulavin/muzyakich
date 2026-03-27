@@ -7,6 +7,7 @@ import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.feature.playlist.detail.api.PlaylistNavKey
 import ru.resodostudio.muzyakich.feature.playlist.detail.impl.PlaylistScreen
 import ru.resodostudio.muzyakich.feature.playlist.detail.impl.PlaylistViewModel
+import ru.resodostudio.muzyakich.feature.playlist.editor.api.navigateToPlaylistEditor
 import ru.resodostudio.muzyakich.feature.song.detail.api.navigateToSong
 
 fun EntryProviderScope<NavKey>.playlistEntry(navigator: Navigator) {
@@ -14,6 +15,7 @@ fun EntryProviderScope<NavKey>.playlistEntry(navigator: Navigator) {
         PlaylistScreen(
             onBackClick = navigator::goBack,
             onSongMenuClick = navigator::navigateToSong,
+            onPlaylistEdit = navigator::navigateToPlaylistEditor,
             viewModel = hiltViewModel<PlaylistViewModel, PlaylistViewModel.Factory> {
                 it.create(key.playlistUuid)
             },

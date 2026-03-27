@@ -21,6 +21,7 @@
     <string name="core_locales_download_update">업데이트 다운로드</string>
     <string name="core_locales_downloading_update">업데이트 다운로드 중</string>
     <string name="core_locales_dynamic_color">다이내믹 색상</string>
+    <string name="core_locales_edit">편집하다</string>
     <string name="core_locales_enable_repeat_mode_all">전체 반복</string>
     <string name="core_locales_enable_repeat_mode_one">한 곡 반복</string>
     <string name="core_locales_enable_shuffle_mode">셔플 모드 활성화</string>
