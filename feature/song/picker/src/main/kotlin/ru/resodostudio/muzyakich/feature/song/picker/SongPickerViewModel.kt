@@ -43,6 +43,10 @@ class SongPickerViewModel @Inject constructor(
             if (mediaId in current) current - mediaId else current + mediaId
         }
     }
+
+    fun clearSelectedSongs() {
+        _selectedSongs.value = emptySet()
+    }
 }
 
 sealed interface SongPickerUiState {

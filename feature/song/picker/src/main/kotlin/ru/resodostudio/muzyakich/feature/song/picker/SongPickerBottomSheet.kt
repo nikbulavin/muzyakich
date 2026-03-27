@@ -64,7 +64,10 @@ fun SongPickerBottomSheet(
         songPickerUiState = songPickerUiState,
         onDismiss = onDismiss,
         onToggleSong = viewModel::toggleSong,
-        onSongsSelected = onSongsSelected,
+        onSongsSelected = { songs ->
+            onSongsSelected(songs)
+            viewModel.clearSelectedSongs()
+        },
         modifier = modifier,
     )
 }
