@@ -71,7 +71,7 @@ import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.AutoDelete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
@@ -460,7 +460,7 @@ private fun AlbumDropdownMenu(
                 shapes = MenuDefaults.itemShape(1, 2),
                 leadingIcon = {
                     Icon(
-                        imageVector = MuzIcons.Filled.Delete,
+                        imageVector = MuzIcons.Filled.AutoDelete,
                         modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                         contentDescription = null,
                     )

@@ -51,6 +51,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -200,13 +201,13 @@ private fun PlaylistEditorScreen(
                                     .align(Alignment.BottomEnd)
                                     .padding(16.dp),
                             ) {
-                                MuzFilledIconButton(
+                                MuzFilledTonalIconButton(
                                     icon = MuzIcons.Filled.Delete,
                                     onClick = onRemoveCover,
                                     contentDescription = stringResource(localesR.string.core_locales_remove_cover),
                                     enabled = coverModel != null,
                                 )
-                                MuzFilledIconButton(
+                                MuzFilledTonalIconButton(
                                     icon = MuzIcons.Filled.Edit,
                                     onClick = {
                                         runCatching {
