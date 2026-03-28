@@ -87,6 +87,14 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
         }
     }
 
+    fun reorderSongs(fromIndex: Int, toIndex: Int) {
+        _songs.update { currentSongs ->
+            currentSongs.toMutableList().apply {
+                add(toIndex, removeAt(fromIndex))
+            }
+        }
+    }
+
     fun savePlaylist() {
         val name = _title.value
         if (name.isBlank()) return

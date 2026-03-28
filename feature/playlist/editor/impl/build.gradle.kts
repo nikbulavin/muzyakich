@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.feature.song.picker)
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.reorderable)
 
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)

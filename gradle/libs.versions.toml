@@ -35,6 +35,7 @@ lottie = "6.7.1"
 playAppUpdate = "2.1.0"
 protobuf = "4.34.1"
 protobufPlugin = "0.9.6"
+reorderable = "3.0.0"
 room = "2.8.4"
 
 [libraries]
@@ -94,6 +95,7 @@ play-app-update-ktx = { group = "com.google.android.play", name = "app-update-kt
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-javalite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
+reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 
