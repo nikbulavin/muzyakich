@@ -3,7 +3,6 @@ package ru.resodostudio.muzyakich.feature.song.list.impl
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,18 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,12 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.cashsense.core.ui.EmptyState
 import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.PlayShuffleButtonGroup
 import ru.resodostudio.cashsense.core.ui.rememberDeleteSwipeAction
 import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
@@ -45,8 +38,6 @@ import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FilterList
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
@@ -171,52 +162,16 @@ private fun LazyGridScope.actionButtons(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Button(
-                shapes = ButtonDefaults.shapes(),
-                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX, false) },
+            PlayShuffleButtonGroup(
+                onPlayClick = { onPlaySongsClick(songs, DEFAULT_INDEX, false) },
+                onShuffleClick = { onPlaySongsClick(songs, DEFAULT_INDEX, true) },
                 modifier = Modifier.weight(1f),
-                contentPadding = ButtonDefaults.contentPaddingFor(
-                    buttonHeight = ButtonDefaults.MinHeight,
-                    hasStartIcon = true,
-                ),
-            ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.PlayArrow,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(ButtonDefaults.MinHeight)),
-                )
-                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(ButtonDefaults.MinHeight)))
-                Text(
-                    text = stringResource(localesR.string.core_locales_play_audio),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            OutlinedButton(
-                shapes = ButtonDefaults.shapes(),
-                onClick = { onPlaySongsClick(songs, DEFAULT_INDEX, true) },
-                modifier = Modifier.weight(1f),
-                contentPadding = ButtonDefaults.contentPaddingFor(
-                    buttonHeight = ButtonDefaults.MinHeight,
-                    hasStartIcon = true,
-                ),
-            ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.Shuffle,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(ButtonDefaults.MinHeight)),
-                )
-                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(ButtonDefaults.MinHeight)))
-                Text(
-                    text = stringResource(localesR.string.core_locales_shuffle),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+            )
             MuzIconButton(
                 onClick = onFilterClick,
                 icon = MuzIcons.Rounded.FilterList,
                 contentDescription = stringResource(localesR.string.core_locales_open_filter_menu),
+                modifier = Modifier.weight(1f),
             )
         }
     }
