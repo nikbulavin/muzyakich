@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -22,8 +19,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -34,7 +29,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -64,6 +58,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.PlayShuffleButtonGroup
 import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.cashsense.core.ui.rememberRemoveFromPlaylistSwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
@@ -76,8 +71,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.model.data.Playlist
 import ru.resodostudio.muzyakich.core.model.data.Song
 import kotlin.uuid.Uuid
@@ -260,61 +253,13 @@ private fun LazyGridScope.actionButtons(
         span = { GridItemSpan(maxLineSpan) },
         contentType = { "ActionButtons" },
     ) {
-        Row(
+        PlayShuffleButtonGroup(
+            onPlayClick = onPlaySongsClick,
+            onShuffleClick = onShuffleSongsClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            val buttonSize = ButtonDefaults.MediumContainerHeight
-            val buttonContentPadding = ButtonDefaults.contentPaddingFor(
-                buttonHeight = buttonSize,
-                hasStartIcon = true,
-            )
-            Button(
-                shapes = ButtonDefaults.shapes(),
-                onClick = onPlaySongsClick,
-                modifier = Modifier
-                    .heightIn(buttonSize)
-                    .weight(1f),
-                contentPadding = buttonContentPadding,
-            ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.PlayArrow,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
-                )
-                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
-                Text(
-                    text = stringResource(localesR.string.core_locales_play_audio),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = ButtonDefaults.textStyleFor(buttonSize),
-                )
-            }
-            OutlinedButton(
-                shapes = ButtonDefaults.shapes(),
-                onClick = onShuffleSongsClick,
-                modifier = Modifier
-                    .heightIn(buttonSize)
-                    .weight(1f),
-                contentPadding = buttonContentPadding,
-            ) {
-                Icon(
-                    imageVector = MuzIcons.Rounded.Shuffle,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
-                )
-                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
-                Text(
-                    text = stringResource(localesR.string.core_locales_shuffle),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = ButtonDefaults.textStyleFor(buttonSize),
-                )
-            }
-        }
+        )
     }
 }
 

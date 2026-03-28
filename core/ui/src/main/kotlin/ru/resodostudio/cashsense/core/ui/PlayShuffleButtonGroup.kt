@@ -1,0 +1,134 @@
+package ru.resodostudio.cashsense.core.ui
+
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
+import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
+import ru.resodostudio.muzyakich.core.locales.R as localesR
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun PlayShuffleButtonGroup(
+    onPlayClick: () -> Unit,
+    onShuffleClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val buttonSize = ButtonDefaults.MediumContainerHeight
+    val buttonContentPadding = ButtonDefaults.contentPaddingFor(
+        buttonHeight = buttonSize,
+        hasStartIcon = true,
+    )
+    ButtonGroup(
+        modifier = modifier,
+        overflowIndicator = { menuState ->
+            MuzIconButton(
+                onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
+                icon = MuzIcons.Rounded.MoreVert,
+                contentDescription = stringResource(localesR.string.core_locales_open_menu),
+            )
+        },
+    ) {
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Button(
+                    shapes = ButtonDefaults.shapes(),
+                    onClick = onPlayClick,
+                    modifier = Modifier
+                        .heightIn(buttonSize)
+                        .weight(1f)
+                        .animateWidth(interactionSource),
+                    contentPadding = buttonContentPadding,
+                    interactionSource = interactionSource,
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.PlayArrow,
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
+                    Text(
+                        text = stringResource(localesR.string.core_locales_play_audio),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = ButtonDefaults.textStyleFor(buttonSize),
+                    )
+                }
+            }
+        ) { state ->
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.PlayArrow,
+                        contentDescription = null,
+                    )
+                },
+                text = { Text(stringResource(localesR.string.core_locales_play_audio)) },
+                onClick = {
+                    onPlayClick()
+                    state.dismiss()
+                },
+            )
+        }
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                OutlinedButton(
+                    shapes = ButtonDefaults.shapes(),
+                    onClick = onShuffleClick,
+                    modifier = Modifier
+                        .heightIn(buttonSize)
+                        .weight(1f)
+                        .animateWidth(interactionSource),
+                    contentPadding = buttonContentPadding,
+                    interactionSource = interactionSource,
+                ) {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.Shuffle,
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
+                    Text(
+                        text = stringResource(localesR.string.core_locales_shuffle),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = ButtonDefaults.textStyleFor(buttonSize),
+                    )
+                }
+            }
+        ) { state ->
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(
+                        imageVector = MuzIcons.Rounded.Shuffle,
+                        contentDescription = null,
+                    )
+                },
+                text = { Text(stringResource(localesR.string.core_locales_shuffle)) },
+                onClick = {
+                    onShuffleClick()
+                    state.dismiss()
+                },
+            )
+        }
+    }
+}
