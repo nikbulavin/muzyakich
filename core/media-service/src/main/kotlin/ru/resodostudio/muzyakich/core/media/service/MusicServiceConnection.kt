@@ -65,8 +65,8 @@ class MusicServiceConnection @Inject constructor(
     }
 
     fun skipToSong(uuid: Uuid, position: Long = C.TIME_UNSET) {
-        mediaController?.run {
-            val timeline = currentTimeline
+        mediaController?.let { controller ->
+            val timeline = controller.currentTimeline
             if (timeline.isEmpty) return
 
             val window = Timeline.Window()
@@ -77,8 +77,8 @@ class MusicServiceConnection @Inject constructor(
                     Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
                 }.getOrNull()
                 if (windowUuid == uuid) {
-                    seekTo(i, position)
-                    if (_nowPlayingState.value.playWhenReady) play()
+                    controller.seekTo(i, position)
+                    if (_nowPlayingState.value.playWhenReady) controller.play()
                     break
                 }
             }
@@ -91,16 +91,16 @@ class MusicServiceConnection @Inject constructor(
         startPositionMs: Long = DEFAULT_POSITION_MS,
         shuffle: Boolean = false,
     ) {
-        mediaController?.run {
-            shuffleModeEnabled = shuffle
+        mediaController?.let { controller ->
+            controller.shuffleModeEnabled = shuffle
             val targetIndex = if (shuffle && songs.isNotEmpty()) {
                 songs.indices.random()
             } else {
                 startIndex
             }
-            setMediaItems(songs.map(Song::asMediaItem), targetIndex, startPositionMs)
-            prepare()
-            play()
+            controller.setMediaItems(songs.map(Song::asMediaItem), targetIndex, startPositionMs)
+            controller.prepare()
+            controller.play()
         }
     }
 
