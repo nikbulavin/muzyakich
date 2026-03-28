@@ -73,8 +73,9 @@ class MusicServiceConnection @Inject constructor(
 
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
-                val windowUuid =
+                val windowUuid = runCatching {
                     Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+                }.getOrNull()
                 if (windowUuid == uuid) {
                     seekTo(i, position)
                     if (_nowPlayingState.value.playWhenReady) play()
@@ -91,8 +92,13 @@ class MusicServiceConnection @Inject constructor(
         shuffle: Boolean = false,
     ) {
         mediaController?.run {
-            val finalSongs = if (shuffle) songs.shuffled() else songs
-            setMediaItems(finalSongs.map(Song::asMediaItem), startIndex, startPositionMs)
+            shuffleModeEnabled = shuffle
+            val targetIndex = if (shuffle && songs.isNotEmpty()) {
+                songs.indices.random()
+            } else {
+                startIndex
+            }
+            setMediaItems(songs.map(Song::asMediaItem), targetIndex, startPositionMs)
             prepare()
             play()
         }
@@ -135,7 +141,9 @@ class MusicServiceConnection @Inject constructor(
             val window = Timeline.Window()
             for (index in timeline.windowCount - 1 downTo 0) {
                 timeline.getWindow(index, window)
-                val itemUuid = Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+                val itemUuid = runCatching {
+                    Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+                }.getOrNull()
                 if (itemUuid == uuid) {
                     controller.removeMediaItem(index)
                     break
@@ -191,7 +199,9 @@ class MusicServiceConnection @Inject constructor(
         val result = mutableListOf<Song>()
         val window = Timeline.Window()
         val currentMediaItem = player.currentMediaItem ?: return emptyList()
-        val currentUuid = Uuid.parse(currentMediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+        val currentUuid = runCatching {
+            Uuid.parse(currentMediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+        }.getOrNull()
         var foundCurrent = false
 
         var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
@@ -199,7 +209,9 @@ class MusicServiceConnection @Inject constructor(
         while (windowIndex != C.INDEX_UNSET) {
             timeline.getWindow(windowIndex, window)
             val mediaItem = window.mediaItem
-            val windowUuid = Uuid.parse(mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+            val windowUuid = runCatching {
+                Uuid.parse(mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+            }.getOrNull()
 
             if (foundCurrent) {
                 val song = runCatching { mediaItem.asSong() }.getOrNull()
