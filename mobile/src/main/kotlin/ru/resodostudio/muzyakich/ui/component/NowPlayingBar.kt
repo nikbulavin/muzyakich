@@ -79,36 +79,17 @@ fun NowPlayingBar(
     val playPauseButtonState = rememberPlayPauseButtonState(player)
     val isPlaying = !playPauseButtonState.showPlay
 
-    val shapes = remember {
-        listOf(
-            MaterialShapes.Pill,
-            MaterialShapes.Pentagon,
-            MaterialShapes.Gem,
-            MaterialShapes.Sunny,
-            MaterialShapes.VerySunny,
-            MaterialShapes.Cookie4Sided,
-            MaterialShapes.Cookie6Sided,
-            MaterialShapes.Cookie7Sided,
-            MaterialShapes.Cookie9Sided,
-            MaterialShapes.Cookie12Sided,
-            MaterialShapes.Clover8Leaf,
-            MaterialShapes.SoftBurst,
-            MaterialShapes.Flower,
-            MaterialShapes.Heart,
-        )
-    }
-
-    var targetShape by remember { mutableStateOf(if (isPlaying) shapes.random() else MaterialShapes.Square) }
+    var targetShape by remember { mutableStateOf(if (isPlaying) artworkShapes.random() else MaterialShapes.Square) }
     var previousShape by remember { mutableStateOf(targetShape) }
     val progress = remember { Animatable(1f) }
 
     LaunchedEffect(currentSong.mediaId, isPlaying) {
-        val newTarget = if (isPlaying) shapes.random() else MaterialShapes.Square
+        val newTarget = if (isPlaying) artworkShapes.random() else MaterialShapes.Square
         previousShape = targetShape
         targetShape = newTarget
 
         progress.snapTo(0f)
-        progress.animateTo(1f, animationSpec = tween(500))
+        progress.animateTo(1f, animationSpec = motionScheme.slowSpatialSpec())
     }
 
     val morph = remember(previousShape, targetShape) {
@@ -131,13 +112,9 @@ fun NowPlayingBar(
             }
         } else {
             val target = (currentRotation.value / 90f).roundToInt() * 90f
-            currentRotation.animateTo(target, motionScheme.fastSpatialSpec())
+            currentRotation.animateTo(target, motionScheme.slowSpatialSpec())
             if (currentRotation.value >= 360f) currentRotation.snapTo(currentRotation.value % 360f)
         }
-    }
-
-    val currentShape = remember(morph, progress.value, currentRotation.value) {
-        MorphPolygonShape(morph, progress.value, currentRotation.value)
     }
 
     Box(
@@ -153,15 +130,19 @@ fun NowPlayingBar(
             val shadowColor = MaterialTheme.colorScheme.inverseSurface
             SongArtworkMini(
                 artworkUri = currentSong.artworkUri,
-                size = 46.dp,
                 modifier = Modifier
                     .graphicsLayer {
-                        this.clip = true
-                        this.shape = currentShape
-                        this.shadowElevation = 3.dp.toPx()
-                        this.ambientShadowColor = shadowColor
-                        this.spotShadowColor = shadowColor
-                    },
+                        clip = true
+                        shape = MorphPolygonShape(
+                            morph = morph,
+                            percentage = progress.value,
+                            rotation = currentRotation.value,
+                        )
+                        shadowElevation = 3.dp.toPx()
+                        ambientShadowColor = shadowColor
+                        spotShadowColor = shadowColor
+                    }
+                    .size(46.dp),
             )
             Spacer(Modifier.size(6.dp))
             AnimatedContent(
@@ -298,3 +279,21 @@ private class MorphPolygonShape(
         return Outline.Generic(path)
     }
 }
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private val artworkShapes = listOf(
+    MaterialShapes.Pill,
+    MaterialShapes.Pentagon,
+    MaterialShapes.Gem,
+    MaterialShapes.Sunny,
+    MaterialShapes.VerySunny,
+    MaterialShapes.Cookie4Sided,
+    MaterialShapes.Cookie6Sided,
+    MaterialShapes.Cookie7Sided,
+    MaterialShapes.Cookie9Sided,
+    MaterialShapes.Cookie12Sided,
+    MaterialShapes.Clover8Leaf,
+    MaterialShapes.SoftBurst,
+    MaterialShapes.Flower,
+    MaterialShapes.Heart,
+)

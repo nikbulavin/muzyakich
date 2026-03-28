@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -61,7 +62,6 @@ internal fun QueuePanel(
             ) {
                 SongArtworkMini(
                     artworkUri = currentSong.artworkUri,
-                    size = 64.dp,
                     modifier = Modifier
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -69,7 +69,8 @@ internal fun QueuePanel(
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                         )
-                        .clip(MaterialTheme.shapes.small),
+                        .clip(MaterialTheme.shapes.small)
+                        .size(64.dp),
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),

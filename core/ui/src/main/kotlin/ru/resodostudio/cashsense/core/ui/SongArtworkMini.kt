@@ -3,7 +3,8 @@ package ru.resodostudio.cashsense.core.ui
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -11,8 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -21,12 +20,10 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 @Composable
 fun SongArtworkMini(
     artworkUri: Uri,
-    size: Dp,
     modifier: Modifier = Modifier,
 ) {
     SubcomposeAsyncImage(
-        modifier = modifier
-            .size(size),
+        modifier = modifier,
         model = ImageRequest.Builder(LocalContext.current)
             .data(artworkUri)
             .size(256)
@@ -39,13 +36,13 @@ fun SongArtworkMini(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(size)
+                    .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surfaceVariant),
             ) {
                 Icon(
                     imageVector = MuzIcons.Rounded.MusicNote,
                     contentDescription = null,
-                    modifier = Modifier.size((size.value / 1.75).dp),
+                    modifier = Modifier.fillMaxWidth(0.7f),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
