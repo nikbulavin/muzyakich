@@ -6,6 +6,9 @@ import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavMetadataKey
+import androidx.navigation3.runtime.get
+import androidx.navigation3.runtime.metadata
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
@@ -49,9 +52,9 @@ internal class BottomSheetScene<T : Any>(
 class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
-        val lastEntry = entries.lastOrNull()
-        val bottomSheetProperties = lastEntry?.metadata?.get(BOTTOM_SHEET_KEY) as? ModalBottomSheetProperties
-        return bottomSheetProperties?.let { properties ->
+        val lastEntry = entries.lastOrNull() ?: return null
+        val bottomSheetProperties = lastEntry.metadata[BottomSheetKey] ?: return null
+        return bottomSheetProperties.let { properties ->
             @Suppress("UNCHECKED_CAST")
             BottomSheetScene(
                 key = lastEntry.contentKey as T,
@@ -72,11 +75,12 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
          * @param modalBottomSheetProperties properties that should be passed to the containing
          * [ModalBottomSheet].
          */
-        @OptIn(ExperimentalMaterial3Api::class)
-        fun bottomSheet(
-            modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
-        ): Map<String, Any> = mapOf(BOTTOM_SHEET_KEY to modalBottomSheetProperties)
+        fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()) =
+            metadata {
+                put(BottomSheetKey, modalBottomSheetProperties)
+            }
 
-        internal const val BOTTOM_SHEET_KEY = "bottomsheet"
+        object BottomSheetKey : NavMetadataKey<ModalBottomSheetProperties>
     }
+
 }
