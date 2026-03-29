@@ -8,11 +8,14 @@ import androidx.annotation.OptIn
 import androidx.core.os.bundleOf
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.common.C.USAGE_MEDIA
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ShuffleOrder
+import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
 import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaConstants
 import androidx.media3.session.MediaLibraryService
@@ -137,6 +140,7 @@ internal class MusicService : MediaLibraryService() {
             .build()
 
         exoPlayerInstance.addListener(exoPlayerListener)
+        exoPlayerInstance.shuffleOrder = CustomShuffleOrder(0)
         exoPlayer = exoPlayerInstance
 
         return CastPlayer.Builder(this)
@@ -203,5 +207,74 @@ internal class MusicService : MediaLibraryService() {
         intent.putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
 
         sendBroadcast(intent)
+    }
+
+    @UnstableApi
+    private class CustomShuffleOrder(
+        private val indices: IntArray,
+        private val randomSeed: Long = 0L,
+    ) : DefaultShuffleOrder(indices, randomSeed) {
+
+        constructor(length: Int, randomSeed: Long = 0L) : this(
+            extractIndices(DefaultShuffleOrder(length, randomSeed)),
+            randomSeed,
+        )
+
+        override fun cloneAndInsert(insertionIndex: Int, insertionCount: Int): ShuffleOrder {
+            val base = super.cloneAndInsert(insertionIndex, insertionCount) as DefaultShuffleOrder
+            return CustomShuffleOrder(extractIndices(base), randomSeed)
+        }
+
+        override fun cloneAndRemove(indexFrom: Int, indexToExclusive: Int): ShuffleOrder {
+            val base = super.cloneAndRemove(indexFrom, indexToExclusive) as DefaultShuffleOrder
+            return CustomShuffleOrder(extractIndices(base), randomSeed)
+        }
+
+        override fun cloneAndClear(): ShuffleOrder {
+            return CustomShuffleOrder(IntArray(0), randomSeed)
+        }
+
+        override fun cloneAndMove(indexFrom: Int, indexToExclusive: Int, newIndexFrom: Int): ShuffleOrder {
+            if (indexToExclusive - indexFrom != 1) {
+                val base = super.cloneAndMove(indexFrom, indexToExclusive, newIndexFrom) as DefaultShuffleOrder
+                return CustomShuffleOrder(extractIndices(base), randomSeed)
+            }
+
+            val pFrom = indices.indexOf(indexFrom)
+            val pTo = indices.indexOf(newIndexFrom)
+
+            val pMapped = IntArray(indices.size)
+            for (i in indices.indices) {
+                val x = indices[i]
+                pMapped[i] = when {
+                    x == indexFrom -> newIndexFrom
+                    indexFrom > newIndexFrom && x in newIndexFrom until indexFrom -> x + 1
+                    indexFrom < newIndexFrom && x in (indexFrom + 1)..newIndexFrom -> x - 1
+                    else -> x
+                }
+            }
+
+            if (pFrom != -1 && pTo != -1) {
+                val list = pMapped.toMutableList()
+                val item = list.removeAt(pFrom)
+                list.add(pTo, item)
+                return CustomShuffleOrder(list.toIntArray(), randomSeed)
+            }
+
+            return CustomShuffleOrder(pMapped, randomSeed)
+        }
+
+        companion object {
+            private fun extractIndices(order: DefaultShuffleOrder): IntArray {
+                val indices = IntArray(order.length)
+                var index = order.firstIndex
+                var i = 0
+                while (index != C.INDEX_UNSET) {
+                    indices[i++] = index
+                    index = order.getNextIndex(index)
+                }
+                return indices
+            }
+        }
     }
 }
