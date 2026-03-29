@@ -61,15 +61,11 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SongItem(
-    song: Song,
-    shapes: ListItemShapes,
+fun SwipeableItem(
     modifier: Modifier = Modifier,
-    isPlaying: Boolean = false,
-    onClick: () -> Unit = {},
-    onMenuClick: () -> Unit = {},
     startToEndSwipeAction: SwipeAction? = null,
     endToStartSwipeAction: SwipeAction? = null,
+    content: @Composable () -> Unit,
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
     val scope = rememberCoroutineScope()
@@ -133,104 +129,125 @@ fun SongItem(
             }
         },
         content = {
-            MuzSelectableListItem(
-                shapes = shapes,
-                selected = isPlaying,
-                onClick = onClick,
-                onLongClick = dropUnlessResumed { onMenuClick() },
-                onLongClickLabel = stringResource(localesR.string.core_locales_open_menu),
-                content = {
-                    Text(
-                        text = song.title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                supportingContent = {
-                    Text(
-                        text = song.artist,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                leadingContent = {
-                    Box {
-                        val shape = MaterialTheme.shapes.medium
-                        if (isPlaying) {
-                            Box(
-                                modifier = Modifier
-                                    .zIndex(1f)
-                                    .size(56.dp)
-                                    .clip(shape)
-                                    .background(MaterialTheme.colorScheme.surface.copy(0.6f)),
-                            ) {
-                                val dynamicProperties = rememberLottieDynamicProperties(
-                                    rememberLottieDynamicProperty(
-                                        property = LottieProperty.COLOR,
-                                        value = MaterialTheme.colorScheme.secondary.toArgb(),
-                                        keyPath = arrayOf("**"),
-                                    )
-                                )
-                                val lottieComposition by rememberLottieComposition(
-                                    LottieCompositionSpec.RawRes(R.raw.core_ui_equalizer_anim),
-                                )
-                                val progress by animateLottieCompositionAsState(
-                                    composition = lottieComposition,
-                                    iterations = LottieConstants.IterateForever,
-                                    speed = 0.4f,
-                                )
-                                LottieAnimation(
-                                    modifier = Modifier
-                                        .zIndex(2f)
-                                        .align(Alignment.Center)
-                                        .size(40.dp),
-                                    composition = lottieComposition,
-                                    progress = { progress },
-                                    dynamicProperties = dynamicProperties,
-                                )
-                            }
-                        }
-                        SubcomposeAsyncImage(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(shape),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(song.artworkUri)
-                                .size(128)
-                                .build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            error = {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                                ) {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.MusicNote,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(32.dp),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            },
-                        )
-                    }
-                },
-                trailingContent = {
-                    MuzIconButton(
-                        onClick = onMenuClick,
-                        icon = MuzIcons.Rounded.MoreVert,
-                        contentDescription = stringResource(localesR.string.core_locales_open_menu),
-                        modifier = Modifier.size(
-                            IconButtonDefaults.smallContainerSize(
-                                IconButtonDefaults.IconButtonWidthOption.Narrow,
-                            ),
-                        ),
-                    )
-                },
-            )
+            content()
         },
     )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun SongItem(
+    song: Song,
+    shapes: ListItemShapes,
+    modifier: Modifier = Modifier,
+    isPlaying: Boolean = false,
+    onClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    startToEndSwipeAction: SwipeAction? = null,
+    endToStartSwipeAction: SwipeAction? = null,
+) {
+    SwipeableItem(
+        modifier = modifier,
+        startToEndSwipeAction = startToEndSwipeAction,
+        endToStartSwipeAction = endToStartSwipeAction,
+    ) {
+        MuzSelectableListItem(
+            shapes = shapes,
+            selected = isPlaying,
+            onClick = onClick,
+            onLongClick = dropUnlessResumed { onMenuClick() },
+            onLongClickLabel = stringResource(localesR.string.core_locales_open_menu),
+            content = {
+                Text(
+                    text = song.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = song.artist,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            leadingContent = {
+                Box {
+                    val shape = MaterialTheme.shapes.medium
+                    if (isPlaying) {
+                        Box(
+                            modifier = Modifier
+                                .zIndex(1f)
+                                .size(56.dp)
+                                .clip(shape)
+                                .background(MaterialTheme.colorScheme.surface.copy(0.6f)),
+                        ) {
+                            val dynamicProperties = rememberLottieDynamicProperties(
+                                rememberLottieDynamicProperty(
+                                    property = LottieProperty.COLOR,
+                                    value = MaterialTheme.colorScheme.secondary.toArgb(),
+                                    keyPath = arrayOf("**"),
+                                ),
+                            )
+                            val lottieComposition by rememberLottieComposition(
+                                LottieCompositionSpec.RawRes(R.raw.core_ui_equalizer_anim),
+                            )
+                            val progress by animateLottieCompositionAsState(
+                                composition = lottieComposition,
+                                iterations = LottieConstants.IterateForever,
+                                speed = 0.4f,
+                            )
+                            LottieAnimation(
+                                modifier = Modifier
+                                    .zIndex(2f)
+                                    .align(Alignment.Center)
+                                    .size(40.dp),
+                                composition = lottieComposition,
+                                progress = { progress },
+                                dynamicProperties = dynamicProperties,
+                            )
+                        }
+                    }
+                    SubcomposeAsyncImage(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(shape),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(song.artworkUri)
+                            .size(128)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        error = {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                            ) {
+                                Icon(
+                                    imageVector = MuzIcons.Rounded.MusicNote,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(32.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        },
+                    )
+                }
+            },
+            trailingContent = {
+                MuzIconButton(
+                    onClick = onMenuClick,
+                    icon = MuzIcons.Rounded.MoreVert,
+                    contentDescription = stringResource(localesR.string.core_locales_open_menu),
+                    modifier = Modifier.size(
+                        IconButtonDefaults.smallContainerSize(
+                            IconButtonDefaults.IconButtonWidthOption.Narrow,
+                        ),
+                    ),
+                )
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
