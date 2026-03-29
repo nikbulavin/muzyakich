@@ -10,6 +10,8 @@ import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.data.repository.impl.PlaylistsRepositoryImpl
 import ru.resodostudio.muzyakich.core.data.repository.impl.SongsRepositoryImpl
 import ru.resodostudio.muzyakich.core.data.repository.impl.UserDataRepositoryImpl
+import ru.resodostudio.muzyakich.core.data.repository.util.AppLocaleManager
+import ru.resodostudio.muzyakich.core.data.repository.util.AppLocaleManagerImpl
 import ru.resodostudio.muzyakich.core.data.repository.util.InAppUpdateManager
 import ru.resodostudio.muzyakich.core.data.repository.util.InAppUpdateManagerImpl
 
@@ -28,4 +30,7 @@ internal interface DataModule {
 
     @Binds
     fun bindsInAppUpdateManager(impl: InAppUpdateManagerImpl): InAppUpdateManager
+
+    @Binds
+    fun bindsAppLocaleManager(impl: AppLocaleManagerImpl): AppLocaleManager
 }

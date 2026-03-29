@@ -13,10 +13,14 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -65,6 +69,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.GraphicEq
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Language
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
@@ -84,6 +89,7 @@ internal fun SettingsScreen(
         onLicensesClick = onLicensesClick,
         onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
         onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
+        onLanguageUpdate = viewModel::setAppLanguage,
     )
 }
 
@@ -95,6 +101,7 @@ private fun SettingsScreen(
     onLicensesClick: () -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
+    onLanguageUpdate: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -114,28 +121,76 @@ private fun SettingsScreen(
     ) { innerPadding ->
         Column(
             modifier = modifier
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
+                .padding(top = innerPadding.calculateTopPadding())
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             when (settingsUiState) {
                 SettingsUiState.Loading -> LoadingState(modifier = Modifier.fillMaxSize())
                 is SettingsUiState.Success -> {
+                    General(
+                        languageTag = settingsUiState.languageTag,
+                        onLanguageUpdate = onLanguageUpdate,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    )
                     Audio(
                         audioSessionId = settingsUiState.audioSessionId,
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                     Appearance(
                         darkThemeConfig = settingsUiState.darkThemeConfig,
                         useDynamicColor = settingsUiState.useDynamicColor,
                         onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
                         onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                     About(
                         onLicensesClick = onLicensesClick,
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
+                    Spacer(Modifier.navigationBarsPadding().padding(bottom = 104.dp))
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun General(
+    languageTag: String,
+    onLanguageUpdate: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+    ) {
+        SectionTitle(
+            titleRes = localesR.string.core_locales_appearance,
+            modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
+        )
+        MuzListItem(
+            content = { Text("Language") },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Rounded.Language,
+                    contentDescription = null,
+                )
+            },
+            shapes = ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp)),
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+            ),
+            onClick = {},
+            supportingContent = {
+                Text(
+                    text = languageTag.ifEmpty { stringResource(localesR.string.core_locales_theme_system_default) },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        )
     }
 }
 
