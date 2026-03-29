@@ -14,6 +14,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,6 +68,14 @@ internal fun LanguageDialog(
                 Text(stringResource(localesR.string.core_locales_confirm))
             }
         },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text(stringResource(localesR.string.core_locales_cancel))
+            }
+        },
         text = {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
@@ -107,6 +116,6 @@ internal fun LanguageDialog(
                     )
                 }
             }
-        }
+        },
     )
 }

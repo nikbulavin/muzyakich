@@ -12,6 +12,7 @@
     <string name="core_locales_audio">오디오</string>
     <string name="core_locales_back">뒤로</string>
     <string name="core_locales_bitrate_format">%1$dkbps</string>
+    <string name="core_locales_cancel">취소</string>
     <string name="core_locales_clear">지우기</string>
     <string name="core_locales_confirm">확인</string>
     <string name="core_locales_delete">삭제</string>

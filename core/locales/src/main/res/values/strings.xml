@@ -12,8 +12,9 @@
     <string name="core_locales_audio">Audio</string>
     <string name="core_locales_back">Back</string>
     <string name="core_locales_bitrate_format">%1$d kbps</string>
+    <string name="core_locales_cancel">Cancel</string>
     <string name="core_locales_clear">Clear</string>
-    <string name="core_locales_confirm">Confirm</string>
+    <string name="core_locales_confirm">OK</string>
     <string name="core_locales_delete">Delete</string>
     <string name="core_locales_disable_repeat_mode">Disable repeat mode</string>
     <string name="core_locales_disable_shuffle_mode">Disable shuffle mode</string>

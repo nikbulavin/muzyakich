@@ -12,8 +12,9 @@
     <string name="core_locales_audio">Аудио</string>
     <string name="core_locales_back">Назад</string>
     <string name="core_locales_bitrate_format">%1$d кбит/с</string>
+    <string name="core_locales_cancel">Отмена</string>
     <string name="core_locales_clear">Очистить</string>
-    <string name="core_locales_confirm">Подтвердить</string>
+    <string name="core_locales_confirm">ОК</string>
     <string name="core_locales_delete">Удалить</string>
     <string name="core_locales_disable_repeat_mode">Выключить режим повтора</string>
     <string name="core_locales_disable_shuffle_mode">Выключить режим перетасовки</string>
