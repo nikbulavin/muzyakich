@@ -89,7 +89,7 @@ fun NowPlayingBar(
         targetShape = newTarget
 
         progress.snapTo(0f)
-        progress.animateTo(1f, animationSpec = motionScheme.slowSpatialSpec())
+        progress.animateTo(1f, motionScheme.slowSpatialSpec())
     }
 
     val morph = remember(previousShape, targetShape) {
@@ -100,20 +100,21 @@ fun NowPlayingBar(
     LaunchedEffect(isPlaying) {
         if (isPlaying) {
             while (true) {
+                val remainingRotation = 360f - currentRotation.value
+                val duration = (9000 * (remainingRotation / 360f)).toInt().coerceAtLeast(1)
                 currentRotation.animateTo(
                     targetValue = 360f,
                     animationSpec = tween(
-                        durationMillis = (9000 * (1f - (currentRotation.value / 360f))).toInt()
-                            .coerceAtLeast(1),
+                        durationMillis = duration,
                         easing = LinearEasing,
-                    )
+                    ),
                 )
                 currentRotation.snapTo(0f)
             }
         } else {
-            val target = (currentRotation.value / 90f).roundToInt() * 90f
-            currentRotation.animateTo(target, motionScheme.slowSpatialSpec())
-            if (currentRotation.value >= 360f) currentRotation.snapTo(currentRotation.value % 360f)
+            val targetAngle = (currentRotation.value / 90f).roundToInt() * 90f
+            currentRotation.animateTo(targetAngle, motionScheme.slowSpatialSpec())
+            currentRotation.snapTo(currentRotation.value % 360f)
         }
     }
 
