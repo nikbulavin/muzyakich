@@ -119,7 +119,7 @@ fun SongItem(
                                     }
                                 }
                             }
-                            .clip(MaterialTheme.shapes.large)
+                            .clip(MaterialTheme.shapes.extraLargeIncreased)
                             .background(swipeAction.backgroundColor),
                         contentAlignment = Alignment.Center,
                     ) {

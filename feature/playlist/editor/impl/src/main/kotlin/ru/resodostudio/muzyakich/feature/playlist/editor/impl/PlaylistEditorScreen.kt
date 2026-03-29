@@ -163,7 +163,12 @@ private fun PlaylistEditorScreen(
                 val arrangementPadding = 16.dp - ListItemDefaults.SegmentedGap
                 LazyColumn(
                     state = lazyListState,
-                    contentPadding = innerPadding + PaddingValues(16.dp),
+                    contentPadding = innerPadding + PaddingValues(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 104.dp,
+                    ),
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                 ) {
                     item {
