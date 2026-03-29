@@ -37,9 +37,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -58,12 +62,16 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Feedback
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Flag
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Gavel
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Info
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Palette
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Policy
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Russia
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.SouthKorea
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.UnitedStates
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Android
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DarkMode
@@ -148,7 +156,11 @@ private fun SettingsScreen(
                         onLicensesClick = onLicensesClick,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
-                    Spacer(Modifier.navigationBarsPadding().padding(bottom = 104.dp))
+                    Spacer(
+                        Modifier
+                            .navigationBarsPadding()
+                            .padding(bottom = 104.dp)
+                    )
                 }
             }
         }
@@ -170,6 +182,29 @@ private fun General(
             titleRes = localesR.string.core_locales_general,
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
+        var shouldShowLanguageDialog by rememberSaveable { mutableStateOf(false) }
+        val availableLanguages = listOf(
+            Language(
+                code = "",
+                displayName = stringResource(localesR.string.core_locales_system_default),
+                icon = MuzIcons.Filled.Flag,
+            ),
+            Language(
+                code = "en",
+                displayName = "English",
+                icon = MuzIcons.Filled.UnitedStates,
+            ),
+            Language(
+                code = "ko",
+                displayName = "한국어",
+                icon = MuzIcons.Filled.SouthKorea,
+            ),
+            Language(
+                code = "ru",
+                displayName = "Русский",
+                icon = MuzIcons.Filled.Russia,
+            ),
+        )
         MuzListItem(
             content = { Text(stringResource(localesR.string.core_locales_language)) },
             leadingContent = {
@@ -182,17 +217,32 @@ private fun General(
             colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             ),
-            onClick = {},
+            onClick = { shouldShowLanguageDialog = true },
             supportingContent = {
                 Text(
-                    text = languageTag.ifEmpty { stringResource(localesR.string.core_locales_system_default) },
+                    text = availableLanguages.find { it.code == languageTag }?.displayName
+                        ?: stringResource(localesR.string.core_locales_system_default),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             },
         )
+        if (shouldShowLanguageDialog) {
+            LanguageDialog(
+                language = languageTag,
+                availableLanguages = availableLanguages,
+                onLanguageClick = onLanguageUpdate,
+                onDismiss = { shouldShowLanguageDialog = false },
+            )
+        }
     }
 }
+
+internal data class Language(
+    val code: String,
+    val displayName: String,
+    val icon: ImageVector,
+)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -334,11 +384,12 @@ private fun Audio(
             ),
             onClick = {
                 runCatching {
-                    val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
-                        putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
-                        putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
-                        putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
-                    }
+                    val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL)
+                        .apply {
+                            putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
+                            putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
+                            putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+                        }
                     equalizerLauncher.launch(intent)
                 }.onFailure { error("Failed to open equalizer") }
             },
