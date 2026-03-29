@@ -18,7 +18,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        androidResources.localeFilters += setOf("en", "ru", "ko")
+        androidResources.localeFilters += setOf("en", "ko", "ru")
     }
     buildTypes {
         debug {
