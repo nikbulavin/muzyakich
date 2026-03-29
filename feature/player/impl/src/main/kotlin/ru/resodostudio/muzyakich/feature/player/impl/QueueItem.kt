@@ -42,6 +42,7 @@ internal fun QueueItem(
     song: Song,
     shapes: ListItemShapes,
     modifier: Modifier = Modifier,
+    reorderableModifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onDismiss: () -> Unit = {},
 ) {
@@ -68,7 +69,7 @@ internal fun QueueItem(
                             val gap = 2.dp.roundToPx()
                             val width = (offset - gap).coerceIn(0, constraints.maxWidth)
                             val placeable = measurable.measure(
-                                constraints.copy(minWidth = width, maxWidth = width)
+                                constraints.copy(minWidth = width, maxWidth = width),
                             )
                             layout(constraints.maxWidth, constraints.maxHeight) {
                                 if (direction == SwipeToDismissBoxValue.EndToStart) {
@@ -139,6 +140,7 @@ internal fun QueueItem(
                     IconButton(
                         onClick = {},
                         shapes = IconButtonDefaults.shapes(),
+                        modifier = reorderableModifier,
                     ) {
                         Icon(
                             imageVector = MuzIcons.Rounded.DragHandle,
@@ -150,6 +152,6 @@ internal fun QueueItem(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 ),
             )
-        }
+        },
     )
 }

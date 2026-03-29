@@ -134,6 +134,30 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
+    fun moveSong(fromUuid: Uuid, toUuid: Uuid) {
+        mediaController?.let { controller ->
+            val timeline = controller.currentTimeline
+            if (timeline.isEmpty) return
+
+            var fromIndex = C.INDEX_UNSET
+            var toIndex = C.INDEX_UNSET
+            val window = Timeline.Window()
+
+            for (i in 0 until timeline.windowCount) {
+                timeline.getWindow(i, window)
+                val itemUuid = runCatching {
+                    Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
+                }.getOrNull()
+                if (itemUuid == fromUuid) fromIndex = i
+                if (itemUuid == toUuid) toIndex = i
+            }
+
+            if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) {
+                controller.moveMediaItem(fromIndex, toIndex)
+            }
+        }
+    }
+
     fun removeSongFromQueue(uuid: Uuid) {
         mediaController?.let { controller ->
             val timeline = controller.currentTimeline
@@ -198,25 +222,18 @@ class MusicServiceConnection @Inject constructor(
 
         val result = mutableListOf<Song>()
         val window = Timeline.Window()
-        val currentMediaItem = player.currentMediaItem ?: return emptyList()
-        val currentUuid = runCatching {
-            Uuid.parse(currentMediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
-        }.getOrNull()
-        var foundCurrent = false
+        val currentIndex = player.currentMediaItemIndex
+        if (currentIndex == C.INDEX_UNSET) return emptyList()
 
+        var foundCurrent = false
         var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
 
         while (windowIndex != C.INDEX_UNSET) {
-            timeline.getWindow(windowIndex, window)
-            val mediaItem = window.mediaItem
-            val windowUuid = runCatching {
-                Uuid.parse(mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
-            }.getOrNull()
-
             if (foundCurrent) {
-                val song = runCatching { mediaItem.asSong() }.getOrNull()
+                timeline.getWindow(windowIndex, window)
+                val song = runCatching { window.mediaItem.asSong() }.getOrNull()
                 if (song != null) result.add(song)
-            } else if (windowUuid == currentUuid) {
+            } else if (windowIndex == currentIndex) {
                 foundCurrent = true
             }
 

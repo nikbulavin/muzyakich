@@ -23,6 +23,11 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudio.cashsense.core.ui.SongArtworkMini
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -48,6 +55,7 @@ internal fun QueuePanel(
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onSongLongClick: (String) -> Unit = {},
     onRemoveFromQueue: (Uuid) -> Unit = {},
+    onReorderSongs: (Uuid, Uuid) -> Unit = { _, _ -> },
 ) {
     with(sharedTransitionScope) {
         Column(
@@ -128,6 +136,28 @@ internal fun QueuePanel(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+
+            var localPlayingQueue by remember { mutableStateOf(playingQueue) }
+
+            LaunchedEffect(playingQueue) {
+                localPlayingQueue = playingQueue
+            }
+
+            val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+                val fromKey = from.key as? Uuid
+                val toKey = to.key as? Uuid
+                if (fromKey != null && toKey != null) {
+                    val fromIndex = localPlayingQueue.indexOfFirst { it.uuid == fromKey }
+                    val toIndex = localPlayingQueue.indexOfFirst { it.uuid == toKey }
+                    if (fromIndex != -1 && toIndex != -1) {
+                        localPlayingQueue = localPlayingQueue.toMutableList().apply {
+                            add(toIndex, removeAt(fromIndex))
+                        }
+                        onReorderSongs(fromKey, toKey)
+                    }
+                }
+            }
+
             LazyColumn(
                 state = lazyListState,
                 modifier = Modifier.fillMaxSize(),
@@ -139,21 +169,27 @@ internal fun QueuePanel(
                 verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
             ) {
                 itemsIndexed(
-                    items = playingQueue,
+                    items = localPlayingQueue,
                     key = { _, song -> song.uuid },
                     contentType = { _, _ -> "QueueSong" },
                 ) { index, song ->
-                    QueueItem(
-                        song = song,
-                        modifier = Modifier.animateItem(),
-                        onClick = { onQueueItemClick(song.uuid) },
-                        onDismiss = { onRemoveFromQueue(song.uuid) },
-                        shapes = if (playingQueue.size == 1) {
-                            ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-                        } else {
-                            ListItemDefaults.segmentedShapes(index, playingQueue.size)
-                        },
-                    )
+                    ReorderableItem(
+                        state = reorderableLazyListState,
+                        key = song.uuid,
+                    ) { _ ->
+                        QueueItem(
+                            song = song,
+                            modifier = Modifier,
+                            reorderableModifier = Modifier.draggableHandle(),
+                            onClick = { onQueueItemClick(song.uuid) },
+                            onDismiss = { onRemoveFromQueue(song.uuid) },
+                            shapes = if (localPlayingQueue.size == 1) {
+                                ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
+                            } else {
+                                ListItemDefaults.segmentedShapes(index, localPlayingQueue.size)
+                            },
+                        )
+                    }
                 }
             }
         }

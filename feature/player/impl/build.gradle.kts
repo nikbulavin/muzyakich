@@ -20,4 +20,5 @@ dependencies {
     implementation(libs.androidx.media3.exoPlayer)
     implementation(libs.androidx.media3.ui.compose.material3)
     implementation(libs.coil.compose)
+    implementation(libs.reorderable)
 }

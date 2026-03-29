@@ -93,6 +93,7 @@ internal fun PlayerScreen(
         onSkipToSongClick = viewModel::skipToSong,
         onFavoriteChange = viewModel::setSongFavorite,
         onRemoveFromQueue = viewModel::removeSong,
+        onReorderSongs = viewModel::moveSong,
     )
 }
 
@@ -105,6 +106,7 @@ private fun PlayerScreen(
     onSkipToSongClick: (Uuid) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onRemoveFromQueue: (Uuid) -> Unit = {},
+    onReorderSongs: (Uuid, Uuid) -> Unit = { _, _ -> },
 ) {
     SharedTransitionLayout {
         var queueOpened by rememberSaveable { mutableStateOf(false) }
@@ -138,6 +140,7 @@ private fun PlayerScreen(
                                     onFavoriteChange = onFavoriteChange,
                                     onSongLongClick = onSongMenuClick,
                                     onRemoveFromQueue = onRemoveFromQueue,
+                                    onReorderSongs = onReorderSongs,
                                     sharedTransitionScope = this@SharedTransitionLayout,
                                 )
                             } else {
@@ -175,7 +178,7 @@ private fun PlayerScreen(
                                                     .sharedBounds(
                                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                         sharedContentState = rememberSharedContentState(
-                                                            currentSong.title
+                                                            currentSong.title,
                                                         ),
                                                         animatedVisibilityScope = this@AnimatedContent,
                                                     )
@@ -189,7 +192,7 @@ private fun PlayerScreen(
                                                     .sharedBounds(
                                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                         sharedContentState = rememberSharedContentState(
-                                                            currentSong.artist
+                                                            currentSong.artist,
                                                         ),
                                                         animatedVisibilityScope = this@AnimatedContent,
                                                     )
@@ -205,7 +208,7 @@ private fun PlayerScreen(
                                                 .sharedBounds(
                                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                     sharedContentState = rememberSharedContentState(
-                                                        localesR.string.core_locales_favorites
+                                                        localesR.string.core_locales_favorites,
                                                     ),
                                                     animatedVisibilityScope = this@AnimatedContent,
                                                 ),
@@ -216,7 +219,7 @@ private fun PlayerScreen(
                                                 .sharedBounds(
                                                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                                     sharedContentState = rememberSharedContentState(
-                                                        localesR.string.core_locales_more_options
+                                                        localesR.string.core_locales_more_options,
                                                     ),
                                                     animatedVisibilityScope = this@AnimatedContent,
                                                 ),
@@ -247,7 +250,7 @@ private fun PlayerScreen(
                                                     Color.Transparent,
                                                     MaterialTheme.colorScheme.surfaceContainerLow,
                                                 ),
-                                            )
+                                            ),
                                         ),
                                 )
                                 Column(

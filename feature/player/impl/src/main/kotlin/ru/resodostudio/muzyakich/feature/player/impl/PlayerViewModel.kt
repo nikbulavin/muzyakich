@@ -49,6 +49,8 @@ internal class PlayerViewModel @Inject constructor(
     fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
 
     fun removeSong(uuid: Uuid) = musicServiceConnection.removeSongFromQueue(uuid)
+    
+    fun moveSong(fromUuid: Uuid, toUuid: Uuid) = musicServiceConnection.moveSong(fromUuid, toUuid)
 
     fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
         viewModelScope.launch {
