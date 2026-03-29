@@ -5,30 +5,22 @@ import ru.resodostudio.muzyakich.core.media.service.util.ALBUM_ID
 import ru.resodostudio.muzyakich.core.media.service.util.ARTIST_ID
 import ru.resodostudio.muzyakich.core.media.service.util.DURATION
 import ru.resodostudio.muzyakich.core.media.service.util.FOLDER
-import ru.resodostudio.muzyakich.core.media.service.util.UUID
 import ru.resodostudio.muzyakich.core.media.service.util.buildPlayableMediaItem
+import ru.resodostudio.muzyakich.core.model.data.QueueSong
 import ru.resodostudio.muzyakich.core.model.data.Song
-import kotlin.uuid.Uuid
 
 internal fun Song.asMediaItem(): MediaItem {
     return buildPlayableMediaItem(
         mediaId = mediaId,
-        artistId = artistId,
-        albumId = albumId,
         mediaUri = mediaUri,
         artworkUri = artworkUri,
         title = title,
         artist = artist,
-        folder = path,
-        duration = duration,
-        trackNumber = trackNumber,
-        releaseYear = year,
     )
 }
 
 fun MediaItem.asSong(): Song {
     return Song(
-        uuid = Uuid.parse(mediaMetadata.extras?.getString(UUID) ?: ""),
         mediaId = mediaId,
         artist = mediaMetadata.artist?.toString() ?: "Unknown",
         title = mediaMetadata.title?.toString() ?: "Unknown",
@@ -48,5 +40,15 @@ fun MediaItem.asSong(): Song {
         trackNumber = 0,
         year = 0,
         genre = null,
+    )
+}
+
+fun MediaItem.asQueueSong(uid: String): QueueSong {
+    return QueueSong(
+        uid = uid,
+        mediaId = mediaId,
+        artist = mediaMetadata.artist?.toString() ?: "Unknown",
+        artworkUri = mediaMetadata.artworkUri!!,
+        title = mediaMetadata.title?.toString() ?: "Unknown",
     )
 }

@@ -16,7 +16,6 @@ import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
-import kotlin.uuid.Uuid
 
 @HiltViewModel
 internal class PlayerViewModel @Inject constructor(
@@ -46,11 +45,11 @@ internal class PlayerViewModel @Inject constructor(
             initialValue = PlayerUiState.Loading,
         )
 
-    fun skipToSong(uuid: Uuid) = musicServiceConnection.skipToSong(uuid)
+    fun skipToSong(uid: String) = musicServiceConnection.skipToSong(uid)
 
-    fun removeSong(uuid: Uuid) = musicServiceConnection.removeSongFromQueue(uuid)
+    fun removeSong(uid: String) = musicServiceConnection.removeSongFromQueue(uid)
     
-    fun moveSong(fromUuid: Uuid, toUuid: Uuid) = musicServiceConnection.moveSong(fromUuid, toUuid)
+    fun moveSong(fromUid: String, toUid: String) = musicServiceConnection.moveSong(fromUid, toUid)
 
     fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
         viewModelScope.launch {

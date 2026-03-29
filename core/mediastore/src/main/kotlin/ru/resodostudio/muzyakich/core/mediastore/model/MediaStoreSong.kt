@@ -2,7 +2,6 @@ package ru.resodostudio.muzyakich.core.mediastore.model
 
 import android.net.Uri
 import ru.resodostudio.muzyakich.core.model.data.Song
-import kotlin.uuid.Uuid
 
 data class MediaStoreSong(
     val mediaId: String,
@@ -31,7 +30,6 @@ fun MediaStoreSong.asExternalModel(
     return Song(
         isFavorite = isFavorite,
         playCount = playCount,
-        uuid = Uuid.random(),
         mediaId = mediaId,
         artistId = artistId,
         albumId = albumId,

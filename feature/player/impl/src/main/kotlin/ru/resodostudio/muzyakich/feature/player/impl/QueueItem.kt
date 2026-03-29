@@ -32,14 +32,14 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.data.QueueSong
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun QueueItem(
-    song: Song,
+    song: QueueSong,
     shapes: ListItemShapes,
     modifier: Modifier = Modifier,
     reorderableModifier: Modifier = Modifier,

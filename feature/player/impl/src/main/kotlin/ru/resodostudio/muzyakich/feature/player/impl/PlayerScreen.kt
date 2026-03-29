@@ -75,7 +75,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Song
-import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -103,10 +102,10 @@ private fun PlayerScreen(
     playerUiState: PlayerUiState,
     onDismiss: () -> Unit,
     onSongMenuClick: (String) -> Unit,
-    onSkipToSongClick: (Uuid) -> Unit = {},
+    onSkipToSongClick: (String) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
-    onRemoveFromQueue: (Uuid) -> Unit = {},
-    onReorderSongs: (Uuid, Uuid) -> Unit = { _, _ -> },
+    onRemoveFromQueue: (String) -> Unit = {},
+    onReorderSongs: (String, String) -> Unit = { _, _ -> },
 ) {
     SharedTransitionLayout {
         var queueOpened by rememberSaveable { mutableStateOf(false) }

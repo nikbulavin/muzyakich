@@ -36,26 +36,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.cashsense.core.ui.SongArtworkMini
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
+import ru.resodostudio.muzyakich.core.model.data.QueueSong
 import ru.resodostudio.muzyakich.core.model.data.Song
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun QueuePanel(
     currentSong: Song,
-    playingQueue: List<Song>,
+    playingQueue: List<QueueSong>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
-    onQueueItemClick: (Uuid) -> Unit = {},
+    onQueueItemClick: (String) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onSongLongClick: (String) -> Unit = {},
-    onRemoveFromQueue: (Uuid) -> Unit = {},
-    onReorderSongs: (Uuid, Uuid) -> Unit = { _, _ -> },
+    onRemoveFromQueue: (String) -> Unit = {},
+    onReorderSongs: (String, String) -> Unit = { _, _ -> },
 ) {
     with(sharedTransitionScope) {
         Column(
@@ -144,17 +144,15 @@ internal fun QueuePanel(
             }
 
             val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-                val fromKey = from.key as? Uuid
-                val toKey = to.key as? Uuid
-                if (fromKey != null && toKey != null) {
-                    val fromIndex = localPlayingQueue.indexOfFirst { it.uuid == fromKey }
-                    val toIndex = localPlayingQueue.indexOfFirst { it.uuid == toKey }
-                    if (fromIndex != -1 && toIndex != -1) {
-                        localPlayingQueue = localPlayingQueue.toMutableList().apply {
-                            add(toIndex, removeAt(fromIndex))
-                        }
-                        onReorderSongs(fromKey, toKey)
+                val fromKey = from.key.toString()
+                val toKey = to.key.toString()
+                val fromIndex = localPlayingQueue.indexOfFirst { it.uid == fromKey }
+                val toIndex = localPlayingQueue.indexOfFirst { it.uid == toKey }
+                if (fromIndex != -1 && toIndex != -1) {
+                    localPlayingQueue = localPlayingQueue.toMutableList().apply {
+                        add(toIndex, removeAt(fromIndex))
                     }
+                    onReorderSongs(fromKey, toKey)
                 }
             }
 
@@ -170,19 +168,19 @@ internal fun QueuePanel(
             ) {
                 itemsIndexed(
                     items = localPlayingQueue,
-                    key = { _, song -> song.uuid },
+                    key = { _, song -> song.uid },
                     contentType = { _, _ -> "QueueSong" },
                 ) { index, song ->
                     ReorderableItem(
                         state = reorderableLazyListState,
-                        key = song.uuid,
+                        key = song.uid,
                     ) { _ ->
                         QueueItem(
                             song = song,
                             modifier = Modifier,
                             reorderableModifier = Modifier.draggableHandle(),
-                            onClick = { onQueueItemClick(song.uuid) },
-                            onDismiss = { onRemoveFromQueue(song.uuid) },
+                            onClick = { onQueueItemClick(song.uid) },
+                            onDismiss = { onRemoveFromQueue(song.uid) },
                             shapes = if (localPlayingQueue.size == 1) {
                                 ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
                             } else {

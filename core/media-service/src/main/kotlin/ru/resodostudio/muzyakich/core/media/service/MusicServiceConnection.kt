@@ -28,14 +28,13 @@ import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_POSITION_MS
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
 import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
-import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
-import ru.resodostudio.muzyakich.core.media.service.util.UUID
+import ru.resodostudio.muzyakich.core.media.service.mapper.asQueueSong
 import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
 import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.data.QueueSong
 import ru.resodostudio.muzyakich.core.model.data.Song
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.uuid.Uuid
 
 @Singleton
 class MusicServiceConnection @Inject constructor(
@@ -64,7 +63,7 @@ class MusicServiceConnection @Inject constructor(
         _audioSessionId.update { id }
     }
 
-    fun skipToSong(uuid: Uuid, position: Long = C.TIME_UNSET) {
+    fun skipToSong(uid: String, position: Long = C.TIME_UNSET) {
         mediaController?.let { controller ->
             val timeline = controller.currentTimeline
             if (timeline.isEmpty) return
@@ -73,10 +72,7 @@ class MusicServiceConnection @Inject constructor(
 
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
-                val windowUuid = runCatching {
-                    Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
-                }.getOrNull()
-                if (windowUuid == uuid) {
+                if (window.uid.toString() == uid) {
                     controller.seekTo(i, position)
                     if (_nowPlayingState.value.playWhenReady) controller.play()
                     break
@@ -134,7 +130,7 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    fun moveSong(fromUuid: Uuid, toUuid: Uuid) {
+    fun moveSong(fromUid: String, toUid: String) {
         mediaController?.let { controller ->
             val timeline = controller.currentTimeline
             if (timeline.isEmpty) return
@@ -145,11 +141,9 @@ class MusicServiceConnection @Inject constructor(
 
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
-                val itemUuid = runCatching {
-                    Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
-                }.getOrNull()
-                if (itemUuid == fromUuid) fromIndex = i
-                if (itemUuid == toUuid) toIndex = i
+                val itemUuid = window.uid.toString()
+                if (itemUuid == fromUid) fromIndex = i
+                if (itemUuid == toUid) toIndex = i
             }
 
             if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) {
@@ -158,17 +152,14 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    fun removeSongFromQueue(uuid: Uuid) {
+    fun removeSongFromQueue(uid: String) {
         mediaController?.let { controller ->
             val timeline = controller.currentTimeline
             if (timeline.isEmpty) return
             val window = Timeline.Window()
             for (index in timeline.windowCount - 1 downTo 0) {
                 timeline.getWindow(index, window)
-                val itemUuid = runCatching {
-                    Uuid.parse(window.mediaItem.mediaMetadata.extras?.getString(UUID) ?: "")
-                }.getOrNull()
-                if (itemUuid == uuid) {
+                if (window.uid.toString() == uid) {
                     controller.removeMediaItem(index)
                     break
                 }
@@ -216,11 +207,11 @@ class MusicServiceConnection @Inject constructor(
         }
     }
 
-    private fun getCurrentPlayingQueue(player: Player): List<Song> {
+    private fun getCurrentPlayingQueue(player: Player): List<QueueSong> {
         val timeline = player.currentTimeline
         if (timeline.isEmpty) return emptyList()
 
-        val result = mutableListOf<Song>()
+        val result = mutableListOf<QueueSong>()
         val window = Timeline.Window()
         val currentIndex = player.currentMediaItemIndex
         if (currentIndex == C.INDEX_UNSET) return emptyList()
@@ -231,8 +222,7 @@ class MusicServiceConnection @Inject constructor(
         while (windowIndex != C.INDEX_UNSET) {
             if (foundCurrent) {
                 timeline.getWindow(windowIndex, window)
-                val song = runCatching { window.mediaItem.asSong() }.getOrNull()
-                if (song != null) result.add(song)
+                result.add(window.mediaItem.asQueueSong(window.uid.toString()))
             } else if (windowIndex == currentIndex) {
                 foundCurrent = true
             }

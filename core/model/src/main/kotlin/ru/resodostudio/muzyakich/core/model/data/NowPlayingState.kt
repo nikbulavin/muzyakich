@@ -10,6 +10,6 @@ data class NowPlayingState(
     val songIndex: Int = DEFAULT_INDEX,
     val playbackState: PlaybackState = IDLE,
     val playWhenReady: Boolean = false,
-    val playingQueue: List<Song> = emptyList(),
+    val playingQueue: List<QueueSong> = emptyList(),
     val player: Player? = null,
 )
