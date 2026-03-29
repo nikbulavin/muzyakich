@@ -79,12 +79,17 @@ fun NowPlayingBar(
     val playPauseButtonState = rememberPlayPauseButtonState(player)
     val isPlaying = !playPauseButtonState.showPlay
 
-    var targetShape by remember { mutableStateOf(if (isPlaying) artworkShapes.random() else MaterialShapes.Square) }
+    var lastArtworkShape by remember { mutableStateOf(artworkShapes.random()) }
+    var targetShape by remember { mutableStateOf(if (isPlaying) lastArtworkShape else MaterialShapes.Square) }
     var previousShape by remember { mutableStateOf(targetShape) }
     val progress = remember { Animatable(1f) }
 
     LaunchedEffect(currentSong.mediaId, isPlaying) {
-        val newTarget = if (isPlaying) artworkShapes.random() else MaterialShapes.Square
+        val newTarget = if (isPlaying) {
+            artworkShapes.filter { it != lastArtworkShape }.random().also { lastArtworkShape = it }
+        } else {
+            MaterialShapes.Square
+        }
         previousShape = targetShape
         targetShape = newTarget
 
@@ -251,7 +256,6 @@ private fun ActionButtons(
             enabled = nextButtonState.isEnabled,
             icon = MuzIcons.Rounded.SkipNext,
             contentDescription = stringResource(localesR.string.core_locales_skip_next),
-            containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
         )
     }
 }
@@ -286,7 +290,6 @@ private val artworkShapes = listOf(
     MaterialShapes.Pill,
     MaterialShapes.Pentagon,
     MaterialShapes.Gem,
-    MaterialShapes.Sunny,
     MaterialShapes.VerySunny,
     MaterialShapes.Cookie4Sided,
     MaterialShapes.Cookie6Sided,
@@ -294,7 +297,5 @@ private val artworkShapes = listOf(
     MaterialShapes.Cookie9Sided,
     MaterialShapes.Cookie12Sided,
     MaterialShapes.Clover8Leaf,
-    MaterialShapes.SoftBurst,
-    MaterialShapes.Flower,
     MaterialShapes.Heart,
 )
