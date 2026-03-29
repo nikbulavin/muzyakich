@@ -29,8 +29,10 @@
     <string name="core_locales_favorites">Favorites</string>
     <string name="core_locales_feedback">Feedback</string>
     <string name="core_locales_filters">Filters</string>
+    <string name="core_locales_general">General</string>
     <string name="core_locales_high_quality">High quality</string>
     <string name="core_locales_install_update">Install update</string>
+    <string name="core_locales_language">Language</string>
     <string name="core_locales_library_empty">You don\'t have any songs yet. Add your favorite music and enjoy listening!</string>
     <string name="core_locales_licenses">Licenses</string>
     <string name="core_locales_more_options">More options</string>
@@ -60,10 +62,10 @@
     <string name="core_locales_sort_order">Sort order</string>
     <string name="core_locales_sort_order_ascending">Ascending</string>
     <string name="core_locales_sort_order_descending">Descending</string>
+    <string name="core_locales_system_default">System default</string>
     <string name="core_locales_theme">Theme</string>
     <string name="core_locales_theme_dark">Dark</string>
     <string name="core_locales_theme_light">Light</string>
-    <string name="core_locales_theme_system_default">System default</string>
     <string name="core_locales_title">Title</string>
     <string name="core_locales_version">Version</string>
 

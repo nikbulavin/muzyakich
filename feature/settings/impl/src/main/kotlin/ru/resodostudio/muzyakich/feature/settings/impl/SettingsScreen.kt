@@ -167,11 +167,11 @@ private fun General(
         verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
         SectionTitle(
-            titleRes = localesR.string.core_locales_appearance,
+            titleRes = localesR.string.core_locales_general,
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
         MuzListItem(
-            content = { Text("Language") },
+            content = { Text(stringResource(localesR.string.core_locales_language)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Rounded.Language,
@@ -185,11 +185,11 @@ private fun General(
             onClick = {},
             supportingContent = {
                 Text(
-                    text = languageTag.ifEmpty { stringResource(localesR.string.core_locales_theme_system_default) },
+                    text = languageTag.ifEmpty { stringResource(localesR.string.core_locales_system_default) },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-            }
+            },
         )
     }
 }
@@ -222,7 +222,7 @@ private fun Appearance(
             },
             trailingContent = {
                 val themeOptions = listOf(
-                    stringResource(localesR.string.core_locales_theme_system_default),
+                    stringResource(localesR.string.core_locales_system_default),
                     stringResource(localesR.string.core_locales_theme_light),
                     stringResource(localesR.string.core_locales_theme_dark),
                 )

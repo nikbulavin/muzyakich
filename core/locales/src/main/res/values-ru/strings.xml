@@ -29,8 +29,10 @@
     <string name="core_locales_favorites">Избранное</string>
     <string name="core_locales_feedback">Обратная связь</string>
     <string name="core_locales_filters">Фильтры</string>
+    <string name="core_locales_general">Общие</string>
     <string name="core_locales_high_quality">Высокое качество</string>
     <string name="core_locales_install_update">Установить обновление</string>
+    <string name="core_locales_language">Язык</string>
     <string name="core_locales_library_empty">У вас пока нет треков. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
     <string name="core_locales_licenses">Лицензии</string>
     <string name="core_locales_more_options">Дополнительно</string>
@@ -60,10 +62,10 @@
     <string name="core_locales_sort_order">Порядок сортировки</string>
     <string name="core_locales_sort_order_ascending">По возрастанию</string>
     <string name="core_locales_sort_order_descending">По убыванию</string>
+    <string name="core_locales_system_default">Как в системе</string>
     <string name="core_locales_theme">Тема</string>
     <string name="core_locales_theme_dark">Тёмная</string>
     <string name="core_locales_theme_light">Светлая</string>
-    <string name="core_locales_theme_system_default">Как в системе</string>
     <string name="core_locales_title">Название</string>
     <string name="core_locales_version">Версия</string>
 

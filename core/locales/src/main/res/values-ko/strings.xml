@@ -29,8 +29,10 @@
     <string name="core_locales_favorites">즐겨찾기</string>
     <string name="core_locales_feedback">피드백</string>
     <string name="core_locales_filters">필터</string>
+    <string name="core_locales_general">일반</string>
     <string name="core_locales_high_quality">고화질</string>
     <string name="core_locales_install_update">업데이트 설치</string>
+    <string name="core_locales_language">언어</string>
     <string name="core_locales_library_empty">아직 노래가 없습니다. 좋아하는 음악을 추가하고 감상하세요!</string>
     <string name="core_locales_licenses">라이선스</string>
     <string name="core_locales_more_options">추가 옵션</string>
@@ -60,10 +62,10 @@
     <string name="core_locales_sort_order">정렬 순서</string>
     <string name="core_locales_sort_order_ascending">오름차순</string>
     <string name="core_locales_sort_order_descending">내림차순</string>
+    <string name="core_locales_system_default">시스템 기본값</string>
     <string name="core_locales_theme">테마</string>
     <string name="core_locales_theme_dark">어두운 테마</string>
     <string name="core_locales_theme_light">밝은 테마</string>
-    <string name="core_locales_theme_system_default">시스템 기본값</string>
     <string name="core_locales_title">제목</string>
     <string name="core_locales_version">버전</string>
 
