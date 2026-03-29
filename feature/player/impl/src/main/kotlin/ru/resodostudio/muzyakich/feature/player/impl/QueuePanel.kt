@@ -23,7 +23,6 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -137,22 +136,24 @@ internal fun QueuePanel(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            var localPlayingQueue by remember { mutableStateOf(playingQueue) }
-
-            LaunchedEffect(playingQueue) {
-                localPlayingQueue = playingQueue
-            }
+            var localPlayingQueue by remember(playingQueue) { mutableStateOf(playingQueue) }
+            var draggedItemId by remember { mutableStateOf<String?>(null) }
+            var targetItemId by remember { mutableStateOf<String?>(null) }
 
             val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
                 val fromKey = from.key.toString()
                 val toKey = to.key.toString()
+
+                if (draggedItemId == null) draggedItemId = fromKey
+                targetItemId = toKey
+
                 val fromIndex = localPlayingQueue.indexOfFirst { it.uid == fromKey }
                 val toIndex = localPlayingQueue.indexOfFirst { it.uid == toKey }
+
                 if (fromIndex != -1 && toIndex != -1) {
                     localPlayingQueue = localPlayingQueue.toMutableList().apply {
                         add(toIndex, removeAt(fromIndex))
                     }
-                    onReorderSongs(fromKey, toKey)
                 }
             }
 
@@ -178,7 +179,17 @@ internal fun QueuePanel(
                         QueueItem(
                             song = song,
                             modifier = Modifier,
-                            reorderableModifier = Modifier.draggableHandle(),
+                            reorderableModifier = Modifier.draggableHandle(
+                                onDragStopped = {
+                                    val from = draggedItemId
+                                    val to = targetItemId
+                                    if (from != null && to != null && from != to) {
+                                        onReorderSongs(from, to)
+                                    }
+                                    draggedItemId = null
+                                    targetItemId = null
+                                },
+                            ),
                             onClick = { onQueueItemClick(song.uid) },
                             onDismiss = { onRemoveFromQueue(song.uid) },
                             shapes = if (localPlayingQueue.size == 1) {
