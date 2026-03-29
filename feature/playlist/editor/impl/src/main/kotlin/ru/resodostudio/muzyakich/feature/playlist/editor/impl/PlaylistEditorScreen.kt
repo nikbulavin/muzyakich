@@ -50,6 +50,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
+import ru.resodostudio.cashsense.core.ui.SwipeableItem
+import ru.resodostudio.cashsense.core.ui.rememberRemoveFromPlaylistSwipeAction
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
@@ -83,6 +85,7 @@ internal fun PlaylistEditorScreen(
         onCoverSelected = viewModel::updateCover,
         onRemoveCover = viewModel::removeCover,
         onAddSongs = viewModel::addSongs,
+        onRemoveSong = viewModel::removeSong,
         onReorderSongs = viewModel::reorderSongs,
         onSave = {
             viewModel.savePlaylist()
@@ -101,6 +104,7 @@ private fun PlaylistEditorScreen(
     onCoverSelected: (Uri?) -> Unit,
     onRemoveCover: () -> Unit,
     onAddSongs: (List<Song>) -> Unit,
+    onRemoveSong: (Song) -> Unit,
     onReorderSongs: (Int, Int) -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
@@ -277,63 +281,69 @@ private fun PlaylistEditorScreen(
                             state = reorderableLazyListState,
                             key = song.mediaId,
                         ) { _ ->
-                            MuzSelectableListItem(
-                                shapes = if (playlistEditorUiState.songs.size == 1) {
-                                    ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-                                } else {
-                                    ListItemDefaults.segmentedShapes(index, playlistEditorUiState.songs.size)
-                                },
-                                onClick = {},
-                                selected = false,
-                                content = {
-                                    Text(
-                                        text = song.title,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                },
-                                supportingContent = {
-                                    Text(
-                                        text = song.artist,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                },
-                                leadingContent = {
-                                    SubcomposeAsyncImage(
-                                        modifier = Modifier
-                                            .size(56.dp)
-                                            .clip(MaterialTheme.shapes.medium),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(song.artworkUri)
-                                            .size(128)
-                                            .build(),
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        error = {
-                                            Box(
-                                                contentAlignment = Alignment.Center,
-                                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                                            ) {
-                                                Icon(
-                                                    imageVector = MuzIcons.Rounded.MusicNote,
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(32.dp),
-                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                )
-                                            }
-                                        },
-                                    )
-                                },
-                                trailingContent = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.DragHandle,
-                                        contentDescription = null,
-                                        modifier = Modifier.draggableHandle(),
-                                    )
-                                },
-                                modifier = Modifier,
-                            )
+                            SwipeableItem(
+                                modifier = modifier,
+                                startToEndSwipeAction = rememberRemoveFromPlaylistSwipeAction(song, onRemoveSong),
+                                endToStartSwipeAction = rememberRemoveFromPlaylistSwipeAction(song, onRemoveSong),
+                            ) {
+                                MuzSelectableListItem(
+                                    shapes = if (playlistEditorUiState.songs.size == 1) {
+                                        ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
+                                    } else {
+                                        ListItemDefaults.segmentedShapes(index, playlistEditorUiState.songs.size)
+                                    },
+                                    onClick = {},
+                                    selected = false,
+                                    content = {
+                                        Text(
+                                            text = song.title,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    },
+                                    supportingContent = {
+                                        Text(
+                                            text = song.artist,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    },
+                                    leadingContent = {
+                                        SubcomposeAsyncImage(
+                                            modifier = Modifier
+                                                .size(56.dp)
+                                                .clip(MaterialTheme.shapes.medium),
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(song.artworkUri)
+                                                .size(128)
+                                                .build(),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            error = {
+                                                Box(
+                                                    contentAlignment = Alignment.Center,
+                                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                                ) {
+                                                    Icon(
+                                                        imageVector = MuzIcons.Rounded.MusicNote,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(32.dp),
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    )
+                                                }
+                                            },
+                                        )
+                                    },
+                                    trailingContent = {
+                                        Icon(
+                                            imageVector = MuzIcons.Rounded.DragHandle,
+                                            contentDescription = null,
+                                            modifier = Modifier.draggableHandle(),
+                                        )
+                                    },
+                                    modifier = Modifier,
+                                )
+                            }
                         }
                     }
                 }

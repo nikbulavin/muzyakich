@@ -87,6 +87,12 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
         }
     }
 
+    fun removeSong(song: Song) {
+        _songs.update { currentSongs ->
+            currentSongs.filter { it.mediaId != song.mediaId }
+        }
+    }
+
     fun reorderSongs(fromIndex: Int, toIndex: Int) {
         _songs.update { currentSongs ->
             currentSongs.toMutableList().apply {
