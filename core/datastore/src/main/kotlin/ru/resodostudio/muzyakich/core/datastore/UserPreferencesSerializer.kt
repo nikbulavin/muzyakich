@@ -10,7 +10,7 @@ import javax.inject.Inject
 /**
  * An [androidx.datastore.core.Serializer] for the [UserPreferences] proto.
  */
-class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferences> {
+internal class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferences> {
 
     override val defaultValue: UserPreferences = getCustomInstance()
 

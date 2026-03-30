@@ -12,16 +12,13 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -30,8 +27,6 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.surfaceColorAtElevation
@@ -44,9 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,11 +67,9 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.SouthKorea
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.UnitedStates
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Android
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.GraphicEq
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Language
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -262,72 +253,43 @@ private fun Appearance(
             titleRes = localesR.string.core_locales_appearance,
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
-        ListItem(
-            headlineContent = { Text(stringResource(localesR.string.core_locales_theme)) },
+        var shouldShowThemeDialog by rememberSaveable { mutableStateOf(false) }
+        val themeOptions = listOf(
+            stringResource(localesR.string.core_locales_system_default) to MuzIcons.Rounded.Android,
+            stringResource(localesR.string.core_locales_theme_light) to MuzIcons.Filled.LightMode,
+            stringResource(localesR.string.core_locales_theme_dark) to MuzIcons.Filled.DarkMode,
+        )
+        MuzListItem(
+            onClick = { shouldShowThemeDialog = true },
+            shapes = if (supportDynamicColor) {
+                ListItemDefaults.segmentedShapes(0, 2)
+            } else {
+                ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
+            },
+            content = { Text(stringResource(localesR.string.core_locales_theme)) },
             leadingContent = {
                 Icon(
                     imageVector = MuzIcons.Filled.Palette,
                     contentDescription = null,
                 )
             },
-            trailingContent = {
-                val themeOptions = listOf(
-                    stringResource(localesR.string.core_locales_system_default),
-                    stringResource(localesR.string.core_locales_theme_light),
-                    stringResource(localesR.string.core_locales_theme_dark),
+            supportingContent = {
+                Text(
+                    text = themeOptions[darkThemeConfig.ordinal].first,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
-                val uncheckedIcons = listOf(
-                    MuzIcons.Rounded.Android,
-                    MuzIcons.Rounded.LightMode,
-                    MuzIcons.Rounded.DarkMode,
-                )
-                val checkedIcons = listOf(
-                    MuzIcons.Rounded.Android,
-                    MuzIcons.Filled.LightMode,
-                    MuzIcons.Filled.DarkMode,
-                )
-                val selectedIndex = darkThemeConfig.ordinal
-                val hapticFeedback = LocalHapticFeedback.current
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-                ) {
-                    themeOptions.forEachIndexed { index, label ->
-                        ToggleButton(
-                            checked = selectedIndex == index,
-                            onCheckedChange = {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                onDarkThemeConfigUpdate(DarkThemeConfig.entries[index])
-                            },
-                            shapes = when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
-                            colors = ToggleButtonDefaults.toggleButtonColors().copy(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            ),
-                        ) {
-                            AnimatedIcon(
-                                icon = if (selectedIndex == index) checkedIcons[index] else uncheckedIcons[index],
-                                contentDescription = label,
-                                modifier = Modifier.size(ToggleButtonDefaults.IconSize),
-                            )
-                        }
-                    }
-                }
             },
-            modifier = Modifier.clip(
-                if (supportDynamicColor) {
-                    ListItemDefaults.segmentedShapes(0, 2).shape
-                } else {
-                    RoundedCornerShape(16.dp)
-                }
-            ),
-            colors = ListItemDefaults.segmentedColors(
-                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-            ),
         )
+        if (shouldShowThemeDialog) {
+            ThemeDialog(
+                themeConfig = darkThemeConfig,
+                themeOptions = themeOptions,
+                onThemeConfigUpdate = onDarkThemeConfigUpdate,
+                onDismiss = { shouldShowThemeDialog = false },
+            )
+        }
+
         if (supportDynamicColor) {
             MuzToggableListItem(
                 shapes = ListItemDefaults.segmentedShapes(1, 2),
