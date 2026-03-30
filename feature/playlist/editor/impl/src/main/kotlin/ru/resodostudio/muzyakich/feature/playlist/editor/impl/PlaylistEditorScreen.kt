@@ -158,9 +158,7 @@ private fun PlaylistEditorScreen(
                     if (fromKey != null && toKey != null) {
                         val fromIndex = playlistEditorUiState.songs.indexOfFirst { it.mediaId == fromKey }
                         val toIndex = playlistEditorUiState.songs.indexOfFirst { it.mediaId == toKey }
-                        if (fromIndex != -1 && toIndex != -1) {
-                            onReorderSongs(fromIndex, toIndex)
-                        }
+                        if (fromIndex != -1 && toIndex != -1) onReorderSongs(fromIndex, toIndex)
                     }
                 }
                 

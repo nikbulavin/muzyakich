@@ -202,27 +202,29 @@ fun LazyGridScope.songsInfo(
     songs: List<Song>,
     modifier: Modifier = Modifier,
 ) {
-    item(
-        span = { GridItemSpan(maxLineSpan) },
-    ) {
-        val count = pluralStringResource(localesR.plurals.core_locales_number_of_songs, songs.size, songs.size)
-        val overallDuration = songs
-            .sumOf { it.duration }
-            .asFormattedDuration()
-        val sizeOnDisk = Formatter.formatFileSize(
-            LocalContext.current,
-            songs.sumOf { it.size }.toLong(),
-        )
-        val songsInfo = listOf(count, overallDuration, sizeOnDisk)
-        Text(
-            text = songsInfo.joinToString(),
-            modifier = modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .animateItem(),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+    if (songs.isNotEmpty()) {
+        item(
+            span = { GridItemSpan(maxLineSpan) },
+        ) {
+            val count = pluralStringResource(localesR.plurals.core_locales_number_of_songs, songs.size, songs.size)
+            val overallDuration = songs
+                .sumOf { it.duration }
+                .asFormattedDuration()
+            val sizeOnDisk = Formatter.formatFileSize(
+                LocalContext.current,
+                songs.sumOf { it.size }.toLong(),
+            )
+            val songsInfo = listOf(count, overallDuration, sizeOnDisk)
+            Text(
+                text = songsInfo.joinToString(),
+                modifier = modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .animateItem(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
