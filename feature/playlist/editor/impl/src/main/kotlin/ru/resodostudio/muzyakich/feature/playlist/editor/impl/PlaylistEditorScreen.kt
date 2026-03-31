@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.feature.playlist.editor.impl
 
 import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -82,6 +81,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.feature.song.picker.SongPickerBottomSheet
 import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.ReorderableLazyListState
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -124,10 +124,6 @@ private fun PlaylistEditorScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pickMedia = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = onCoverSelected,
-    )
     var expanded by rememberSaveable { mutableStateOf(true) }
 
     Scaffold(
@@ -162,7 +158,7 @@ private fun PlaylistEditorScreen(
                     FloatingToolbar(
                         expanded = expanded,
                         onAddSongs = onAddSongs,
-                        pickMedia = pickMedia,
+                        onCoverSelected = onCoverSelected,
                         onSave = onSave,
                         saveButtonEnabled = playlistEditorUiState.title.isNotBlank(),
                         modifier = Modifier
@@ -220,91 +216,97 @@ private fun PlaylistEditorScreen(
                                 singleLine = true,
                             )
                         }
-                        itemsIndexed(
-                            items = playlistEditorUiState.songs,
-                            key = { _, song -> song.mediaId },
-                            contentType = { _, _ -> "Song" },
-                        ) { index, song ->
-                            ReorderableItem(
-                                state = reorderableLazyListState,
-                                key = song.mediaId,
-                            ) { _ ->
-                                SwipeableItem(
-                                    modifier = modifier,
-                                    startToEndSwipeAction = rememberRemoveFromPlaylistSwipeAction(
-                                        song,
-                                        onRemoveSong
-                                    ),
-                                    endToStartSwipeAction = rememberRemoveFromPlaylistSwipeAction(
-                                        song,
-                                        onRemoveSong
-                                    ),
-                                ) {
-                                    MuzSelectableListItem(
-                                        shapes = if (playlistEditorUiState.songs.size == 1) {
-                                            ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-                                        } else {
-                                            ListItemDefaults.segmentedShapes(
-                                                index,
-                                                playlistEditorUiState.songs.size
-                                            )
-                                        },
-                                        onClick = {},
-                                        selected = false,
-                                        content = {
-                                            Text(
-                                                text = song.title,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
-                                        },
-                                        supportingContent = {
-                                            Text(
-                                                text = song.artist,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
-                                        },
-                                        leadingContent = {
-                                            SubcomposeAsyncImage(
-                                                modifier = Modifier
-                                                    .size(56.dp)
-                                                    .clip(MaterialTheme.shapes.medium),
-                                                model = ImageRequest.Builder(LocalContext.current)
-                                                    .data(song.artworkUri)
-                                                    .size(128)
-                                                    .build(),
-                                                contentDescription = null,
-                                                contentScale = ContentScale.Crop,
-                                                error = {
-                                                    Box(
-                                                        contentAlignment = Alignment.Center,
-                                                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                                                    ) {
-                                                        Icon(
-                                                            imageVector = MuzIcons.Rounded.MusicNote,
-                                                            contentDescription = null,
-                                                            modifier = Modifier.size(32.dp),
-                                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                        )
-                                                    }
-                                                },
-                                            )
-                                        },
-                                        trailingContent = {
-                                            Icon(
-                                                imageVector = MuzIcons.Rounded.DragHandle,
-                                                contentDescription = null,
-                                                modifier = Modifier.draggableHandle(),
-                                            )
-                                        },
-                                        modifier = Modifier,
-                                    )
-                                }
-                            }
-                        }
+                        playlistSongs(
+                            songs = playlistEditorUiState.songs,
+                            reorderableLazyListState = reorderableLazyListState,
+                            modifier = modifier,
+                            onRemoveSong = onRemoveSong,
+                        )
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun LazyListScope.playlistSongs(
+    songs: List<Song>,
+    reorderableLazyListState: ReorderableLazyListState,
+    modifier: Modifier,
+    onRemoveSong: (Song) -> Unit,
+) {
+    itemsIndexed(
+        items = songs,
+        key = { _, song -> song.mediaId },
+        contentType = { _, _ -> "Song" },
+    ) { index, song ->
+        ReorderableItem(
+            state = reorderableLazyListState,
+            key = song.mediaId,
+        ) { _ ->
+            SwipeableItem(
+                modifier = modifier,
+                startToEndSwipeAction = rememberRemoveFromPlaylistSwipeAction(song, onRemoveSong),
+                endToStartSwipeAction = rememberRemoveFromPlaylistSwipeAction(song, onRemoveSong),
+            ) {
+                MuzSelectableListItem(
+                    shapes = if (songs.size == 1) {
+                        ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
+                    } else {
+                        ListItemDefaults.segmentedShapes(index, songs.size)
+                    },
+                    onClick = {},
+                    selected = false,
+                    content = {
+                        Text(
+                            text = song.title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            text = song.artist,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    leadingContent = {
+                        SubcomposeAsyncImage(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(MaterialTheme.shapes.medium),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(song.artworkUri)
+                                .size(128)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            error = {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.MusicNote,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(32.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            },
+                        )
+                    },
+                    trailingContent = {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.DragHandle,
+                            contentDescription = null,
+                            modifier = Modifier.draggableHandle(),
+                        )
+                    },
+                    modifier = Modifier,
+                )
             }
         }
     }
@@ -315,11 +317,15 @@ private fun PlaylistEditorScreen(
 private fun FloatingToolbar(
     expanded: Boolean,
     onAddSongs: (List<Song>) -> Unit,
-    pickMedia: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
+    onCoverSelected: (Uri?) -> Unit,
     onSave: () -> Unit,
     saveButtonEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val pickMedia = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = onCoverSelected,
+    )
     HorizontalFloatingToolbar(
         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
         modifier = modifier,
