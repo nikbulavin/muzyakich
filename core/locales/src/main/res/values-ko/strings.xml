@@ -31,11 +31,13 @@
     <string name="core_locales_feedback">피드백</string>
     <string name="core_locales_filters">필터</string>
     <string name="core_locales_general">일반</string>
+    <string name="core_locales_grant_permission">권한 허용</string>
     <string name="core_locales_high_quality">고화질</string>
     <string name="core_locales_install_update">업데이트 설치</string>
     <string name="core_locales_language">언어</string>
     <string name="core_locales_library_empty">아직 노래가 없습니다. 좋아하는 음악을 추가하고 감상하세요!</string>
     <string name="core_locales_licenses">라이선스</string>
+    <string name="core_locales_media_permission_rationale">애플리케이션을 계속 사용하려면 미디어 파일 읽기 권한을 허용해 주세요.</string>
     <string name="core_locales_more_options">추가 옵션</string>
     <string name="core_locales_move_to_trash">휴지통으로 이동</string>
     <string name="core_locales_move_to_trash_description">30일 후에 영구적으로 삭제됩니다</string>

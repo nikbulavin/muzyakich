@@ -31,11 +31,13 @@
     <string name="core_locales_feedback">Обратная связь</string>
     <string name="core_locales_filters">Фильтры</string>
     <string name="core_locales_general">Общие</string>
+    <string name="core_locales_grant_permission">Предоставить разрешение</string>
     <string name="core_locales_high_quality">Высокое качество</string>
     <string name="core_locales_install_update">Установить обновление</string>
     <string name="core_locales_language">Язык</string>
     <string name="core_locales_library_empty">У вас пока нет треков. Добавьте любимую музыку и наслаждайтесь прослушиванием!</string>
     <string name="core_locales_licenses">Лицензии</string>
+    <string name="core_locales_media_permission_rationale">Пожалуйста, предоставьте разрешение на чтение медиа файлов для продолжения использования приложения.</string>
     <string name="core_locales_more_options">Дополнительно</string>
     <string name="core_locales_move_to_trash">Переместить в корзину</string>
     <string name="core_locales_move_to_trash_description">Будет удален навсегда через 30 дней</string>

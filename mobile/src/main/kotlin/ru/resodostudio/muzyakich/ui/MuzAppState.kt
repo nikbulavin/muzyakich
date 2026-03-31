@@ -2,13 +2,9 @@ package ru.resodostudio.muzyakich.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -46,13 +42,6 @@ class MuzAppState(
     val navigationState: NavigationState,
     coroutineScope: CoroutineScope,
 ) {
-
-    val permissionState: PermissionState
-        @Composable get() = rememberMuzyakichPermissionState { isPermissionRequested = true }
-
-    var isPermissionRequested by mutableStateOf(false)
-        private set
-
     val nowPlayingState = musicServiceConnection.nowPlayingState
         .stateIn(
             scope = coroutineScope,

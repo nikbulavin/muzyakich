@@ -31,11 +31,13 @@
     <string name="core_locales_feedback">Feedback</string>
     <string name="core_locales_filters">Filters</string>
     <string name="core_locales_general">General</string>
+    <string name="core_locales_grant_permission">Grant permission</string>
     <string name="core_locales_high_quality">High quality</string>
     <string name="core_locales_install_update">Install update</string>
     <string name="core_locales_language">Language</string>
     <string name="core_locales_library_empty">You don\'t have any songs yet. Add your favorite music and enjoy listening!</string>
     <string name="core_locales_licenses">Licenses</string>
+    <string name="core_locales_media_permission_rationale">Please grant permission to read media files to continue using the application.</string>
     <string name="core_locales_more_options">More options</string>
     <string name="core_locales_move_to_trash">Move to trash</string>
     <string name="core_locales_move_to_trash_description">Will be permanently deleted after 30 days</string>
