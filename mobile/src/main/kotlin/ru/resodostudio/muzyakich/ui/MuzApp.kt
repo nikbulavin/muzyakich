@@ -56,6 +56,7 @@ import ru.resodostudio.muzyakich.feature.player.api.PlayerNavKey
 import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
 import ru.resodostudio.muzyakich.feature.player.impl.navigation.playerEntry
 import ru.resodostudio.muzyakich.feature.playlist.detail.impl.navigation.playlistEntry
+import ru.resodostudio.muzyakich.feature.playlist.editor.api.PlaylistEditorNavKey
 import ru.resodostudio.muzyakich.feature.playlist.editor.impl.navigation.playlistEditorEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
@@ -157,7 +158,9 @@ fun MuzApp(
             }
 
             AnimatedVisibility(
-                visible = PlayerNavKey !in appState.navigationState.backStack && player?.currentMediaItem != null,
+                visible = appState.navigationState.backStack.none {
+                    it is PlaylistEditorNavKey || it is PlayerNavKey
+                } && player?.currentMediaItem != null,
                 enter = fadeIn(motionScheme.defaultEffectsSpec()) +
                         scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
                         slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
