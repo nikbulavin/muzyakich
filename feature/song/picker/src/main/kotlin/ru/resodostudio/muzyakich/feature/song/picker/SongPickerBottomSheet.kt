@@ -4,28 +4,34 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,8 +51,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.cashsense.core.ui.LoadingState
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconButton
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
@@ -115,31 +119,51 @@ private fun SongPickerBottomSheet(
                             .zIndex(1f),
                         expanded = expanded,
                         content = {
-                            Spacer(modifier = Modifier.size(4.dp))
-                            MuzFilledIconButton(
-                                icon = MuzIcons.Rounded.Check,
-                                contentDescription = stringResource(localesR.string.core_locales_confirm),
-                                onClick = {
-                                    val selectedSongs = songPickerUiState.songs
-                                        .filter { it.mediaId in songPickerUiState.selectedSongs }
-                                    onSongsSelected(selectedSongs)
-                                    onDismiss()
-                                },
-                                enabled = songPickerUiState.selectedSongs.isNotEmpty(),
-                                containerSize = IconButtonDefaults.smallContainerSize(
-                                    IconButtonDefaults.IconButtonWidthOption.Wide,
+                            val okText = stringResource(localesR.string.core_locales_confirm)
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                    TooltipAnchorPosition.Above
                                 ),
-                            )
-                            Spacer(modifier = Modifier.size(4.dp))
+                                tooltip = { PlainTooltip { Text(okText) } },
+                                state = rememberTooltipState(),
+                                modifier = Modifier.padding(
+                                    end = if (expanded) 4.dp else 0.dp,
+                                ),
+                            ) {
+                                FilledIconButton(
+                                    modifier = Modifier.width(64.dp),
+                                    onClick = {
+                                        val selectedSongs = songPickerUiState.songs
+                                            .filter { it.mediaId in songPickerUiState.selectedSongs }
+                                        onSongsSelected(selectedSongs)
+                                        onDismiss()
+                                    },
+                                    enabled = songPickerUiState.selectedSongs.isNotEmpty(),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.Check,
+                                        contentDescription = okText,
+                                    )
+                                }
+                            }
                         },
                         leadingContent = {
-                            MuzIconButton(
-                                icon = MuzIcons.Rounded.Close,
-                                contentDescription = stringResource(localesR.string.core_locales_clear),
-                                onClick = onClearSelectedSongs,
-                                enabled = songPickerUiState.selectedSongs.isNotEmpty(),
-                            )
-                            Spacer(modifier = Modifier.size(4.dp))
+                            val clearText = stringResource(localesR.string.core_locales_clear)
+                            AppBarRow(
+                                modifier = Modifier.padding(end = 8.dp)
+                            ) {
+                                clickableItem(
+                                    onClick = onClearSelectedSongs,
+                                    icon = {
+                                        Icon(
+                                            imageVector = MuzIcons.Rounded.Close,
+                                            contentDescription = clearText,
+                                        )
+                                    },
+                                    label = clearText,
+                                    enabled = songPickerUiState.selectedSongs.isNotEmpty()
+                                )
+                            }
                         },
                     )
                     LazyColumn(
