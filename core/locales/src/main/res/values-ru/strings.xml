@@ -46,6 +46,8 @@
     <string name="core_locales_open_filter_menu">Открыть меню фильтров</string>
     <string name="core_locales_open_menu">Открыть меню</string>
     <string name="core_locales_pause_audio">Поставить на паузу</string>
+    <string name="core_locales_permanently_delete">Удалить навсегда?</string>
+    <string name="core_locales_permanently_delete_playlist_description">Вы уверены, что хотите удалить этот плейлист? Это действие нельзя отменить.</string>
     <string name="core_locales_play_audio">Врубить</string>
     <string name="core_locales_play_next">Воспроизвести далее</string>
     <string name="core_locales_playlists">Плейлисты</string>

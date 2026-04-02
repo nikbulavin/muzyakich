@@ -46,6 +46,8 @@
     <string name="core_locales_open_filter_menu">필터 메뉴 열기</string>
     <string name="core_locales_open_menu">메뉴 열기</string>
     <string name="core_locales_pause_audio">일시 정지</string>
+    <string name="core_locales_permanently_delete">영구적으로 삭제하시겠습니까?</string>
+    <string name="core_locales_permanently_delete_playlist_description">이 재생 목록을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</string>
     <string name="core_locales_play_audio">재생</string>
     <string name="core_locales_play_next">다음 곡 재생</string>
     <string name="core_locales_playlists">재생 목록</string>

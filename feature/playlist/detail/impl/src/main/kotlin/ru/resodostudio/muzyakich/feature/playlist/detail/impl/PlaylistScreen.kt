@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
@@ -32,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -66,7 +69,7 @@ import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DeleteForever
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Edit
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
@@ -336,6 +339,48 @@ private fun PlaylistDropdownMenu(
     onPlaylistDelete: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            icon = {
+                Icon(
+                    imageVector = MuzIcons.Filled.Delete,
+                    contentDescription = null,
+                )
+            },
+            title = {
+                Text(
+                    text = stringResource(localesR.string.core_locales_permanently_delete),
+                    textAlign = TextAlign.Center,
+                )
+            },
+            text = {
+                Text(stringResource(localesR.string.core_locales_permanently_delete_playlist_description))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        onPlaylistDelete()
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(localesR.string.core_locales_delete))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(localesR.string.core_locales_cancel))
+                }
+            },
+        )
+    }
+
     Box(
         modifier = Modifier.wrapContentSize(Alignment.TopStart),
     ) {
@@ -399,13 +444,13 @@ private fun PlaylistDropdownMenu(
                 shapes = MenuDefaults.itemShape(2, 3),
                 leadingIcon = {
                     Icon(
-                        imageVector = MuzIcons.Filled.DeleteForever,
+                        imageVector = MuzIcons.Filled.Delete,
                         modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                         contentDescription = null,
                     )
                 },
                 onClick = {
-                    onPlaylistDelete()
+                    showDeleteDialog = true
                     expanded = false
                 },
                 colors = MenuDefaults.selectableItemVibrantColors(),
