@@ -7,6 +7,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -173,8 +174,20 @@ private fun AlbumScreen(
                             album = albumUiState.album,
                         )
                         actionButtons(
-                            onPlaySongsClick = { onPlaySongsClick(albumUiState.album.songs, 0, false) },
-                            onShuffleSongsClick = { onPlaySongsClick(albumUiState.album.songs, 0, true) },
+                            onPlaySongsClick = {
+                                onPlaySongsClick(
+                                    albumUiState.album.songs,
+                                    0,
+                                    false
+                                )
+                            },
+                            onShuffleSongsClick = {
+                                onPlaySongsClick(
+                                    albumUiState.album.songs,
+                                    0,
+                                    true
+                                )
+                            },
                         )
                         groupedSongs(
                             songs = albumUiState.album.songs,
@@ -236,7 +249,12 @@ private fun LazyGridScope.groupedSongs(
                 isPlaying = isPlaying,
                 onSongMenuClick = onSongMenuClick,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
+                startToEndSwipeAction = { song ->
+                    rememberPlaylistPlaySwipeAction(
+                        song,
+                        onSongLeftToRightSwipe
+                    )
+                },
                 endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
             )
         }
@@ -248,7 +266,12 @@ private fun LazyGridScope.groupedSongs(
             isPlaying = isPlaying,
             onSongMenuClick = onSongMenuClick,
             modifier = Modifier.padding(horizontal = 16.dp),
-            startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
+            startToEndSwipeAction = { song ->
+                rememberPlaylistPlaySwipeAction(
+                    song,
+                    onSongLeftToRightSwipe
+                )
+            },
             endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
         )
     }
@@ -408,53 +431,60 @@ private fun AlbumTopAppBar(
     onRemoveSongsClick: (List<String>) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
-
-    ) {
-    val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
-    CenterAlignedTopAppBar(
-        title = {
-            AnimatedVisibility(
-                visible = isScrolled,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        },
-        navigationIcon = {
-            MuzFilledTonalIconButton(
-                icon = MuzIcons.Rounded.ArrowBack,
-                onClick = onBackClick,
-                contentDescription = stringResource(localesR.string.core_locales_back),
-                modifier = Modifier.padding(start = 8.dp),
-                tooltipPosition = TooltipAnchorPosition.Right,
-                colors = if (isScrolled) {
-                    IconButtonDefaults.iconButtonVibrantColors()
-                } else {
-                    IconButtonDefaults.filledTonalIconButtonColors()
+) {
+    with(LocalNavAnimatedContentScope.current) {
+        with(LocalSharedTransitionScope.current) {
+            val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
+            CenterAlignedTopAppBar(
+                title = {
+                    AnimatedVisibility(
+                        visible = isScrolled,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        Text(
+                            text = title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 },
-                containerSize = IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                navigationIcon = {
+                    MuzFilledTonalIconButton(
+                        icon = MuzIcons.Rounded.ArrowBack,
+                        onClick = onBackClick,
+                        contentDescription = stringResource(localesR.string.core_locales_back),
+                        modifier = Modifier.padding(start = 8.dp),
+                        tooltipPosition = TooltipAnchorPosition.Right,
+                        colors = if (isScrolled) {
+                            IconButtonDefaults.iconButtonVibrantColors()
+                        } else {
+                            IconButtonDefaults.filledTonalIconButtonColors()
+                        },
+                        containerSize = IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                    )
+                },
+                actions = {
+                    AlbumDropdownMenu(
+                        isScrolled = isScrolled,
+                        songs = songs,
+                        onPlaySongsNextClick = onPlaySongsNextClick,
+                        onRemoveSongsClick = onRemoveSongsClick,
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = containerColor,
+                    scrolledContainerColor = containerColor,
+                ),
+                scrollBehavior = scrollBehavior,
+                modifier = modifier
+                    .renderInSharedTransitionScopeOverlay(1f)
+                    .animateEnterExit(
+                        exit = fadeOut(snap()),
+                    ),
             )
-        },
-        actions = {
-            AlbumDropdownMenu(
-                isScrolled = isScrolled,
-                songs = songs,
-                onPlaySongsNextClick = onPlaySongsNextClick,
-                onRemoveSongsClick = onRemoveSongsClick,
-            )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = containerColor,
-            scrolledContainerColor = containerColor,
-        ),
-        scrollBehavior = scrollBehavior,
-        modifier = modifier,
-    )
+        }
+    }
 }
 
 @Composable
@@ -530,7 +560,9 @@ private fun AlbumDropdownMenu(
                             songs.map { it.mediaUri },
                             true,
                         )
-                        launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+                        launcher.launch(
+                            IntentSenderRequest.Builder(pendingIntent.intentSender).build()
+                        )
                     }
                 },
                 colors = MenuDefaults.selectableItemVibrantColors(),
