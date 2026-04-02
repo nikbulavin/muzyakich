@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -323,6 +324,19 @@ private fun LazyGridScope.header(album: Album) {
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .sharedBounds(
+                                rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = album.id.toString(),
+                                        origin = album.title,
+                                        type = SharedElementType.Title,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            ),
                     )
                     Text(
                         text = album.artist,
@@ -331,6 +345,19 @@ private fun LazyGridScope.header(album: Album) {
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .sharedBounds(
+                                rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = album.id.toString(),
+                                        origin = album.artist,
+                                        type = SharedElementType.Artist,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            ),
                     )
                     val labels = listOfNotNull(album.genre, album.year)
                     if (labels.isNotEmpty()) {

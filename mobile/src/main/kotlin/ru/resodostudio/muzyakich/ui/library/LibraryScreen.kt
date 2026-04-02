@@ -213,14 +213,14 @@ private fun LibraryScreen(
                     }
                     val motionScheme = MaterialTheme.motionScheme
                     AnimatedContent(
-                        targetState = navigationState,
+                        targetState = navigationState.currentKey,
                         transitionSpec = {
                             scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
                                     fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
                                     fadeOut(snap())
                         },
                     ) { state ->
-                        when (state.currentKey) {
+                        when (state) {
                             PlaylistsNavKey -> {
                                 PlaylistsEntry(onPlaylistClick)
                             }

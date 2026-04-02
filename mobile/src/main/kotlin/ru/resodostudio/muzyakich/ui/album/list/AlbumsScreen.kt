@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.ui.album.list
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -195,6 +196,19 @@ private fun AlbumCard(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .sharedBounds(
+                                rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = album.id.toString(),
+                                        origin = album.title,
+                                        type = SharedElementType.Title,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            ),
                     )
                     Text(
                         text = album.artist,
@@ -202,6 +216,19 @@ private fun AlbumCard(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .sharedBounds(
+                                rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = album.id.toString(),
+                                        origin = album.artist,
+                                        type = SharedElementType.Artist,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            ),
                     )
                 }
             }
