@@ -2,6 +2,7 @@ package ru.resodostudio.muzyakich.ui.library
 
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -59,8 +60,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.ui.NavDisplay
 import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
@@ -75,15 +74,14 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
-import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
-import ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation.playlistsEntry
+import ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation.PlaylistsEntry
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
-import ru.resodostudio.muzyakich.feature.song.list.impl.navigation.songsEntry
+import ru.resodostudio.muzyakich.feature.song.list.impl.navigation.SongsEntry
+import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsEntry
 import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsNavKey
-import ru.resodostudio.muzyakich.ui.album.list.navigation.albumsEntry
+import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsEntry
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsNavKey
-import ru.resodostudio.muzyakich.ui.artist.list.navigation.artistsEntry
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -173,7 +171,7 @@ private fun LibraryScreen(
                             )
                             .padding(bottom = bottomPadding)
                             .animateFloatingActionButton(
-                                visible = PlaylistsNavKey in navigationState.backStack,
+                                visible = PlaylistsNavKey == navigationState,
                                 alignment = Alignment.BottomEnd,
                             ),
                     ) {
@@ -213,34 +211,33 @@ private fun LibraryScreen(
                             )
                         }
                     }
-                    val entryProvider = entryProvider {
-                        playlistsEntry(onPlaylistClick)
-                        songsEntry(onSongMenuClick)
-                        albumsEntry(onAlbumClick)
-                        artistsEntry(onArtistClick)
-                    }
-
                     val motionScheme = MaterialTheme.motionScheme
-
-                    NavDisplay(
-                        entries = navigationState.toEntries(entryProvider),
-                        onBack = navigator::goBack,
+                    AnimatedContent(
+                        targetState = navigationState,
                         transitionSpec = {
                             scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
                                     fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
                                     fadeOut(snap())
                         },
-                        popTransitionSpec = {
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                                    fadeOut(snap())
-                        },
-                        predictivePopTransitionSpec = {
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                                    fadeOut(snap())
-                        },
-                    )
+                    ) { state ->
+                        when (state.currentKey) {
+                            PlaylistsNavKey -> {
+                                PlaylistsEntry(onPlaylistClick)
+                            }
+
+                            SongsNavKey -> {
+                                SongsEntry(onSongMenuClick)
+                            }
+
+                            AlbumsNavKey -> {
+                                AlbumsEntry(onAlbumClick)
+                            }
+
+                            ArtistsNavKey -> {
+                                ArtistsEntry(onArtistClick)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -295,7 +292,12 @@ private fun LibraryTopAppBar(
                         onClick = {
                             runCatching {
                                 if (inAppUpdateState is AppUpdateResult.Available) {
-                                    activity?.let { inAppUpdateState.startFlexibleUpdate(it, 1) }
+                                    activity?.let {
+                                        inAppUpdateState.startFlexibleUpdate(
+                                            it,
+                                            1
+                                        )
+                                    }
                                 }
                                 if (inAppUpdateState is AppUpdateResult.Downloaded) {
                                     scope.launch { inAppUpdateState.completeUpdate() }

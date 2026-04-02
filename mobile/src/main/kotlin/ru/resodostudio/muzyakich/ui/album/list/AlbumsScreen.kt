@@ -33,11 +33,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.cashsense.core.ui.EmptyState
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
+import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
+import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
+import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Album
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -128,52 +133,77 @@ private fun AlbumCard(
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        onClick = dropUnlessResumed { onClick(album.id) },
-        modifier = modifier,
-    ) {
-        Column {
-            SubcomposeAsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(MaterialTheme.shapes.medium),
-                model = album.songs.firstOrNull()?.artworkUri,
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-                error = {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                    ) {
-                        Icon(
-                            imageVector = MuzIcons.Rounded.Album,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(0.35f),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+    with(LocalSharedTransitionScope.current) {
+        OutlinedCard(
+            onClick = dropUnlessResumed { onClick(album.id) },
+            modifier = modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = album.id.toString(),
+                            origin = album.id.toString(),
+                            type = SharedElementType.Bounds,
+                        ),
+                    ),
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                ),
+        ) {
+            Column {
+                val artworkUri = album.songs.firstOrNull()?.artworkUri
+                SubcomposeAsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = album.id.toString(),
+                                    origin = artworkUri.toString(),
+                                    type = SharedElementType.Artwork,
+                                ),
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         )
-                    }
-                },
-            )
-            Column(
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Text(
-                    text = album.title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
+                        .clip(MaterialTheme.shapes.medium),
+                    model = artworkUri,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                    error = {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surfaceVariant),
+                        ) {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.Album,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(0.35f),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
                 )
-                Text(
-                    text = album.artist,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                Column(
+                    modifier = Modifier.padding(12.dp)
+                ) {
+                    Text(
+                        text = album.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Text(
+                        text = album.artist,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }

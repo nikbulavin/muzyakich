@@ -1,13 +1,11 @@
 package ru.resodostudio.muzyakich.ui.artist.list.navigation
 
-import androidx.navigation3.runtime.EntryProviderScope
-import androidx.navigation3.runtime.NavKey
+import androidx.compose.runtime.Composable
 import ru.resodostudio.muzyakich.ui.artist.list.ArtistsScreen
 
-fun EntryProviderScope<NavKey>.artistsEntry(onArtistClick: (Long) -> Unit) {
-    entry<ArtistsNavKey> {
-        ArtistsScreen(
-            onArtistClick = onArtistClick,
-        )
-    }
+@Composable
+fun ArtistsEntry(onArtistClick: (Long) -> Unit) {
+    ArtistsScreen(
+        onArtistClick = onArtistClick,
+    )
 }

@@ -1,13 +1,11 @@
 package ru.resodostudio.muzyakich.ui.album.list.navigation
 
-import androidx.navigation3.runtime.EntryProviderScope
-import androidx.navigation3.runtime.NavKey
+import androidx.compose.runtime.Composable
 import ru.resodostudio.muzyakich.ui.album.list.AlbumsScreen
 
-fun EntryProviderScope<NavKey>.albumsEntry(onAlbumClick: (Long) -> Unit) {
-    entry<AlbumsNavKey> {
-        AlbumsScreen(
-            onAlbumClick = onAlbumClick,
-        )
-    }
+@Composable
+fun AlbumsEntry(onAlbumClick: (Long) -> Unit) {
+    AlbumsScreen(
+        onAlbumClick = onAlbumClick,
+    )
 }
