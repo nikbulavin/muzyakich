@@ -161,6 +161,7 @@ private fun PlaylistScreen(
                     actionButtons(
                         onPlaySongsClick = { onPlaySongsClick(playlistUiState.playlist.songs, 0, false) },
                         onShuffleSongsClick = { onPlaySongsClick(playlistUiState.playlist.songs, 0, true) },
+                        enabled = playlistUiState.playlist.songs.isNotEmpty(),
                     )
                     songs(
                         songs = playlistUiState.playlist.songs,
@@ -252,6 +253,7 @@ private fun LazyGridScope.header(playlist: Playlist) {
 private fun LazyGridScope.actionButtons(
     onPlaySongsClick: () -> Unit,
     onShuffleSongsClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     item(
         span = { GridItemSpan(maxLineSpan) },
@@ -264,6 +266,7 @@ private fun LazyGridScope.actionButtons(
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             buttonSize = ButtonDefaults.MediumContainerHeight,
+            enabled = enabled,
         )
     }
 }

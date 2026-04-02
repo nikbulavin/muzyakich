@@ -126,6 +126,7 @@ private fun SongsScreen(
                     songs = songsUiState.songs,
                     onPlaySongsClick = onPlaySongsClick,
                     onFilterClick = { shouldShowFilterBottomSheet = true },
+                    enabled = songsUiState.songs.isNotEmpty(),
                 )
                 songs(
                     songs = songsUiState.songs,
@@ -149,6 +150,7 @@ private fun LazyGridScope.actionButtons(
     songs: List<Song>,
     onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
     onFilterClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     item(
         span = { GridItemSpan(maxLineSpan) },
@@ -166,6 +168,7 @@ private fun LazyGridScope.actionButtons(
                 onPlayClick = { onPlaySongsClick(songs, DEFAULT_INDEX, false) },
                 onShuffleClick = { onPlaySongsClick(songs, DEFAULT_INDEX, true) },
                 modifier = Modifier.weight(1f),
+                enabled = enabled,
             )
             MuzIconButton(
                 onClick = onFilterClick,

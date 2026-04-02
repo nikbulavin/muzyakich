@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -18,9 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -32,6 +29,7 @@ fun PlayShuffleButtonGroup(
     onShuffleClick: () -> Unit,
     modifier: Modifier = Modifier,
     buttonSize: Dp = ButtonDefaults.MinHeight,
+    enabled: Boolean = true,
 ) {
     val buttonContentPadding = ButtonDefaults.contentPaddingFor(
         buttonHeight = buttonSize,
@@ -39,13 +37,7 @@ fun PlayShuffleButtonGroup(
     )
     ButtonGroup(
         modifier = modifier,
-        overflowIndicator = { menuState ->
-            MuzIconButton(
-                onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
-                icon = MuzIcons.Rounded.MoreVert,
-                contentDescription = stringResource(localesR.string.core_locales_open_menu),
-            )
-        },
+        overflowIndicator = {},
     ) {
         customItem(
             buttonGroupContent = {
@@ -59,6 +51,7 @@ fun PlayShuffleButtonGroup(
                         .animateWidth(interactionSource),
                     contentPadding = buttonContentPadding,
                     interactionSource = interactionSource,
+                    enabled = enabled,
                 ) {
                     Icon(
                         imageVector = MuzIcons.Rounded.PlayArrow,
@@ -74,21 +67,7 @@ fun PlayShuffleButtonGroup(
                     )
                 }
             }
-        ) { state ->
-            DropdownMenuItem(
-                leadingIcon = {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.PlayArrow,
-                        contentDescription = null,
-                    )
-                },
-                text = { Text(stringResource(localesR.string.core_locales_play_audio)) },
-                onClick = {
-                    onPlayClick()
-                    state.dismiss()
-                },
-            )
-        }
+        ) {}
         customItem(
             buttonGroupContent = {
                 val interactionSource = remember { MutableInteractionSource() }
@@ -101,6 +80,7 @@ fun PlayShuffleButtonGroup(
                         .animateWidth(interactionSource),
                     contentPadding = buttonContentPadding,
                     interactionSource = interactionSource,
+                    enabled = enabled,
                 ) {
                     Icon(
                         imageVector = MuzIcons.Rounded.Shuffle,
@@ -116,20 +96,6 @@ fun PlayShuffleButtonGroup(
                     )
                 }
             }
-        ) { state ->
-            DropdownMenuItem(
-                leadingIcon = {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.Shuffle,
-                        contentDescription = null,
-                    )
-                },
-                text = { Text(stringResource(localesR.string.core_locales_shuffle)) },
-                onClick = {
-                    onShuffleClick()
-                    state.dismiss()
-                },
-            )
-        }
+        ) {}
     }
 }
