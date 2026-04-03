@@ -15,4 +15,6 @@ dependencies {
 
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
+
+    implementation(libs.androidx.navigation3.ui)
 }

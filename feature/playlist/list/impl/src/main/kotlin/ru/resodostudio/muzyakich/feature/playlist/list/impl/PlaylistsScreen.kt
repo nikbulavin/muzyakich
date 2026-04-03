@@ -33,11 +33,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import ru.resodostudio.cashsense.core.ui.EmptyState
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
+import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
+import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
+import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.data.Playlist
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -129,44 +134,77 @@ private fun PlaylistCard(
     onClick: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        onClick = dropUnlessResumed { onClick(playlist.uuid) },
-        modifier = modifier,
-    ) {
-        Column {
-            SubcomposeAsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(MaterialTheme.shapes.medium),
-                model = playlist.coverFilePath,
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-                error = {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                    ) {
-                        Icon(
-                            imageVector = MuzIcons.Rounded.LibraryMusic,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(0.35f),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+    with(LocalSharedTransitionScope.current) {
+        OutlinedCard(
+            onClick = dropUnlessResumed { onClick(playlist.uuid) },
+            modifier = modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = playlist.uuid.toString(),
+                            origin = playlist.uuid.toString(),
+                            type = SharedElementType.Bounds,
+                        ),
+                    ),
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                ),
+        ) {
+            Column {
+                SubcomposeAsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = playlist.uuid.toString(),
+                                    origin = playlist.coverFilePath.toString(),
+                                    type = SharedElementType.Artwork,
+                                ),
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         )
-                    }
-                },
-            )
-            Column(
-                modifier = Modifier.padding(12.dp),
-            ) {
+                        .clip(MaterialTheme.shapes.medium),
+                    model = playlist.coverFilePath,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                    error = {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surfaceVariant),
+                        ) {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.LibraryMusic,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(0.35f),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                )
                 Text(
                     text = playlist.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = playlist.uuid.toString(),
+                                    origin = playlist.title,
+                                    type = SharedElementType.Title,
+                                ),
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        ),
                 )
             }
         }
