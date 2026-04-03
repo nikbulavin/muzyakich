@@ -171,7 +171,7 @@ private fun LibraryScreen(
                             )
                             .padding(bottom = bottomPadding)
                             .animateFloatingActionButton(
-                                visible = PlaylistsNavKey == navigationState,
+                                visible = navigationState.currentKey is PlaylistsNavKey,
                                 alignment = Alignment.BottomEnd,
                             ),
                     ) {

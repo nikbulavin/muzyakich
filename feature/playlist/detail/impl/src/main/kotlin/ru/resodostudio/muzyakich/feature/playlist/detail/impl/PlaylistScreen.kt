@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.feature.playlist.detail.impl
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -234,6 +235,8 @@ private fun LazyGridScope.header(playlist: Playlist) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(bottom = 16.dp)
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
@@ -245,8 +248,6 @@ private fun LazyGridScope.header(playlist: Playlist) {
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         )
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
                         .drawWithCache {
                             val brush = Brush.verticalGradient(
                                 colors = listOf(brushColor, Color.Transparent),
@@ -342,52 +343,60 @@ private fun PlaylistTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 ) {
-    val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
-    CenterAlignedTopAppBar(
-        title = {
-            AnimatedVisibility(
-                visible = isScrolled,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        },
-        navigationIcon = {
-            MuzFilledTonalIconButton(
-                icon = MuzIcons.Rounded.ArrowBack,
-                onClick = onBackClick,
-                contentDescription = stringResource(localesR.string.core_locales_back),
-                modifier = Modifier.padding(start = 8.dp),
-                tooltipPosition = TooltipAnchorPosition.Right,
-                colors = if (isScrolled) {
-                    IconButtonDefaults.iconButtonVibrantColors()
-                } else {
-                    IconButtonDefaults.filledTonalIconButtonColors()
+    with(LocalNavAnimatedContentScope.current) {
+        with(LocalSharedTransitionScope.current) {
+            val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
+            CenterAlignedTopAppBar(
+                title = {
+                    AnimatedVisibility(
+                        visible = isScrolled,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        Text(
+                            text = title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 },
-                containerSize = IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                navigationIcon = {
+                    MuzFilledTonalIconButton(
+                        icon = MuzIcons.Rounded.ArrowBack,
+                        onClick = onBackClick,
+                        contentDescription = stringResource(localesR.string.core_locales_back),
+                        modifier = Modifier.padding(start = 8.dp),
+                        tooltipPosition = TooltipAnchorPosition.Right,
+                        colors = if (isScrolled) {
+                            IconButtonDefaults.iconButtonVibrantColors()
+                        } else {
+                            IconButtonDefaults.filledTonalIconButtonColors()
+                        },
+                        containerSize = IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                    )
+                },
+                actions = {
+                    PlaylistDropdownMenu(
+                        isScrolled = isScrolled,
+                        songs = songs,
+                        onPlaylistEdit = onPlaylistEdit,
+                        onPlaySongsNextClick = onPlaySongsNextClick,
+                        onPlaylistDelete = onPlaylistDelete,
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = containerColor,
+                    scrolledContainerColor = containerColor,
+                ),
+                scrollBehavior = scrollBehavior,
+                modifier = modifier
+                    .renderInSharedTransitionScopeOverlay(1f)
+                    .animateEnterExit(
+                        exit = fadeOut(snap()),
+                    ),
             )
-        },
-        actions = {
-            PlaylistDropdownMenu(
-                isScrolled = isScrolled,
-                songs = songs,
-                onPlaylistEdit = onPlaylistEdit,
-                onPlaySongsNextClick = onPlaySongsNextClick,
-                onPlaylistDelete = onPlaylistDelete,
-            )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = containerColor,
-            scrolledContainerColor = containerColor,
-        ),
-        scrollBehavior = scrollBehavior,
-        modifier = modifier,
-    )
+        }
+    }
 }
 
 @Composable
