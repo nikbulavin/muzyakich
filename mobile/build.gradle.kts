@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudio.muzyakich"
-        versionCode = 5
-        versionName = "1.0.0-alpha05"
+        versionCode = 6
+        versionName = "1.0.0-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
