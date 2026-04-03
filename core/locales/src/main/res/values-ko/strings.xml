@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="core_locales_app_name">뮤지큥</string>
+    <string name="core_locales_app_name">Muzyakich</string>
 
     <string name="core_locales_about">정보</string>
     <string name="core_locales_add_songs">노래 추가</string>

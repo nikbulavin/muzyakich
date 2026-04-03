@@ -219,26 +219,29 @@ fun MuzApp(
                         slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                 modifier = Modifier.align(Alignment.BottomCenter),
             ) {
-                NowPlayingBar(
-                    currentSong = player?.currentMediaItem!!.asSong(),
-                    player = player,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
-                        .padding(16.dp)
-                        .shadow(
-                            elevation = 6.dp,
-                            shape = MaterialTheme.shapes.largeIncreased,
-                            clip = true,
-                        )
-                        .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                            inputScale = HazeInputScale.Auto
-                            blurEnabled = true
-                            blurRadius = hazeBlurRadius
-                            noiseFactor = 0f
-                        },
-                    onClick = dropUnlessResumed { navigator.navigateToPlayer() },
-                )
+                with(LocalSharedTransitionScope.current) {
+                    NowPlayingBar(
+                        currentSong = player?.currentMediaItem!!.asSong(),
+                        player = player,
+                        modifier = Modifier
+                            .renderInSharedTransitionScopeOverlay(2f)
+                            .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
+                            .padding(16.dp)
+                            .shadow(
+                                elevation = 6.dp,
+                                shape = MaterialTheme.shapes.largeIncreased,
+                                clip = true,
+                            )
+                            .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                inputScale = HazeInputScale.Auto
+                                blurEnabled = true
+                                blurRadius = hazeBlurRadius
+                                noiseFactor = 0f
+                            },
+                        onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                    )
+                }
             }
         }
     }
