@@ -148,6 +148,7 @@ private fun AlbumCard(
                     ),
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                 ),
         ) {
             Column {

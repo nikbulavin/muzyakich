@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.feature.playlist.detail.impl
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -161,6 +162,7 @@ private fun PlaylistScreen(
                             ),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                         )
                         .nestedScroll(scrollBehavior.nestedScrollConnection),
                 ) { paddingValues ->

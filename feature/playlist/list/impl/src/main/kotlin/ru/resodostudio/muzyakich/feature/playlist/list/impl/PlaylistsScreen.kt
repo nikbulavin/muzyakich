@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.feature.playlist.list.impl
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -148,6 +149,7 @@ private fun PlaylistCard(
                     ),
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                 ),
         ) {
             Column {
