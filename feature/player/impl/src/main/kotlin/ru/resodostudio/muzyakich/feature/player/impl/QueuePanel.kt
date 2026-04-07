@@ -191,7 +191,7 @@ internal fun QueuePanel(
                                 },
                             ),
                             onClick = { onQueueItemClick(song.uid) },
-                            onDismiss = { onRemoveFromQueue(song.uid) },
+                            onRemoveFromQueue = { onRemoveFromQueue(song.uid) },
                             shapes = if (localPlayingQueue.size == 1) {
                                 ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
                             } else {

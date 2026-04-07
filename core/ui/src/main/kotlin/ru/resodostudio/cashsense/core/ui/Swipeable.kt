@@ -29,7 +29,9 @@ import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Remove
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlaylistRemove
+import ru.resodostudio.muzyakich.core.model.data.QueueSong
 import ru.resodostudio.muzyakich.core.model.data.Song
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -164,6 +166,20 @@ fun rememberPlaylistPlaySwipeAction(
         action = { onSwipe(song) },
     )
 }
+
+@Composable
+fun rememberRemoveFromQueueSwipeAction(
+    queueSong: QueueSong,
+    onRemove: (String) -> Unit,
+): SwipeAction {
+    return SwipeAction(
+        icon = MuzIcons.Filled.Remove,
+        backgroundColor = MaterialTheme.colorScheme.errorContainer,
+        iconColor = MaterialTheme.colorScheme.onErrorContainer,
+        action = { onRemove(queueSong.uid) },
+    )
+}
+
 
 data class SwipeAction(
     val icon: ImageVector,
