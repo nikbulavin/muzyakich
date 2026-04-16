@@ -37,7 +37,7 @@ internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() 
         is KotlinJvmProjectExtension -> compilerOptions
         else -> TODO("Unsupported project extension $this ${T::class}")
     }.apply {
-        jvmToolchain(17)
+        jvmToolchain(25)
         allWarningsAsErrors = warningsAsErrors
         freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
         freeCompilerArgs.add("-Xannotation-default-target=param-property")
