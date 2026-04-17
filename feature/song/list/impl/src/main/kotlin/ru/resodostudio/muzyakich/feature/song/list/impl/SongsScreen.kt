@@ -100,7 +100,7 @@ private fun SongsScreen(
             var shouldShowFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
 
             if (shouldShowFilterBottomSheet) {
-                FilterBottomSheet(
+                FilterDropdownMenu(
                     filterConfig = songsUiState.filterConfig,
                     onSortByUpdate = onSortByUpdate,
                     onSortOrderUpdate = onSortOrderUpdate,

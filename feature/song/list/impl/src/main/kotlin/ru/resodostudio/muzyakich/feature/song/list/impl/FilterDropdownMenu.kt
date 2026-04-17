@@ -49,7 +49,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
     ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
-internal fun FilterBottomSheet(
+internal fun FilterDropdownMenu(
     filterConfig: FilterConfig,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
