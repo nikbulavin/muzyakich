@@ -5,6 +5,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.rememberLifecycleOwner
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.get
@@ -17,7 +20,7 @@ import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy.Compan
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */
 @OptIn(ExperimentalMaterial3Api::class)
-internal class BottomSheetScene<T : Any>(
+internal data class BottomSheetScene<T : Any>(
     override val key: T,
     override val previousEntries: List<NavEntry<T>>,
     override val overlaidEntries: List<NavEntry<T>>,
@@ -32,12 +35,15 @@ internal class BottomSheetScene<T : Any>(
         val sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
         )
+        val lifecycleOwner = rememberLifecycleOwner()
         ModalBottomSheet(
             onDismissRequest = onBack,
             sheetState = sheetState,
             properties = modalBottomSheetProperties,
         ) {
-            entry.Content()
+            CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+                entry.Content()
+            }
         }
     }
 }
