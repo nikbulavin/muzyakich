@@ -18,12 +18,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,9 +31,7 @@ import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.cashsense.core.ui.songs
 import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
-import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FilterList
+import ru.resodostudio.muzyakich.core.model.data.FilterConfig
 import ru.resodostudio.muzyakich.core.model.data.Song
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
@@ -97,18 +91,6 @@ private fun SongsScreen(
         }
 
         is SongsUiState.Success -> {
-            var shouldShowFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
-
-            if (shouldShowFilterBottomSheet) {
-                FilterDropdownMenu(
-                    filterConfig = songsUiState.filterConfig,
-                    onSortByUpdate = onSortByUpdate,
-                    onSortOrderUpdate = onSortOrderUpdate,
-                    onDismiss = { shouldShowFilterBottomSheet = false },
-                    onToggleFilterFavorites = onToggleFilterFavorites,
-                )
-            }
-
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(300.dp),
                 contentPadding = PaddingValues(
@@ -125,8 +107,11 @@ private fun SongsScreen(
                 actionButtons(
                     songs = songsUiState.songs,
                     onPlaySongsClick = onPlaySongsClick,
-                    onFilterClick = { shouldShowFilterBottomSheet = true },
                     enabled = songsUiState.songs.isNotEmpty(),
+                    filterConfig = songsUiState.filterConfig,
+                    onSortByUpdate = onSortByUpdate,
+                    onSortOrderUpdate = onSortOrderUpdate,
+                    onToggleFilterFavorites = onToggleFilterFavorites,
                 )
                 songs(
                     songs = songsUiState.songs,
@@ -149,7 +134,10 @@ private fun SongsScreen(
 private fun LazyGridScope.actionButtons(
     songs: List<Song>,
     onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
-    onFilterClick: () -> Unit,
+    filterConfig: FilterConfig,
+    onSortByUpdate: (SortBy) -> Unit = {},
+    onSortOrderUpdate: (SortOrder) -> Unit = {},
+    onToggleFilterFavorites: (Boolean) -> Unit = {},
     enabled: Boolean = true,
 ) {
     item(
@@ -170,10 +158,11 @@ private fun LazyGridScope.actionButtons(
                 modifier = Modifier.weight(1f),
                 enabled = enabled,
             )
-            MuzIconButton(
-                onClick = onFilterClick,
-                icon = MuzIcons.Rounded.FilterList,
-                contentDescription = stringResource(localesR.string.core_locales_open_filter_menu),
+            FilterDropdownMenu(
+                filterConfig = filterConfig,
+                onSortByUpdate = onSortByUpdate,
+                onSortOrderUpdate = onSortOrderUpdate,
+                onToggleFilterFavorites = onToggleFilterFavorites,
                 modifier = Modifier.weight(1f),
             )
         }
