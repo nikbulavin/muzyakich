@@ -29,7 +29,6 @@ android {
             isShrinkResources = true
             applicationIdSuffix = MuzBuildType.RELEASE.applicationIdSuffix
             signingConfig = signingConfigs.named("debug").get()
-            baselineProfile.automaticGenerationDuringBuild = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -48,8 +47,13 @@ android {
 }
 
 baselineProfile {
-    automaticGenerationDuringBuild = false
     dexLayoutOptimization = true
+
+    variants {
+        register("prodRelease") {
+            automaticGenerationDuringBuild = true
+        }
+    }
 }
 
 dependencies {
