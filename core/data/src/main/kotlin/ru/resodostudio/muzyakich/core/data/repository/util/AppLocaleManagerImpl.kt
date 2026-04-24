@@ -11,15 +11,11 @@ internal class AppLocaleManagerImpl @Inject constructor() : AppLocaleManager {
     }
 
     override fun setAppLanguage(languageTag: String) {
-        runCatching {
-            val localeList = if (languageTag.isEmpty()) {
-                LocaleListCompat.getEmptyLocaleList()
-            } else {
-                LocaleListCompat.forLanguageTags(languageTag)
-            }
-            AppCompatDelegate.setApplicationLocales(localeList)
-        }.onFailure { exception ->
-            exception.printStackTrace()
+        val localeList = if (languageTag.isEmpty()) {
+            LocaleListCompat.getEmptyLocaleList()
+        } else {
+            LocaleListCompat.forLanguageTags(languageTag)
         }
+        AppCompatDelegate.setApplicationLocales(localeList)
     }
 }
