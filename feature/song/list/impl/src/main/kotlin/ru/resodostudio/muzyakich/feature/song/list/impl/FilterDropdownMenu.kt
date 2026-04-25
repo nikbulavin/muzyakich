@@ -24,7 +24,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,7 +35,6 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -68,7 +66,6 @@ internal fun FilterDropdownMenu(
         skipPartiallyExpanded = true,
     )
     val hapticFeedback = LocalHapticFeedback.current
-    val coroutineScope = rememberCoroutineScope()
     var shouldShowFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     MuzIconButton(
@@ -80,10 +77,7 @@ internal fun FilterDropdownMenu(
 
     if (shouldShowFilterBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = {
-                coroutineScope.launch { sheetState.hide() }
-                shouldShowFilterBottomSheet = false
-            },
+            onDismissRequest = { shouldShowFilterBottomSheet = false },
             sheetState = sheetState,
         ) {
             Column(
@@ -116,6 +110,7 @@ internal fun FilterDropdownMenu(
                                 iconSize = FilterChipDefaults.IconSize,
                             )
                         },
+                        shapes = FilterChipDefaults.shapes(),
                     )
                 }
 
