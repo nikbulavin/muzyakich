@@ -55,7 +55,6 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Feedback
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Flag
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Gavel
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Info
@@ -178,7 +177,7 @@ private fun General(
             Language(
                 code = "",
                 displayName = stringResource(localesR.string.core_locales_system_default),
-                icon = MuzIcons.Filled.Flag,
+                icon = MuzIcons.Rounded.Android,
             ),
             Language(
                 code = "en",
