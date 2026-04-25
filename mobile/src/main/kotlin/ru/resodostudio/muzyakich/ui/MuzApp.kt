@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -121,7 +122,7 @@ fun MuzApp(
         ) {
             val hazeState = rememberHazeState()
             val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
             )
             val hazeBlurRadius = 32.dp
 
@@ -230,7 +231,7 @@ fun MuzApp(
                             .padding(16.dp)
                             .shadow(
                                 elevation = 6.dp,
-                                shape = MaterialTheme.shapes.largeIncreased,
+                                shape = CircleShape,
                                 clip = true,
                             )
                             .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
