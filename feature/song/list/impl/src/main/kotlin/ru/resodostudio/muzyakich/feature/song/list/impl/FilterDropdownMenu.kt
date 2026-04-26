@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemShapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -77,7 +79,7 @@ internal fun FilterDropdownMenu(
                     checked = filterConfig.shouldFilterFavorites,
                     onCheckedChange = { checked ->
                         hapticFeedback.performHapticFeedback(
-                            if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                            if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff,
                         )
                         onToggleFilterFavorites(checked)
                     },
@@ -105,215 +107,150 @@ internal fun FilterDropdownMenu(
                 shapes = MenuDefaults.groupShape(1, 2),
                 containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
-                Box {
-                    val itemInteractionSource = remember { MutableInteractionSource() }
-                    val itemHovered by itemInteractionSource.collectIsHoveredAsState()
-                    var itemChecked by remember { mutableStateOf(false) }
+                FilterSubMenu(
+                    label = stringResource(localesR.string.core_locales_sort_by),
+                    leadingIcon = MuzIcons.Rounded.Sort,
+                    supportingText = if (filterConfig.sortBy == SortBy.TITLE) {
+                        stringResource(localesR.string.core_locales_title)
+                    } else {
+                        stringResource(localesR.string.core_locales_artist)
+                    },
+                    options = listOf(
+                        SubMenuOption(
+                            value = SortBy.ARTIST,
+                            label = stringResource(localesR.string.core_locales_artist),
+                            icon = MuzIcons.Filled.Artist,
+                        ),
+                        SubMenuOption(
+                            value = SortBy.TITLE,
+                            label = stringResource(localesR.string.core_locales_title),
+                            icon = MuzIcons.Rounded.Title,
+                        ),
+                    ),
+                    selectedValue = filterConfig.sortBy,
+                    onOptionSelected = onSortByUpdate,
+                    shapes = MenuDefaults.itemShape(1, 3),
+                )
+                FilterSubMenu(
+                    label = stringResource(localesR.string.core_locales_sort_order),
+                    leadingIcon = MuzIcons.Rounded.SortByAlpha,
+                    supportingText = if (filterConfig.sortOrder == SortOrder.DESCENDING) {
+                        stringResource(localesR.string.core_locales_sort_order_descending)
+                    } else {
+                        stringResource(localesR.string.core_locales_sort_order_ascending)
+                    },
+                    options = listOf(
+                        SubMenuOption(
+                            value = SortOrder.ASCENDING,
+                            label = stringResource(localesR.string.core_locales_sort_order_ascending),
+                            icon = MuzIcons.Rounded.ArrowUpwardAlt,
+                        ),
+                        SubMenuOption(
+                            value = SortOrder.DESCENDING,
+                            label = stringResource(localesR.string.core_locales_sort_order_descending),
+                            icon = MuzIcons.Rounded.ArrowDownwardAlt,
+                        ),
+                    ),
+                    selectedValue = filterConfig.sortOrder,
+                    onOptionSelected = onSortOrderUpdate,
+                    shapes = MenuDefaults.itemShape(2, 3),
+                )
+            }
+        }
+    }
+}
+
+private data class SubMenuOption<T>(
+    val value: T,
+    val label: String,
+    val icon: ImageVector,
+)
+
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
+@Composable
+private fun <T> FilterSubMenu(
+    label: String,
+    leadingIcon: ImageVector,
+    supportingText: String,
+    options: List<SubMenuOption<T>>,
+    selectedValue: T,
+    onOptionSelected: (T) -> Unit,
+    shapes: MenuItemShapes,
+) {
+    val hapticFeedback = LocalHapticFeedback.current
+    val itemInteractionSource = remember { MutableInteractionSource() }
+    val itemHovered by itemInteractionSource.collectIsHoveredAsState()
+    var itemChecked by remember { mutableStateOf(false) }
+    val colors = MenuDefaults.selectableItemVibrantColors()
+
+    Box {
+        DropdownMenuItem(
+            selected = false,
+            interactionSource = itemInteractionSource,
+            text = { Text(label) },
+            shapes = shapes,
+            leadingIcon = {
+                Icon(
+                    imageVector = leadingIcon,
+                    modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                    contentDescription = null,
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = MuzIcons.Rounded.ArrowRight,
+                    modifier = Modifier.size(MenuDefaults.TrailingIconSize),
+                    contentDescription = null,
+                )
+            },
+            onClick = { itemChecked = !itemChecked },
+            colors = colors,
+            supportingText = { Text(supportingText) },
+        )
+
+        DropdownMenuPopup(
+            popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
+                MenuAnchorPosition.End,
+            ),
+            expanded = itemChecked || itemHovered,
+            onDismissRequest = { itemChecked = false },
+            properties = PopupProperties(focusable = false),
+        ) {
+            DropdownMenuGroup(
+                shapes = MenuDefaults.groupShape(0, 1),
+                interactionSource = itemInteractionSource,
+                containerColor = MenuDefaults.groupVibrantContainerColor,
+            ) {
+                options.forEachIndexed { index, option ->
                     DropdownMenuItem(
-                        selected = false,
-                        interactionSource = itemInteractionSource,
-                        text = { Text(stringResource(localesR.string.core_locales_sort_by)) },
-                        shapes = MenuDefaults.itemShape(1, 3),
+                        selected = selectedValue == option.value,
+                        onClick = {
+                            if (selectedValue != option.value) {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            }
+                            onOptionSelected(option.value)
+                        },
+                        text = { Text(option.label) },
+                        shapes = MenuDefaults.itemShape(index, options.size),
                         leadingIcon = {
                             Icon(
-                                imageVector = MuzIcons.Rounded.Sort,
+                                imageVector = option.icon,
                                 modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                                 contentDescription = null,
                             )
                         },
-                        trailingIcon = {
+                        selectedLeadingIcon = {
                             Icon(
-                                imageVector = MuzIcons.Rounded.ArrowRight,
-                                modifier = Modifier.size(MenuDefaults.TrailingIconSize),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = { itemChecked = !itemChecked },
-                        colors = colors,
-                        supportingText = {
-                            Text(
-                                text = if (filterConfig.sortBy == SortBy.TITLE) {
-                                    stringResource(localesR.string.core_locales_title)
-                                } else {
-                                    stringResource(localesR.string.core_locales_artist)
-                                },
-                            )
-                        },
-                    )
-
-                    DropdownMenuPopup(
-                        popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
-                            MenuAnchorPosition.End
-                        ),
-                        expanded = itemChecked || itemHovered,
-                        onDismissRequest = { itemChecked = false },
-                        properties = PopupProperties(focusable = false),
-                    ) {
-                        DropdownMenuGroup(
-                            shapes = MenuDefaults.groupShape(0, 1),
-                            interactionSource = itemInteractionSource,
-                            containerColor = MenuDefaults.groupVibrantContainerColor,
-                        ) {
-                            val colors = MenuDefaults.selectableItemVibrantColors()
-                            DropdownMenuItem(
-                                selected = filterConfig.sortBy == SortBy.ARTIST,
-                                onClick = {
-                                    if (filterConfig.sortBy != SortBy.ARTIST) {
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                    }
-                                    onSortByUpdate(SortBy.ARTIST)
-                                },
-                                text = { Text(stringResource(localesR.string.core_locales_artist)) },
-                                shapes = MenuDefaults.itemShape(0, 2),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Filled.Artist,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                selectedLeadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.Check,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                colors = colors,
-                            )
-                            DropdownMenuItem(
-                                selected = filterConfig.sortBy == SortBy.TITLE,
-                                onClick = {
-                                    if (filterConfig.sortBy != SortBy.TITLE) {
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                    }
-                                    onSortByUpdate(SortBy.TITLE)
-                                },
-                                text = { Text(stringResource(localesR.string.core_locales_title)) },
-                                shapes = MenuDefaults.itemShape(1, 2),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.Title,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                selectedLeadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.Check,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                colors = colors,
-                            )
-                        }
-                    }
-                }
-                Box {
-                    val itemInteractionSource = remember { MutableInteractionSource() }
-                    val itemHovered by itemInteractionSource.collectIsHoveredAsState()
-                    var itemChecked by remember { mutableStateOf(false) }
-                    DropdownMenuItem(
-                        selected = false,
-                        interactionSource = itemInteractionSource,
-                        text = { Text(stringResource(localesR.string.core_locales_sort_order)) },
-                        shapes = MenuDefaults.itemShape(2, 3),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.SortByAlpha,
+                                imageVector = MuzIcons.Rounded.Check,
                                 modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                                 contentDescription = null,
                             )
                         },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.ArrowRight,
-                                modifier = Modifier.size(MenuDefaults.TrailingIconSize),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = { itemChecked = !itemChecked },
                         colors = colors,
-                        supportingText = {
-                            Text(
-                                text = if (filterConfig.sortOrder == SortOrder.DESCENDING) {
-                                    stringResource(localesR.string.core_locales_sort_order_descending)
-                                } else {
-                                    stringResource(localesR.string.core_locales_sort_order_ascending)
-                                },
-                            )
-                        },
                     )
-
-                    DropdownMenuPopup(
-                        popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
-                            MenuAnchorPosition.End
-                        ),
-                        expanded = itemChecked || itemHovered,
-                        onDismissRequest = { itemChecked = false },
-                        properties = PopupProperties(focusable = false),
-                    ) {
-                        DropdownMenuGroup(
-                            shapes = MenuDefaults.groupShape(0, 1),
-                            interactionSource = itemInteractionSource,
-                            containerColor = MenuDefaults.groupVibrantContainerColor,
-                        ) {
-                            val colors = MenuDefaults.selectableItemVibrantColors()
-                            DropdownMenuItem(
-                                selected = filterConfig.sortOrder == SortOrder.ASCENDING,
-                                onClick = {
-                                    if (filterConfig.sortOrder != SortOrder.ASCENDING) {
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                    }
-                                    onSortOrderUpdate(SortOrder.ASCENDING)
-                                },
-                                text = { Text(stringResource(localesR.string.core_locales_sort_order_ascending)) },
-                                shapes = MenuDefaults.itemShape(0, 2),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.ArrowUpwardAlt,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                selectedLeadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.Check,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                colors = colors,
-                            )
-                            DropdownMenuItem(
-                                selected = filterConfig.sortOrder == SortOrder.DESCENDING,
-                                onClick = {
-                                    if (filterConfig.sortOrder != SortOrder.DESCENDING) {
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                    }
-                                    onSortOrderUpdate(SortOrder.DESCENDING)
-                                },
-                                text = { Text(stringResource(localesR.string.core_locales_sort_order_descending)) },
-                                shapes = MenuDefaults.itemShape(1, 2),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.ArrowDownwardAlt,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                selectedLeadingIcon = {
-                                    Icon(
-                                        imageVector = MuzIcons.Rounded.Check,
-                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                        contentDescription = null,
-                                    )
-                                },
-                                colors = colors,
-                            )
-                        }
-                    }
                 }
             }
         }
