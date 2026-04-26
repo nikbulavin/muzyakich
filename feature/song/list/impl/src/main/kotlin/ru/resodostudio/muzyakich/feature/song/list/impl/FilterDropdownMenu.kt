@@ -3,6 +3,8 @@ package ru.resodostudio.muzyakich.feature.song.list.impl
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -53,7 +55,6 @@ internal fun FilterDropdownMenu(
     onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    val groupInteractionSource = remember { MutableInteractionSource() }
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -63,16 +64,15 @@ internal fun FilterDropdownMenu(
             contentDescription = stringResource(localesR.string.core_locales_open_filter_menu),
             modifier = modifier,
         )
+        val colors = MenuDefaults.selectableItemVibrantColors()
         DropdownMenuPopup(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuGroup(
-                shapes = MenuDefaults.groupShape(0, 1),
-                interactionSource = groupInteractionSource,
+                shapes = MenuDefaults.groupShape(0, 2),
                 containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
-                val colors = MenuDefaults.selectableItemVibrantColors()
                 DropdownMenuItem(
                     checked = filterConfig.shouldFilterFavorites,
                     onCheckedChange = { checked ->
@@ -99,6 +99,12 @@ internal fun FilterDropdownMenu(
                     },
                     colors = colors,
                 )
+            }
+            Spacer(Modifier.height(MenuDefaults.GroupSpacing))
+            DropdownMenuGroup(
+                shapes = MenuDefaults.groupShape(1, 2),
+                containerColor = MenuDefaults.groupVibrantContainerColor,
+            ) {
                 Box {
                     val itemInteractionSource = remember { MutableInteractionSource() }
                     val itemHovered by itemInteractionSource.collectIsHoveredAsState()
