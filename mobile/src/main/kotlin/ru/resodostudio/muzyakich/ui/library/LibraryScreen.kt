@@ -175,7 +175,10 @@ private fun LibraryScreen(
                                 alignment = Alignment.BottomEnd,
                             ),
                     ) {
-                        FloatingActionButton(onClick = onNewPlaylistClick) {
+                        FloatingActionButton(
+                            onClick = onNewPlaylistClick,
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ) {
                             Icon(
                                 imageVector = MuzIcons.Rounded.Add,
                                 contentDescription = contentDescription,
