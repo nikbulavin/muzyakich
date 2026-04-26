@@ -60,7 +60,10 @@ internal fun FilterDropdownMenu(
             contentDescription = stringResource(localesR.string.core_locales_open_filter_menu),
             modifier = modifier,
         )
-        DropdownMenuPopup(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DropdownMenuPopup(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
             DropdownMenuGroup(
                 shapes = MenuDefaults.groupShape(0, 1),
                 interactionSource = groupInteractionSource,
@@ -118,6 +121,15 @@ internal fun FilterDropdownMenu(
                         },
                         onClick = { itemChecked = !itemChecked },
                         colors = colors,
+                        supportingText = {
+                            Text(
+                                text = if (filterConfig.sortBy == SortBy.TITLE) {
+                                    stringResource(localesR.string.core_locales_title)
+                                } else {
+                                    stringResource(localesR.string.core_locales_artist)
+                                },
+                            )
+                        },
                     )
 
                     DropdownMenuPopup(
@@ -156,6 +168,15 @@ internal fun FilterDropdownMenu(
                         },
                         onClick = { itemChecked = !itemChecked },
                         colors = colors,
+                        supportingText = {
+                            Text(
+                                text = if (filterConfig.sortOrder == SortOrder.DESCENDING) {
+                                    stringResource(localesR.string.core_locales_sort_order_descending)
+                                } else {
+                                    stringResource(localesR.string.core_locales_sort_order_ascending)
+                                },
+                            )
+                        },
                     )
 
                     DropdownMenuPopup(
