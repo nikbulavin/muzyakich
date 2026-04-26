@@ -25,12 +25,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.PopupProperties
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowRight
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FilterList
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Sort
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SortByAlpha
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Title
 import ru.resodostudio.muzyakich.core.model.data.FilterConfig
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
@@ -49,7 +51,6 @@ internal fun FilterDropdownMenu(
     onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-
     val groupInteractionSource = remember { MutableInteractionSource() }
     var expanded by remember { mutableStateOf(false) }
 
@@ -140,7 +141,65 @@ internal fun FilterDropdownMenu(
                         onDismissRequest = { itemChecked = false },
                         properties = PopupProperties(focusable = false),
                     ) {
-
+                        DropdownMenuGroup(
+                            shapes = MenuDefaults.groupShape(0, 1),
+                            interactionSource = itemInteractionSource,
+                            containerColor = MenuDefaults.groupVibrantContainerColor,
+                        ) {
+                            val colors = MenuDefaults.selectableItemVibrantColors()
+                            DropdownMenuItem(
+                                selected = filterConfig.sortBy == SortBy.ARTIST,
+                                onClick = {
+                                    if (filterConfig.sortBy != SortBy.ARTIST) {
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                    }
+                                    onSortByUpdate(SortBy.ARTIST)
+                                },
+                                text = { Text(stringResource(localesR.string.core_locales_artist)) },
+                                shapes = MenuDefaults.itemShape(0, 2),
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = MuzIcons.Filled.Artist,
+                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                        contentDescription = null,
+                                    )
+                                },
+                                selectedLeadingIcon = {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.Check,
+                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                        contentDescription = null,
+                                    )
+                                },
+                                colors = colors,
+                            )
+                            DropdownMenuItem(
+                                selected = filterConfig.sortBy == SortBy.TITLE,
+                                onClick = {
+                                    if (filterConfig.sortBy != SortBy.TITLE) {
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                    }
+                                    onSortByUpdate(SortBy.TITLE)
+                                },
+                                text = { Text(stringResource(localesR.string.core_locales_title)) },
+                                shapes = MenuDefaults.itemShape(1, 2),
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.Title,
+                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                        contentDescription = null,
+                                    )
+                                },
+                                selectedLeadingIcon = {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.Check,
+                                        modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                        contentDescription = null,
+                                    )
+                                },
+                                colors = colors,
+                            )
+                        }
                     }
                 }
                 Box {
