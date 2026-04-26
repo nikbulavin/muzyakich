@@ -1,50 +1,36 @@
 package ru.resodostudio.muzyakich.feature.song.list.impl
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorPosition
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.TonalToggleButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
+import androidx.compose.ui.window.PopupProperties
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
-import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowDownwardAlt
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowUpwardAlt
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowRight
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FilterList
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Title
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Sort
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SortByAlpha
 import ru.resodostudio.muzyakich.core.model.data.FilterConfig
 import ru.resodostudio.muzyakich.core.model.data.SortBy
 import ru.resodostudio.muzyakich.core.model.data.SortOrder
@@ -62,156 +48,125 @@ internal fun FilterDropdownMenu(
     onSortByUpdate: (SortBy) -> Unit = {},
     onSortOrderUpdate: (SortOrder) -> Unit = {},
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
     val hapticFeedback = LocalHapticFeedback.current
-    var shouldShowFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
 
-    MuzIconButton(
-        onClick = { shouldShowFilterBottomSheet = true },
-        icon = MuzIcons.Rounded.FilterList,
-        contentDescription = stringResource(localesR.string.core_locales_open_filter_menu),
-        modifier = modifier,
-    )
+    val groupInteractionSource = remember { MutableInteractionSource() }
+    var expanded by remember { mutableStateOf(false) }
 
-    if (shouldShowFilterBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { shouldShowFilterBottomSheet = false },
-            sheetState = sheetState,
-        ) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+    Box {
+        MuzIconButton(
+            onClick = { expanded = true },
+            icon = MuzIcons.Rounded.FilterList,
+            contentDescription = stringResource(localesR.string.core_locales_open_filter_menu),
+            modifier = modifier,
+        )
+        DropdownMenuPopup(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuGroup(
+                shapes = MenuDefaults.groupShape(0, 1),
+                interactionSource = groupInteractionSource,
+                containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
-                Text(
-                    text = stringResource(localesR.string.core_locales_filters),
-                    style = MaterialTheme.typography.titleMedium,
+                val colors = MenuDefaults.selectableItemVibrantColors()
+                DropdownMenuItem(
+                    checked = filterConfig.shouldFilterFavorites,
+                    onCheckedChange = { checked ->
+                        hapticFeedback.performHapticFeedback(
+                            if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                        )
+                        onToggleFilterFavorites(checked)
+                    },
+                    text = { Text(stringResource(localesR.string.core_locales_favorites)) },
+                    shapes = MenuDefaults.itemShape(0, 3),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = MuzIcons.Filled.Star,
+                            modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                            contentDescription = null,
+                        )
+                    },
+                    checkedLeadingIcon = {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.Check,
+                            modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                            contentDescription = null,
+                        )
+                    },
+                    colors = colors,
                 )
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(bottom = 8.dp),
-                ) {
-                    val selected = filterConfig.shouldFilterFavorites
-                    FilterChip(
-                        selected = selected,
-                        onClick = {
-                            hapticFeedback.performHapticFeedback(
-                                if (selected) HapticFeedbackType.ToggleOff else HapticFeedbackType.ToggleOn
-                            )
-                            onToggleFilterFavorites(!selected)
-                        },
-                        label = { Text(stringResource(localesR.string.core_locales_favorites)) },
+                Box {
+                    val itemInteractionSource = remember { MutableInteractionSource() }
+                    val itemHovered by itemInteractionSource.collectIsHoveredAsState()
+                    var itemChecked by remember { mutableStateOf(false) }
+                    DropdownMenuItem(
+                        selected = false,
+                        interactionSource = itemInteractionSource,
+                        text = { Text(stringResource(localesR.string.core_locales_sort_by)) },
+                        shapes = MenuDefaults.itemShape(1, 3),
                         leadingIcon = {
-                            AnimatedIcon(
-                                icon = if (selected) MuzIcons.Rounded.Check else MuzIcons.Filled.Star,
-                                iconSize = FilterChipDefaults.IconSize,
+                            Icon(
+                                imageVector = MuzIcons.Rounded.Sort,
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                contentDescription = null,
                             )
                         },
-                        shapes = FilterChipDefaults.shapes(),
+                        trailingIcon = {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.ArrowRight,
+                                modifier = Modifier.size(MenuDefaults.TrailingIconSize),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = { itemChecked = !itemChecked },
+                        colors = colors,
                     )
-                }
 
-                Text(
-                    text = stringResource(localesR.string.core_locales_sort_by),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                val sortByOptions = listOf(
-                    stringResource(localesR.string.core_locales_artist),
-                    stringResource(localesR.string.core_locales_title),
-                )
-                val sortByIcons = listOf(MuzIcons.Filled.Artist, MuzIcons.Rounded.Title)
+                    DropdownMenuPopup(
+                        popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
+                            MenuAnchorPosition.End
+                        ),
+                        expanded = itemChecked || itemHovered,
+                        onDismissRequest = { itemChecked = false },
+                        properties = PopupProperties(focusable = false),
+                    ) {
 
-                Row(
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-                ) {
-                    sortByOptions.forEachIndexed { index, label ->
-                        val checked = filterConfig.sortBy.ordinal == index
-                        TonalToggleButton(
-                            checked = checked,
-                            onCheckedChange = {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                onSortByUpdate(SortBy.entries[index])
-                            },
-                            modifier = Modifier
-                                .semantics { role = Role.RadioButton }
-                                .weight(1f),
-                            shapes = when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                sortByOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                buttonHeight = ToggleButtonDefaults.MinHeight,
-                                hasStartIcon = true,
-                            ),
-                        ) {
-                            AnimatedIcon(
-                                icon = if (checked) MuzIcons.Rounded.Check else sortByIcons[index],
-                                iconSize = ToggleButtonDefaults.IconSize,
-                            )
-                            Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
-                            Text(
-                                text = label,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
                     }
                 }
-
-                Text(
-                    text = stringResource(localesR.string.core_locales_sort_order),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                val sortOrderOptions = listOf(
-                    stringResource(localesR.string.core_locales_sort_order_ascending),
-                    stringResource(localesR.string.core_locales_sort_order_descending),
-                )
-                val sortOrderIcons = listOf(
-                    MuzIcons.Rounded.ArrowUpwardAlt,
-                    MuzIcons.Rounded.ArrowDownwardAlt,
-                )
-
-                Row(
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-                ) {
-                    sortOrderOptions.forEachIndexed { index, label ->
-                        val checked = filterConfig.sortOrder.ordinal == index
-                        TonalToggleButton(
-                            checked = checked,
-                            onCheckedChange = {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                onSortOrderUpdate(SortOrder.entries[index])
-                            },
-                            modifier = Modifier
-                                .semantics { role = Role.RadioButton }
-                                .weight(1f),
-                            shapes = when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                sortByOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                buttonHeight = ToggleButtonDefaults.MinHeight,
-                                hasStartIcon = true,
-                            ),
-                        ) {
-                            AnimatedIcon(
-                                icon = if (checked) MuzIcons.Rounded.Check else sortOrderIcons[index],
-                                iconSize = ToggleButtonDefaults.IconSize,
+                Box {
+                    val itemInteractionSource = remember { MutableInteractionSource() }
+                    val itemHovered by itemInteractionSource.collectIsHoveredAsState()
+                    var itemChecked by remember { mutableStateOf(false) }
+                    DropdownMenuItem(
+                        selected = false,
+                        interactionSource = itemInteractionSource,
+                        text = { Text(stringResource(localesR.string.core_locales_sort_order)) },
+                        shapes = MenuDefaults.itemShape(2, 3),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.SortByAlpha,
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                contentDescription = null,
                             )
-                            Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
-                            Text(
-                                text = label,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = MuzIcons.Rounded.ArrowRight,
+                                modifier = Modifier.size(MenuDefaults.TrailingIconSize),
+                                contentDescription = null,
                             )
-                        }
+                        },
+                        onClick = { itemChecked = !itemChecked },
+                        colors = colors,
+                    )
+
+                    DropdownMenuPopup(
+                        popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
+                            MenuAnchorPosition.End
+                        ),
+                        expanded = itemChecked || itemHovered,
+                        onDismissRequest = { itemChecked = false },
+                        properties = PopupProperties(focusable = false),
+                    ) {
+
                     }
                 }
             }
