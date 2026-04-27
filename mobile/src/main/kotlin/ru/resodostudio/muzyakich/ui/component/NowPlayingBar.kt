@@ -144,7 +144,7 @@ fun NowPlayingBar(
                             percentage = progress.value,
                             rotation = currentRotation.value,
                         )
-                        shadowElevation = 3.dp.toPx()
+                        shadowElevation = 2.dp.toPx()
                         ambientShadowColor = shadowColor
                         spotShadowColor = shadowColor
                     }
