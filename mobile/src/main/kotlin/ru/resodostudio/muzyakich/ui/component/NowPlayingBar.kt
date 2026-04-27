@@ -80,7 +80,7 @@ fun NowPlayingBar(
     val isPlaying = !playPauseButtonState.showPlay
 
     var lastArtworkShape by remember { mutableStateOf(artworkShapes.random()) }
-    var targetShape by remember { mutableStateOf(if (isPlaying) lastArtworkShape else MaterialShapes.Circle) }
+    var targetShape by remember { mutableStateOf(if (isPlaying) lastArtworkShape else MaterialShapes.Square) }
     var previousShape by remember { mutableStateOf(targetShape) }
     val progress = remember { Animatable(1f) }
 
@@ -88,7 +88,7 @@ fun NowPlayingBar(
         val newTarget = if (isPlaying) {
             artworkShapes.filter { it != lastArtworkShape }.random().also { lastArtworkShape = it }
         } else {
-            MaterialShapes.Circle
+            MaterialShapes.Square
         }
         previousShape = targetShape
         targetShape = newTarget
@@ -148,7 +148,7 @@ fun NowPlayingBar(
                         ambientShadowColor = shadowColor
                         spotShadowColor = shadowColor
                     }
-                    .size(46.dp),
+                    .size(40.dp),
             )
             Spacer(Modifier.size(4.dp))
             AnimatedContent(
