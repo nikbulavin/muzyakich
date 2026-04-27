@@ -47,13 +47,18 @@ android {
 }
 
 baselineProfile {
+    automaticGenerationDuringBuild = false
     dexLayoutOptimization = true
+}
 
-    variants {
-        register("prodRelease") {
-            automaticGenerationDuringBuild = true
+val baselineprofileProject = rootProject.findProject(":baselineprofile")
+if (baselineprofileProject != null) {
+    tasks.matching { it.name == "createProdNonMinifiedReleaseApkListingFileRedirect" }
+        .configureEach {
+            dependsOn(baselineprofileProject.tasks.matching {
+                it.name.contains("packageProdNonMinifiedRelease")
+            })
         }
-    }
 }
 
 dependencies {

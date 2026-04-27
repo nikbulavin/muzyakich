@@ -11,6 +11,7 @@ android {
     defaultConfig {
         minSdk = 28
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["androidx.benchmark.enabledRules"] = "BaselineProfile"
 
         buildConfigField("String", "APP_BUILD_TYPE_SUFFIX", "\"\"")
     }
@@ -36,6 +37,7 @@ android {
     }
 
     targetProjectPath = ":mobile"
+    experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
 baselineProfile {
