@@ -29,7 +29,6 @@
     <string name="core_locales_equalizer">이퀄라이저</string>
     <string name="core_locales_favorites">즐겨찾기</string>
     <string name="core_locales_feedback">피드백</string>
-    <string name="core_locales_filters">필터</string>
     <string name="core_locales_general">일반</string>
     <string name="core_locales_grant_permission">권한 허용</string>
     <string name="core_locales_high_quality">고화질</string>
