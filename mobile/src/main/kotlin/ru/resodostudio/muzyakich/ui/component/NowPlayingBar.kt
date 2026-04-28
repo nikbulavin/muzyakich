@@ -131,7 +131,7 @@ fun NowPlayingBar(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.padding(vertical = 12.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
         ) {
             val shadowColor = MaterialTheme.colorScheme.inverseSurface
             SongArtworkMini(

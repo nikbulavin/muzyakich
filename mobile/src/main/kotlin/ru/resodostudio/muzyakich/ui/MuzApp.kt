@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -99,6 +100,7 @@ fun MuzApp(
     val player = nowPlayingState.player
 
     val motionScheme = MaterialTheme.motionScheme
+    val hazeState = rememberHazeState()
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -108,6 +110,50 @@ fun MuzApp(
                 modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
             )
         },
+        floatingActionButton = {
+            val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+            )
+            val hazeBlurRadius = 32.dp
+            AnimatedVisibility(
+                visible = appState.navigationState.backStack.none {
+                    it is PlaylistEditorNavKey || it is PlayerNavKey
+                } && player?.currentMediaItem != null,
+                enter = fadeIn(motionScheme.defaultEffectsSpec()) +
+                        scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                        slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
+                        expandHorizontally(
+                            animationSpec = motionScheme.defaultSpatialSpec(),
+                            expandFrom = Alignment.CenterHorizontally,
+                        ),
+                exit = fadeOut(motionScheme.fastEffectsSpec()) +
+                        slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+            ) {
+                with(LocalSharedTransitionScope.current) {
+                    NowPlayingBar(
+                        currentSong = player?.currentMediaItem!!.asSong(),
+                        player = player,
+                        modifier = Modifier
+                            .renderInSharedTransitionScopeOverlay(2f)
+                            .navigationBarsPadding()
+                            .padding(horizontal = 16.dp)
+                            .shadow(
+                                elevation = 6.dp,
+                                shape = CircleShape,
+                                clip = true,
+                            )
+                            .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                inputScale = HazeInputScale.Auto
+                                blurEnabled = true
+                                blurRadius = hazeBlurRadius
+                                noiseFactor = 0f
+                            },
+                        onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                    )
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
         Box(
             Modifier
@@ -120,12 +166,6 @@ fun MuzApp(
                     ),
                 ),
         ) {
-            val hazeState = rememberHazeState()
-            val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-            )
-            val hazeBlurRadius = 32.dp
-
             val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
             when (permissionState.status) {
                 is PermissionStatus.Denied -> {
@@ -201,46 +241,6 @@ fun MuzApp(
                         sceneStrategies = listOf(
                             remember { BottomSheetSceneStrategy() },
                         ),
-                    )
-                }
-            }
-
-            AnimatedVisibility(
-                visible = appState.navigationState.backStack.none {
-                    it is PlaylistEditorNavKey || it is PlayerNavKey
-                } && player?.currentMediaItem != null,
-                enter = fadeIn(motionScheme.defaultEffectsSpec()) +
-                        scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
-                        slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
-                        expandHorizontally(
-                            animationSpec = motionScheme.defaultSpatialSpec(),
-                            expandFrom = Alignment.CenterHorizontally,
-                        ),
-                exit = fadeOut(motionScheme.fastEffectsSpec()) +
-                        slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
-                modifier = Modifier.align(Alignment.BottomCenter),
-            ) {
-                with(LocalSharedTransitionScope.current) {
-                    NowPlayingBar(
-                        currentSong = player?.currentMediaItem!!.asSong(),
-                        player = player,
-                        modifier = Modifier
-                            .renderInSharedTransitionScopeOverlay(2f)
-                            .align(Alignment.BottomCenter)
-                            .navigationBarsPadding()
-                            .padding(16.dp)
-                            .shadow(
-                                elevation = 6.dp,
-                                shape = CircleShape,
-                                clip = true,
-                            )
-                            .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                inputScale = HazeInputScale.Auto
-                                blurEnabled = true
-                                blurRadius = hazeBlurRadius
-                                noiseFactor = 0f
-                            },
-                        onClick = dropUnlessResumed { navigator.navigateToPlayer() },
                     )
                 }
             }
