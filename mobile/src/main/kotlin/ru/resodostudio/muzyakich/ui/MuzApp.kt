@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -153,7 +152,7 @@ fun MuzApp(
                 val hazeBlurRadius = 32.dp
                 AnimatedVisibility(
                     visible = isNowPlayingVisible,
-                    modifier = Modifier.weight(1f, isNowPlayingVisible),
+                    modifier = Modifier.weight(1f),
                     enter = fadeIn(motionScheme.defaultEffectsSpec()) +
                             scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
                             slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
@@ -181,8 +180,7 @@ fun MuzApp(
                                     blurEnabled = true
                                     blurRadius = hazeBlurRadius
                                     noiseFactor = 0f
-                                }
-                                .animateContentSize(motionScheme.defaultSpatialSpec()),
+                                },
                             onClick = dropUnlessResumed { navigator.navigateToPlayer() },
                         )
                     }
