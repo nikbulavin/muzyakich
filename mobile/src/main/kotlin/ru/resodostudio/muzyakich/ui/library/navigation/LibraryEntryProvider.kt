@@ -11,9 +11,13 @@ import ru.resodostudio.muzyakich.ui.album.detail.navigation.navigateToAlbum
 import ru.resodostudio.muzyakich.ui.artist.detail.navigation.navigateToArtist
 import ru.resodostudio.muzyakich.ui.library.LibraryScreen
 
-fun EntryProviderScope<NavKey>.libraryEntry(navigator: Navigator) {
+fun EntryProviderScope<NavKey>.libraryEntry(
+    navigator: Navigator,
+    libraryNavigator: Navigator,
+) {
     entry<LibraryNavKey> {
         LibraryScreen(
+            libraryNavigator = libraryNavigator,
             onPlaylistClick = navigator::navigateToPlaylist,
             onNewPlaylistClick = navigator::navigateToPlaylistEditor,
             onAlbumClick = navigator::navigateToAlbum,

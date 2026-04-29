@@ -67,6 +67,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionSc
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.feature.player.api.PlayerNavKey
 import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
@@ -80,6 +81,7 @@ import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
 import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
 import ru.resodostudio.muzyakich.ui.artist.detail.navigation.artistEntry
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
+import ru.resodostudio.muzyakich.ui.library.LibraryTab
 import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -94,6 +96,10 @@ fun MuzApp(
     appState: MuzAppState,
 ) {
     val navigator = remember { Navigator(appState.navigationState) }
+    val libraryNavigationState = rememberNavigationState(
+        initialBackStack = listOf(LibraryTab.entries.first().navKey),
+    )
+    val libraryNavigator = remember { Navigator(libraryNavigationState) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     val nowPlayingState by appState.nowPlayingState.collectAsStateWithLifecycle()
@@ -210,7 +216,7 @@ fun MuzApp(
 
                 PermissionStatus.Granted -> {
                     val entryProvider = entryProvider {
-                        libraryEntry(navigator)
+                        libraryEntry(navigator, libraryNavigator)
                         playerEntry(navigator)
                         albumEntry(navigator)
                         artistEntry(navigator)

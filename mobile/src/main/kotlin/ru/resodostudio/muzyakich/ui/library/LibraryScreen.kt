@@ -47,32 +47,24 @@ import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavKey
 import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Add
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Download
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.navigation.Navigator
-import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
 import ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation.PlaylistsEntry
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
@@ -86,6 +78,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
 fun LibraryScreen(
+    libraryNavigator: Navigator,
     onPlaylistClick: (Uuid) -> Unit,
     onNewPlaylistClick: () -> Unit,
     onAlbumClick: (Long) -> Unit,
@@ -99,6 +92,7 @@ fun LibraryScreen(
 
     LibraryScreen(
         libraryUiState = libraryUiState,
+        libraryNavigator = libraryNavigator,
         onPlaylistClick = onPlaylistClick,
         onNewPlaylistClick = onNewPlaylistClick,
         onAlbumClick = onAlbumClick,
@@ -113,6 +107,7 @@ fun LibraryScreen(
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
+    libraryNavigator: Navigator,
     onPlaylistClick: (Uuid) -> Unit,
     onNewPlaylistClick: () -> Unit,
     onAlbumClick: (Long) -> Unit,
@@ -127,11 +122,7 @@ private fun LibraryScreen(
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
             val libraryTabs = LibraryTab.entries
-            val navigationState = rememberNavigationState(
-                initialBackStack = listOf(libraryTabs.first().navKey),
-            )
-            val navigator = remember { Navigator(navigationState) }
-            val currentTab = libraryTabs.find { it.navKey == navigationState.backStack.last() }
+            val currentTab = libraryTabs.find { it.navKey == libraryNavigator.state.backStack.last() }
                 ?: libraryTabs.first()
 
             val bottomPadding by animateDpAsState(
@@ -170,7 +161,7 @@ private fun LibraryScreen(
                             )
                             .padding(bottom = bottomPadding)
                             .animateFloatingActionButton(
-                                visible = navigationState.currentKey is PlaylistsNavKey,
+                                visible = libraryNavigator.state.backStack.last() is PlaylistsNavKey,
                                 alignment = Alignment.BottomEnd,
                             ),
                     ) {
@@ -196,7 +187,7 @@ private fun LibraryScreen(
                         libraryTabs.forEach { tab ->
                             Tab(
                                 selected = currentTab == tab,
-                                onClick = { navigator.navigateAndClearStack(tab.navKey) },
+                                onClick = { libraryNavigator.navigateAndClearStack(tab.navKey) },
                                 icon = {
                                     Icon(
                                         imageVector = tab.icon,
@@ -215,7 +206,7 @@ private fun LibraryScreen(
                     }
                     val motionScheme = MaterialTheme.motionScheme
                     AnimatedContent(
-                        targetState = navigationState.currentKey,
+                        targetState = libraryNavigator.state.backStack.last(),
                         transitionSpec = {
                             scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
                                     fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
@@ -282,12 +273,7 @@ private fun LibraryTopAppBar(
                         onClick = {
                             runCatching {
                                 if (inAppUpdateState is AppUpdateResult.Available) {
-                                    activity?.let {
-                                        inAppUpdateState.startFlexibleUpdate(
-                                            it,
-                                            1
-                                        )
-                                    }
+                                    activity?.let { inAppUpdateState.startFlexibleUpdate(it, 1) }
                                 }
                                 if (inAppUpdateState is AppUpdateResult.Downloaded) {
                                     scope.launch { inAppUpdateState.completeUpdate() }
@@ -334,31 +320,4 @@ private fun LibraryTopAppBar(
             }
         },
     )
-}
-
-enum class LibraryTab(
-    @StringRes val titleRes: Int,
-    val icon: ImageVector,
-    val navKey: NavKey,
-) {
-    PLAYLISTS(
-        titleRes = localesR.string.core_locales_playlists,
-        icon = MuzIcons.Rounded.LibraryMusic,
-        navKey = PlaylistsNavKey,
-    ),
-    SONGS(
-        titleRes = localesR.string.core_locales_songs,
-        icon = MuzIcons.Rounded.MusicNote,
-        navKey = SongsNavKey,
-    ),
-    ALBUMS(
-        titleRes = localesR.string.core_locales_albums,
-        icon = MuzIcons.Rounded.Album,
-        navKey = AlbumsNavKey,
-    ),
-    ARTISTS(
-        titleRes = localesR.string.core_locales_artists,
-        icon = MuzIcons.Rounded.Artist,
-        navKey = ArtistsNavKey,
-    ),
 }
