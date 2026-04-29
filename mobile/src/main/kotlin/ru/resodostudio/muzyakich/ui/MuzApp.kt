@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,11 +14,13 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -31,12 +34,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.animateFloatingActionButton
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +73,7 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Add
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.media.service.mapper.asSong
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
@@ -74,7 +85,9 @@ import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
 import ru.resodostudio.muzyakich.feature.player.impl.navigation.playerEntry
 import ru.resodostudio.muzyakich.feature.playlist.detail.impl.navigation.playlistEntry
 import ru.resodostudio.muzyakich.feature.playlist.editor.api.PlaylistEditorNavKey
+import ru.resodostudio.muzyakich.feature.playlist.editor.api.navigateToPlaylistEditor
 import ru.resodostudio.muzyakich.feature.playlist.editor.impl.navigation.playlistEditorEntry
+import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
@@ -82,6 +95,7 @@ import ru.resodostudio.muzyakich.ui.album.detail.navigation.albumEntry
 import ru.resodostudio.muzyakich.ui.artist.detail.navigation.artistEntry
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.ui.library.LibraryTab
+import ru.resodostudio.muzyakich.ui.library.navigation.LibraryNavKey
 import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -117,45 +131,86 @@ fun MuzApp(
             )
         },
         floatingActionButton = {
-            val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-            )
-            val hazeBlurRadius = 32.dp
-            AnimatedVisibility(
-                visible = appState.navigationState.backStack.none {
-                    it is PlaylistEditorNavKey || it is PlayerNavKey
-                } && player?.currentMediaItem != null,
-                enter = fadeIn(motionScheme.defaultEffectsSpec()) +
-                        scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
-                        slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
-                        expandHorizontally(
-                            animationSpec = motionScheme.defaultSpatialSpec(),
-                            expandFrom = Alignment.CenterHorizontally,
+            val isNowPlayingVisible = appState.navigationState.backStack.none {
+                it is PlaylistEditorNavKey || it is PlayerNavKey
+            } && player?.currentMediaItem != null
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(
+                            WindowInsetsSides.Horizontal,
                         ),
-                exit = fadeOut(motionScheme.fastEffectsSpec()) +
-                        slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
-            ) {
-                with(LocalSharedTransitionScope.current) {
-                    NowPlayingBar(
-                        currentSong = player?.currentMediaItem!!.asSong(),
-                        player = player,
-                        modifier = Modifier
-                            .renderInSharedTransitionScopeOverlay(2f)
-                            .navigationBarsPadding()
-                            .padding(horizontal = 16.dp)
-                            .shadow(
-                                elevation = 6.dp,
-                                shape = CircleShape,
-                                clip = true,
-                            )
-                            .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                inputScale = HazeInputScale.Auto
-                                blurEnabled = true
-                                blurRadius = hazeBlurRadius
-                                noiseFactor = 0f
-                            },
-                        onClick = dropUnlessResumed { navigator.navigateToPlayer() },
                     )
+                    .padding(horizontal = 16.dp),
+            ) {
+                val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                )
+                val hazeBlurRadius = 32.dp
+                AnimatedVisibility(
+                    visible = isNowPlayingVisible,
+                    modifier = Modifier.weight(1f, isNowPlayingVisible),
+                    enter = fadeIn(motionScheme.defaultEffectsSpec()) +
+                            scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                            slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
+                            expandHorizontally(
+                                animationSpec = motionScheme.defaultSpatialSpec(),
+                                expandFrom = Alignment.CenterHorizontally,
+                            ),
+                    exit = fadeOut(motionScheme.fastEffectsSpec()) +
+                            slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+                ) {
+                    with(LocalSharedTransitionScope.current) {
+                        NowPlayingBar(
+                            currentSong = player?.currentMediaItem!!.asSong(),
+                            player = player,
+                            modifier = Modifier
+                                .renderInSharedTransitionScopeOverlay(2f)
+                                .navigationBarsPadding()
+                                .shadow(
+                                    elevation = 6.dp,
+                                    shape = CircleShape,
+                                    clip = true,
+                                )
+                                .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                    inputScale = HazeInputScale.Auto
+                                    blurEnabled = true
+                                    blurRadius = hazeBlurRadius
+                                    noiseFactor = 0f
+                                }
+                                .animateContentSize(motionScheme.defaultSpatialSpec()),
+                            onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                        )
+                    }
+                }
+                val contentDescription = stringResource(localesR.string.core_locales_new_playlist)
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                        TooltipAnchorPosition.Above,
+                    ),
+                    tooltip = { PlainTooltip { Text(contentDescription) } },
+                    state = rememberTooltipState(),
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .animateFloatingActionButton(
+                            visible = libraryNavigator.state.backStack.last() is PlaylistsNavKey &&
+                                    navigator.state.currentKey is LibraryNavKey,
+                            alignment = Alignment.BottomCenter,
+                        ),
+                ) {
+                    FloatingActionButton(
+                        onClick = navigator::navigateToPlaylistEditor,
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    ) {
+                        Icon(
+                            imageVector = MuzIcons.Rounded.Add,
+                            contentDescription = contentDescription,
+                        )
+                    }
                 }
             }
         },

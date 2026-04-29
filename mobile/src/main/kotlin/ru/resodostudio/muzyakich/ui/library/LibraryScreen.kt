@@ -4,7 +4,6 @@ import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
@@ -14,20 +13,13 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -43,12 +35,10 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -61,7 +51,6 @@ import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Add
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Download
 import ru.resodostudio.muzyakich.core.navigation.Navigator
@@ -125,11 +114,6 @@ private fun LibraryScreen(
             val currentTab = libraryTabs.find { it.navKey == libraryNavigator.state.backStack.last() }
                 ?: libraryTabs.first()
 
-            val bottomPadding by animateDpAsState(
-                targetValue = (if (libraryUiState.isCurrentMediaItemExists) 88.dp else 0.dp) +
-                        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
-            )
-
             Scaffold(
                 modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
@@ -144,38 +128,6 @@ private fun LibraryScreen(
                     )
                 },
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                floatingActionButton = {
-                    val contentDescription =
-                        stringResource(localesR.string.core_locales_new_playlist)
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            TooltipAnchorPosition.Above,
-                        ),
-                        tooltip = { PlainTooltip { Text(contentDescription) } },
-                        state = rememberTooltipState(),
-                        modifier = Modifier
-                            .windowInsetsPadding(
-                                WindowInsets.safeDrawing.only(
-                                    WindowInsetsSides.Horizontal,
-                                ),
-                            )
-                            .padding(bottom = bottomPadding)
-                            .animateFloatingActionButton(
-                                visible = libraryNavigator.state.backStack.last() is PlaylistsNavKey,
-                                alignment = Alignment.BottomEnd,
-                            ),
-                    ) {
-                        FloatingActionButton(
-                            onClick = onNewPlaylistClick,
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.Add,
-                                contentDescription = contentDescription,
-                            )
-                        }
-                    }
-                },
             ) { paddingValues ->
                 Column(
                     modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
