@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
@@ -110,7 +109,7 @@ fun LibraryScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
@@ -224,21 +223,10 @@ private fun LibraryScreen(
                         },
                     ) { state ->
                         when (state) {
-                            PlaylistsNavKey -> {
-                                PlaylistsEntry(onPlaylistClick)
-                            }
-
-                            SongsNavKey -> {
-                                SongsEntry(onSongMenuClick)
-                            }
-
-                            AlbumsNavKey -> {
-                                AlbumsEntry(onAlbumClick)
-                            }
-
-                            ArtistsNavKey -> {
-                                ArtistsEntry(onArtistClick)
-                            }
+                            PlaylistsNavKey -> PlaylistsEntry(onPlaylistClick)
+                            SongsNavKey -> SongsEntry(onSongMenuClick)
+                            AlbumsNavKey -> AlbumsEntry(onAlbumClick)
+                            ArtistsNavKey -> ArtistsEntry(onArtistClick)
                         }
                     }
                 }
@@ -247,7 +235,6 @@ private fun LibraryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun LibraryTopAppBar(
     @StringRes titleRes: Int,
