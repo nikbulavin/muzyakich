@@ -9,8 +9,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
@@ -69,7 +67,6 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconB
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.HighQuality
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
@@ -261,9 +258,8 @@ private fun PlayerScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     playerUiState.nowPlayingState.player?.let { player ->
-                                        ProgressSlider(
+                                        SongProgressSlider(
                                             player = player,
-                                            bitrate = playerUiState.currentSong.bitrate,
                                             modifier = Modifier.fillMaxWidth(),
                                         )
                                     }
@@ -383,9 +379,8 @@ private fun SongArtwork(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun ProgressSlider(
+private fun SongProgressSlider(
     player: Player,
-    bitrate: Int,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -411,18 +406,6 @@ private fun ProgressSlider(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                AnimatedVisibility(
-                    visible = bitrate >= 256,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut(),
-                ) {
-                    Icon(
-                        imageVector = MuzIcons.Rounded.HighQuality,
-                        contentDescription = stringResource(localesR.string.core_locales_high_quality),
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
                 Text(
                     text = "-$remainingDuration",
                     style = MaterialTheme.typography.labelMedium,
