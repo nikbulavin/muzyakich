@@ -121,6 +121,10 @@ fun MuzApp(
     val motionScheme = MaterialTheme.motionScheme
     val hazeState = rememberHazeState()
 
+    val isNowPlayingVisible = appState.navigationState.backStack.none {
+        it is PlaylistEditorNavKey || it is PlayerNavKey
+    } && player?.currentMediaItem != null
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = {
@@ -130,13 +134,9 @@ fun MuzApp(
             )
         },
         floatingActionButton = {
-            val isNowPlayingVisible = appState.navigationState.backStack.none {
-                it is PlaylistEditorNavKey || it is PlayerNavKey
-            } && player?.currentMediaItem != null
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.End,
                 modifier = Modifier
                     .fillMaxWidth()
                     .windowInsetsPadding(
@@ -203,6 +203,7 @@ fun MuzApp(
                     FloatingActionButton(
                         onClick = navigator::navigateToPlaylistEditor,
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        modifier = Modifier.padding(start = 8.dp),
                     ) {
                         Icon(
                             imageVector = MuzIcons.Rounded.Add,
