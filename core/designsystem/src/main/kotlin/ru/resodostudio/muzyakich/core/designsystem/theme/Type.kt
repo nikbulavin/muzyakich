@@ -30,6 +30,7 @@ internal val ShantellSansFontFamily = FontFamily(
         ),
     ),
 )
+
 @OptIn(ExperimentalTextApi::class)
 internal val NunitoFontFamily = FontFamily(
     Font(
@@ -102,7 +103,7 @@ internal val MuzTypography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.1.sp,
+        letterSpacing = 0.15.sp,
         fontFamily = ShantellSansFontFamily,
     ),
     titleSmall = TextStyle(
@@ -151,7 +152,7 @@ internal val MuzTypography = Typography(
         fontWeight = FontWeight.ExtraBold,
         fontSize = 10.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.sp,
+        letterSpacing = 0.5.sp,
         fontFamily = NunitoFontFamily,
-    )
+    ),
 )
