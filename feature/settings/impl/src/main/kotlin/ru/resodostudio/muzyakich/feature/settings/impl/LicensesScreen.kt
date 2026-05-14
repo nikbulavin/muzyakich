@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.feature.settings.impl
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -12,12 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.variant.LibraryActionMode
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LicensesScreen(
     onBackClick: () -> Unit,
@@ -43,7 +42,7 @@ internal fun LicensesScreen(
             libraries = libraries,
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxSize(),
-            showDescription = true,
+            actionMode = LibraryActionMode.Icons,
         )
     }
 }
