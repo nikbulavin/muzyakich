@@ -20,6 +20,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 internal fun LicensesScreen(
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         topBar = {
@@ -32,10 +33,10 @@ internal fun LicensesScreen(
                         contentDescription = stringResource(localesR.string.core_locales_back),
                         tooltipPosition = TooltipAnchorPosition.Right,
                     )
-                }
+                },
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
     ) { paddingValues ->
         val libraries by produceLibraries(R.raw.aboutlibraries)
         LibrariesContainer(
