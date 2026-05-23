@@ -3,7 +3,9 @@ package ru.resodostudio.muzyakich.core.navigation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetValue.Expanded
+import androidx.compose.material3.SheetValue.Hidden
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -32,8 +34,9 @@ internal data class BottomSheetScene<T : Any>(
     override val entries: List<NavEntry<T>> = listOf(entry)
 
     override val content: @Composable (() -> Unit) = {
-        val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = true,
+        val sheetState = rememberBottomSheetState(
+            initialValue = Expanded,
+            enabledValues = setOf(Hidden, Expanded),
         )
         val lifecycleOwner = rememberLifecycleOwner()
         ModalBottomSheet(
