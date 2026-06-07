@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.core.designsystem.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -10,7 +9,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import ru.resodostudio.muzyakich.core.designsystem.R
 
-@OptIn(ExperimentalTextApi::class)
 internal val ShantellSansFontFamily = FontFamily(
     Font(
         resId = R.font.shantell_sans_variable,
@@ -31,7 +29,6 @@ internal val ShantellSansFontFamily = FontFamily(
     ),
 )
 
-@OptIn(ExperimentalTextApi::class)
 internal val NunitoFontFamily = FontFamily(
     Font(
         resId = R.font.nunito_variable,
