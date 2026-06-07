@@ -8,6 +8,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -33,7 +34,7 @@ class AlbumViewModel @AssistedInject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-    val albumUiState = combine(
+    val albumUiState: StateFlow<AlbumUiState> = combine(
         songsRepository.getSongs(SortBy.TITLE, SortOrder.ASCENDING),
         musicServiceConnection.nowPlayingState,
     ) { songs, nowPlaying ->
@@ -58,8 +59,8 @@ class AlbumViewModel @AssistedInject constructor(
             )
         }
     }
-        .catch { AlbumUiState.Error }
         .flowOn(defaultDispatcher)
+        .catch { emit(AlbumUiState.Error) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),

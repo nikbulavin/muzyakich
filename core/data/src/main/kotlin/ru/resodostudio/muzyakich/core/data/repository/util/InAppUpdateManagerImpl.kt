@@ -19,5 +19,5 @@ internal class InAppUpdateManagerImpl @Inject constructor(
     private val appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(context)
 
     override val inAppUpdateResult: Flow<AppUpdateResult> = appUpdateManager.requestUpdateFlow()
-        .catch { AppUpdateResult.NotAvailable }
+        .catch { emit(AppUpdateResult.NotAvailable) }
 }
