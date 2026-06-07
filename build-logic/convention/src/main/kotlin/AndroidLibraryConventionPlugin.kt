@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.LibraryExtension
-import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -8,7 +7,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
 import ru.resodostudio.muzyakich.configureFlavors
 import ru.resodostudio.muzyakich.configureKotlinAndroid
-import ru.resodostudio.muzyakich.disableUnnecessaryAndroidTests
 import ru.resodostudio.muzyakich.libs
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
@@ -29,9 +27,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     .distinct()
                     .joinToString(separator = "_")
                     .lowercase() + "_"
-            }
-            extensions.configure<LibraryAndroidComponentsExtension> {
-                disableUnnecessaryAndroidTests(target)
             }
             dependencies {
                 "androidTestImplementation"(libs.findLibrary("kotlin.test").get())
