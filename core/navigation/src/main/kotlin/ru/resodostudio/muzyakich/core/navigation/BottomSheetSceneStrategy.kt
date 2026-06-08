@@ -35,7 +35,7 @@ internal data class BottomSheetScene<T : Any>(
 
     override val content: @Composable (() -> Unit) = {
         val sheetState = rememberBottomSheetState(
-            initialValue = Expanded,
+            initialValue = Hidden,
             enabledValues = setOf(Hidden, Expanded),
         )
         val lifecycleOwner = rememberLifecycleOwner()
