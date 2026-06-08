@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
@@ -291,7 +290,7 @@ internal fun MoreIconButton(
 ) {
     MuzFilledTonalIconButton(
         modifier = modifier,
-        onClick = dropUnlessResumed { onClick() },
+        onClick = onClick,
         containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
         icon = MuzIcons.Rounded.MoreVert,
         contentDescription = stringResource(localesR.string.core_locales_open_menu),
