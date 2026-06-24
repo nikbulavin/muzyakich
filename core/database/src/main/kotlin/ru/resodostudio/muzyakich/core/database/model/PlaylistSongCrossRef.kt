@@ -1,8 +1,9 @@
 package ru.resodostudio.muzyakich.core.database.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room3.ColumnInfo
+import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Index
 import kotlin.uuid.Uuid
 
 @Entity(
@@ -22,11 +23,14 @@ import kotlin.uuid.Uuid
             onDelete = ForeignKey.CASCADE,
         ),
     ],
+    indices = [
+        Index("song_uuid"),
+    ],
 )
 data class PlaylistSongCrossRef(
     @ColumnInfo(name = "playlist_uuid")
     val playlistUuid: Uuid,
-    @ColumnInfo(name = "song_uuid", index = true)
+    @ColumnInfo(name = "song_uuid")
     val songUuid: Uuid,
     @ColumnInfo(name = "position")
     val position: Int,

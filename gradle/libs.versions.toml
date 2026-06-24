@@ -37,7 +37,7 @@ playAppUpdate = "2.1.0"
 protobuf = "4.35.1"
 protobufPlugin = "0.10.0"
 reorderable = "3.1.0"
-room = "2.8.4"
+room = "3.0.0-rc01"
 
 [libraries]
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutLibraries" }
@@ -99,8 +99,8 @@ protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-
 protobuf-javalite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room3", name = "room3-compiler", version.ref = "room" }
+room-runtime = { group = "androidx.room3", name = "room3-runtime", version.ref = "room" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle-api", version.ref = "androidGradlePlugin" }
@@ -109,7 +109,7 @@ firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "per
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
+room-gradlePlugin = { group = "androidx.room3", name = "room3-gradle-plugin", version.ref = "room" }
 
 [plugins]
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
@@ -125,7 +125,7 @@ compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
-room = { id = "androidx.room", version.ref = "room" }
+room = { id = "androidx.room3", version.ref = "room" }
 
 # Plugins defined by this project
 muzyakich-android-application = { id = "muzyakich.android.application" }

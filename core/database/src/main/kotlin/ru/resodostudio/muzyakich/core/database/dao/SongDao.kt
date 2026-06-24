@@ -1,8 +1,8 @@
 package ru.resodostudio.muzyakich.core.database.dao
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Upsert
+import androidx.room3.Dao
+import androidx.room3.Query
+import androidx.room3.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudio.muzyakich.core.database.model.SongEntity
 import kotlin.time.Instant

@@ -1,18 +1,19 @@
 package ru.resodostudio.muzyakich.core.database.model
 
-import androidx.room.Embedded
-import androidx.room.Junction
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Junction
+import androidx.room3.Relation
 
 data class PlaylistWithSongs(
-    @Embedded val playlist: PlaylistEntity,
+    @Embedded
+    val playlist: PlaylistEntity,
     @Relation(
-        parentColumn = "uuid",
-        entityColumn = "uuid",
+        parentColumns = ["uuid"],
+        entityColumns = ["uuid"],
         associateBy = Junction(
             PlaylistSongCrossRef::class,
-            parentColumn = "playlist_uuid",
-            entityColumn = "song_uuid",
+            parentColumns = ["playlist_uuid"],
+            entityColumns = ["song_uuid"],
         ),
     )
     val songs: List<SongEntity>,

@@ -1,8 +1,8 @@
 package ru.resodostudio.muzyakich.core.database
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room3.ColumnTypeConverters
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
 import ru.resodostudio.muzyakich.core.database.dao.PlaylistDao
 import ru.resodostudio.muzyakich.core.database.dao.SongDao
 import ru.resodostudio.muzyakich.core.database.model.PlaylistEntity
@@ -20,7 +20,7 @@ import ru.resodostudio.muzyakich.core.database.util.UuidConverter
     version = 4,
     exportSchema = true,
 )
-@TypeConverters(
+@ColumnTypeConverters(
     InstantConverter::class,
     UuidConverter::class,
 )

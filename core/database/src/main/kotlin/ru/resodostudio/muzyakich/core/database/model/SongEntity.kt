@@ -1,18 +1,22 @@
 package ru.resodostudio.muzyakich.core.database.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.ColumnInfo
+import androidx.room3.Entity
+import androidx.room3.Index
+import androidx.room3.PrimaryKey
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 @Entity(
     tableName = "songs",
+    indices = [
+        Index("media_id"),
+    ],
 )
 data class SongEntity(
     @PrimaryKey
     val uuid: Uuid,
-    @ColumnInfo(name = "media_id", index = true)
+    @ColumnInfo(name = "media_id")
     val mediaId: String,
     @ColumnInfo(name = "is_favorite")
     val isFavorite: Boolean,

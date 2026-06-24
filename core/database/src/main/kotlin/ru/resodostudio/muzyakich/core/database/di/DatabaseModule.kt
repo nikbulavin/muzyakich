@@ -1,7 +1,7 @@
 package ru.resodostudio.muzyakich.core.database.di
 
 import android.content.Context
-import androidx.room.Room
+import androidx.room3.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +24,6 @@ internal object DatabaseModule {
             klass = MuzDatabase::class.java,
             name = "muz-database",
         )
-            .fallbackToDestructiveMigration(true)
             .build()
     }
 }
