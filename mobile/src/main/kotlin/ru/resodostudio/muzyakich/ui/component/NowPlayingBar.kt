@@ -49,8 +49,10 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.Morph
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.state.rememberCurrentMediaItemState
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
@@ -61,7 +63,6 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
-import ru.resodostudio.muzyakich.core.model.data.Song
 import kotlin.math.roundToInt
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -70,12 +71,12 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun NowPlayingBar(
     player: Player,
-    currentSong: Song,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val motionScheme = MaterialTheme.motionScheme
 
+    val currentMediaItemState = rememberCurrentMediaItemState(player)
     val playPauseButtonState = rememberPlayPauseButtonState(player)
     val isPlaying = !playPauseButtonState.showPlay
 
@@ -84,7 +85,7 @@ fun NowPlayingBar(
     var previousShape by remember { mutableStateOf(targetShape) }
     val progress = remember { Animatable(1f) }
 
-    LaunchedEffect(currentSong.mediaId, isPlaying) {
+    LaunchedEffect(currentMediaItemState.mediaItem?.mediaId, isPlaying) {
         val newTarget = if (isPlaying) {
             artworkShapes.filter { it != lastArtworkShape }.random().also { lastArtworkShape = it }
         } else {
@@ -135,7 +136,7 @@ fun NowPlayingBar(
         ) {
             val shadowColor = MaterialTheme.colorScheme.inverseSurface
             SongArtworkMini(
-                artworkUri = currentSong.artworkUri,
+                artworkUri = currentMediaItemState.mediaMetadata.artworkUri,
                 modifier = Modifier
                     .graphicsLayer {
                         clip = true
@@ -152,17 +153,17 @@ fun NowPlayingBar(
             )
             Spacer(Modifier.size(4.dp))
             AnimatedContent(
-                targetState = currentSong,
+                targetState = currentMediaItemState.mediaItem,
                 transitionSpec = {
                     fadeIn(motionScheme.fastEffectsSpec()) +
                             slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 12 } togetherWith
                             fadeOut(snap())
                 },
-                contentKey = { it.mediaId },
+                contentKey = { it?.mediaId },
                 modifier = Modifier.weight(1f),
-            ) { songState ->
+            ) { mediaItemState ->
                 SongInfo(
-                    song = songState,
+                    mediaItem = mediaItemState,
                 )
             }
             ActionButtons(
@@ -180,10 +181,9 @@ fun NowPlayingBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SongInfo(
-    song: Song,
+    mediaItem: MediaItem?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -191,13 +191,13 @@ private fun SongInfo(
         modifier = modifier.padding(bottom = 2.dp, end = 12.dp),
     ) {
         Text(
-            text = song.title,
+            text = mediaItem?.mediaMetadata?.title.toString(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.basicMarquee(),
         )
         Text(
-            text = song.artist,
+            text = mediaItem?.mediaMetadata?.artist.toString(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.basicMarquee(),
@@ -209,7 +209,6 @@ private fun SongInfo(
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun SongProgressIndicator(
     player: Player,
     modifier: Modifier = Modifier,
@@ -228,7 +227,6 @@ private fun SongProgressIndicator(
 }
 
 @androidx.annotation.OptIn(UnstableApi::class)
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ActionButtons(
     player: Player,

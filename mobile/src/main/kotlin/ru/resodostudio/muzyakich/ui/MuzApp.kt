@@ -163,25 +163,26 @@ fun MuzApp(
                             slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                 ) {
                     with(LocalSharedTransitionScope.current) {
-                        NowPlayingBar(
-                            currentSong = player?.currentMediaItem!!.asSong(),
-                            player = player,
-                            modifier = Modifier
-                                .renderInSharedTransitionScopeOverlay(2f)
-                                .navigationBarsPadding()
-                                .shadow(
-                                    elevation = 6.dp,
-                                    shape = CircleShape,
-                                    clip = true,
-                                )
-                                .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                    inputScale = HazeInputScale.Auto
-                                    blurEnabled = true
-                                    blurRadius = hazeBlurRadius
-                                    noiseFactor = 0f
-                                },
-                            onClick = dropUnlessResumed { navigator.navigateToPlayer() },
-                        )
+                        if (player != null) {
+                            NowPlayingBar(
+                                player = player,
+                                modifier = Modifier
+                                    .renderInSharedTransitionScopeOverlay(2f)
+                                    .navigationBarsPadding()
+                                    .shadow(
+                                        elevation = 6.dp,
+                                        shape = CircleShape,
+                                        clip = true,
+                                    )
+                                    .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                        inputScale = HazeInputScale.Auto
+                                        blurEnabled = true
+                                        blurRadius = hazeBlurRadius
+                                        noiseFactor = 0f
+                                    },
+                                onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                            )
+                        }
                     }
                 }
                 val contentDescription = stringResource(localesR.string.core_locales_new_playlist)

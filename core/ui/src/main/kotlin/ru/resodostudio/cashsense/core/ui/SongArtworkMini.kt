@@ -19,7 +19,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 
 @Composable
 fun SongArtworkMini(
-    artworkUri: Uri,
+    artworkUri: Uri?,
     modifier: Modifier = Modifier,
 ) {
     SubcomposeAsyncImage(
