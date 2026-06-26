@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
@@ -92,7 +91,6 @@ internal fun PlayerScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
@@ -282,7 +280,6 @@ private fun PlayerScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun MoreIconButton(
     onClick: () -> Unit,
@@ -297,7 +294,6 @@ internal fun MoreIconButton(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun FavoriteToggleButton(
     song: Song,
@@ -318,7 +314,6 @@ internal fun FavoriteToggleButton(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SongArtwork(
     artworkUri: Uri,
@@ -377,7 +372,6 @@ private fun SongArtwork(
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun SongProgressSlider(
     player: Player,
     modifier: Modifier = Modifier,

@@ -101,7 +101,8 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalHazeApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
 fun MuzApp(
