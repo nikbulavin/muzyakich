@@ -124,6 +124,8 @@ fun MuzApp(
         it is PlaylistEditorNavKey || it is PlayerNavKey
     } && player?.currentMediaItem != null
 
+    val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = {
@@ -152,15 +154,14 @@ fun MuzApp(
                 AnimatedVisibility(
                     visible = isNowPlayingVisible,
                     modifier = Modifier.weight(1f),
-                    enter = fadeIn(motionScheme.defaultEffectsSpec()) +
+                    enter = fadeIn(fadeSpec) +
                             scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
                             slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
                             expandHorizontally(
                                 animationSpec = motionScheme.defaultSpatialSpec(),
                                 expandFrom = Alignment.CenterHorizontally,
                             ),
-                    exit = fadeOut(motionScheme.fastEffectsSpec()) +
-                            slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+                    exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                 ) {
                     with(LocalSharedTransitionScope.current) {
                         if (player != null) {
@@ -272,13 +273,13 @@ fun MuzApp(
                     val entryProvider = entryProvider {
                         libraryEntry(navigator, libraryNavigator)
                         playerEntry(navigator)
-                        albumEntry(navigator)
+                        albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)
                         settingsEntry(navigator)
                         licensesEntry(navigator)
                         playlistEditorEntry(navigator)
-                        playlistEntry(navigator)
+                        playlistEntry(navigator, fadeSpec)
                     }
 
                     NavDisplay(
