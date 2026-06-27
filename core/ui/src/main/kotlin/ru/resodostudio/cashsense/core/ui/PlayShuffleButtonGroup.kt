@@ -48,7 +48,10 @@ fun PlayShuffleButtonGroup(
                     modifier = Modifier
                         .heightIn(buttonSize)
                         .weight(1f)
-                        .animateWidth(interactionSource),
+                        .animateWidth(
+                            interactionSource = interactionSource,
+                            compressionLimit = buttonContentPadding,
+                        ),
                     contentPadding = buttonContentPadding,
                     interactionSource = interactionSource,
                     enabled = enabled,
@@ -66,8 +69,9 @@ fun PlayShuffleButtonGroup(
                         style = ButtonDefaults.textStyleFor(buttonSize),
                     )
                 }
-            }
-        ) {}
+            },
+            menuContent = {},
+        )
         customItem(
             buttonGroupContent = {
                 val interactionSource = remember { MutableInteractionSource() }
@@ -77,7 +81,10 @@ fun PlayShuffleButtonGroup(
                     modifier = Modifier
                         .heightIn(buttonSize)
                         .weight(1f)
-                        .animateWidth(interactionSource),
+                        .animateWidth(
+                            interactionSource = interactionSource,
+                            compressionLimit = buttonContentPadding,
+                        ),
                     contentPadding = buttonContentPadding,
                     interactionSource = interactionSource,
                     enabled = enabled,
@@ -95,7 +102,8 @@ fun PlayShuffleButtonGroup(
                         style = ButtonDefaults.textStyleFor(buttonSize),
                     )
                 }
-            }
-        ) {}
+            },
+            menuContent = {},
+        )
     }
 }
