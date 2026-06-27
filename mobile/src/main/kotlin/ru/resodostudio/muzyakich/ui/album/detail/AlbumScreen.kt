@@ -30,7 +30,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -109,7 +108,7 @@ fun AlbumScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AlbumScreen(
     albumUiState: AlbumUiState,
@@ -401,7 +400,6 @@ private fun LazyGridScope.header(album: Album) {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.actionButtons(
     onPlaySongsClick: () -> Unit,
     onShuffleSongsClick: () -> Unit,
@@ -421,7 +419,6 @@ private fun LazyGridScope.actionButtons(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AlbumTopAppBar(
     title: String,
@@ -489,7 +486,6 @@ private fun AlbumTopAppBar(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun AlbumDropdownMenu(
     isScrolled: Boolean,
     songs: List<Song>,

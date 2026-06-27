@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -70,7 +68,6 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 fun LibraryScreen(
     libraryNavigator: Navigator,
     onPlaylistClick: (Uuid) -> Unit,
-    onNewPlaylistClick: () -> Unit,
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
@@ -84,7 +81,6 @@ fun LibraryScreen(
         libraryUiState = libraryUiState,
         libraryNavigator = libraryNavigator,
         onPlaylistClick = onPlaylistClick,
-        onNewPlaylistClick = onNewPlaylistClick,
         onAlbumClick = onAlbumClick,
         onArtistClick = onArtistClick,
         onSongMenuClick = onSongMenuClick,
@@ -93,13 +89,11 @@ fun LibraryScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryScreen(
     libraryUiState: LibraryUiState,
     libraryNavigator: Navigator,
     onPlaylistClick: (Uuid) -> Unit,
-    onNewPlaylistClick: () -> Unit,
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (Long) -> Unit,
     onSongMenuClick: (String) -> Unit,
@@ -179,7 +173,6 @@ private fun LibraryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryTopAppBar(
     @StringRes titleRes: Int,

@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
@@ -36,7 +35,6 @@ import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SwipeableItem(
     modifier: Modifier = Modifier,
@@ -179,7 +177,6 @@ fun rememberRemoveFromQueueSwipeAction(
         action = { onRemove(queueSong.uid) },
     )
 }
-
 
 data class SwipeAction(
     val icon: ImageVector,
