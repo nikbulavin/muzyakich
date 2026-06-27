@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
-import ru.resodostudio.muzyakich.core.model.data.Playlist
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Playlist
+import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid

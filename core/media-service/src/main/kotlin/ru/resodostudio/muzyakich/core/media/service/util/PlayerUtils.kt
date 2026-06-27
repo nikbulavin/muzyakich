@@ -1,7 +1,7 @@
 package ru.resodostudio.muzyakich.core.media.service.util
 
 import androidx.media3.common.Player
-import ru.resodostudio.muzyakich.core.model.data.PlaybackState
+import ru.resodostudio.muzyakich.core.model.PlaybackState
 
 internal fun Int.asPlaybackState() = when (this) {
     Player.STATE_IDLE -> PlaybackState.IDLE

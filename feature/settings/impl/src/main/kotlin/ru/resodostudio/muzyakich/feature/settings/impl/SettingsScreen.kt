@@ -70,7 +70,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.GraphicEq
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Language
 import ru.resodostudio.muzyakich.core.designsystem.theme.supportsDynamicTheming
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

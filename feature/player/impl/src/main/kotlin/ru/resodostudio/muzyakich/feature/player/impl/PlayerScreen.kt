@@ -69,7 +69,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

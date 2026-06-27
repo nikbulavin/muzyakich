@@ -62,7 +62,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Genres
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

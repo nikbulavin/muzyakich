@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
-import ru.resodostudio.muzyakich.core.model.data.Playlist
+import ru.resodostudio.muzyakich.core.model.Playlist
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 

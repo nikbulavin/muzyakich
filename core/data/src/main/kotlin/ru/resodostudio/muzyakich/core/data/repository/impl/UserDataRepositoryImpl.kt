@@ -3,10 +3,10 @@ package ru.resodostudio.muzyakich.core.data.repository.impl
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.datastore.MuzPreferencesDataSource
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
-import ru.resodostudio.muzyakich.core.model.data.UserData
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
+import ru.resodostudio.muzyakich.core.model.UserData
 import javax.inject.Inject
 
 internal class UserDataRepositoryImpl @Inject constructor(

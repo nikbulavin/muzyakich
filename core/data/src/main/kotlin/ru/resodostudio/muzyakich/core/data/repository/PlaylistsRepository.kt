@@ -1,7 +1,7 @@
 package ru.resodostudio.muzyakich.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.resodostudio.muzyakich.core.model.data.Playlist
+import ru.resodostudio.muzyakich.core.model.Playlist
 import kotlin.uuid.Uuid
 
 interface PlaylistsRepository {

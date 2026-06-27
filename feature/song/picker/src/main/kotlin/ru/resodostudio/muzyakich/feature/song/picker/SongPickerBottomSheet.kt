@@ -58,7 +58,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Close
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

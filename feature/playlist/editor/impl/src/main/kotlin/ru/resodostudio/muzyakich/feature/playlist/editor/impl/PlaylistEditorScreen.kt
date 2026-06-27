@@ -78,7 +78,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.feature.song.picker.SongPickerBottomSheet
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.ReorderableLazyListState

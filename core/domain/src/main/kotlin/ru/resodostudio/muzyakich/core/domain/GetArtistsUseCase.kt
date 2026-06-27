@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.map
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Default
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
-import ru.resodostudio.muzyakich.core.model.data.Artist
-import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
+import ru.resodostudio.muzyakich.core.model.Artist
+import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
 import javax.inject.Inject
 
 class GetArtistsUseCase @Inject constructor(

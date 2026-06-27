@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.core.model.data
+package ru.resodostudio.muzyakich.core.model
 
 data class UserData(
     val darkThemeConfig: DarkThemeConfig,

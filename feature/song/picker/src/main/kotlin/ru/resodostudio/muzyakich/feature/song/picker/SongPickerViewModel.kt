@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
-import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
+import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 

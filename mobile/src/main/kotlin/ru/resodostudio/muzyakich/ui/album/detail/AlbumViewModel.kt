@@ -19,11 +19,11 @@ import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Default
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.data.Album
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
-import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
+import ru.resodostudio.muzyakich.core.model.Album
+import ru.resodostudio.muzyakich.core.model.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = AlbumViewModel.Factory::class)

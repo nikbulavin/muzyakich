@@ -37,9 +37,9 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.FilterList
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Sort
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SortByAlpha
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Title
-import ru.resodostudio.muzyakich.core.model.data.FilterConfig
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
+import ru.resodostudio.muzyakich.core.model.FilterConfig
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

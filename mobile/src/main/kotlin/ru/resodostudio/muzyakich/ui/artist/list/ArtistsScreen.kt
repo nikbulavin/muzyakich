@@ -27,7 +27,7 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import ru.resodostudio.cashsense.core.ui.EmptyState
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
-import ru.resodostudio.muzyakich.core.model.data.Artist
+import ru.resodostudio.muzyakich.core.model.Artist
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.NowPlayingState
 import ru.resodostudio.muzyakich.core.navigation.NavigationState
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.ui.library.navigation.LibraryNavKey

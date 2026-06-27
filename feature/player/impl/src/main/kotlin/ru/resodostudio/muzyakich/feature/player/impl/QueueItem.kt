@@ -27,7 +27,7 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListIt
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.model.data.QueueSong
+import ru.resodostudio.muzyakich.core.model.QueueSong
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Language
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

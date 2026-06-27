@@ -3,14 +3,14 @@ package ru.resodostudio.muzyakich.core.datastore
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.DARK
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.LIGHT
-import ru.resodostudio.muzyakich.core.model.data.FilterConfig
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
-import ru.resodostudio.muzyakich.core.model.data.UserData
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig.DARK
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig.FOLLOW_SYSTEM
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig.LIGHT
+import ru.resodostudio.muzyakich.core.model.FilterConfig
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
+import ru.resodostudio.muzyakich.core.model.UserData
 import javax.inject.Inject
 
 class MuzPreferencesDataSource @Inject constructor(

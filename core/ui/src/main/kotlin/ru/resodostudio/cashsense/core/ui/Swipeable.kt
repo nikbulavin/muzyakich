@@ -31,8 +31,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Remove
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlaylistRemove
-import ru.resodostudio.muzyakich.core.model.data.QueueSong
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.QueueSong
+import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 

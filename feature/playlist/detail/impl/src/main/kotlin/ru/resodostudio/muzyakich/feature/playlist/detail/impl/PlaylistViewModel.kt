@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
-import ru.resodostudio.muzyakich.core.model.data.Playlist
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.Playlist
+import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 

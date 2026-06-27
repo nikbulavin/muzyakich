@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.domain.GetArtistsUseCase
-import ru.resodostudio.muzyakich.core.model.data.Artist
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
+import ru.resodostudio.muzyakich.core.model.Artist
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 

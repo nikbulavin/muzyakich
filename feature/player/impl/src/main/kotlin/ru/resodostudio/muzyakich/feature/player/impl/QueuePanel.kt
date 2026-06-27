@@ -35,8 +35,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.cashsense.core.ui.SongArtworkMini
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
-import ru.resodostudio.muzyakich.core.model.data.QueueSong
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.QueueSong
+import ru.resodostudio.muzyakich.core.model.Song
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import ru.resodostudio.muzyakich.core.locales.R as localesR

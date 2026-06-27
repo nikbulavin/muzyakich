@@ -1,10 +1,10 @@
 package ru.resodostudio.muzyakich.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
-import ru.resodostudio.muzyakich.core.model.data.UserData
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
+import ru.resodostudio.muzyakich.core.model.UserData
 
 interface UserDataRepository {
 

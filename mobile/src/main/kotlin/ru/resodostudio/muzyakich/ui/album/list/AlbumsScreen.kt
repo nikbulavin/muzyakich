@@ -44,7 +44,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionSc
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
-import ru.resodostudio.muzyakich.core.model.data.Album
+import ru.resodostudio.muzyakich.core.model.Album
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.DARK
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig.LIGHT
-import ru.resodostudio.muzyakich.core.model.data.UserData
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig.DARK
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig.FOLLOW_SYSTEM
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig.LIGHT
+import ru.resodostudio.muzyakich.core.model.UserData
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 

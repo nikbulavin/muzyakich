@@ -27,12 +27,12 @@ import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_POSITION_MS
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.Main
-import ru.resodostudio.muzyakich.core.media.service.mapper.asMediaItem
-import ru.resodostudio.muzyakich.core.media.service.mapper.asQueueSong
+import ru.resodostudio.muzyakich.core.media.service.util.asMediaItem
+import ru.resodostudio.muzyakich.core.media.service.util.asQueueSong
 import ru.resodostudio.muzyakich.core.media.service.util.asPlaybackState
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
-import ru.resodostudio.muzyakich.core.model.data.QueueSong
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.QueueSong
+import ru.resodostudio.muzyakich.core.model.Song
 import javax.inject.Inject
 import javax.inject.Singleton
 

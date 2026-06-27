@@ -8,9 +8,9 @@ import ru.resodostudio.muzyakich.core.database.dao.SongDao
 import ru.resodostudio.muzyakich.core.database.model.SongEntity
 import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSource
 import ru.resodostudio.muzyakich.core.mediastore.model.asExternalModel
-import ru.resodostudio.muzyakich.core.model.data.Song
-import ru.resodostudio.muzyakich.core.model.data.SortBy
-import ru.resodostudio.muzyakich.core.model.data.SortOrder
+import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.model.SortBy
+import ru.resodostudio.muzyakich.core.model.SortOrder
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.uuid.Uuid

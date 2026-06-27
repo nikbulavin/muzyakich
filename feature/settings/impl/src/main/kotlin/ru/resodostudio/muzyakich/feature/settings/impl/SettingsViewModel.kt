@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.data.repository.util.AppLocaleManager
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.data.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.model.DarkThemeConfig
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 

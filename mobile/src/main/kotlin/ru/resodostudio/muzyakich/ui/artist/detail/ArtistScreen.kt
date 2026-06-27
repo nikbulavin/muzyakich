@@ -27,7 +27,7 @@ import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

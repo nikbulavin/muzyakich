@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.stateIn
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.domain.GetArtistUseCase
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.data.Artist
-import ru.resodostudio.muzyakich.core.model.data.NowPlayingState
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Artist
+import ru.resodostudio.muzyakich.core.model.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = ArtistViewModel.Factory::class)

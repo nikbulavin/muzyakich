@@ -19,7 +19,7 @@ import ru.resodostudio.muzyakich.core.database.model.PlaylistSongCrossRef
 import ru.resodostudio.muzyakich.core.database.model.SongEntity
 import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSource
 import ru.resodostudio.muzyakich.core.mediastore.model.asExternalModel
-import ru.resodostudio.muzyakich.core.model.data.Playlist
+import ru.resodostudio.muzyakich.core.model.Playlist
 import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.Uuid

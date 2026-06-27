@@ -1,7 +1,7 @@
 package ru.resodostudio.muzyakich.core.mediastore.model
 
 import android.net.Uri
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Song
 
 data class MediaStoreSong(
     val mediaId: String,

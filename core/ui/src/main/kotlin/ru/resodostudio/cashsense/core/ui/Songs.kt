@@ -45,7 +45,7 @@ import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListIt
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
-import ru.resodostudio.muzyakich.core.model.data.Song
+import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.ui.R
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
