@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.core.designsystem.component
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
@@ -13,7 +12,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MuzListItem(
     onClick: () -> Unit,
@@ -41,7 +39,31 @@ fun MuzListItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun MuzListItem(
+    content: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
+    overlineContent: @Composable (() -> Unit)? = null,
+    supportingContent: @Composable (() -> Unit)? = null,
+    leadingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.segmentedColors(
+        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+    ),
+) {
+    SegmentedListItem(
+        content = content,
+        modifier = modifier,
+        overlineContent = overlineContent,
+        supportingContent = supportingContent,
+        leadingContent = leadingContent,
+        trailingContent = trailingContent,
+        colors = colors,
+        shapes = shapes,
+    )
+}
+
 @Composable
 fun MuzToggableListItem(
     checked: Boolean,
@@ -77,7 +99,6 @@ fun MuzToggableListItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MuzSelectableListItem(
     selected: Boolean,
