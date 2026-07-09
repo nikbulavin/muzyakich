@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.album.list
+package ru.resodostudio.muzyakich.feature.album.list.impl
 
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -48,7 +47,7 @@ import ru.resodostudio.muzyakich.core.model.Album
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun AlbumsScreen(
+internal fun AlbumsScreen(
     onAlbumClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AlbumsViewModel = hiltViewModel(),
@@ -62,7 +61,6 @@ fun AlbumsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AlbumsScreen(
     albumsUiState: AlbumsUiState,
@@ -189,7 +187,7 @@ private fun AlbumCard(
                     },
                 )
                 Column(
-                    modifier = Modifier.padding(12.dp)
+                    modifier = Modifier.padding(12.dp),
                 ) {
                     Text(
                         text = album.title,

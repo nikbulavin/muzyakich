@@ -1,7 +1,7 @@
-package ru.resodostudio.muzyakich.ui.album.list.navigation
+package ru.resodostudio.muzyakich.feature.album.list.impl.navigation
 
 import androidx.compose.runtime.Composable
-import ru.resodostudio.muzyakich.ui.album.list.AlbumsScreen
+import ru.resodostudio.muzyakich.feature.album.list.impl.AlbumsScreen
 
 @Composable
 fun AlbumsEntry(onAlbumClick: (Long) -> Unit) {

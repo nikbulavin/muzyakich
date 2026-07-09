@@ -53,12 +53,12 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Settings
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ApkInstall
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Download
 import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.feature.album.list.api.AlbumsNavKey
+import ru.resodostudio.muzyakich.feature.album.list.impl.navigation.AlbumsEntry
 import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
 import ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation.PlaylistsEntry
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
 import ru.resodostudio.muzyakich.feature.song.list.impl.navigation.SongsEntry
-import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsEntry
-import ru.resodostudio.muzyakich.ui.album.list.navigation.AlbumsNavKey
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsEntry
 import ru.resodostudio.muzyakich.ui.artist.list.navigation.ArtistsNavKey
 import kotlin.uuid.Uuid

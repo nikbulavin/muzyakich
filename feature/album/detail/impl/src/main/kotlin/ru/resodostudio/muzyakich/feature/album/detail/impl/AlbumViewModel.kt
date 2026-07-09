@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.album.detail
+package ru.resodostudio.muzyakich.feature.album.detail.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,8 +27,8 @@ import ru.resodostudio.muzyakich.core.model.SortOrder
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = AlbumViewModel.Factory::class)
-class AlbumViewModel @AssistedInject constructor(
-    @Assisted val albumId: Long,
+internal class AlbumViewModel @AssistedInject constructor(
+    @Assisted private val albumId: Long,
     songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
@@ -91,7 +91,7 @@ class AlbumViewModel @AssistedInject constructor(
     }
 }
 
-sealed interface AlbumUiState {
+internal sealed interface AlbumUiState {
 
     data object Loading : AlbumUiState
 

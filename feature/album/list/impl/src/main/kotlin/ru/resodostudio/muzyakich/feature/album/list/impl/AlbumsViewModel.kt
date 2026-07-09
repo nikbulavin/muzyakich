@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.album.list
+package ru.resodostudio.muzyakich.feature.album.list.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class AlbumsViewModel @Inject constructor(
+internal class AlbumsViewModel @Inject constructor(
     songsRepository: SongsRepository,
 ) : ViewModel() {
 
@@ -35,7 +35,7 @@ class AlbumsViewModel @Inject constructor(
                             year = null,
                             genre = null,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -46,7 +46,7 @@ class AlbumsViewModel @Inject constructor(
         )
 }
 
-sealed interface AlbumsUiState {
+internal sealed interface AlbumsUiState {
 
     data object Loading : AlbumsUiState
 

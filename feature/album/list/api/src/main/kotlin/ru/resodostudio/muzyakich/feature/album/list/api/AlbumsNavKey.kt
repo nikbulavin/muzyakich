@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.album.list.navigation
+package ru.resodostudio.muzyakich.feature.album.list.api
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

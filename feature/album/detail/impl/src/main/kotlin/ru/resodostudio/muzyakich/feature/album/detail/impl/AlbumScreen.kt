@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.album.detail
+package ru.resodostudio.muzyakich.feature.album.detail.impl
 
 import android.app.Activity.RESULT_OK
 import android.provider.MediaStore
@@ -30,7 +30,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
@@ -87,7 +86,7 @@ import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun AlbumScreen(
+internal fun AlbumScreen(
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -108,7 +107,6 @@ fun AlbumScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AlbumScreen(
     albumUiState: AlbumUiState,
@@ -178,14 +176,14 @@ private fun AlbumScreen(
                                 onPlaySongsClick(
                                     albumUiState.album.songs,
                                     0,
-                                    false
+                                    false,
                                 )
                             },
                             onShuffleSongsClick = {
                                 onPlaySongsClick(
                                     albumUiState.album.songs,
                                     0,
-                                    true
+                                    true,
                                 )
                             },
                         )
@@ -252,7 +250,7 @@ private fun LazyGridScope.groupedSongs(
                 startToEndSwipeAction = { song ->
                     rememberPlaylistPlaySwipeAction(
                         song,
-                        onSongLeftToRightSwipe
+                        onSongLeftToRightSwipe,
                     )
                 },
                 endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
@@ -269,7 +267,7 @@ private fun LazyGridScope.groupedSongs(
             startToEndSwipeAction = { song ->
                 rememberPlaylistPlaySwipeAction(
                     song,
-                    onSongLeftToRightSwipe
+                    onSongLeftToRightSwipe,
                 )
             },
             endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
@@ -558,7 +556,7 @@ private fun AlbumDropdownMenu(
                             true,
                         )
                         launcher.launch(
-                            IntentSenderRequest.Builder(pendingIntent.intentSender).build()
+                            IntentSenderRequest.Builder(pendingIntent.intentSender).build(),
                         )
                     }
                 },

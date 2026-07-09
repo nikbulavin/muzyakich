@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.album.detail.navigation
+package ru.resodostudio.muzyakich.feature.album.detail.impl.navigation
 
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.fadeIn
@@ -10,9 +10,10 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudio.muzyakich.core.navigation.Navigator
+import ru.resodostudio.muzyakich.feature.album.detail.api.AlbumNavKey
+import ru.resodostudio.muzyakich.feature.album.detail.impl.AlbumScreen
+import ru.resodostudio.muzyakich.feature.album.detail.impl.AlbumViewModel
 import ru.resodostudio.muzyakich.feature.song.detail.api.navigateToSong
-import ru.resodostudio.muzyakich.ui.album.detail.AlbumScreen
-import ru.resodostudio.muzyakich.ui.album.detail.AlbumViewModel
 
 fun EntryProviderScope<NavKey>.albumEntry(
     navigator: Navigator,
