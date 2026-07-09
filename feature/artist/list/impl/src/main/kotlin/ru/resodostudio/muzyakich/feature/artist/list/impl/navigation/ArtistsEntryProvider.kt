@@ -1,7 +1,7 @@
-package ru.resodostudio.muzyakich.ui.artist.list.navigation
+package ru.resodostudio.muzyakich.feature.artist.list.impl.navigation
 
 import androidx.compose.runtime.Composable
-import ru.resodostudio.muzyakich.ui.artist.list.ArtistsScreen
+import ru.resodostudio.muzyakich.feature.artist.list.impl.ArtistsScreen
 
 @Composable
 fun ArtistsEntry(onArtistClick: (Long) -> Unit) {

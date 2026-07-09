@@ -1,12 +1,10 @@
-package ru.resodostudio.muzyakich.ui.artist.detail
+package ru.resodostudio.muzyakich.feature.artist.detail.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,7 +29,7 @@ import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun ArtistScreen(
+internal fun ArtistScreen(
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -50,9 +48,8 @@ fun ArtistScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ArtistScreen(
+private fun ArtistScreen(
     artistUiState: ArtistUiState,
     onBackClick: () -> Unit,
     onSongMenuClick: (String) -> Unit,

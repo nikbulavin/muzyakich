@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.artist.list
+package ru.resodostudio.muzyakich.feature.artist.list.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +15,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class ArtistsViewModel @Inject constructor(
+internal class ArtistsViewModel @Inject constructor(
     getArtistsUseCase: GetArtistsUseCase,
 ) : ViewModel() {
 
@@ -36,7 +36,7 @@ class ArtistsViewModel @Inject constructor(
         )
 }
 
-sealed interface ArtistsUiState {
+internal sealed interface ArtistsUiState {
 
     data object Loading : ArtistsUiState
 

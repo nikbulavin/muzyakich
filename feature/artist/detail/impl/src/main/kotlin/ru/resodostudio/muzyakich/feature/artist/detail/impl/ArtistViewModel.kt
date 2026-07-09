@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.artist.detail
+package ru.resodostudio.muzyakich.feature.artist.detail.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +19,7 @@ import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = ArtistViewModel.Factory::class)
-class ArtistViewModel @AssistedInject constructor(
+internal class ArtistViewModel @AssistedInject constructor(
     @Assisted val artistId: Long,
     getArtistUseCase: GetArtistUseCase,
     private val musicServiceConnection: MusicServiceConnection,
@@ -64,7 +64,7 @@ class ArtistViewModel @AssistedInject constructor(
     }
 }
 
-sealed interface ArtistUiState {
+internal sealed interface ArtistUiState {
 
     data object Loading : ArtistUiState
 

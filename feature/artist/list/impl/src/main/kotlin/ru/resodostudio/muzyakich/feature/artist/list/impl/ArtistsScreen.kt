@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.artist.list
+package ru.resodostudio.muzyakich.feature.artist.list.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +30,7 @@ import ru.resodostudio.muzyakich.core.model.Artist
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun ArtistsScreen(
+internal fun ArtistsScreen(
     onArtistClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ArtistsViewModel = hiltViewModel(),
@@ -45,7 +44,6 @@ fun ArtistsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ArtistsScreen(
     artistsUiState: ArtistsUiState,
@@ -94,7 +92,6 @@ private fun ArtistsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.artists(
     artists: List<Artist>,
     onArtistClick: (Long) -> Unit,
