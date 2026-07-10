@@ -124,6 +124,8 @@ fun MuzApp(
 
     val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
+    val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = {
@@ -195,7 +197,8 @@ fun MuzApp(
                         .navigationBarsPadding()
                         .animateFloatingActionButton(
                             visible = libraryNavigator.state.backStack.last() is PlaylistsNavKey &&
-                                    navigator.state.currentKey is LibraryNavKey,
+                                    navigator.state.currentKey is LibraryNavKey &&
+                                    permissionState.status == PermissionStatus.Granted,
                             alignment = Alignment.BottomCenter,
                         ),
                 ) {
@@ -225,7 +228,6 @@ fun MuzApp(
                     ),
                 ),
         ) {
-            val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
             when (permissionState.status) {
                 is PermissionStatus.Denied -> {
                     Column(
@@ -240,7 +242,7 @@ fun MuzApp(
                             style = MaterialTheme.typography.bodyLarge,
                         )
                         Spacer(modifier = Modifier.height(32.dp))
-                        val buttonSize = ButtonDefaults.MinHeight
+                        val buttonSize = ButtonDefaults.MediumContainerHeight
                         val buttonContentPadding = ButtonDefaults.contentPaddingFor(
                             buttonHeight = buttonSize,
                             hasStartIcon = true,
