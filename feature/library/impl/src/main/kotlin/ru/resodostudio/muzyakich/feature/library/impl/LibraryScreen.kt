@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.library
+package ru.resodostudio.muzyakich.feature.library.impl
 
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
@@ -57,6 +57,7 @@ import ru.resodostudio.muzyakich.feature.album.list.api.AlbumsNavKey
 import ru.resodostudio.muzyakich.feature.album.list.impl.navigation.AlbumsEntry
 import ru.resodostudio.muzyakich.feature.artist.list.api.ArtistsNavKey
 import ru.resodostudio.muzyakich.feature.artist.list.impl.navigation.ArtistsEntry
+import ru.resodostudio.muzyakich.feature.library.impl.model.LibraryTab
 import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
 import ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation.PlaylistsEntry
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
@@ -65,7 +66,7 @@ import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
-fun LibraryScreen(
+internal fun LibraryScreen(
     libraryNavigator: Navigator,
     onPlaylistClick: (Uuid) -> Unit,
     onAlbumClick: (Long) -> Unit,
@@ -159,6 +160,7 @@ private fun LibraryScreen(
                                     fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
                                     fadeOut(snap())
                         },
+                        label = "LibraryContent",
                     ) { state ->
                         when (state) {
                             PlaylistsNavKey -> PlaylistsEntry(onPlaylistClick)

@@ -68,6 +68,8 @@ dependencies {
     implementation(projects.feature.artist.detail.impl)
     implementation(projects.feature.artist.list.api)
     implementation(projects.feature.artist.list.impl)
+    implementation(projects.feature.library.api)
+    implementation(projects.feature.library.impl)
     implementation(projects.feature.player.api)
     implementation(projects.feature.player.impl)
     implementation(projects.feature.playlist.detail.api)
@@ -99,8 +101,6 @@ dependencies {
     implementation(libs.haze)
     implementation(libs.haze.materials)
     implementation(libs.lottie.compose)
-    implementation(libs.play.app.update)
-    implementation(libs.play.app.update.ktx)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 

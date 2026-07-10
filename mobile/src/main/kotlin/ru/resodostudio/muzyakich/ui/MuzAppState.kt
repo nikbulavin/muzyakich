@@ -13,7 +13,7 @@ import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.NowPlayingState
 import ru.resodostudio.muzyakich.core.navigation.NavigationState
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
-import ru.resodostudio.muzyakich.ui.library.navigation.LibraryNavKey
+import ru.resodostudio.muzyakich.feature.library.api.LibraryNavKey
 import kotlin.time.Duration.Companion.seconds
 
 @Composable

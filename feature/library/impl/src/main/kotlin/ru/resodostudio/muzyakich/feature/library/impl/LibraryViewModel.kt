@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.ui.library
+package ru.resodostudio.muzyakich.feature.library.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class LibraryViewModel @Inject constructor(
+internal class LibraryViewModel @Inject constructor(
     inAppUpdateManager: InAppUpdateManager,
     musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
@@ -37,7 +37,7 @@ class LibraryViewModel @Inject constructor(
         )
 }
 
-sealed interface LibraryUiState {
+internal sealed interface LibraryUiState {
 
     data object Loading : LibraryUiState
 

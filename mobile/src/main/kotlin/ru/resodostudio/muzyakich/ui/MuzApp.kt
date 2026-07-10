@@ -79,6 +79,9 @@ import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.feature.album.detail.impl.navigation.albumEntry
 import ru.resodostudio.muzyakich.feature.artist.detail.impl.navigation.artistEntry
+import ru.resodostudio.muzyakich.feature.library.api.LibraryNavKey
+import ru.resodostudio.muzyakich.feature.library.impl.model.LibraryTab
+import ru.resodostudio.muzyakich.feature.library.impl.navigation.libraryEntry
 import ru.resodostudio.muzyakich.feature.player.api.PlayerNavKey
 import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
 import ru.resodostudio.muzyakich.feature.player.impl.navigation.playerEntry
@@ -91,9 +94,6 @@ import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
-import ru.resodostudio.muzyakich.ui.library.LibraryTab
-import ru.resodostudio.muzyakich.ui.library.navigation.LibraryNavKey
-import ru.resodostudio.muzyakich.ui.library.navigation.libraryEntry
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(
