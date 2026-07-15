@@ -402,7 +402,7 @@ private fun PlaylistTopAppBar(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 private fun PlaylistDropdownMenu(
     isScrolled: Boolean,
     songs: List<Song>,

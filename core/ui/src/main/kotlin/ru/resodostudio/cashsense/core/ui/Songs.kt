@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
@@ -48,6 +49,7 @@ import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.ui.R
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongItem(
     song: Song,

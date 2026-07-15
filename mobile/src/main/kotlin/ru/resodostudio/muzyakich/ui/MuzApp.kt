@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -99,7 +100,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class,
+    ExperimentalHazeApi::class, ExperimentalMaterial3Api::class,
 )
 @Composable
 fun MuzApp(
