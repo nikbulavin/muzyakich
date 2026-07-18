@@ -15,6 +15,8 @@ personal music library, built with a focus on a reactive and seamless user exper
 
 ## UI
 
+![Screenshots](docs/images/screenshots.jpg "Screenshots")
+
 The application strictly adheres to the [Material 3 Expressive][m3] design principles, offering
 a refined, modern, and accessible interface built entirely with [Jetpack Compose][compose].
 
