@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
@@ -42,6 +43,7 @@ import ru.resodostudio.muzyakich.core.model.SortBy
 import ru.resodostudio.muzyakich.core.model.SortOrder
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FilterDropdownMenu(
     filterConfig: FilterConfig,
