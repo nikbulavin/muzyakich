@@ -200,7 +200,7 @@ fun MuzApp(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         HorizontalFloatingToolbar(
-                            expanded = true,
+                            expanded = false,
                             content = {
                                 val tabs = LibraryTab.entries
                                 val labels = tabs.associateWith { stringResource(it.titleRes) }
@@ -219,6 +219,7 @@ fun MuzApp(
                                     }
                                 }
                             },
+                            collapsedShadowElevation = 3.dp,
                         )
                         FloatingToolbarDefaults.StandardFloatingActionButton(
                             onClick = dropUnlessResumed { navigator.navigateToPlaylistEditor() },
