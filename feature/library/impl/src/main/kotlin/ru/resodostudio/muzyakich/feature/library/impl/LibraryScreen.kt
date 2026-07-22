@@ -11,9 +11,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -24,10 +23,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
@@ -42,7 +39,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,7 +54,6 @@ import ru.resodostudio.muzyakich.feature.album.list.api.AlbumsNavKey
 import ru.resodostudio.muzyakich.feature.album.list.impl.navigation.AlbumsEntry
 import ru.resodostudio.muzyakich.feature.artist.list.api.ArtistsNavKey
 import ru.resodostudio.muzyakich.feature.artist.list.impl.navigation.ArtistsEntry
-import ru.resodostudio.muzyakich.feature.library.impl.model.LibraryTab
 import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
 import ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation.PlaylistsEntry
 import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
@@ -107,10 +102,6 @@ private fun LibraryScreen(
         is LibraryUiState.Success -> {
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-            val libraryTabs = LibraryTab.entries
-            val currentTab = libraryTabs.find { it.navKey == libraryNavigator.state.backStack.last() }
-                ?: libraryTabs.first()
-
             Scaffold(
                 modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
@@ -126,33 +117,9 @@ private fun LibraryScreen(
                 },
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
             ) { paddingValues ->
-                Column(
-                    modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
+                Box(
+                    modifier = Modifier.padding(paddingValues),
                 ) {
-                    PrimaryScrollableTabRow(
-                        selectedTabIndex = currentTab.ordinal,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        libraryTabs.forEach { tab ->
-                            Tab(
-                                selected = currentTab == tab,
-                                onClick = { libraryNavigator.navigateAndClearStack(tab.navKey) },
-                                icon = {
-                                    Icon(
-                                        imageVector = tab.icon,
-                                        contentDescription = null,
-                                    )
-                                },
-                                text = {
-                                    Text(
-                                        text = stringResource(tab.titleRes),
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                },
-                            )
-                        }
-                    }
                     val motionScheme = MaterialTheme.motionScheme
                     AnimatedContent(
                         targetState = libraryNavigator.state.backStack.last(),
