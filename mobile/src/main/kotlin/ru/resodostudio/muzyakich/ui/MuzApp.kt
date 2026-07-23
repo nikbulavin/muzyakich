@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateBounds
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -28,7 +29,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +37,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -50,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,6 +69,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Add
@@ -194,46 +197,59 @@ fun MuzApp(
                             slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
                     exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        HorizontalFloatingToolbar(
-                            expanded = false,
-                            content = {
-                                val tabs = LibraryTab.entries
-                                val labels = tabs.associateWith { stringResource(it.titleRes) }
-                                AppBarRow {
-                                    for (tab in tabs) {
-                                        clickableItem(
-                                            onClick = { libraryNavigator.navigateAndClearStack(tab.navKey) },
-                                            icon = {
-                                                Icon(
-                                                    imageVector = tab.icon,
-                                                    contentDescription = null,
-                                                )
-                                            },
-                                            label = labels[tab] ?: "",
-                                        )
-                                    }
-                                }
-                            },
-                            collapsedShadowElevation = 3.dp,
-                        )
-                        FloatingToolbarDefaults.StandardFloatingActionButton(
-                            onClick = dropUnlessResumed { navigator.navigateToPlaylistEditor() },
+                    LookaheadScope {
+                        Row(
                             modifier = Modifier
-                                .animateFloatingActionButton(
-                                    visible = currentLibraryTab == LibraryTab.PLAYLISTS,
-                                    alignment = Alignment.BottomCenter,
-                                )
-                                .size(56.dp),
+                                .padding(horizontal = 16.dp)
+                                .animateBounds(this),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.Add,
-                                contentDescription = stringResource(localesR.string.core_locales_new_playlist),
+                            HorizontalFloatingToolbar(
+                                expanded = false,
+                                content = {
+                                    val tabs = LibraryTab.entries
+                                    val labels = tabs.associateWith { stringResource(it.titleRes) }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        tabs.forEach { tab ->
+                                            MuzFilledIconToggleButton(
+                                                checked = tab == currentLibraryTab,
+                                                onCheckedChange = {
+                                                    libraryNavigator.navigateAndClearStack(
+                                                        tab.navKey
+                                                    )
+                                                },
+                                                icon = tab.icon,
+                                                contentDescription = labels[tab] ?: "",
+                                                containerSize = IconButtonDefaults.smallContainerSize(
+                                                    IconButtonDefaults.IconButtonWidthOption.Wide
+                                                ),
+                                                shapes = IconButtonDefaults.toggleableShapes(
+                                                    checkedShape = CircleShape,
+                                                ),
+                                            )
+                                        }
+                                    }
+                                },
+                                collapsedShadowElevation = 3.dp,
                             )
+                            FloatingToolbarDefaults.StandardFloatingActionButton(
+                                onClick = dropUnlessResumed { navigator.navigateToPlaylistEditor() },
+                                modifier = Modifier
+                                    .animateFloatingActionButton(
+                                        visible = currentLibraryTab == LibraryTab.PLAYLISTS,
+                                        alignment = Alignment.BottomCenter,
+                                    )
+                                    .size(56.dp),
+                            ) {
+                                Icon(
+                                    imageVector = MuzIcons.Rounded.Add,
+                                    contentDescription = stringResource(localesR.string.core_locales_new_playlist),
+                                )
+                            }
                         }
                     }
                 }

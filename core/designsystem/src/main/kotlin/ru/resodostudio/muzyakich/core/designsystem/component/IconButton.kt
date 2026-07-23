@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.IconToggleButtonColors
+import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -161,6 +162,7 @@ fun MuzFilledIconToggleButton(
     colors: IconToggleButtonColors = IconButtonDefaults.filledIconToggleButtonColors(),
     containerSize: DpSize = smallContainerSize(),
     iconSize: Dp = IconButtonDefaults.smallIconSize,
+    shapes: IconToggleButtonShapes = IconButtonDefaults.toggleableShapes(),
 ) {
     TooltipBox(
         modifier = modifier,
@@ -179,7 +181,7 @@ fun MuzFilledIconToggleButton(
                 )
                 onCheckedChange(!checked)
             },
-            shapes = IconButtonDefaults.toggleableShapes(),
+            shapes = shapes,
             colors = colors,
             modifier = Modifier.size(containerSize),
         ) {
