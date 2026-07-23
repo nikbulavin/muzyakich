@@ -140,68 +140,69 @@ fun MuzApp(
             )
         },
         floatingActionButton = {
-            Column(
-                modifier = Modifier
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Horizontal,
-                        ),
-                    )
-                    .navigationBarsPadding(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                AnimatedVisibility(
-                    visible = isNowPlayingVisible,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    enter = fadeIn(fadeSpec) +
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
-                            slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
-                            expandHorizontally(
-                                animationSpec = motionScheme.defaultSpatialSpec(),
-                                expandFrom = Alignment.CenterHorizontally,
+            LookaheadScope {
+                Column(
+                    modifier = Modifier
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(
+                                WindowInsetsSides.Horizontal,
                             ),
-                    exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+                        )
+                        .navigationBarsPadding()
+                        .animateBounds(this@LookaheadScope),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    )
-                    val hazeBlurRadius = 32.dp
-                    with(LocalSharedTransitionScope.current) {
-                        if (player != null) {
-                            NowPlayingBar(
-                                player = player,
-                                modifier = Modifier
-                                    .renderInSharedTransitionScopeOverlay(2f)
-                                    .shadow(
-                                        elevation = 6.dp,
-                                        shape = CircleShape,
-                                        clip = true,
-                                    )
-                                    .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                        inputScale = HazeInputScale.Auto
-                                        blurEnabled = true
-                                        blurRadius = hazeBlurRadius
-                                        noiseFactor = 0f
-                                    },
-                                onClick = dropUnlessResumed { navigator.navigateToPlayer() },
-                            )
+                    AnimatedVisibility(
+                        visible = isNowPlayingVisible,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        enter = fadeIn(fadeSpec) +
+                                scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                                slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
+                                expandHorizontally(
+                                    animationSpec = motionScheme.defaultSpatialSpec(),
+                                    expandFrom = Alignment.CenterHorizontally,
+                                ),
+                        exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+                    ) {
+                        val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        )
+                        val hazeBlurRadius = 32.dp
+                        with(LocalSharedTransitionScope.current) {
+                            if (player != null) {
+                                NowPlayingBar(
+                                    player = player,
+                                    modifier = Modifier
+                                        .renderInSharedTransitionScopeOverlay(2f)
+                                        .shadow(
+                                            elevation = 3.dp,
+                                            shape = CircleShape,
+                                            clip = true,
+                                        )
+                                        .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                            inputScale = HazeInputScale.Auto
+                                            blurEnabled = true
+                                            blurRadius = hazeBlurRadius
+                                            noiseFactor = 0f
+                                        },
+                                    onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                                )
+                            }
                         }
                     }
-                }
-                AnimatedVisibility(
-                    visible = navigator.state.currentKey is LibraryNavKey &&
-                            permissionState.status == PermissionStatus.Granted,
-                    enter = fadeIn(fadeSpec) +
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
-                            slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
-                    exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
-                ) {
-                    LookaheadScope {
+                    AnimatedVisibility(
+                        visible = navigator.state.currentKey is LibraryNavKey &&
+                                permissionState.status == PermissionStatus.Granted,
+                        enter = fadeIn(fadeSpec) +
+                                scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                                slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
+                        exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+                    ) {
                         Row(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
-                                .animateBounds(this),
+                                .animateBounds(this@LookaheadScope),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
