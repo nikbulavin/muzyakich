@@ -65,6 +65,7 @@ fun NavigationToolbar(
                                 checkedShape = CircleShape,
                             ),
                             shouldAnimateIcon = false,
+                            shouldVibrateOnToggle = false,
                         )
                     }
                 }

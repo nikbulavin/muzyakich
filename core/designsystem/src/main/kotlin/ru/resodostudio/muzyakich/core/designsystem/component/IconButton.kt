@@ -164,6 +164,7 @@ fun MuzFilledIconToggleButton(
     iconSize: Dp = IconButtonDefaults.smallIconSize,
     shapes: IconToggleButtonShapes = IconButtonDefaults.toggleableShapes(),
     shouldAnimateIcon: Boolean = true,
+    shouldVibrateOnToggle: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -177,9 +178,11 @@ fun MuzFilledIconToggleButton(
         FilledIconToggleButton(
             checked = checked,
             onCheckedChange = {
-                hapticFeedback.performHapticFeedback(
-                    if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-                )
+                if (shouldVibrateOnToggle) {
+                    hapticFeedback.performHapticFeedback(
+                        if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                    )
+                }
                 onCheckedChange(!checked)
             },
             shapes = shapes,
