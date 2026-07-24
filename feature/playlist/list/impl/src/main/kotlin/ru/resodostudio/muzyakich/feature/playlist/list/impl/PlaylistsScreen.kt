@@ -12,13 +12,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -51,23 +50,24 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 internal fun PlaylistsScreen(
     onPlaylistClick: (Uuid) -> Unit,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: PlaylistsViewModel = hiltViewModel(),
 ) {
     val playlistsUiState by viewModel.playlistsUiState.collectAsStateWithLifecycle()
-
     PlaylistsScreen(
         playlistsUiState = playlistsUiState,
         onPlaylistClick = onPlaylistClick,
+        innerPadding = innerPadding,
         modifier = modifier,
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PlaylistsScreen(
     playlistsUiState: PlaylistsUiState,
     onPlaylistClick: (Uuid) -> Unit,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     when (playlistsUiState) {
@@ -77,7 +77,7 @@ private fun PlaylistsScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(32.dp)
-                    .navigationBarsPadding(),
+                    .padding(innerPadding),
             )
         }
 
@@ -85,7 +85,7 @@ private fun PlaylistsScreen(
             LoadingState(
                 modifier = modifier
                     .fillMaxSize()
-                    .navigationBarsPadding(),
+                    .padding(innerPadding),
             )
         }
 
@@ -95,7 +95,7 @@ private fun PlaylistsScreen(
                 modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(
+                contentPadding = innerPadding + PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
                     top = 16.dp,

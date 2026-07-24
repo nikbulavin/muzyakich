@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,6 +32,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 internal fun ArtistsScreen(
     onArtistClick: (Long) -> Unit,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: ArtistsViewModel = hiltViewModel(),
 ) {
@@ -40,6 +41,7 @@ internal fun ArtistsScreen(
     ArtistsScreen(
         artistsUiState = artistsUiState,
         onArtistClick = onArtistClick,
+        innerPadding = innerPadding,
         modifier = modifier,
     )
 }
@@ -48,6 +50,7 @@ internal fun ArtistsScreen(
 private fun ArtistsScreen(
     artistsUiState: ArtistsUiState,
     onArtistClick: (Long) -> Unit,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     when (artistsUiState) {
@@ -57,7 +60,7 @@ private fun ArtistsScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(32.dp)
-                    .navigationBarsPadding(),
+                    .padding(innerPadding),
             )
         }
 
@@ -65,7 +68,7 @@ private fun ArtistsScreen(
             LoadingState(
                 modifier = modifier
                     .fillMaxSize()
-                    .navigationBarsPadding(),
+                    .padding(innerPadding),
             )
         }
 
@@ -74,7 +77,7 @@ private fun ArtistsScreen(
                 columns = GridCells.Adaptive(300.dp),
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                contentPadding = PaddingValues(
+                contentPadding = innerPadding + PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
                     top = 16.dp,

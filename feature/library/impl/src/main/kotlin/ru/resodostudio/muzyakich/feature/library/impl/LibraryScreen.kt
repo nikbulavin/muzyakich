@@ -11,8 +11,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -37,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -111,31 +110,27 @@ private fun LibraryScreen(
                         onSettingsClick = onSettingsClick,
                         scrollBehavior = scrollBehavior,
                         colors = TopAppBarDefaults.topAppBarColors().copy(
-                            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+                            scrolledContainerColor = Color.Transparent,
+                            containerColor = Color.Transparent,
                         ),
                     )
                 },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            ) { paddingValues ->
-                Box(
-                    modifier = Modifier.padding(paddingValues),
-                ) {
-                    val motionScheme = MaterialTheme.motionScheme
-                    AnimatedContent(
-                        targetState = libraryNavigator.state.backStack.last(),
-                        transitionSpec = {
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
-                                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
-                                    fadeOut(snap())
-                        },
-                        label = "LibraryContent",
-                    ) { state ->
-                        when (state) {
-                            PlaylistsNavKey -> PlaylistsEntry(onPlaylistClick)
-                            SongsNavKey -> SongsEntry(onSongMenuClick)
-                            AlbumsNavKey -> AlbumsEntry(onAlbumClick)
-                            ArtistsNavKey -> ArtistsEntry(onArtistClick)
-                        }
+            ) { innerPadding ->
+                val motionScheme = MaterialTheme.motionScheme
+                AnimatedContent(
+                    targetState = libraryNavigator.state.backStack.last(),
+                    transitionSpec = {
+                        scaleIn(motionScheme.defaultSpatialSpec(), 0.92f) +
+                                fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                                fadeOut(snap())
+                    },
+                    label = "LibraryContent",
+                ) { state ->
+                    when (state) {
+                        PlaylistsNavKey -> PlaylistsEntry(onPlaylistClick, innerPadding)
+                        SongsNavKey -> SongsEntry(onSongMenuClick, innerPadding)
+                        AlbumsNavKey -> AlbumsEntry(onAlbumClick, innerPadding)
+                        ArtistsNavKey -> ArtistsEntry(onArtistClick, innerPadding)
                     }
                 }
             }

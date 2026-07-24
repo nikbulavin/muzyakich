@@ -8,13 +8,12 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +39,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 internal fun SongsScreen(
     onSongMenuClick: (String) -> Unit,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: SongsViewModel = hiltViewModel(),
 ) {
@@ -48,6 +48,7 @@ internal fun SongsScreen(
     SongsScreen(
         songsUiState = songsUiState,
         onSongMenuClick = onSongMenuClick,
+        innerPadding = innerPadding,
         modifier = modifier,
         onPlaySongsClick = viewModel::playSongs,
         onToggleFilterFavorites = viewModel::toggleFilterFavorites,
@@ -58,11 +59,11 @@ internal fun SongsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SongsScreen(
     songsUiState: SongsUiState,
     onSongMenuClick: (String) -> Unit,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onPlaySongsClick: (songs: List<Song>, startIndex: Int, shuffle: Boolean) -> Unit = { _, _, _ -> },
     onToggleFilterFavorites: (Boolean) -> Unit = {},
@@ -78,7 +79,7 @@ private fun SongsScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(32.dp)
-                    .navigationBarsPadding(),
+                    .padding(innerPadding),
             )
         }
 
@@ -86,14 +87,14 @@ private fun SongsScreen(
             LoadingState(
                 modifier = modifier
                     .fillMaxSize()
-                    .navigationBarsPadding(),
+                    .padding(innerPadding),
             )
         }
 
         is SongsUiState.Success -> {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(300.dp),
-                contentPadding = PaddingValues(
+                contentPadding = innerPadding + PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
                     top = 8.dp,
@@ -130,7 +131,6 @@ private fun SongsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.actionButtons(
     songs: List<Song>,
     onPlaySongsClick: (List<Song>, Int, Boolean) -> Unit,
