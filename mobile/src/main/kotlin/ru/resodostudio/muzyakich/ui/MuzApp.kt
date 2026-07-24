@@ -13,13 +13,11 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -33,19 +31,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.animateFloatingActionButton
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,7 +63,6 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Add
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
@@ -88,19 +78,19 @@ import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
 import ru.resodostudio.muzyakich.feature.player.impl.navigation.playerEntry
 import ru.resodostudio.muzyakich.feature.playlist.detail.impl.navigation.playlistEntry
 import ru.resodostudio.muzyakich.feature.playlist.editor.api.PlaylistEditorNavKey
-import ru.resodostudio.muzyakich.feature.playlist.editor.api.navigateToPlaylistEditor
 import ru.resodostudio.muzyakich.feature.playlist.editor.impl.navigation.playlistEditorEntry
-import ru.resodostudio.muzyakich.feature.playlist.list.api.PlaylistsNavKey
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
+import ru.resodostudio.muzyakich.ui.component.NavigationToolbar
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalHazeApi::class,
+    ExperimentalMaterial3Api::class,
 )
 @Composable
 fun MuzApp(
@@ -119,13 +109,19 @@ fun MuzApp(
     val motionScheme = MaterialTheme.motionScheme
     val hazeState = rememberHazeState()
 
-    val isNowPlayingVisible = appState.navigationState.backStack.none {
+    val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
+
+    val shouldShowNowPlayingBar = appState.navigationState.backStack.none {
         it is PlaylistEditorNavKey || it is PlayerNavKey
     } && player?.currentMediaItem != null
+    val shouldShowNavigationToolbar = appState.navigationState.currentKey is LibraryNavKey
+            && permissionState.status == PermissionStatus.Granted
 
     val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
-    val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
+    val currentLibraryTab =
+        LibraryTab.entries.find { it.navKey == libraryNavigator.state.backStack.last() }
+            ?: LibraryTab.entries.first()
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -136,43 +132,41 @@ fun MuzApp(
             )
         },
         floatingActionButton = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Horizontal,
-                        ),
-                    )
-                    .padding(horizontal = 16.dp),
-            ) {
-                val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                )
-                val hazeBlurRadius = 32.dp
-                AnimatedVisibility(
-                    visible = isNowPlayingVisible,
-                    modifier = Modifier.weight(1f),
-                    enter = fadeIn(fadeSpec) +
-                            scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
-                            slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
-                            expandHorizontally(
-                                animationSpec = motionScheme.defaultSpatialSpec(),
-                                expandFrom = Alignment.CenterHorizontally,
+            with(LocalSharedTransitionScope.current) {
+                Column(
+                    modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(2f)
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(
+                                WindowInsetsSides.Horizontal,
                             ),
-                    exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+                        )
+                        .navigationBarsPadding(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    with(LocalSharedTransitionScope.current) {
+                    AnimatedVisibility(
+                        visible = shouldShowNowPlayingBar,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        enter = fadeIn(fadeSpec) +
+                                scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                                slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 } +
+                                expandHorizontally(
+                                    animationSpec = motionScheme.defaultSpatialSpec(),
+                                    expandFrom = Alignment.CenterHorizontally,
+                                ),
+                        exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
+                    ) {
+                        val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        )
+                        val hazeBlurRadius = 32.dp
                         if (player != null) {
                             NowPlayingBar(
                                 player = player,
                                 modifier = Modifier
-                                    .renderInSharedTransitionScopeOverlay(2f)
-                                    .navigationBarsPadding()
                                     .shadow(
-                                        elevation = 6.dp,
+                                        elevation = 3.dp,
                                         shape = CircleShape,
                                         clip = true,
                                     )
@@ -186,31 +180,17 @@ fun MuzApp(
                             )
                         }
                     }
-                }
-                val contentDescription = stringResource(localesR.string.core_locales_new_playlist)
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                        TooltipAnchorPosition.Above,
-                    ),
-                    tooltip = { PlainTooltip { Text(contentDescription) } },
-                    state = rememberTooltipState(),
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .animateFloatingActionButton(
-                            visible = libraryNavigator.state.backStack.last() is PlaylistsNavKey &&
-                                    navigator.state.currentKey is LibraryNavKey &&
-                                    permissionState.status == PermissionStatus.Granted,
-                            alignment = Alignment.BottomCenter,
-                        ),
-                ) {
-                    FloatingActionButton(
-                        onClick = navigator::navigateToPlaylistEditor,
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        modifier = Modifier.padding(start = 8.dp),
+                    AnimatedVisibility(
+                        visible = shouldShowNavigationToolbar,
+                        enter = fadeIn(fadeSpec) +
+                                scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
+                                slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
+                        exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                     ) {
-                        Icon(
-                            imageVector = MuzIcons.Rounded.Add,
-                            contentDescription = contentDescription,
+                        NavigationToolbar(
+                            currentLibraryTab = currentLibraryTab,
+                            libraryNavigator = libraryNavigator,
+                            navigator = navigator,
                         )
                     }
                 }
@@ -272,7 +252,10 @@ fun MuzApp(
 
                 PermissionStatus.Granted -> {
                     val entryProvider = entryProvider {
-                        libraryEntry(navigator, libraryNavigator)
+                        libraryEntry(
+                            navigator = navigator,
+                            libraryNavigator = libraryNavigator,
+                        )
                         playerEntry(navigator)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)

@@ -1,12 +1,17 @@
 package ru.resodostudio.muzyakich.feature.playlist.list.impl.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import ru.resodostudio.muzyakich.feature.playlist.list.impl.PlaylistsScreen
 import kotlin.uuid.Uuid
 
 @Composable
-fun PlaylistsEntry(onPlaylistClick: (Uuid) -> Unit) {
+fun PlaylistsEntry(
+    onPlaylistClick: (Uuid) -> Unit,
+    innerPadding: PaddingValues,
+) {
     PlaylistsScreen(
         onPlaylistClick = onPlaylistClick,
+        innerPadding = innerPadding,
     )
 }

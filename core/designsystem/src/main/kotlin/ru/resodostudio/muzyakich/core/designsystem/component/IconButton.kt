@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.IconToggleButtonColors
+import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -161,6 +162,9 @@ fun MuzFilledIconToggleButton(
     colors: IconToggleButtonColors = IconButtonDefaults.filledIconToggleButtonColors(),
     containerSize: DpSize = smallContainerSize(),
     iconSize: Dp = IconButtonDefaults.smallIconSize,
+    shapes: IconToggleButtonShapes = IconButtonDefaults.toggleableShapes(),
+    shouldAnimateIcon: Boolean = true,
+    shouldVibrateOnToggle: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -174,20 +178,30 @@ fun MuzFilledIconToggleButton(
         FilledIconToggleButton(
             checked = checked,
             onCheckedChange = {
-                hapticFeedback.performHapticFeedback(
-                    if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-                )
+                if (shouldVibrateOnToggle) {
+                    hapticFeedback.performHapticFeedback(
+                        if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                    )
+                }
                 onCheckedChange(!checked)
             },
-            shapes = IconButtonDefaults.toggleableShapes(),
+            shapes = shapes,
             colors = colors,
             modifier = Modifier.size(containerSize),
         ) {
-            AnimatedIcon(
-                icon = icon,
-                contentDescription = contentDescription,
-                iconSize = iconSize,
-            )
+            if (shouldAnimateIcon) {
+                AnimatedIcon(
+                    icon = icon,
+                    contentDescription = contentDescription,
+                    iconSize = iconSize,
+                )
+            } else {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDescription,
+                    modifier = Modifier.size(iconSize),
+                )
+            }
         }
     }
 }
