@@ -163,6 +163,7 @@ fun MuzFilledIconToggleButton(
     containerSize: DpSize = smallContainerSize(),
     iconSize: Dp = IconButtonDefaults.smallIconSize,
     shapes: IconToggleButtonShapes = IconButtonDefaults.toggleableShapes(),
+    shouldAnimateIcon: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -185,11 +186,19 @@ fun MuzFilledIconToggleButton(
             colors = colors,
             modifier = Modifier.size(containerSize),
         ) {
-            AnimatedIcon(
-                icon = icon,
-                contentDescription = contentDescription,
-                iconSize = iconSize,
-            )
+            if (shouldAnimateIcon) {
+                AnimatedIcon(
+                    icon = icon,
+                    contentDescription = contentDescription,
+                    iconSize = iconSize,
+                )
+            } else {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDescription,
+                    modifier = Modifier.size(iconSize),
+                )
+            }
         }
     }
 }

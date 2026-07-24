@@ -4,6 +4,9 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Album
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Artist
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Artist
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
@@ -16,27 +19,32 @@ import ru.resodostudio.muzyakich.feature.song.list.api.SongsNavKey
 
 enum class LibraryTab(
     @StringRes val titleRes: Int,
-    val icon: ImageVector,
+    val unselectedIcon: ImageVector,
+    val selectedIcon: ImageVector,
     val navKey: NavKey,
 ) {
     PLAYLISTS(
         titleRes = R.string.core_locales_playlists,
-        icon = MuzIcons.Rounded.LibraryMusic,
+        unselectedIcon = MuzIcons.Rounded.LibraryMusic,
+        selectedIcon = MuzIcons.Filled.LibraryMusic,
         navKey = PlaylistsNavKey,
     ),
     SONGS(
         titleRes = R.string.core_locales_songs,
-        icon = MuzIcons.Rounded.MusicNote,
+        unselectedIcon = MuzIcons.Rounded.MusicNote,
+        selectedIcon = MuzIcons.Rounded.MusicNote,
         navKey = SongsNavKey,
     ),
     ALBUMS(
         titleRes = R.string.core_locales_albums,
-        icon = MuzIcons.Rounded.Album,
+        unselectedIcon = MuzIcons.Rounded.Album,
+        selectedIcon = MuzIcons.Filled.Album,
         navKey = AlbumsNavKey,
     ),
     ARTISTS(
         titleRes = R.string.core_locales_artists,
-        icon = MuzIcons.Rounded.Artist,
+        unselectedIcon = MuzIcons.Rounded.Artist,
+        selectedIcon = MuzIcons.Filled.Artist,
         navKey = ArtistsNavKey,
     ),
 }

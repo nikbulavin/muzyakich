@@ -216,14 +216,15 @@ fun MuzApp(
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         tabs.forEach { tab ->
+                                            val selected = tab == currentLibraryTab
                                             MuzFilledIconToggleButton(
-                                                checked = tab == currentLibraryTab,
+                                                checked = selected,
                                                 onCheckedChange = {
                                                     libraryNavigator.navigateAndClearStack(
                                                         tab.navKey
                                                     )
                                                 },
-                                                icon = tab.icon,
+                                                icon = if (selected) tab.selectedIcon else tab.unselectedIcon,
                                                 contentDescription = labels[tab] ?: "",
                                                 containerSize = IconButtonDefaults.smallContainerSize(
                                                     IconButtonDefaults.IconButtonWidthOption.Wide
@@ -231,6 +232,7 @@ fun MuzApp(
                                                 shapes = IconButtonDefaults.toggleableShapes(
                                                     checkedShape = CircleShape,
                                                 ),
+                                                shouldAnimateIcon = false,
                                             )
                                         }
                                     }
