@@ -1,7 +1,6 @@
 package ru.resodostudio.muzyakich.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateBounds
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -32,7 +31,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -51,7 +49,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -99,8 +96,8 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalHazeApi::class,
+    ExperimentalMaterial3Api::class,
 )
 @Composable
 fun MuzApp(
@@ -119,13 +116,15 @@ fun MuzApp(
     val motionScheme = MaterialTheme.motionScheme
     val hazeState = rememberHazeState()
 
-    val isNowPlayingVisible = appState.navigationState.backStack.none {
+    val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
+
+    val shouldShowNowPlayingBar = appState.navigationState.backStack.none {
         it is PlaylistEditorNavKey || it is PlayerNavKey
     } && player?.currentMediaItem != null
+    val shouldShowNavigationToolbar = appState.navigationState.currentKey is LibraryNavKey
+            && permissionState.status == PermissionStatus.Granted
 
     val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
-
-    val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
 
     val currentLibraryTab =
         LibraryTab.entries.find { it.navKey == libraryNavigator.state.backStack.last() }
@@ -140,21 +139,21 @@ fun MuzApp(
             )
         },
         floatingActionButton = {
-            LookaheadScope {
+            with(LocalSharedTransitionScope.current) {
                 Column(
                     modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(2f)
                         .windowInsetsPadding(
                             WindowInsets.safeDrawing.only(
                                 WindowInsetsSides.Horizontal,
                             ),
                         )
-                        .navigationBarsPadding()
-                        .animateBounds(this@LookaheadScope),
+                        .navigationBarsPadding(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     AnimatedVisibility(
-                        visible = isNowPlayingVisible,
+                        visible = shouldShowNowPlayingBar,
                         modifier = Modifier.padding(horizontal = 16.dp),
                         enter = fadeIn(fadeSpec) +
                                 scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
@@ -169,40 +168,34 @@ fun MuzApp(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                         val hazeBlurRadius = 32.dp
-                        with(LocalSharedTransitionScope.current) {
-                            if (player != null) {
-                                NowPlayingBar(
-                                    player = player,
-                                    modifier = Modifier
-                                        .renderInSharedTransitionScopeOverlay(2f)
-                                        .shadow(
-                                            elevation = 3.dp,
-                                            shape = CircleShape,
-                                            clip = true,
-                                        )
-                                        .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                            inputScale = HazeInputScale.Auto
-                                            blurEnabled = true
-                                            blurRadius = hazeBlurRadius
-                                            noiseFactor = 0f
-                                        },
-                                    onClick = dropUnlessResumed { navigator.navigateToPlayer() },
-                                )
-                            }
+                        if (player != null) {
+                            NowPlayingBar(
+                                player = player,
+                                modifier = Modifier
+                                    .shadow(
+                                        elevation = 3.dp,
+                                        shape = CircleShape,
+                                        clip = true,
+                                    )
+                                    .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                        inputScale = HazeInputScale.Auto
+                                        blurEnabled = true
+                                        blurRadius = hazeBlurRadius
+                                        noiseFactor = 0f
+                                    },
+                                onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                            )
                         }
                     }
                     AnimatedVisibility(
-                        visible = navigator.state.currentKey is LibraryNavKey &&
-                                permissionState.status == PermissionStatus.Granted,
+                        visible = shouldShowNavigationToolbar,
                         enter = fadeIn(fadeSpec) +
                                 scaleIn(motionScheme.defaultSpatialSpec(), 0.85f) +
                                 slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
                         exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                     ) {
                         Row(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .animateBounds(this@LookaheadScope),
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
