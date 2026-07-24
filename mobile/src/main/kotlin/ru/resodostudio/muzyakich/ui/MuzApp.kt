@@ -13,7 +13,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -32,16 +31,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingToolbarDefaults
-import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,10 +61,8 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
-import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Add
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
@@ -85,11 +78,11 @@ import ru.resodostudio.muzyakich.feature.player.api.navigateToPlayer
 import ru.resodostudio.muzyakich.feature.player.impl.navigation.playerEntry
 import ru.resodostudio.muzyakich.feature.playlist.detail.impl.navigation.playlistEntry
 import ru.resodostudio.muzyakich.feature.playlist.editor.api.PlaylistEditorNavKey
-import ru.resodostudio.muzyakich.feature.playlist.editor.api.navigateToPlaylistEditor
 import ru.resodostudio.muzyakich.feature.playlist.editor.impl.navigation.playlistEditorEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
+import ru.resodostudio.muzyakich.ui.component.NavigationToolbar
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -194,59 +187,11 @@ fun MuzApp(
                                 slideInVertically(motionScheme.defaultSpatialSpec()) { it / 2 },
                         exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            HorizontalFloatingToolbar(
-                                expanded = false,
-                                content = {
-                                    val tabs = LibraryTab.entries
-                                    val labels = tabs.associateWith { stringResource(it.titleRes) }
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        tabs.forEach { tab ->
-                                            val selected = tab == currentLibraryTab
-                                            MuzFilledIconToggleButton(
-                                                checked = selected,
-                                                onCheckedChange = {
-                                                    libraryNavigator.navigateAndClearStack(
-                                                        tab.navKey
-                                                    )
-                                                },
-                                                icon = if (selected) tab.selectedIcon else tab.unselectedIcon,
-                                                contentDescription = labels[tab] ?: "",
-                                                containerSize = IconButtonDefaults.smallContainerSize(
-                                                    IconButtonDefaults.IconButtonWidthOption.Wide
-                                                ),
-                                                shapes = IconButtonDefaults.toggleableShapes(
-                                                    checkedShape = CircleShape,
-                                                ),
-                                                shouldAnimateIcon = false,
-                                            )
-                                        }
-                                    }
-                                },
-                                collapsedShadowElevation = 3.dp,
-                            )
-                            FloatingToolbarDefaults.StandardFloatingActionButton(
-                                onClick = dropUnlessResumed { navigator.navigateToPlaylistEditor() },
-                                modifier = Modifier
-                                    .animateFloatingActionButton(
-                                        visible = currentLibraryTab == LibraryTab.PLAYLISTS,
-                                        alignment = Alignment.BottomCenter,
-                                    )
-                                    .size(56.dp),
-                            ) {
-                                Icon(
-                                    imageVector = MuzIcons.Rounded.Add,
-                                    contentDescription = stringResource(localesR.string.core_locales_new_playlist),
-                                )
-                            }
-                        }
+                        NavigationToolbar(
+                            currentLibraryTab = currentLibraryTab,
+                            libraryNavigator = libraryNavigator,
+                            navigator = navigator,
+                        )
                     }
                 }
             }
