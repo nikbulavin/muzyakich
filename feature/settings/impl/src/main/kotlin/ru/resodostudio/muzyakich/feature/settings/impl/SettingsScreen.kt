@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -55,6 +56,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Feedback
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Gavel
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Info
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Japan
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.LightMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Palette
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Policy
@@ -169,28 +171,37 @@ private fun General(
             modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top = 16.dp),
         )
         var shouldShowLanguageDialog by rememberSaveable { mutableStateOf(false) }
-        val availableLanguages = listOf(
-            Language(
-                code = "",
-                displayName = stringResource(localesR.string.core_locales_system_default),
-                icon = MuzIcons.Rounded.Android,
-            ),
-            Language(
-                code = "en",
-                displayName = "English",
-                icon = MuzIcons.Filled.UnitedStates,
-            ),
-            Language(
-                code = "ko",
-                displayName = "한국어",
-                icon = MuzIcons.Filled.SouthKorea,
-            ),
-            Language(
-                code = "ru",
-                displayName = "Русский",
-                icon = MuzIcons.Filled.Russia,
-            ),
-        )
+        val systemDefaultText = stringResource(localesR.string.core_locales_system_default)
+        val availableLanguages = remember(systemDefaultText) {
+            listOf(
+                Language(
+                    code = "",
+                    displayName = systemDefaultText,
+                    icon = MuzIcons.Rounded.Android,
+                ),
+                Language(
+                    code = "en",
+                    displayName = "English",
+                    icon = MuzIcons.Filled.UnitedStates,
+                ),
+                Language(
+                    code = "ja",
+                    displayName = "日本語",
+                    icon = MuzIcons.Filled.Japan,
+                ),
+                Language(
+                    code = "ko",
+                    displayName = "한국어",
+                    icon = MuzIcons.Filled.SouthKorea,
+                ),
+                Language(
+                    code = "ru",
+                    displayName = "Русский",
+                    icon = MuzIcons.Filled.Russia,
+                ),
+            )
+        }
+
         MuzListItem(
             content = { Text(stringResource(localesR.string.core_locales_language)) },
             leadingContent = {
