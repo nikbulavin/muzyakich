@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_locales_app_name">ムジャキチ</string>
+
+    <string name="core_locales_about">概要</string>
+    <string name="core_locales_add_songs">曲を追加</string>
+    <string name="core_locales_add_to_favorites">お気に入りに追加</string>
+    <string name="core_locales_albums">アルバム</string>
+    <string name="core_locales_appearance">表示</string>
+    <string name="core_locales_artist">アーティスト</string>
+    <string name="core_locales_artists">アーティスト</string>
+    <string name="core_locales_audio">オーディオ</string>
+    <string name="core_locales_back">戻る</string>
+    <string name="core_locales_bitrate_format">%1$d kbps</string>
+    <string name="core_locales_cancel">キャンセル</string>
+    <string name="core_locales_clear">クリア</string>
+    <string name="core_locales_confirm">OK</string>
+    <string name="core_locales_delete">削除</string>
+    <string name="core_locales_disable_repeat_mode">リピートをオフ</string>
+    <string name="core_locales_disable_shuffle_mode">シャッフルをオフ</string>
+    <string name="core_locales_disc_number">ディスク %1$d</string>
+    <string name="core_locales_download_update">アップデートをダウンロード</string>
+    <string name="core_locales_downloading_update">アップデートをダウンロード中</string>
+    <string name="core_locales_dynamic_color">ダイナミックカラー</string>
+    <string name="core_locales_edit">編集</string>
+    <string name="core_locales_enable_repeat_mode_all">すべてリピート</string>
+    <string name="core_locales_enable_repeat_mode_one">1曲リピート</string>
+    <string name="core_locales_enable_shuffle_mode">シャッフルをオン</string>
+    <string name="core_locales_equalizer">イコライザー</string>
+    <string name="core_locales_favorites">お気に入り</string>
+    <string name="core_locales_feedback">フィードバック</string>
+    <string name="core_locales_general">全般</string>
+    <string name="core_locales_grant_permission">権限を許可</string>
+    <string name="core_locales_high_quality">高音質</string>
+    <string name="core_locales_install_update">アップデートをインストール</string>
+    <string name="core_locales_language">言語</string>
+    <string name="core_locales_library_empty">まだ曲がありません。お気に入りの音楽を追加して、リスニングをお楽しみください！</string>
+    <string name="core_locales_licenses">ライセンス</string>
+    <string name="core_locales_media_permission_rationale">アプリを引き続き使用するには、メディアファイルの読み取り権限を許可してください。</string>
+    <string name="core_locales_more_options">その他のオプション</string>
+    <string name="core_locales_move_to_trash">ゴミ箱に移動</string>
+    <string name="core_locales_move_to_trash_description">30日後に完全に削除されます</string>
+    <string name="core_locales_new_playlist">新しいプレイリスト</string>
+    <string name="core_locales_next_in_queue">キューの次</string>
+    <string name="core_locales_open_filter_menu">フィルターメニューを開く</string>
+    <string name="core_locales_open_menu">メニューを開く</string>
+    <string name="core_locales_pause_audio">一時停止</string>
+    <string name="core_locales_permanently_delete">完全に削除しますか？</string>
+    <string name="core_locales_permanently_delete_playlist_description">このプレイリストを削除してもよろしいですか？この操作は元に戻せません。</string>
+    <string name="core_locales_play_audio">再生</string>
+    <string name="core_locales_play_next">次に再生</string>
+    <string name="core_locales_playlists">プレイリスト</string>
+    <string name="core_locales_playlists_empty">まだプレイリストがありません。新しいプレイリストを作成して、お気に入りの音楽を追加しましょう！</string>
+    <string name="core_locales_privacy_policy">プライバシーポリシー</string>
+    <string name="core_locales_queue">キュー</string>
+    <string name="core_locales_remove_cover">カバーを削除</string>
+    <string name="core_locales_remove_from_favorites">お気に入りから削除</string>
+    <string name="core_locales_search">検索</string>
+    <string name="core_locales_set_cover">カバーを設定</string>
+    <string name="core_locales_settings">設定</string>
+    <string name="core_locales_shuffle">シャッフル</string>
+    <string name="core_locales_skip_next">次へ</string>
+    <string name="core_locales_skip_previous">前へ</string>
+    <string name="core_locales_songs">曲</string>
+    <string name="core_locales_sort_by">並べ替え</string>
+    <string name="core_locales_sort_order">順序</string>
+    <string name="core_locales_sort_order_ascending">昇順</string>
+    <string name="core_locales_sort_order_descending">降順</string>
+    <string name="core_locales_system_default">システムのデフォルト</string>
+    <string name="core_locales_theme">テーマ</string>
+    <string name="core_locales_theme_dark">ダーク</string>
+    <string name="core_locales_theme_light">ライト</string>
+    <string name="core_locales_title">タイトル</string>
+    <string name="core_locales_version">バージョン</string>
+
+    <plurals name="core_locales_number_of_songs">
+        <item quantity="other">%d曲</item>
+    </plurals>
+
+    <plurals name="core_locales_plays_count">
+        <item quantity="other">%d回再生</item>
+    </plurals>
+</resources>

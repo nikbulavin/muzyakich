@@ -6,9 +6,9 @@
     <string name="core_locales_add_songs">노래 추가</string>
     <string name="core_locales_add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="core_locales_albums">앨범</string>
-    <string name="core_locales_appearance">외관</string>
+    <string name="core_locales_appearance">디스플레이</string>
     <string name="core_locales_artist">아티스트</string>
-    <string name="core_locales_artists">아티스트들</string>
+    <string name="core_locales_artists">아티스트</string>
     <string name="core_locales_audio">오디오</string>
     <string name="core_locales_back">뒤로</string>
     <string name="core_locales_bitrate_format">%1$dkbps</string>
@@ -22,7 +22,7 @@
     <string name="core_locales_download_update">업데이트 다운로드</string>
     <string name="core_locales_downloading_update">업데이트 다운로드 중</string>
     <string name="core_locales_dynamic_color">다이내믹 색상</string>
-    <string name="core_locales_edit">편집하다</string>
+    <string name="core_locales_edit">편집</string>
     <string name="core_locales_enable_repeat_mode_all">전체 반복</string>
     <string name="core_locales_enable_repeat_mode_one">한 곡 반복</string>
     <string name="core_locales_enable_shuffle_mode">셔플 모드 활성화</string>
@@ -31,7 +31,7 @@
     <string name="core_locales_feedback">피드백</string>
     <string name="core_locales_general">일반</string>
     <string name="core_locales_grant_permission">권한 허용</string>
-    <string name="core_locales_high_quality">고화질</string>
+    <string name="core_locales_high_quality">고음질</string>
     <string name="core_locales_install_update">업데이트 설치</string>
     <string name="core_locales_language">언어</string>
     <string name="core_locales_library_empty">아직 노래가 없습니다. 좋아하는 음악을 추가하고 감상하세요!</string>
