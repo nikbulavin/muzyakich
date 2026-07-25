@@ -25,8 +25,11 @@ android {
             applicationIdSuffix = MuzBuildType.DEBUG.applicationIdSuffix
         }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            val runMinification = providers.gradleProperty("minifyWithR8")
+                .map(String::toBooleanStrict)
+                .getOrElse(true)
+            isMinifyEnabled = runMinification
+            isShrinkResources = runMinification
             applicationIdSuffix = MuzBuildType.RELEASE.applicationIdSuffix
             signingConfig = signingConfigs.named("debug").get()
             proguardFiles(
