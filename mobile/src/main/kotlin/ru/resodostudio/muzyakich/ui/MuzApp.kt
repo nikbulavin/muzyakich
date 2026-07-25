@@ -81,6 +81,7 @@ import ru.resodostudio.muzyakich.feature.playlist.editor.api.PlaylistEditorNavKe
 import ru.resodostudio.muzyakich.feature.playlist.editor.impl.navigation.playlistEditorEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
+import ru.resodostudio.muzyakich.feature.song.detail.api.SongNavKey
 import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
 import ru.resodostudio.muzyakich.ui.component.NavigationToolbar
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
@@ -112,10 +113,16 @@ fun MuzApp(
     val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
 
     val shouldShowNowPlayingBar = appState.navigationState.backStack.none {
-        it is PlaylistEditorNavKey || it is PlayerNavKey
+        it is PlaylistEditorNavKey
     } && player?.currentMediaItem != null
-    val shouldShowNavigationToolbar = appState.navigationState.currentKey is LibraryNavKey
-            && permissionState.status == PermissionStatus.Granted
+    val backStack = appState.navigationState.backStack
+    val shouldShowNavigationToolbar = (
+            appState.navigationState.currentKey is LibraryNavKey ||
+                    (
+                            (appState.navigationState.currentKey is PlayerNavKey || appState.navigationState.currentKey is SongNavKey) &&
+                                    backStack.getOrNull(backStack.size - 2) is LibraryNavKey
+                            )
+            ) && permissionState.status == PermissionStatus.Granted
 
     val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
