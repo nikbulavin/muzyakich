@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MuzListItem(
+fun MuzSegmentedListItem(
     onClick: () -> Unit,
     content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
@@ -25,6 +25,7 @@ fun MuzListItem(
     colors: ListItemColors = ListItemDefaults.segmentedColors(
         containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
     ),
+    enabled: Boolean = true,
 ) {
     SegmentedListItem(
         onClick = onClick,
@@ -36,11 +37,12 @@ fun MuzListItem(
         trailingContent = trailingContent,
         colors = colors,
         shapes = shapes,
+        enabled = enabled,
     )
 }
 
 @Composable
-fun MuzListItem(
+fun MuzSegmentedListItem(
     content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     shapes: ListItemShapes = ListItemDefaults.shapes(),

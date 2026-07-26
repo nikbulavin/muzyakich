@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -27,6 +26,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +46,7 @@ import ru.resodostudio.cashsense.core.ui.util.asFormattedBitDepth
 import ru.resodostudio.cashsense.core.ui.util.asFormattedSampleRate
 import ru.resodostudio.cashsense.core.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItem
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSegmentedListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSwitch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
@@ -61,8 +63,12 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Schedule
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Genres
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlaylistAdd
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
+import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.feature.song.detail.impl.component.PlaylistPicker
+import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -80,10 +86,11 @@ internal fun SongBottomSheet(
         modifier = modifier,
         onPlayNextClick = viewModel::playSongNext,
         onFavoriteChange = viewModel::setSongFavorite,
+        onAddSongToPlaylist = viewModel::addToPlaylist,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SongBottomSheet(
     songUiState: SongUiState,
@@ -92,6 +99,7 @@ private fun SongBottomSheet(
     onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onSongRemove: (String) -> Unit,
+    onAddSongToPlaylist: (Uuid, String, Int) -> Unit = { _, _, _ -> },
 ) {
     when (songUiState) {
         SongUiState.Error -> onDismiss()
@@ -160,6 +168,7 @@ private fun SongBottomSheet(
                 HorizontalDivider()
                 ActionPanel(
                     song = song,
+                    availablePlaylists = songUiState.playlists,
                     onPlayNextClick = { song ->
                         onPlayNextClick(song)
                         onDismiss()
@@ -167,21 +176,23 @@ private fun SongBottomSheet(
                     onFavoriteChange = onFavoriteChange,
                     onDismiss = onDismiss,
                     onSongRemove = onSongRemove,
+                    onAddSongToPlaylist = onAddSongToPlaylist,
                 )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ActionPanel(
     song: Song,
+    availablePlaylists: List<Playlist>,
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onDismiss: () -> Unit,
     onSongRemove: (String) -> Unit = {},
+    onAddSongToPlaylist: (Uuid, String, Int) -> Unit = { _, _, _ -> },
 ) {
     Column(
         modifier = modifier,
@@ -221,9 +232,39 @@ private fun ActionPanel(
             colors = ListItemDefaults.segmentedColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
-            shapes = ListItemDefaults.segmentedShapes(0, 3),
+            shapes = ListItemDefaults.segmentedShapes(0, 4),
         )
-        MuzListItem(
+        var shouldShowPlaylistPicker by rememberSaveable { mutableStateOf(false) }
+        MuzSegmentedListItem(
+            enabled = availablePlaylists.isNotEmpty(),
+            content = {
+                Text(
+                    text = stringResource(localesR.string.core_locales_add_to_playlist),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Rounded.PlaylistAdd,
+                    contentDescription = null,
+                )
+            },
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ),
+            onClick = { shouldShowPlaylistPicker = true },
+            shapes = ListItemDefaults.segmentedShapes(1, 4),
+        )
+        if (shouldShowPlaylistPicker) {
+            PlaylistPicker(
+                songMediaId = song.mediaId,
+                availablePlaylists = availablePlaylists,
+                onConfirm = onAddSongToPlaylist,
+                onDismiss = { shouldShowPlaylistPicker = false },
+            )
+        }
+        MuzSegmentedListItem(
             content = {
                 Text(
                     text = stringResource(localesR.string.core_locales_play_next),
@@ -241,9 +282,9 @@ private fun ActionPanel(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = { onPlayNextClick(song) },
-            shapes = ListItemDefaults.segmentedShapes(1, 3),
+            shapes = ListItemDefaults.segmentedShapes(2, 4),
         )
-        MuzListItem(
+        MuzSegmentedListItem(
             content = {
                 Text(
                     text = stringResource(localesR.string.core_locales_move_to_trash),
@@ -279,7 +320,7 @@ private fun ActionPanel(
                     exception.printStackTrace()
                 }
             },
-            shapes = ListItemDefaults.segmentedShapes(2, 3),
+            shapes = ListItemDefaults.segmentedShapes(3, 4),
         )
     }
 }

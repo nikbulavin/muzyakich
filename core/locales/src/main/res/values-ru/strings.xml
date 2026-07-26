@@ -5,6 +5,7 @@
     <string name="core_locales_about">О нас</string>
     <string name="core_locales_add_songs">Добавить треки</string>
     <string name="core_locales_add_to_favorites">Добавить в избранное</string>
+    <string name="core_locales_add_to_playlist">Добавить в плейлист</string>
     <string name="core_locales_albums">Альбомы</string>
     <string name="core_locales_appearance">Оформление</string>
     <string name="core_locales_artist">Исполнитель</string>

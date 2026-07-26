@@ -47,7 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzListItem
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSegmentedListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSwitch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -202,7 +202,7 @@ private fun General(
             )
         }
 
-        MuzListItem(
+        MuzSegmentedListItem(
             content = { Text(stringResource(localesR.string.core_locales_language)) },
             leadingContent = {
                 Icon(
@@ -261,7 +261,7 @@ private fun Appearance(
             stringResource(localesR.string.core_locales_theme_light) to MuzIcons.Filled.LightMode,
             stringResource(localesR.string.core_locales_theme_dark) to MuzIcons.Filled.DarkMode,
         )
-        MuzListItem(
+        MuzSegmentedListItem(
             onClick = { shouldShowThemeDialog = true },
             shapes = if (supportDynamicColor) {
                 ListItemDefaults.segmentedShapes(0, 2)
@@ -333,7 +333,7 @@ private fun Audio(
             contract = ActivityResultContracts.StartActivityForResult(),
         ) { _ -> }
 
-        MuzListItem(
+        MuzSegmentedListItem(
             content = { Text(stringResource(localesR.string.core_locales_equalizer)) },
             leadingContent = {
                 Icon(
@@ -373,7 +373,7 @@ private fun About(
         )
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
-        MuzListItem(
+        MuzSegmentedListItem(
             content = { Text(stringResource(localesR.string.core_locales_feedback)) },
             leadingContent = {
                 Icon(
@@ -390,7 +390,7 @@ private fun About(
                 )
             },
         )
-        MuzListItem(
+        MuzSegmentedListItem(
             content = { Text(stringResource(localesR.string.core_locales_privacy_policy)) },
             leadingContent = {
                 Icon(
@@ -407,7 +407,7 @@ private fun About(
                 )
             },
         )
-        MuzListItem(
+        MuzSegmentedListItem(
             content = { Text(stringResource(localesR.string.core_locales_licenses)) },
             leadingContent = {
                 Icon(
@@ -421,7 +421,7 @@ private fun About(
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = packageInfo?.versionName ?: "?.?.?"
         val versionCode = "(${packageInfo?.longVersionCode})"
-        MuzListItem(
+        MuzSegmentedListItem(
             content = { Text(stringResource(localesR.string.core_locales_version)) },
             leadingContent = {
                 Icon(
