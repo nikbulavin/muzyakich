@@ -8,31 +8,38 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
+import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.time.Duration.Companion.seconds
+import kotlin.uuid.Uuid
 
 @HiltViewModel(assistedFactory = SongViewModel.Factory::class)
 internal class SongViewModel @AssistedInject constructor(
     @Assisted val mediaId: String,
     private val musicServiceConnection: MusicServiceConnection,
     private val songsRepository: SongsRepository,
+    private val playlistsRepository: PlaylistsRepository,
 ) : ViewModel() {
 
-    val songUiState = songsRepository.getSong(mediaId)
-        .map { song ->
-            if (song == null) {
-                SongUiState.Error
-            } else {
-                SongUiState.Success(
-                    song = song,
-                )
-            }
+    val songUiState = combine(
+        songsRepository.getSong(mediaId),
+        playlistsRepository.getPlaylists(),
+    ) { song, playlists ->
+        if (song == null) {
+            SongUiState.Error
+        } else {
+            SongUiState.Success(
+                song = song,
+                playlists = playlists,
+            )
         }
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -53,6 +60,13 @@ internal class SongViewModel @AssistedInject constructor(
         musicServiceConnection.removeSongs(listOf(mediaId))
     }
 
+    fun addToPlaylist(playlistUuid: Uuid, mediaId: String, position: Int) {
+        viewModelScope.launch {
+            playlistsRepository.addSongToPlaylist(playlistUuid, mediaId, position)
+        }
+    }
+
+
     @AssistedFactory
     interface Factory {
         fun create(
@@ -69,5 +83,6 @@ sealed interface SongUiState {
 
     data class Success(
         val song: Song,
+        val playlists: List<Playlist>,
     ) : SongUiState
 }
