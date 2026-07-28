@@ -95,6 +95,7 @@ internal class MusicService : MediaLibraryService() {
             
             val audioSessionId = exoPlayer?.audioSessionId ?: player.audioSessionId
             player.release()
+            exoPlayer?.release()
             release()
             clearListener()
             musicServiceConnection.updateAudioSessionId(null)

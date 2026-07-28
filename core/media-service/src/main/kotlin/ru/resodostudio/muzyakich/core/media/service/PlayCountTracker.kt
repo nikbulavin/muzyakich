@@ -12,6 +12,7 @@ import ru.resodostudio.muzyakich.core.common.MuzDispatchers
 import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class PlayCountTracker @Inject constructor(
     private val songsRepository: SongsRepository,
@@ -36,15 +37,24 @@ internal class PlayCountTracker @Inject constructor(
         if (player.playWhenReady && player.playbackState == Player.STATE_READY) {
             if (playCountJob?.isActive != true) {
                 playCountJob = applicationScope.launch(mainDispatcher) {
+                    val duration = player.duration
+                    val threshold = if (duration != C.TIME_UNSET && duration in 1..<30_000L) duration else 30_000L
+
                     while (true) {
-                        val duration = player.duration
-                        val threshold = if (duration != C.TIME_UNSET && duration in 1..<30_000L) duration else 30_000L
-                        if (duration > 0 && player.currentPosition >= threshold) {
+                        val currentPosition = player.currentPosition
+
+                        if (currentPosition >= threshold) {
                             lastIncrementedMediaId = currentMediaId
                             songsRepository.incrementPlayCount(currentMediaId)
                             break
                         }
-                        delay(1000)
+
+                        val remainingMs = threshold - currentPosition
+                        val speed = player.playbackParameters.speed
+
+                        val delayMs = if (speed > 0f) (remainingMs / speed).toLong() else 1000L
+
+                        delay(delayMs.coerceAtLeast(100L).milliseconds)
                     }
                 }
             }
