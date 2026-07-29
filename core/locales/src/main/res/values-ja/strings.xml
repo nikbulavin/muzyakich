@@ -28,6 +28,7 @@
     <string name="core_locales_enable_repeat_mode_one">1曲リピート</string>
     <string name="core_locales_enable_shuffle_mode">シャッフルをオン</string>
     <string name="core_locales_equalizer">イコライザー</string>
+    <string name="core_locales_equalizer_not_found">このデバイスではイコライザーがサポートされていません</string>
     <string name="core_locales_favorites">お気に入り</string>
     <string name="core_locales_feedback">フィードバック</string>
     <string name="core_locales_general">全般</string>
