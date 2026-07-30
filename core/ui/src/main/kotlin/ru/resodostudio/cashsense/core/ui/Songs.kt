@@ -186,11 +186,7 @@ fun LazyGridScope.songs(
             modifier = modifier.animateItem(),
             onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
             onMenuClick = { onSongMenuClick(song.mediaId) },
-            shapes = if (songs.size == 1) {
-                ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-            } else {
-                ListItemDefaults.segmentedShapes(index, songs.size)
-            },
+            shapes = ListItemDefaults.segmentedShapes(index, songs.size),
             startToEndSwipeAction = startToEndSwipeAction?.invoke(song),
             endToStartSwipeAction = endToStartSwipeAction?.invoke(song),
         )

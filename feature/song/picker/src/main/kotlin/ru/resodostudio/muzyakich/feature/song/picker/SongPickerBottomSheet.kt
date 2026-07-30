@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
@@ -83,7 +82,7 @@ fun SongPickerBottomSheet(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SongPickerBottomSheet(
     songPickerUiState: SongPickerUiState,
@@ -190,7 +189,6 @@ private fun SongPickerBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.songs(
     songs: List<Song>,
     selectedSongs: Set<String>,
@@ -202,22 +200,16 @@ private fun LazyListScope.songs(
         key = { _, song -> song.mediaId },
         contentType = { _, _ -> "Song" },
     ) { index, song ->
-        val selected = selectedSongs.contains(song.mediaId)
         SongItem(
             song = song,
-            selected = selected,
+            selected = selectedSongs.contains(song.mediaId),
             modifier = modifier.animateItem(),
             onClick = { onClick(song.mediaId) },
-            shapes = if (songs.size == 1) {
-                ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-            } else {
-                ListItemDefaults.segmentedShapes(index, songs.size)
-            },
+            shapes = ListItemDefaults.segmentedShapes(index, songs.size),
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SongItem(
     song: Song,
