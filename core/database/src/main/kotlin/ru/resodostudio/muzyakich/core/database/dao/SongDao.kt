@@ -16,6 +16,9 @@ interface SongDao {
     @Query("SELECT * FROM songs WHERE media_id = :mediaId")
     fun getSong(mediaId: String): Flow<SongEntity?>
 
+    @Query("SELECT SUM(play_count) FROM songs")
+    fun getTotalPlayCount(): Flow<Int?>
+
     @Upsert
     suspend fun upsertSong(songEntity: SongEntity)
 

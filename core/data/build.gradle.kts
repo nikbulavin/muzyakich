@@ -17,4 +17,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.playServices)
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
 }

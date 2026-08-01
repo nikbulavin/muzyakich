@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.feature.player.impl
 
 import android.net.Uri
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -81,6 +82,7 @@ internal fun PlayerScreen(
 ) {
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
     val player by viewModel.player.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current
 
     PlayerScreen(
         playerUiState = playerUiState,
@@ -88,7 +90,10 @@ internal fun PlayerScreen(
         onDismiss = onDismiss,
         onSongMenuClick = onSongMenuClick,
         onSkipToSongClick = viewModel::skipToSong,
-        onFavoriteChange = viewModel::setSongFavorite,
+        onFavoriteChange = { id, favorite ->
+            viewModel.setSongFavorite(id, favorite)
+            if (favorite && activity != null) viewModel.requestReview(activity)
+        },
         onRemoveFromQueue = viewModel::removeSong,
         onReorderSongs = viewModel::moveSong,
     )
@@ -125,6 +130,7 @@ private fun PlayerScreen(
                         AnimatedContent(
                             targetState = queueOpened,
                             transitionSpec = { fadeIn(animSpec) togetherWith fadeOut(animSpec) },
+                            label = "QueuePanel",
                         ) { queueOpenedState ->
                             if (queueOpenedState) {
                                 QueuePanel(
@@ -142,7 +148,7 @@ private fun PlayerScreen(
                                 )
                             } else {
                                 Column(
-                                    modifier = Modifier.requiredHeight(maxHeight / 2 + 80.dp),
+                                    modifier = Modifier.requiredHeight((maxHeight / 2) + 80.dp),
                                 ) {
                                     Box(
                                         modifier = Modifier

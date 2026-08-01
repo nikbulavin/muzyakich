@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.feature.song.detail.impl
 import android.app.Activity.RESULT_OK
 import android.provider.MediaStore
 import android.text.format.Formatter
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -78,6 +79,7 @@ internal fun SongBottomSheet(
     viewModel: SongViewModel = hiltViewModel(),
 ) {
     val songUiState by viewModel.songUiState.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current
 
     SongBottomSheet(
         songUiState = songUiState,
@@ -85,7 +87,10 @@ internal fun SongBottomSheet(
         onSongRemove = viewModel::removeSong,
         modifier = modifier,
         onPlayNextClick = viewModel::playSongNext,
-        onFavoriteChange = viewModel::setSongFavorite,
+        onFavoriteChange = { id, favorite ->
+            viewModel.setSongFavorite(id, favorite)
+            if (favorite && activity != null) viewModel.requestReview(activity)
+        },
         onAddSongToPlaylist = viewModel::addToPlaylist,
     )
 }

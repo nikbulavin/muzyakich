@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.feature.player.impl
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
+import ru.resodostudio.muzyakich.core.domain.CheckAndShowReviewUseCase
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
@@ -21,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 internal class PlayerViewModel @Inject constructor(
     private val songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
+    private val checkAndShowReviewUseCase: CheckAndShowReviewUseCase,
 ) : ViewModel() {
 
     val player = musicServiceConnection.playerState
@@ -61,6 +64,12 @@ internal class PlayerViewModel @Inject constructor(
     fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
         viewModelScope.launch {
             songsRepository.toggleFavorite(mediaId, isFavorite)
+        }
+    }
+
+    fun requestReview(activity: Activity) {
+        viewModelScope.launch {
+            checkAndShowReviewUseCase(activity)
         }
     }
 }

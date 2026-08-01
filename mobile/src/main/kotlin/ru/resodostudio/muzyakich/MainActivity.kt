@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity() {
             val appState = rememberMuzAppState(
                 musicServiceConnection = musicServiceConnection,
             )
+
             MuzTheme(
                 darkTheme = themeSettings.darkTheme,
                 dynamicTheme = themeSettings.dynamicTheme,

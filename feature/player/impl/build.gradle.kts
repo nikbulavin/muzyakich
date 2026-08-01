@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.core.data)
+    implementation(projects.core.domain)
     implementation(projects.core.locales)
     implementation(projects.core.mediaService)
 
@@ -16,6 +17,7 @@ dependencies {
     implementation(projects.feature.song.detail.api)
 
     implementation(platform(libs.coil.bom))
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.media3.cast)
     implementation(libs.androidx.media3.exoPlayer)
     implementation(libs.androidx.media3.ui.compose.material3)
