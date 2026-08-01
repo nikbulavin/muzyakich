@@ -99,9 +99,8 @@ private fun PlaylistsScreen(
                     start = 16.dp,
                     end = 16.dp,
                     top = 16.dp,
-                    bottom = 104.dp + WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding(),
-                ),
+                    bottom = 140.dp,
+                ) + WindowInsets.navigationBars.asPaddingValues(),
             ) {
                 playlists(
                     playlists = playlistsUiState.playlists,
