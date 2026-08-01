@@ -14,6 +14,8 @@ import ru.resodostudio.muzyakich.core.data.repository.util.AppLocaleManager
 import ru.resodostudio.muzyakich.core.data.repository.util.AppLocaleManagerImpl
 import ru.resodostudio.muzyakich.core.data.repository.util.InAppUpdateManager
 import ru.resodostudio.muzyakich.core.data.repository.util.InAppUpdateManagerImpl
+import ru.resodostudio.muzyakich.core.data.repository.util.ReviewManager
+import ru.resodostudio.muzyakich.core.data.repository.util.ReviewManagerImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -30,6 +32,9 @@ internal interface DataModule {
 
     @Binds
     fun bindsInAppUpdateManager(impl: InAppUpdateManagerImpl): InAppUpdateManager
+
+    @Binds
+    fun bindsReviewManager(impl: ReviewManagerImpl): ReviewManager
 
     @Binds
     fun bindsAppLocaleManager(impl: AppLocaleManagerImpl): AppLocaleManager

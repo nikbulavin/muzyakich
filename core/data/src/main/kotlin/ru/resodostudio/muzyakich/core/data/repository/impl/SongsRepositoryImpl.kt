@@ -3,6 +3,7 @@ package ru.resodostudio.muzyakich.core.data.repository.impl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.database.dao.SongDao
 import ru.resodostudio.muzyakich.core.database.model.SongEntity
@@ -57,6 +58,8 @@ internal class SongsRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override fun getTotalPlayCount(): Flow<Int> = songDao.getTotalPlayCount().map { it ?: 0 }
 
     override suspend fun toggleFavorite(mediaId: String, isFavorite: Boolean) {
         val songEntity = songDao.getSong(mediaId).first()

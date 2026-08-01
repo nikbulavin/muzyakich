@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -138,7 +139,9 @@ internal fun QueuePanel(
             var draggedItemId by remember { mutableStateOf<String?>(null) }
             var targetItemId by remember { mutableStateOf<String?>(null) }
 
-            val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+            val reorderableLazyListState = rememberReorderableLazyListState(
+                lazyListState = lazyListState,
+            ) { from, to ->
                 val fromKey = from.key.toString()
                 val toKey = to.key.toString()
 
@@ -159,10 +162,10 @@ internal fun QueuePanel(
                 state = lazyListState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
-                    start = 14.dp,
-                    end = 14.dp,
-                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
-                ),
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 250.dp,
+                ) + WindowInsets.navigationBars.asPaddingValues(),
                 verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
             ) {
                 itemsIndexed(
@@ -190,7 +193,10 @@ internal fun QueuePanel(
                             ),
                             onClick = { onQueueItemClick(song.uid) },
                             onRemoveFromQueue = { onRemoveFromQueue(song.uid) },
-                            shapes = ListItemDefaults.segmentedShapes(index, localPlayingQueue.size),
+                            shapes = ListItemDefaults.segmentedShapes(
+                                index,
+                                localPlayingQueue.size,
+                            ),
                         )
                     }
                 }

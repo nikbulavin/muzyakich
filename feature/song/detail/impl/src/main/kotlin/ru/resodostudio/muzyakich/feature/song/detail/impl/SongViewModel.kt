@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.feature.song.detail.impl
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
+import ru.resodostudio.muzyakich.core.domain.CheckAndShowReviewUseCase
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.Song
@@ -25,6 +27,7 @@ internal class SongViewModel @AssistedInject constructor(
     private val musicServiceConnection: MusicServiceConnection,
     private val songsRepository: SongsRepository,
     private val playlistsRepository: PlaylistsRepository,
+    private val checkAndShowReviewUseCase: CheckAndShowReviewUseCase,
 ) : ViewModel() {
 
     val songUiState = combine(
@@ -63,6 +66,12 @@ internal class SongViewModel @AssistedInject constructor(
     fun addToPlaylist(playlistUuid: Uuid, mediaId: String, position: Int) {
         viewModelScope.launch {
             playlistsRepository.addSongToPlaylist(playlistUuid, mediaId, position)
+        }
+    }
+
+    fun requestReview(activity: Activity) {
+        viewModelScope.launch {
+            checkAndShowReviewUseCase(activity)
         }
     }
 

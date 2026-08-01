@@ -34,7 +34,10 @@ sealed interface MainActivityUiState {
 
     data object Loading : MainActivityUiState
 
-    data class Success(val userData: UserData) : MainActivityUiState {
+    data class Success(
+        val userData: UserData,
+    ) : MainActivityUiState {
+
         override val shouldUseDynamicTheming = userData.useDynamicColor
 
         override fun shouldUseDarkTheme(isSystemDarkTheme: Boolean) =

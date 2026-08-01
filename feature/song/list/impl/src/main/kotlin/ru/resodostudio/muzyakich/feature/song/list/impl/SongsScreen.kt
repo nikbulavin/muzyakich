@@ -98,9 +98,8 @@ private fun SongsScreen(
                     start = 16.dp,
                     end = 16.dp,
                     top = 8.dp,
-                    bottom = 104.dp + WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding(),
-                ),
+                    bottom = 140.dp,
+                ) + WindowInsets.navigationBars.asPaddingValues(),
                 modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
