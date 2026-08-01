@@ -48,4 +48,11 @@ class MuzAppState(
             started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = NowPlayingState(),
         )
+
+    val playerState = musicServiceConnection.playerState
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            initialValue = null,
+        )
 }

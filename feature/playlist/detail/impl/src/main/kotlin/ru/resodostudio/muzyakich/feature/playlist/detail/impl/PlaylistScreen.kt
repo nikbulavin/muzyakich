@@ -190,11 +190,11 @@ private fun PlaylistScreen(
                         )
                         songs(
                             songs = playlistUiState.playlist.songs,
-                            currentMediaId = playlistUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
+                            currentMediaId = playlistUiState.nowPlayingState.mediaId,
                             onPlaySongsClick = { songs, index ->
                                 onPlaySongsClick(songs, index, false)
                             },
-                            isPlaying = playlistUiState.nowPlayingState.player?.isPlaying ?: false,
+                            isPlaying = playlistUiState.nowPlayingState.isPlaying,
                             onSongMenuClick = onSongMenuClick,
                             modifier = Modifier.padding(horizontal = 16.dp),
                             startToEndSwipeAction = { song ->

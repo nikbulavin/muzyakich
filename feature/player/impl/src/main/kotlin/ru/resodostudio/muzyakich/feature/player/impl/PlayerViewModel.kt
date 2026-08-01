@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
-import ru.resodostudio.muzyakich.core.model.NowPlayingState
+import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.model.SortBy
 import ru.resodostudio.muzyakich.core.model.SortOrder
@@ -23,6 +23,13 @@ internal class PlayerViewModel @Inject constructor(
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
+    val player = musicServiceConnection.playerState
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            initialValue = null,
+        )
+
     val playerUiState = combine(
         musicServiceConnection.nowPlayingState,
         songsRepository.getSongs(sortBy = SortBy.TITLE, sortOrder = SortOrder.ASCENDING),
@@ -33,7 +40,7 @@ internal class PlayerViewModel @Inject constructor(
             PlayerUiState.Error
         } else {
             PlayerUiState.Success(
-                nowPlayingState = nowPlayingState,
+                playingQueue = nowPlayingState.playingQueue,
                 currentSong = currentSong,
                 songs = songs,
             )
@@ -65,7 +72,7 @@ sealed interface PlayerUiState {
     data object Error : PlayerUiState
 
     data class Success(
-        val nowPlayingState: NowPlayingState,
+        val playingQueue: List<QueueSong>,
         val currentSong: Song,
         val songs: List<Song>,
     ) : PlayerUiState

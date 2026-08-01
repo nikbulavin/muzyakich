@@ -107,7 +107,7 @@ fun MuzApp(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val nowPlayingState by appState.nowPlayingState.collectAsStateWithLifecycle()
-    val player = nowPlayingState.player
+    val player by appState.playerState.collectAsStateWithLifecycle()
 
     val motionScheme = MaterialTheme.motionScheme
     val hazeState = rememberHazeState()
@@ -116,7 +116,7 @@ fun MuzApp(
 
     val shouldShowNowPlayingBar = appState.navigationState.backStack.none {
         it is PlaylistEditorNavKey
-    } && player?.currentMediaItem != null
+    } && nowPlayingState.mediaId.isNotEmpty()
     val backStack = appState.navigationState.backStack
     val shouldShowNavigationToolbar = (
             appState.navigationState.currentKey is LibraryNavKey ||
@@ -170,7 +170,7 @@ fun MuzApp(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                         val hazeBlurRadius = 32.dp
-                        if (player != null) {
+                        player?.let { player ->
                             NowPlayingBar(
                                 player = player,
                                 modifier = Modifier

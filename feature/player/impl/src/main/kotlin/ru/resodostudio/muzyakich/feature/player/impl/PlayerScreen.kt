@@ -80,9 +80,11 @@ internal fun PlayerScreen(
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
+    val player by viewModel.player.collectAsStateWithLifecycle()
 
     PlayerScreen(
         playerUiState = playerUiState,
+        player = player,
         onDismiss = onDismiss,
         onSongMenuClick = onSongMenuClick,
         onSkipToSongClick = viewModel::skipToSong,
@@ -95,6 +97,7 @@ internal fun PlayerScreen(
 @Composable
 private fun PlayerScreen(
     playerUiState: PlayerUiState,
+    player: Player?,
     onDismiss: () -> Unit,
     onSongMenuClick: (String) -> Unit,
     onSkipToSongClick: (String) -> Unit = {},
@@ -127,7 +130,7 @@ private fun PlayerScreen(
                                 QueuePanel(
                                     lazyListState = lazyListState,
                                     currentSong = currentSong,
-                                    playingQueue = playerUiState.nowPlayingState.playingQueue,
+                                    playingQueue = playerUiState.playingQueue,
                                     modifier = Modifier.padding(top = 16.dp),
                                     animatedVisibilityScope = this,
                                     onQueueItemClick = onSkipToSongClick,
@@ -255,13 +258,11 @@ private fun PlayerScreen(
                                     verticalArrangement = Arrangement.SpaceBetween,
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    playerUiState.nowPlayingState.player?.let { player ->
+                                    player?.let { player ->
                                         SongProgressSlider(
                                             player = player,
                                             modifier = Modifier.fillMaxWidth(),
                                         )
-                                    }
-                                    playerUiState.nowPlayingState.player?.let { player ->
                                         PlayerControlButtonGroup(
                                             player = player,
                                         )
