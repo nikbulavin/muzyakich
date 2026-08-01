@@ -42,8 +42,8 @@ internal class SongsViewModel @Inject constructor(
                 }
 
                 SongsUiState.Success(
-                    currentMediaId = nowPlayingState.player?.currentMediaItem?.mediaId,
-                    isPlaying = nowPlayingState.player?.isPlaying ?: false,
+                    currentMediaId = nowPlayingState.mediaId,
+                    isPlaying = nowPlayingState.isPlaying,
                     songs = filteredSongs,
                     filterConfig = userData.filterConfig,
                 )

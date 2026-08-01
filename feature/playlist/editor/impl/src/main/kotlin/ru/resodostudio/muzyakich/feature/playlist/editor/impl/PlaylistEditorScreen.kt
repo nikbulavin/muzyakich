@@ -27,7 +27,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
@@ -110,7 +109,7 @@ internal fun PlaylistEditorScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlaylistEditorScreen(
     playlistEditorUiState: PlaylistEditorUiState,
@@ -229,7 +228,6 @@ private fun PlaylistEditorScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.playlistSongs(
     songs: List<Song>,
     reorderableLazyListState: ReorderableLazyListState,
@@ -251,11 +249,7 @@ private fun LazyListScope.playlistSongs(
                 endToStartSwipeAction = rememberRemoveFromPlaylistSwipeAction(song, onRemoveSong),
             ) {
                 MuzSelectableListItem(
-                    shapes = if (songs.size == 1) {
-                        ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-                    } else {
-                        ListItemDefaults.segmentedShapes(index, songs.size)
-                    },
+                    shapes = ListItemDefaults.segmentedShapes(index, songs.size),
                     onClick = {},
                     selected = false,
                     content = {
@@ -312,8 +306,8 @@ private fun LazyListScope.playlistSongs(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 private fun FloatingToolbar(
     expanded: Boolean,
     onAddSongs: (List<Song>) -> Unit,

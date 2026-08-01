@@ -38,6 +38,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudio.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
@@ -105,7 +107,7 @@ fun MuzApp(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val nowPlayingState by appState.nowPlayingState.collectAsStateWithLifecycle()
-    val player = nowPlayingState.player
+    val player by appState.playerState.collectAsStateWithLifecycle()
 
     val motionScheme = MaterialTheme.motionScheme
     val hazeState = rememberHazeState()
@@ -114,7 +116,7 @@ fun MuzApp(
 
     val shouldShowNowPlayingBar = appState.navigationState.backStack.none {
         it is PlaylistEditorNavKey
-    } && player?.currentMediaItem != null
+    } && nowPlayingState.mediaId.isNotEmpty()
     val backStack = appState.navigationState.backStack
     val shouldShowNavigationToolbar = (
             appState.navigationState.currentKey is LibraryNavKey ||
@@ -168,7 +170,7 @@ fun MuzApp(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                         val hazeBlurRadius = 32.dp
-                        if (player != null) {
+                        player?.let { player ->
                             NowPlayingBar(
                                 player = player,
                                 modifier = Modifier
@@ -273,27 +275,31 @@ fun MuzApp(
                         playlistEntry(navigator, fadeSpec)
                     }
 
-                    NavDisplay(
-                        modifier = Modifier.hazeSource(hazeState),
-                        entries = appState.navigationState.toEntries(entryProvider),
-                        onBack = navigator::goBack,
-                        transitionSpec = {
-                            slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } togetherWith
-                                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it }
-                        },
-                        popTransitionSpec = {
-                            slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
-                                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
-                        },
-                        predictivePopTransitionSpec = {
-                            slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
-                                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
-                        },
-                        sharedTransitionScope = LocalSharedTransitionScope.current,
-                        sceneStrategies = listOf(
-                            remember { BottomSheetSceneStrategy() },
-                        ),
-                    )
+                    CompositionLocalProvider(
+                        LocalSnackbarHostState provides snackbarHostState,
+                    ) {
+                        NavDisplay(
+                            modifier = Modifier.hazeSource(hazeState),
+                            entries = appState.navigationState.toEntries(entryProvider),
+                            onBack = navigator::goBack,
+                            transitionSpec = {
+                                slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } togetherWith
+                                        slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it }
+                            },
+                            popTransitionSpec = {
+                                slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
+                                        slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
+                            },
+                            predictivePopTransitionSpec = {
+                                slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
+                                        slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
+                            },
+                            sharedTransitionScope = LocalSharedTransitionScope.current,
+                            sceneStrategies = listOf(
+                                remember { BottomSheetSceneStrategy() },
+                            ),
+                        )
+                    }
                 }
             }
         }

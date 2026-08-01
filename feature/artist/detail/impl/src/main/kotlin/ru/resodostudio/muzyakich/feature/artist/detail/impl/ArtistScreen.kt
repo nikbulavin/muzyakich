@@ -99,9 +99,9 @@ private fun ArtistScreen(
                 ) {
                     songs(
                         songs = artistUiState.artist.songs,
-                        currentMediaId = artistUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
+                        currentMediaId = artistUiState.nowPlayingState.mediaId,
                         onPlaySongsClick = { songs, index -> onPlaySongsClick(songs, index, false) },
-                        isPlaying = artistUiState.nowPlayingState.player?.isPlaying ?: false,
+                        isPlaying = artistUiState.nowPlayingState.isPlaying,
                         onSongMenuClick = onSongMenuClick,
                         startToEndSwipeAction = { song -> rememberPlaylistPlaySwipeAction(song, onSongLeftToRightSwipe) },
                         endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },

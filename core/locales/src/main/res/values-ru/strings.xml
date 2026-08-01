@@ -28,6 +28,7 @@
     <string name="core_locales_enable_repeat_mode_one">Включить одиночный режим повтора</string>
     <string name="core_locales_enable_shuffle_mode">Включить режим перетасовки</string>
     <string name="core_locales_equalizer">Эквалайзер</string>
+    <string name="core_locales_equalizer_not_found">Эквалайзер не поддерживается на этом устройстве</string>
     <string name="core_locales_favorites">Избранное</string>
     <string name="core_locales_feedback">Обратная связь</string>
     <string name="core_locales_general">Общие</string>

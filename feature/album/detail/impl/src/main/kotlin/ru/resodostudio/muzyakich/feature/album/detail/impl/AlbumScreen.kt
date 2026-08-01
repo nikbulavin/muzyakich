@@ -190,8 +190,8 @@ private fun AlbumScreen(
                         )
                         groupedSongs(
                             songs = albumUiState.album.songs,
-                            currentMediaId = albumUiState.nowPlayingState.player?.currentMediaItem?.mediaId,
-                            isPlaying = albumUiState.nowPlayingState.player?.isPlaying ?: false,
+                            currentMediaId = albumUiState.nowPlayingState.mediaId,
+                            isPlaying = albumUiState.nowPlayingState.isPlaying,
                             onPlaySongsClick = { songs, index ->
                                 onPlaySongsClick(songs, index, false)
                             },

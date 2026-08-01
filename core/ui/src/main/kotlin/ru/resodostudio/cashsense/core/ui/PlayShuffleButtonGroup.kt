@@ -2,6 +2,7 @@ package ru.resodostudio.cashsense.core.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -33,6 +35,7 @@ fun PlayShuffleButtonGroup(
         buttonHeight = buttonSize,
         hasStartIcon = true,
     )
+    val layoutDirection = LocalLayoutDirection.current
     ButtonGroup(
         modifier = modifier,
         overflowIndicator = {},
@@ -48,7 +51,8 @@ fun PlayShuffleButtonGroup(
                         .weight(1f)
                         .animateWidth(
                             interactionSource = interactionSource,
-                            compressionLimit = buttonContentPadding,
+                            compressionLimit = buttonContentPadding
+                                .calculateEndPadding(layoutDirection),
                         ),
                     contentPadding = buttonContentPadding,
                     interactionSource = interactionSource,
@@ -81,7 +85,8 @@ fun PlayShuffleButtonGroup(
                         .weight(1f)
                         .animateWidth(
                             interactionSource = interactionSource,
-                            compressionLimit = buttonContentPadding,
+                            compressionLimit = buttonContentPadding
+                                .calculateEndPadding(layoutDirection),
                         ),
                     contentPadding = buttonContentPadding,
                     interactionSource = interactionSource,

@@ -191,7 +191,7 @@ private fun <T> FilterSubMenu(
                     contentDescription = null,
                 )
             },
-            trailingIcon = {
+            trailingContent = {
                 Icon(
                     imageVector = MuzIcons.Rounded.ArrowRight,
                     modifier = Modifier.size(MenuDefaults.TrailingIconSize),

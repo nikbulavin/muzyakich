@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,7 +40,6 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun QueuePanel(
     currentSong: Song,
@@ -192,11 +190,7 @@ internal fun QueuePanel(
                             ),
                             onClick = { onQueueItemClick(song.uid) },
                             onRemoveFromQueue = { onRemoveFromQueue(song.uid) },
-                            shapes = if (localPlayingQueue.size == 1) {
-                                ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-                            } else {
-                                ListItemDefaults.segmentedShapes(index, localPlayingQueue.size)
-                            },
+                            shapes = ListItemDefaults.segmentedShapes(index, localPlayingQueue.size),
                         )
                     }
                 }
