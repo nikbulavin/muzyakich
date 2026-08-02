@@ -45,8 +45,6 @@ import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
-import ru.resodostudio.cashsense.core.ui.LoadingState
-import ru.resodostudio.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSegmentedListItem
@@ -72,6 +70,8 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.GraphicEq
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Language
 import ru.resodostudio.muzyakich.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudio.muzyakich.core.model.DarkThemeConfig
+import ru.resodostudio.muzyakich.core.ui.LoadingState
+import ru.resodostudio.muzyakich.core.ui.LocalSnackbarHostState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

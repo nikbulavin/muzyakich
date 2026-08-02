@@ -91,7 +91,10 @@ class MainActivity : AppCompatActivity() {
                 darkTheme = themeSettings.darkTheme,
                 dynamicTheme = themeSettings.dynamicTheme,
             ) {
-                MuzApp(appState)
+                MuzApp(
+                    appState = appState,
+                    darkTheme = themeSettings.darkTheme,
+                )
             }
         }
     }

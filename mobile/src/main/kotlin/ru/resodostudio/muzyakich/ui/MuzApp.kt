@@ -42,6 +42,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -51,6 +52,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.state.rememberCurrentMediaItemState
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -62,7 +65,6 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
-import ru.resodostudio.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
@@ -70,6 +72,8 @@ import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
+import ru.resodostudio.muzyakich.core.ui.LocalSnackbarHostState
+import ru.resodostudio.muzyakich.core.ui.util.DynamicPlayerTheme
 import ru.resodostudio.muzyakich.feature.album.detail.impl.navigation.albumEntry
 import ru.resodostudio.muzyakich.feature.artist.detail.impl.navigation.artistEntry
 import ru.resodostudio.muzyakich.feature.library.api.LibraryNavKey
@@ -89,6 +93,7 @@ import ru.resodostudio.muzyakich.ui.component.NavigationToolbar
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(
     ExperimentalPermissionsApi::class,
     ExperimentalHazeMaterialsApi::class,
@@ -98,6 +103,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun MuzApp(
     appState: MuzAppState,
+    darkTheme: Boolean,
 ) {
     val navigator = remember { Navigator(appState.navigationState) }
     val libraryNavigationState = rememberNavigationState(
@@ -131,6 +137,9 @@ fun MuzApp(
     val currentLibraryTab =
         LibraryTab.entries.find { it.navKey == libraryNavigator.state.backStack.last() }
             ?: LibraryTab.entries.first()
+
+    val currentMediaItemState = rememberCurrentMediaItemState(player)
+    val artworkUri = currentMediaItemState.mediaMetadata.artworkUri
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -166,27 +175,30 @@ fun MuzApp(
                                 ),
                         exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                     ) {
-                        val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        )
-                        val hazeBlurRadius = 32.dp
                         player?.let { player ->
-                            NowPlayingBar(
-                                player = player,
-                                modifier = Modifier
-                                    .shadow(
-                                        elevation = 3.dp,
-                                        shape = CircleShape,
-                                        clip = true,
-                                    )
-                                    .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                        inputScale = HazeInputScale.Auto
-                                        blurEnabled = true
-                                        blurRadius = hazeBlurRadius
-                                        noiseFactor = 0f
-                                    },
-                                onClick = dropUnlessResumed { navigator.navigateToPlayer() },
-                            )
+                            DynamicPlayerTheme(
+                                artworkUri = artworkUri,
+                                isDarkTheme = darkTheme,
+                            ) {
+                                val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                )
+                                val hazeBlurRadius = 32.dp
+
+                                NowPlayingBar(
+                                    player = player,
+                                    currentMediaItemState = currentMediaItemState,
+                                    modifier = Modifier
+                                        .shadow(elevation = 3.dp, shape = CircleShape, clip = true)
+                                        .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                            inputScale = HazeInputScale.Auto
+                                            blurEnabled = true
+                                            blurRadius = hazeBlurRadius
+                                            noiseFactor = 0f
+                                        },
+                                    onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                                )
+                            }
                         }
                     }
                     AnimatedVisibility(
@@ -260,12 +272,11 @@ fun MuzApp(
                 }
 
                 PermissionStatus.Granted -> {
+                    val contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
+                    val artworkUriState = rememberUpdatedState(artworkUri)
                     val entryProvider = entryProvider {
-                        libraryEntry(
-                            navigator = navigator,
-                            libraryNavigator = libraryNavigator,
-                        )
-                        playerEntry(navigator)
+                        libraryEntry(navigator, libraryNavigator)
+                        playerEntry(navigator, contentWindowInsets, artworkUriState, darkTheme)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)

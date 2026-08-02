@@ -1,4 +1,4 @@
-package ru.resodostudio.cashsense.core.ui
+package ru.resodostudio.muzyakich.core.ui
 
 import android.text.format.Formatter
 import androidx.compose.foundation.background
@@ -39,14 +39,13 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
-import ru.resodostudio.cashsense.core.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.Song
-import ru.resodostudio.muzyakich.core.ui.R
+import ru.resodostudio.muzyakich.core.ui.util.asFormattedDuration
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)

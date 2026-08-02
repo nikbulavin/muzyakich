@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
-import ru.resodostudio.cashsense.core.ui.EmptyState
-import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.model.Artist
+import ru.resodostudio.muzyakich.core.ui.EmptyState
+import ru.resodostudio.muzyakich.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

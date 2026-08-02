@@ -21,13 +21,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import ru.resodostudio.cashsense.core.ui.SwipeableItem
-import ru.resodostudio.cashsense.core.ui.rememberRemoveFromQueueSwipeAction
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.model.QueueSong
+import ru.resodostudio.muzyakich.core.ui.SwipeableItem
+import ru.resodostudio.muzyakich.core.ui.rememberRemoveFromQueueSwipeAction
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

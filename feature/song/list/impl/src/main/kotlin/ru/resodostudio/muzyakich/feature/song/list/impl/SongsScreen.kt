@@ -22,18 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudio.cashsense.core.ui.EmptyState
-import ru.resodostudio.cashsense.core.ui.LoadingState
-import ru.resodostudio.cashsense.core.ui.PlayShuffleButtonGroup
-import ru.resodostudio.cashsense.core.ui.rememberDeleteSwipeAction
-import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
-import ru.resodostudio.cashsense.core.ui.songs
-import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.common.Constants.DEFAULT_INDEX
 import ru.resodostudio.muzyakich.core.model.FilterConfig
 import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.model.SortBy
 import ru.resodostudio.muzyakich.core.model.SortOrder
+import ru.resodostudio.muzyakich.core.ui.EmptyState
+import ru.resodostudio.muzyakich.core.ui.LoadingState
+import ru.resodostudio.muzyakich.core.ui.PlayShuffleButtonGroup
+import ru.resodostudio.muzyakich.core.ui.rememberDeleteSwipeAction
+import ru.resodostudio.muzyakich.core.ui.rememberPlaylistPlaySwipeAction
+import ru.resodostudio.muzyakich.core.ui.songs
+import ru.resodostudio.muzyakich.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

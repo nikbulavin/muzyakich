@@ -1,4 +1,4 @@
-package ru.resodostudio.cashsense.core.ui
+package ru.resodostudio.muzyakich.core.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box

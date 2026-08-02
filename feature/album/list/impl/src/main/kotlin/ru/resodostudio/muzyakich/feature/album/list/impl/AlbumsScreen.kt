@@ -35,8 +35,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
-import ru.resodostudio.cashsense.core.ui.EmptyState
-import ru.resodostudio.cashsense.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
@@ -44,6 +42,8 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.Album
+import ru.resodostudio.muzyakich.core.ui.EmptyState
+import ru.resodostudio.muzyakich.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable

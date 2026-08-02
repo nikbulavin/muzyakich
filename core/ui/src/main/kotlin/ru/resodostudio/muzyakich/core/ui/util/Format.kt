@@ -1,4 +1,4 @@
-package ru.resodostudio.cashsense.core.ui.util
+package ru.resodostudio.muzyakich.core.ui.util
 
 import android.icu.text.MeasureFormat
 import android.icu.util.Measure
