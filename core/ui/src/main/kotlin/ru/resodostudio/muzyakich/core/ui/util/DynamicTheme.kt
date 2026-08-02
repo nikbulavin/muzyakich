@@ -18,38 +18,34 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
+import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.ktx.rememberThemeColor
 import com.materialkolor.rememberDynamicColorScheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun DynamicTrackTheme(
+fun DynamicPlayerTheme(
     artworkUri: Uri?,
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val fallbackColor = MaterialTheme.colorScheme.primary
+    val fallbackScheme = MaterialTheme.colorScheme
     val imageBitmap = rememberArtworkImageBitmap(artworkUri)
-
-    val seedColor = if (imageBitmap != null) {
-        rememberThemeColor(
-            image = imageBitmap,
-            fallback = fallbackColor,
+    val targetScheme = if (artworkUri != null && imageBitmap != null) {
+        val seedColor = rememberThemeColor(image = imageBitmap, fallback = fallbackScheme.primary)
+        rememberDynamicColorScheme(
+            seedColor = seedColor,
+            isDark = isDarkTheme,
         )
     } else {
-        fallbackColor
+        fallbackScheme
     }
 
-    val colorScheme = rememberDynamicColorScheme(
-        seedColor = seedColor,
-        isDark = isDarkTheme,
-    )
-
     MaterialExpressiveTheme(
-        colorScheme = colorScheme,
-        motionScheme = MaterialTheme.motionScheme,
+        colorScheme = animateColorScheme(targetScheme),
         typography = MaterialTheme.typography,
+        motionScheme = MaterialTheme.motionScheme,
         shapes = MaterialTheme.shapes,
         content = content,
     )

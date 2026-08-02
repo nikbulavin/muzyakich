@@ -72,7 +72,7 @@ import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.core.ui.LocalSnackbarHostState
-import ru.resodostudio.muzyakich.core.ui.util.DynamicTrackTheme
+import ru.resodostudio.muzyakich.core.ui.util.DynamicPlayerTheme
 import ru.resodostudio.muzyakich.feature.album.detail.impl.navigation.albumEntry
 import ru.resodostudio.muzyakich.feature.artist.detail.impl.navigation.artistEntry
 import ru.resodostudio.muzyakich.feature.library.api.LibraryNavKey
@@ -137,6 +137,9 @@ fun MuzApp(
         LibraryTab.entries.find { it.navKey == libraryNavigator.state.backStack.last() }
             ?: LibraryTab.entries.first()
 
+    val currentMediaItemState = rememberCurrentMediaItemState(player)
+    val artworkUri = currentMediaItemState.mediaMetadata.artworkUri
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = {
@@ -172,9 +175,8 @@ fun MuzApp(
                         exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                     ) {
                         player?.let { player ->
-                            val currentMediaItemState = rememberCurrentMediaItemState(player)
-                            DynamicTrackTheme(
-                                artworkUri = currentMediaItemState.mediaMetadata.artworkUri,
+                            DynamicPlayerTheme(
+                                artworkUri = artworkUri,
                                 isDarkTheme = darkTheme,
                             ) {
                                 val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
@@ -271,11 +273,8 @@ fun MuzApp(
                 PermissionStatus.Granted -> {
                     val contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                     val entryProvider = entryProvider {
-                        libraryEntry(
-                            navigator = navigator,
-                            libraryNavigator = libraryNavigator,
-                        )
-                        playerEntry(navigator, contentWindowInsets)
+                        libraryEntry(navigator, libraryNavigator)
+                        playerEntry(navigator, contentWindowInsets, artworkUri, darkTheme)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)
