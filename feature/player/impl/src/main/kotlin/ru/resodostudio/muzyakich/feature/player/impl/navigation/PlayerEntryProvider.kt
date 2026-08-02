@@ -17,7 +17,7 @@ fun EntryProviderScope<NavKey>.playerEntry(
     navigator: Navigator,
     contentWindowInsets: WindowInsets,
     artworkUri: State<Uri?>?,
-    isDarkTheme: Boolean,
+    isDarkTheme: State<Boolean>,
 ) {
     entry<PlayerNavKey>(
         metadata = BottomSheetSceneStrategy.bottomSheet(

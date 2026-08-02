@@ -274,9 +274,10 @@ fun MuzApp(
                 PermissionStatus.Granted -> {
                     val contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                     val artworkUriState = rememberUpdatedState(artworkUri)
+                    val isDarkThemeState = rememberUpdatedState(darkTheme)
                     val entryProvider = entryProvider {
                         libraryEntry(navigator, libraryNavigator)
-                        playerEntry(navigator, contentWindowInsets, artworkUriState, darkTheme)
+                        playerEntry(navigator, contentWindowInsets, artworkUriState, isDarkThemeState)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)
