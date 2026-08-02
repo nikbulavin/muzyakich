@@ -23,7 +23,7 @@ import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
-import ru.resodostudio.muzyakich.core.ui.util.DynamicPlayerTheme
+import ru.resodostudio.muzyakich.core.designsystem.theme.DynamicMuzTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal data class BottomSheetScene<T : Any>(
@@ -47,7 +47,7 @@ internal data class BottomSheetScene<T : Any>(
         )
         val lifecycleOwner = rememberLifecycleOwner()
 
-        DynamicPlayerTheme(
+        DynamicMuzTheme(
             artworkUri = artworkUri?.value,
             isDarkTheme = isDarkTheme?.value ?: isSystemInDarkTheme(),
         ) {

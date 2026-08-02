@@ -16,7 +16,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.lottie.compose)
-    implementation(libs.materialKolor)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
 }
