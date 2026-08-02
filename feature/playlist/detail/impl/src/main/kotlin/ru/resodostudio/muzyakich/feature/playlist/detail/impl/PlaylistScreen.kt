@@ -64,12 +64,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import ru.resodostudio.cashsense.core.ui.LoadingState
-import ru.resodostudio.cashsense.core.ui.PlayShuffleButtonGroup
-import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
-import ru.resodostudio.cashsense.core.ui.rememberRemoveFromPlaylistSwipeAction
-import ru.resodostudio.cashsense.core.ui.songs
-import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
@@ -84,6 +78,12 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.ui.LoadingState
+import ru.resodostudio.muzyakich.core.ui.PlayShuffleButtonGroup
+import ru.resodostudio.muzyakich.core.ui.rememberPlaylistPlaySwipeAction
+import ru.resodostudio.muzyakich.core.ui.rememberRemoveFromPlaylistSwipeAction
+import ru.resodostudio.muzyakich.core.ui.songs
+import ru.resodostudio.muzyakich.core.ui.songsInfo
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 

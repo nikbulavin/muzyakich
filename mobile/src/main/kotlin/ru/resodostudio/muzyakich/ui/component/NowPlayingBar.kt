@@ -53,17 +53,17 @@ import androidx.graphics.shapes.Morph
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.ui.compose.state.rememberCurrentMediaItemState
+import androidx.media3.ui.compose.state.CurrentMediaItemState
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberProgressStateWithTickCount
-import ru.resodostudio.cashsense.core.ui.SongArtworkMini
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Pause
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlayArrow
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.SkipNext
+import ru.resodostudio.muzyakich.core.ui.SongArtworkMini
 import kotlin.math.roundToInt
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -72,12 +72,12 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun NowPlayingBar(
     player: Player,
+    currentMediaItemState: CurrentMediaItemState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val motionScheme = MaterialTheme.motionScheme
 
-    val currentMediaItemState = rememberCurrentMediaItemState(player)
     val playPauseButtonState = rememberPlayPauseButtonState(player)
     val isPlaying = !playPauseButtonState.showPlay
 

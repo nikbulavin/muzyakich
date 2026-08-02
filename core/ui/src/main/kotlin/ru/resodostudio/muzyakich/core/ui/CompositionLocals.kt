@@ -1,4 +1,4 @@
-package ru.resodostudio.cashsense.core.ui
+package ru.resodostudio.muzyakich.core.ui
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf

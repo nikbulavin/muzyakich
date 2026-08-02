@@ -43,9 +43,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import ru.resodostudio.cashsense.core.ui.util.asFormattedBitDepth
-import ru.resodostudio.cashsense.core.ui.util.asFormattedSampleRate
-import ru.resodostudio.cashsense.core.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSegmentedListItem
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSwitch
@@ -68,6 +65,9 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.PlaylistAdd
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Star
 import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.ui.util.asFormattedBitDepth
+import ru.resodostudio.muzyakich.core.ui.util.asFormattedSampleRate
+import ru.resodostudio.muzyakich.core.ui.util.asFormattedString
 import ru.resodostudio.muzyakich.feature.song.detail.impl.component.PlaylistPicker
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR

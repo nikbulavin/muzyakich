@@ -1,4 +1,4 @@
-package ru.resodostudio.cashsense.core.ui
+package ru.resodostudio.muzyakich.core.ui
 
 import android.net.Uri
 import androidx.compose.foundation.background

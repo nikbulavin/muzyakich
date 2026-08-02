@@ -18,15 +18,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudio.cashsense.core.ui.LoadingState
-import ru.resodostudio.cashsense.core.ui.rememberDeleteSwipeAction
-import ru.resodostudio.cashsense.core.ui.rememberPlaylistPlaySwipeAction
-import ru.resodostudio.cashsense.core.ui.songs
-import ru.resodostudio.cashsense.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.ui.LoadingState
+import ru.resodostudio.muzyakich.core.ui.rememberDeleteSwipeAction
+import ru.resodostudio.muzyakich.core.ui.rememberPlaylistPlaySwipeAction
+import ru.resodostudio.muzyakich.core.ui.songs
+import ru.resodostudio.muzyakich.core.ui.songsInfo
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
