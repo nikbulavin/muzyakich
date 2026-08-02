@@ -103,7 +103,6 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun MuzApp(
     appState: MuzAppState,
-    darkTheme: Boolean,
 ) {
     val navigator = remember { Navigator(appState.navigationState) }
     val libraryNavigationState = rememberNavigationState(
@@ -178,7 +177,6 @@ fun MuzApp(
                         player?.let { player ->
                             DynamicMuzTheme(
                                 artworkUri = artworkUri,
-                                isDarkTheme = darkTheme,
                             ) {
                                 val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -274,10 +272,9 @@ fun MuzApp(
                 PermissionStatus.Granted -> {
                     val contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                     val artworkUriState = rememberUpdatedState(artworkUri)
-                    val isDarkThemeState = rememberUpdatedState(darkTheme)
                     val entryProvider = entryProvider {
                         libraryEntry(navigator, libraryNavigator)
-                        playerEntry(navigator, contentWindowInsets, artworkUriState, isDarkThemeState)
+                        playerEntry(navigator, contentWindowInsets, artworkUriState)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)

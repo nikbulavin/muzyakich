@@ -17,13 +17,11 @@ fun EntryProviderScope<NavKey>.playerEntry(
     navigator: Navigator,
     contentWindowInsets: WindowInsets,
     artworkUri: State<Uri?>?,
-    isDarkTheme: State<Boolean>,
 ) {
     entry<PlayerNavKey>(
         metadata = BottomSheetSceneStrategy.bottomSheet(
             contentWindowInsets = contentWindowInsets,
             artworkUri = artworkUri,
-            isDarkTheme = isDarkTheme,
         ),
     ) {
         PlayerScreen(

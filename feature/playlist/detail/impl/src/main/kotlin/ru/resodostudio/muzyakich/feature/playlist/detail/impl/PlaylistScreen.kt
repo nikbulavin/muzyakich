@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.feature.playlist.detail.impl
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.snap
@@ -72,6 +73,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
+import ru.resodostudio.muzyakich.core.designsystem.theme.DynamicMuzTheme
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
@@ -138,7 +140,11 @@ private fun PlaylistScreen(
                     }
                 }
 
-                Scaffold(
+                DynamicMuzTheme(
+                    artworkUri = playlistUiState.playlist.coverFilePath?.let { Uri.parse(it) }
+                        ?: playlistUiState.playlist.songs.firstOrNull()?.artworkUri,
+                ) {
+                    Scaffold(
                     topBar = {
                         PlaylistTopAppBar(
                             title = playlistUiState.playlist.title,
@@ -219,6 +225,7 @@ private fun PlaylistScreen(
             }
         }
     }
+}
 }
 
 private fun LazyGridScope.header(playlist: Playlist) {

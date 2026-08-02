@@ -72,6 +72,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PlaylistPlay
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Album
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
+import ru.resodostudio.muzyakich.core.designsystem.theme.DynamicMuzTheme
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementKey
 import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
@@ -131,8 +132,11 @@ private fun AlbumScreen(
                     listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 250
                 }
             }
-            with(LocalSharedTransitionScope.current) {
-                Scaffold(
+            DynamicMuzTheme(
+                artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri,
+            ) {
+                with(LocalSharedTransitionScope.current) {
+                    Scaffold(
                     topBar = {
                         AlbumTopAppBar(
                             title = albumUiState.album.title,
@@ -208,6 +212,7 @@ private fun AlbumScreen(
             }
         }
     }
+}
 }
 
 private fun LazyGridScope.groupedSongs(

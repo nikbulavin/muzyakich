@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -267,6 +268,8 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+val LocalIsDarkTheme = compositionLocalOf { false }
+
 @Composable
 fun MuzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -296,7 +299,10 @@ fun MuzTheme(
         motionScheme = MotionScheme.expressive(),
         content = {
             SharedTransitionLayout {
-                CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this,
+                    LocalIsDarkTheme provides darkTheme,
+                ) {
                     content()
                 }
             }
@@ -307,7 +313,7 @@ fun MuzTheme(
 @Composable
 fun DynamicMuzTheme(
     artworkUri: Uri?,
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    isDarkTheme: Boolean = LocalIsDarkTheme.current,
     content: @Composable () -> Unit,
 ) {
     val fallbackScheme = MaterialTheme.colorScheme
