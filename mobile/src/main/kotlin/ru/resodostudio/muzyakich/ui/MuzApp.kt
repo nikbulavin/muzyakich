@@ -42,6 +42,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -272,9 +273,10 @@ fun MuzApp(
 
                 PermissionStatus.Granted -> {
                     val contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
+                    val artworkUriState = rememberUpdatedState(artworkUri)
                     val entryProvider = entryProvider {
                         libraryEntry(navigator, libraryNavigator)
-                        playerEntry(navigator, contentWindowInsets, artworkUri, darkTheme)
+                        playerEntry(navigator, contentWindowInsets, artworkUriState, darkTheme)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)

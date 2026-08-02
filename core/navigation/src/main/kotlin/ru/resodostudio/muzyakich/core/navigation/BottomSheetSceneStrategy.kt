@@ -11,6 +11,7 @@ import androidx.compose.material3.SheetValue.Hidden
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.State
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.rememberLifecycleOwner
 import androidx.navigation3.runtime.NavEntry
@@ -31,7 +32,7 @@ internal data class BottomSheetScene<T : Any>(
     private val entry: NavEntry<T>,
     private val modalBottomSheetProperties: ModalBottomSheetProperties,
     private val contentWindowInsets: WindowInsets?,
-    private val artworkUri: Uri?,
+    private val artworkUri: State<Uri?>?,
     private val isDarkTheme: Boolean,
     private val onBack: () -> Unit,
 ) : OverlayScene<T> {
@@ -46,7 +47,7 @@ internal data class BottomSheetScene<T : Any>(
         val lifecycleOwner = rememberLifecycleOwner()
 
         DynamicPlayerTheme(
-            artworkUri = artworkUri,
+            artworkUri = artworkUri?.value,
             isDarkTheme = isDarkTheme,
         ) {
             ModalBottomSheet(
@@ -94,7 +95,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
         fun bottomSheet(
             modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
             contentWindowInsets: WindowInsets? = null,
-            artworkUri: Uri? = null,
+            artworkUri: State<Uri?>? = null,
             isDarkTheme: Boolean = false,
         ): Map<String, Any> {
             return metadata {
@@ -107,7 +108,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
         object BottomSheetKey : NavMetadataKey<ModalBottomSheetProperties>
         object BottomSheetInsetsKey : NavMetadataKey<WindowInsets>
-        object BottomSheetArtworkUriKey : NavMetadataKey<Uri>
+        object BottomSheetArtworkUriKey : NavMetadataKey<State<Uri?>>
         object BottomSheetIsDarkThemeKey : NavMetadataKey<Boolean>
     }
 }
