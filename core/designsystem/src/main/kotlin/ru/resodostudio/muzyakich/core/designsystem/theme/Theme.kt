@@ -3,12 +3,14 @@ package ru.resodostudio.muzyakich.core.designsystem.theme
 import android.app.Activity
 import android.app.UiModeManager
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -16,9 +18,27 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import coil3.imageLoader
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
+import coil3.toBitmap
+import com.materialkolor.ktx.animateColorScheme
+import com.materialkolor.ktx.rememberThemeColor
+import com.materialkolor.rememberDynamicColorScheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -248,6 +268,8 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+val LocalIsDarkTheme = compositionLocalOf { false }
+
 @Composable
 fun MuzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -277,12 +299,68 @@ fun MuzTheme(
         motionScheme = MotionScheme.expressive(),
         content = {
             SharedTransitionLayout {
-                CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this,
+                    LocalIsDarkTheme provides darkTheme,
+                ) {
                     content()
                 }
             }
         },
     )
+}
+
+@Composable
+fun DynamicMuzTheme(
+    artworkUri: Uri?,
+    isDarkTheme: Boolean = LocalIsDarkTheme.current,
+    content: @Composable () -> Unit,
+) {
+    val fallbackScheme = MaterialTheme.colorScheme
+    val imageBitmap = rememberArtworkImageBitmap(artworkUri)
+    val targetScheme = if (artworkUri != null && imageBitmap != null) {
+        val seedColor = rememberThemeColor(image = imageBitmap, fallback = fallbackScheme.primary)
+        rememberDynamicColorScheme(
+            seedColor = seedColor,
+            isDark = isDarkTheme,
+        )
+    } else {
+        fallbackScheme
+    }
+
+    MaterialExpressiveTheme(
+        colorScheme = animateColorScheme(targetScheme),
+        typography = MaterialTheme.typography,
+        motionScheme = MaterialTheme.motionScheme,
+        shapes = MaterialTheme.shapes,
+        content = content,
+    )
+}
+
+@Composable
+private fun rememberArtworkImageBitmap(artworkUri: Uri?): ImageBitmap? {
+    val context = LocalContext.current
+    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+    LaunchedEffect(artworkUri) {
+        if (artworkUri == null) {
+            imageBitmap = null
+            return@LaunchedEffect
+        }
+        withContext(Dispatchers.IO) {
+            val request = ImageRequest.Builder(context)
+                .data(artworkUri)
+                .size(64)
+                .allowHardware(false)
+                .build()
+
+            val result = context.imageLoader.execute(request)
+            if (result is SuccessResult) {
+                imageBitmap = result.image.toBitmap().asImageBitmap()
+            }
+        }
+    }
+    return imageBitmap
 }
 
 @Composable

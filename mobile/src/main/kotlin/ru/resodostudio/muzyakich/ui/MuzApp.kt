@@ -67,13 +67,13 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
+import ru.resodostudio.muzyakich.core.designsystem.theme.DynamicMuzTheme
 import ru.resodostudio.muzyakich.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudio.muzyakich.core.navigation.BottomSheetSceneStrategy
 import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.core.navigation.rememberNavigationState
 import ru.resodostudio.muzyakich.core.navigation.toEntries
 import ru.resodostudio.muzyakich.core.ui.LocalSnackbarHostState
-import ru.resodostudio.muzyakich.core.ui.util.DynamicPlayerTheme
 import ru.resodostudio.muzyakich.feature.album.detail.impl.navigation.albumEntry
 import ru.resodostudio.muzyakich.feature.artist.detail.impl.navigation.artistEntry
 import ru.resodostudio.muzyakich.feature.library.api.LibraryNavKey
@@ -103,7 +103,6 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 fun MuzApp(
     appState: MuzAppState,
-    darkTheme: Boolean,
 ) {
     val navigator = remember { Navigator(appState.navigationState) }
     val libraryNavigationState = rememberNavigationState(
@@ -176,9 +175,8 @@ fun MuzApp(
                         exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                     ) {
                         player?.let { player ->
-                            DynamicPlayerTheme(
+                            DynamicMuzTheme(
                                 artworkUri = artworkUri,
-                                isDarkTheme = darkTheme,
                             ) {
                                 val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -276,7 +274,7 @@ fun MuzApp(
                     val artworkUriState = rememberUpdatedState(artworkUri)
                     val entryProvider = entryProvider {
                         libraryEntry(navigator, libraryNavigator)
-                        playerEntry(navigator, contentWindowInsets, artworkUriState, darkTheme)
+                        playerEntry(navigator, contentWindowInsets, artworkUriState)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)

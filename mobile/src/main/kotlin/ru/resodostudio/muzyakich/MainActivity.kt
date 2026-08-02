@@ -93,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             ) {
                 MuzApp(
                     appState = appState,
-                    darkTheme = themeSettings.darkTheme,
                 )
             }
         }

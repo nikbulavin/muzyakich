@@ -11,4 +11,7 @@ dependencies {
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.ui.util)
     implementation(libs.androidx.navigation3.ui)
+    implementation(platform(libs.coil.bom))
+    implementation(libs.coil.compose)
+    implementation(libs.materialKolor)
 }

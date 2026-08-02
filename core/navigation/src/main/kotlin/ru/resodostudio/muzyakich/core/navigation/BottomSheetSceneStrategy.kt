@@ -22,7 +22,7 @@ import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
-import ru.resodostudio.muzyakich.core.ui.util.DynamicPlayerTheme
+import ru.resodostudio.muzyakich.core.designsystem.theme.DynamicMuzTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal data class BottomSheetScene<T : Any>(
@@ -33,7 +33,6 @@ internal data class BottomSheetScene<T : Any>(
     private val modalBottomSheetProperties: ModalBottomSheetProperties,
     private val contentWindowInsets: WindowInsets?,
     private val artworkUri: State<Uri?>?,
-    private val isDarkTheme: Boolean,
     private val onBack: () -> Unit,
 ) : OverlayScene<T> {
 
@@ -46,9 +45,8 @@ internal data class BottomSheetScene<T : Any>(
         )
         val lifecycleOwner = rememberLifecycleOwner()
 
-        DynamicPlayerTheme(
+        DynamicMuzTheme(
             artworkUri = artworkUri?.value,
-            isDarkTheme = isDarkTheme,
         ) {
             ModalBottomSheet(
                 onDismissRequest = onBack,
@@ -73,7 +71,6 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
         val contentWindowInsets = lastEntry.metadata[BottomSheetInsetsKey]
 
         val artworkUri = lastEntry.metadata[BottomSheetArtworkUriKey]
-        val isDarkTheme = lastEntry.metadata[BottomSheetIsDarkThemeKey] ?: false
 
         return bottomSheetProperties.let { properties ->
             @Suppress("UNCHECKED_CAST")
@@ -85,7 +82,6 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
                 modalBottomSheetProperties = properties,
                 contentWindowInsets = contentWindowInsets,
                 artworkUri = artworkUri,
-                isDarkTheme = isDarkTheme,
                 onBack = onBack,
             )
         }
@@ -96,19 +92,16 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
             modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
             contentWindowInsets: WindowInsets? = null,
             artworkUri: State<Uri?>? = null,
-            isDarkTheme: Boolean = false,
         ): Map<String, Any> {
             return metadata {
                 put(BottomSheetKey, modalBottomSheetProperties)
                 if (contentWindowInsets != null) put(BottomSheetInsetsKey, contentWindowInsets)
                 if (artworkUri != null) put(BottomSheetArtworkUriKey, artworkUri)
-                put(BottomSheetIsDarkThemeKey, isDarkTheme)
             }
         }
 
         object BottomSheetKey : NavMetadataKey<ModalBottomSheetProperties>
         object BottomSheetInsetsKey : NavMetadataKey<WindowInsets>
         object BottomSheetArtworkUriKey : NavMetadataKey<State<Uri?>>
-        object BottomSheetIsDarkThemeKey : NavMetadataKey<Boolean>
     }
 }
