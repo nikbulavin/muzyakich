@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -167,6 +168,7 @@ private fun PlayerScreen(
                                     ) {
                                         SongArtwork(
                                             artworkUri = currentSong.artworkUri,
+                                            isPlaying = playerUiState.isPlaying,
                                             animatedVisibilityScope = this@AnimatedContent,
                                             sharedTransitionScope = this@SharedTransitionLayout,
                                         )
@@ -341,15 +343,22 @@ internal fun FavoriteToggleButton(
 @Composable
 private fun SongArtwork(
     artworkUri: Uri,
+    isPlaying: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
 ) {
+    val horizontalPadding by animateDpAsState(
+        targetValue = if (isPlaying) 24.dp else 48.dp,
+        animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
+        label = "ArtworkScale",
+    )
+
     with(sharedTransitionScope) {
         SubcomposeAsyncImage(
             modifier = modifier
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = horizontalPadding)
                 .aspectRatio(1f)
                 .dropShadow(
                     shape = shape,
