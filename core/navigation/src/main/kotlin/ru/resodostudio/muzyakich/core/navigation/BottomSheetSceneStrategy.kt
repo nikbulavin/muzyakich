@@ -1,5 +1,7 @@
 package ru.resodostudio.muzyakich.core.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -28,6 +30,7 @@ internal data class BottomSheetScene<T : Any>(
     override val overlaidEntries: List<NavEntry<T>>,
     private val entry: NavEntry<T>,
     private val modalBottomSheetProperties: ModalBottomSheetProperties,
+    private val contentWindowInsets: WindowInsets?,
     private val onBack: () -> Unit,
 ) : OverlayScene<T> {
 
@@ -43,6 +46,7 @@ internal data class BottomSheetScene<T : Any>(
             onDismissRequest = onBack,
             sheetState = sheetState,
             properties = modalBottomSheetProperties,
+            contentWindowInsets = { contentWindowInsets ?: BottomSheetDefaults.modalWindowInsets },
         ) {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 entry.Content()
@@ -63,6 +67,8 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastEntry = entries.lastOrNull() ?: return null
         val bottomSheetProperties = lastEntry.metadata[BottomSheetKey] ?: return null
+        val contentWindowInsets = lastEntry.metadata[BottomSheetInsetsKey]
+
         return bottomSheetProperties.let { properties ->
             @Suppress("UNCHECKED_CAST")
             BottomSheetScene(
@@ -71,6 +77,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
                 overlaidEntries = entries.dropLast(1),
                 entry = lastEntry,
                 modalBottomSheetProperties = properties,
+                contentWindowInsets = contentWindowInsets,
                 onBack = onBack,
             )
         }
@@ -84,12 +91,18 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
          * @param modalBottomSheetProperties properties that should be passed to the containing
          * [ModalBottomSheet].
          */
-        fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()) =
-            metadata {
+        fun bottomSheet(
+            modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
+            contentWindowInsets: WindowInsets? = null,
+        ): Map<String, Any> {
+            return metadata {
                 put(BottomSheetKey, modalBottomSheetProperties)
+                if (contentWindowInsets != null) put(BottomSheetInsetsKey, contentWindowInsets)
             }
+        }
 
         object BottomSheetKey : NavMetadataKey<ModalBottomSheetProperties>
+        object BottomSheetInsetsKey : NavMetadataKey<WindowInsets>
     }
 
 }

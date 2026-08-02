@@ -20,10 +20,14 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
@@ -124,6 +128,11 @@ private fun PlayerScreen(
                     BoxWithConstraints(
                         modifier = Modifier.fillMaxSize(),
                     ) {
+                        val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        val safeHeight = maxHeight - navBarHeight
+                        val topHeight = (safeHeight / 2) + 80.dp
+                        val bottomHeight = (safeHeight / 2) - 80.dp + navBarHeight
+
                         val lazyListState = rememberLazyListState()
                         val isQueueScrolled by remember { derivedStateOf { lazyListState.lastScrolledForward } }
                         val animSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
@@ -148,7 +157,7 @@ private fun PlayerScreen(
                                 )
                             } else {
                                 Column(
-                                    modifier = Modifier.requiredHeight((maxHeight / 2) + 80.dp),
+                                    modifier = Modifier.requiredHeight(topHeight),
                                 ) {
                                     Box(
                                         modifier = Modifier
@@ -241,7 +250,7 @@ private fun PlayerScreen(
                             exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
                         ) {
                             Column(
-                                modifier = Modifier.requiredHeight(maxHeight / 2 - 80.dp),
+                                modifier = Modifier.requiredHeight(bottomHeight),
                             ) {
                                 Spacer(
                                     modifier = Modifier
@@ -260,7 +269,12 @@ private fun PlayerScreen(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                        .padding(start = 32.dp, end = 32.dp, bottom = 16.dp),
+                                        .navigationBarsPadding()
+                                        .padding(
+                                            start = 32.dp,
+                                            end = 32.dp,
+                                            bottom = 16.dp,
+                                        ),
                                     verticalArrangement = Arrangement.SpaceBetween,
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {

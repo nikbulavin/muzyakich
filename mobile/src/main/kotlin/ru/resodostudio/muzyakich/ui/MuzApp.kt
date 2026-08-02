@@ -260,12 +260,13 @@ fun MuzApp(
                 }
 
                 PermissionStatus.Granted -> {
+                    val contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                     val entryProvider = entryProvider {
                         libraryEntry(
                             navigator = navigator,
                             libraryNavigator = libraryNavigator,
                         )
-                        playerEntry(navigator)
+                        playerEntry(navigator, contentWindowInsets)
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)
