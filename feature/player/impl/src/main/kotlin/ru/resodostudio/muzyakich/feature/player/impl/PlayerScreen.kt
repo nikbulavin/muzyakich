@@ -65,7 +65,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.ui.compose.indicators.TimeText
-import androidx.media3.ui.compose.material3.indicator.ProgressSlider
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
@@ -129,7 +128,8 @@ private fun PlayerScreen(
                     BoxWithConstraints(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        val navBarHeight =
+                            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                         val safeHeight = maxHeight - navBarHeight
                         val topHeight = (safeHeight / 2) + 80.dp
                         val bottomHeight = (safeHeight / 2) - 80.dp + navBarHeight
@@ -168,7 +168,7 @@ private fun PlayerScreen(
                                     ) {
                                         SongArtwork(
                                             artworkUri = currentSong.artworkUri,
-                                            isPlaying = playerUiState.isPlaying,
+                                            playWhenReady = playerUiState.playWhenReady,
                                             animatedVisibilityScope = this@AnimatedContent,
                                             sharedTransitionScope = this@SharedTransitionLayout,
                                         )
@@ -281,8 +281,9 @@ private fun PlayerScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     player?.let { player ->
-                                        SongProgressSlider(
+                                        SongProgressSection(
                                             player = player,
+                                            playWhenReady = playerUiState.playWhenReady,
                                             modifier = Modifier.fillMaxWidth(),
                                         )
                                         PlayerControlButtonGroup(
@@ -343,14 +344,14 @@ internal fun FavoriteToggleButton(
 @Composable
 private fun SongArtwork(
     artworkUri: Uri,
-    isPlaying: Boolean,
+    playWhenReady: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
 ) {
     val horizontalPadding by animateDpAsState(
-        targetValue = if (isPlaying) 24.dp else 48.dp,
+        targetValue = if (playWhenReady) 24.dp else 48.dp,
         animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
         label = "ArtworkScale",
     )
@@ -405,16 +406,18 @@ private fun SongArtwork(
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-private fun SongProgressSlider(
+private fun SongProgressSection(
     player: Player,
+    playWhenReady: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        ProgressSlider(
+        WavyProgressSlider(
             player = player,
+            playWhenReady = playWhenReady,
             modifier = Modifier.height(32.dp),
         )
         TimeText(player) {
