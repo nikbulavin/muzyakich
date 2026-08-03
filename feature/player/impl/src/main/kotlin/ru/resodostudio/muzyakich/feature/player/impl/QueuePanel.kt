@@ -37,6 +37,9 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransition
 import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.ui.SongArtworkMini
+import ru.resodostudio.muzyakich.feature.player.impl.component.FavoriteToggleButton
+import ru.resodostudio.muzyakich.feature.player.impl.component.MoreIconButton
+import ru.resodostudio.muzyakich.feature.player.impl.component.QueueItem
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import ru.resodostudio.muzyakich.core.locales.R as localesR

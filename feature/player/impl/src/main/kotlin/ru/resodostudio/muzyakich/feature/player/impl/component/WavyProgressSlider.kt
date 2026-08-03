@@ -1,5 +1,6 @@
-package ru.resodostudio.muzyakich.feature.player.impl
+package ru.resodostudio.muzyakich.feature.player.impl.component
 
+import androidx.annotation.OptIn
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -39,8 +40,9 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.indicators.ProgressIndicator
 import kotlinx.coroutines.CoroutineScope
+import kotlin.math.sin
 
-@androidx.annotation.OptIn(UnstableApi::class)
+@OptIn(UnstableApi::class)
 @Composable
 internal fun WavyProgressSlider(
     player: Player?,
@@ -123,7 +125,7 @@ internal fun WavyProgressSlider(
                         var x = 0f
                         while (x <= activeWidth) {
                             val dampening = ((activeWidth - x) / dampenDist).coerceIn(0f, 1f)
-                            val y = centerY + (amplitudePx * dampening) * kotlin.math.sin(x * waveFreq - phase)
+                            val y = centerY + (amplitudePx * dampening) * sin(x * waveFreq - phase)
                             lineTo(thumbR + x, y)
                             x += 3f
                         }

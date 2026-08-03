@@ -1,9 +1,8 @@
-package ru.resodostudio.muzyakich.feature.player.impl
+package ru.resodostudio.muzyakich.feature.player.impl.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -29,7 +28,6 @@ import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.ui.SwipeableItem
 import ru.resodostudio.muzyakich.core.ui.rememberRemoveFromQueueSwipeAction
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun QueueItem(
     song: QueueSong,

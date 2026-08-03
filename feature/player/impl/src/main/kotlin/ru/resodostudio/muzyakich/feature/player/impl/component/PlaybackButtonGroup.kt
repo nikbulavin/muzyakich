@@ -1,4 +1,4 @@
-package ru.resodostudio.muzyakich.feature.player.impl
+package ru.resodostudio.muzyakich.feature.player.impl.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.LocalContentColor
@@ -38,7 +37,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Shuffle
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @androidx.annotation.OptIn(UnstableApi::class)
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlaybackButtonGroup(
     player: Player,
