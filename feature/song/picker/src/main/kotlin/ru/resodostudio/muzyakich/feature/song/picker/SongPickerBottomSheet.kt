@@ -4,9 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -93,13 +101,14 @@ private fun SongPickerBottomSheet(
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberBottomSheetState(
-        initialValue = Expanded,
+        initialValue = Hidden,
         enabledValues = setOf(Hidden, Expanded),
     )
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismiss,
         modifier = modifier,
+        contentWindowInsets = { WindowInsets.safeDrawing.only(WindowInsetsSides.Top) },
     ) {
         when (songPickerUiState) {
             SongPickerUiState.Error -> onDismiss()
@@ -116,6 +125,7 @@ private fun SongPickerBottomSheet(
                 Box {
                     HorizontalFloatingToolbar(
                         modifier = Modifier
+                            .navigationBarsPadding()
                             .align(Alignment.BottomCenter)
                             .offset(y = -ScreenOffset)
                             .zIndex(1f),
@@ -169,7 +179,12 @@ private fun SongPickerBottomSheet(
                         },
                     )
                     LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 104.dp,
+                        ) + WindowInsets.navigationBars.asPaddingValues(),
                         modifier = Modifier.floatingToolbarVerticalNestedScroll(
                             expanded = expanded,
                             onExpand = { expanded = true },
