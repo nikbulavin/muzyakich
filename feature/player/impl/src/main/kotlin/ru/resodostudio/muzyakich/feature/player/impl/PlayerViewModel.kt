@@ -46,6 +46,7 @@ internal class PlayerViewModel @Inject constructor(
                 playingQueue = nowPlayingState.playingQueue,
                 currentSong = currentSong,
                 songs = songs,
+                playWhenReady = nowPlayingState.playWhenReady,
             )
         }
     }
@@ -84,5 +85,6 @@ sealed interface PlayerUiState {
         val playingQueue: List<QueueSong>,
         val currentSong: Song,
         val songs: List<Song>,
+        val playWhenReady: Boolean,
     ) : PlayerUiState
 }
