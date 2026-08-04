@@ -9,6 +9,7 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -129,7 +130,8 @@ private fun PlayerScreen(
                     BoxWithConstraints(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        val navBarHeight =
+                            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                         val safeHeight = maxHeight - navBarHeight
                         val topHeight = (safeHeight / 2) + 80.dp
                         val bottomHeight = (safeHeight / 2) - 80.dp + navBarHeight
@@ -280,43 +282,51 @@ private fun Header(
                             .padding(horizontal = 32.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        AnimatedContent(
-                            targetState = currentSong,
-                            transitionSpec = {
-                                fadeIn(fadeSpec) +
-                                        slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 12 } togetherWith
-                                        fadeOut(snap())
-                            },
-                            contentKey = { it.mediaId },
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
                             modifier = Modifier.weight(1f),
-                        ) { currentSongState ->
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(2.dp),
-                                modifier = Modifier.weight(1f),
-                            ) {
+                        ) {
+                            AnimatedContent(
+                                targetState = currentSong.title,
+                                transitionSpec = {
+                                    fadeIn(fadeSpec) +
+                                            slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 8 } togetherWith
+                                            fadeOut(snap())
+                                },
+                                label = "TitleAnimation",
+                                modifier = Modifier.fillMaxWidth(),
+                            ) { title ->
                                 Text(
-                                    text = currentSongState.title,
+                                    text = title,
                                     maxLines = 1,
                                     modifier = Modifier
                                         .sharedBounds(
-                                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                            sharedContentState = rememberSharedContentState(
-                                                currentSongState.title,
-                                            ),
+                                            boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                            sharedContentState = rememberSharedContentState(title),
                                             animatedVisibilityScope = animatedVisibilityScope,
                                         )
                                         .basicMarquee(),
                                     style = MaterialTheme.typography.titleLarge,
                                 )
+                            }
+                            AnimatedContent(
+                                targetState = currentSong.artist,
+                                transitionSpec = {
+                                    val delay = 50
+                                    fadeIn(tween(300, delay)) +
+                                            slideInHorizontally(tween(300, delay)) { it / 8 } togetherWith
+                                            fadeOut(snap(delay))
+                                },
+                                label = "ArtistAnimation",
+                                modifier = Modifier.fillMaxWidth(),
+                            ) { artist ->
                                 Text(
-                                    text = currentSongState.artist,
+                                    text = artist,
                                     maxLines = 1,
                                     modifier = Modifier
                                         .sharedBounds(
-                                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                            sharedContentState = rememberSharedContentState(
-                                                currentSongState.artist,
-                                            ),
+                                            boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                            sharedContentState = rememberSharedContentState(artist),
                                             animatedVisibilityScope = animatedVisibilityScope,
                                         )
                                         .basicMarquee(),
@@ -325,12 +335,13 @@ private fun Header(
                                 )
                             }
                         }
+
                         FavoriteToggleButton(
                             song = currentSong,
                             onFavoriteChange = onFavoriteChange,
                             modifier = Modifier
                                 .sharedBounds(
-                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                    boundsTransform = motionScheme.sharedElementTransitionSpec,
                                     sharedContentState = rememberSharedContentState(
                                         localesR.string.core_locales_favorites,
                                     ),
@@ -341,7 +352,7 @@ private fun Header(
                             onClick = { onSongMenuClick(currentSong.mediaId) },
                             modifier = Modifier
                                 .sharedBounds(
-                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                    boundsTransform = motionScheme.sharedElementTransitionSpec,
                                     sharedContentState = rememberSharedContentState(
                                         localesR.string.core_locales_more_options,
                                     ),
