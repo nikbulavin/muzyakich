@@ -130,14 +130,14 @@ private fun PlayerScreen(
                     BoxWithConstraints(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        val navBarHeight =
-                            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        val navBarHeight = WindowInsets.navigationBars
+                            .asPaddingValues()
+                            .calculateBottomPadding()
                         val safeHeight = maxHeight - navBarHeight
                         val topHeight = (safeHeight / 2) + 80.dp
                         val bottomHeight = (safeHeight / 2) - 80.dp + navBarHeight
 
                         val lazyListState = rememberLazyListState()
-                        val motionScheme = MaterialTheme.motionScheme
                         val isQueueScrolled by remember { derivedStateOf { lazyListState.lastScrolledForward } }
 
                         Header(
@@ -155,61 +155,15 @@ private fun PlayerScreen(
                             playWhenReady = playerUiState.playWhenReady,
                         )
 
-                        val spatialSpec = motionScheme.defaultSpatialSpec<IntSize>()
-                        val effectsSpec = motionScheme.defaultEffectsSpec<Float>()
-                        this@Column.AnimatedVisibility(
-                            visible = !isQueueScrolled || !queueOpened,
+                        Body(
+                            player = player,
+                            queueOpened = queueOpened,
+                            isQueueScrolled = isQueueScrolled,
+                            playWhenReady = playerUiState.playWhenReady,
+                            height = bottomHeight,
+                            onQueueClick = { queueOpened = it },
                             modifier = Modifier.align(Alignment.BottomCenter),
-                            enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
-                            exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
-                        ) {
-                            Column(
-                                modifier = Modifier.requiredHeight(bottomHeight),
-                            ) {
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(8.dp)
-                                        .background(
-                                            brush = Brush.verticalGradient(
-                                                listOf(
-                                                    Color.Transparent,
-                                                    MaterialTheme.colorScheme.surfaceContainerLow,
-                                                ),
-                                            ),
-                                        ),
-                                )
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                        .navigationBarsPadding()
-                                        .padding(
-                                            start = 32.dp,
-                                            end = 32.dp,
-                                            bottom = 16.dp,
-                                        ),
-                                    verticalArrangement = Arrangement.SpaceBetween,
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    player?.let { player ->
-                                        SongProgressSection(
-                                            player = player,
-                                            playWhenReady = playerUiState.playWhenReady,
-                                            modifier = Modifier.fillMaxWidth(),
-                                        )
-                                        PlayerControlButtonGroup(
-                                            player = player,
-                                        )
-                                        PlaybackButtonGroup(
-                                            player = player,
-                                            queueOpened = queueOpened,
-                                            onQueueClick = { queueOpened = it },
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        )
                     }
                 }
             }
@@ -360,6 +314,74 @@ private fun Header(
                                 ),
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Body(
+    player: Player?,
+    queueOpened: Boolean,
+    isQueueScrolled: Boolean,
+    playWhenReady: Boolean,
+    height: Dp,
+    onQueueClick: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val motionScheme = MaterialTheme.motionScheme
+    val spatialSpec = motionScheme.defaultSpatialSpec<IntSize>()
+    val effectsSpec = motionScheme.defaultEffectsSpec<Float>()
+    AnimatedVisibility(
+        visible = !isQueueScrolled || !queueOpened,
+        modifier = modifier,
+        enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
+        exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
+    ) {
+        Column(
+            modifier = Modifier.requiredHeight(height),
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                Color.Transparent,
+                                MaterialTheme.colorScheme.surfaceContainerLow,
+                            ),
+                        ),
+                    ),
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    .navigationBarsPadding()
+                    .padding(
+                        start = 32.dp,
+                        end = 32.dp,
+                        bottom = 16.dp,
+                    ),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                player?.let { player ->
+                    SongProgressSection(
+                        player = player,
+                        playWhenReady = playWhenReady,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    PlayerControlButtonGroup(
+                        player = player,
+                    )
+                    PlaybackButtonGroup(
+                        player = player,
+                        queueOpened = queueOpened,
+                        onQueueClick = onQueueClick,
+                    )
                 }
             }
         }
