@@ -3,7 +3,6 @@ package ru.resodostudio.muzyakich.core.designsystem.theme
 import android.app.Activity
 import android.app.UiModeManager
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.animation.SharedTransitionLayout
@@ -312,7 +311,7 @@ fun MuzTheme(
 
 @Composable
 fun DynamicMuzTheme(
-    artworkUri: Uri?,
+    artworkUri: String?,
     isDarkTheme: Boolean = LocalIsDarkTheme.current,
     content: @Composable () -> Unit,
 ) {
@@ -338,7 +337,7 @@ fun DynamicMuzTheme(
 }
 
 @Composable
-private fun rememberArtworkImageBitmap(artworkUri: Uri?): ImageBitmap? {
+private fun rememberArtworkImageBitmap(artworkUri: String?): ImageBitmap? {
     val context = LocalContext.current
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
 

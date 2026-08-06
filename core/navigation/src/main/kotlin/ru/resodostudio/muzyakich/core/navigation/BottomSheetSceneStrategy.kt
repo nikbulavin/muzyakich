@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.core.navigation
 
-import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +31,7 @@ internal data class BottomSheetScene<T : Any>(
     private val entry: NavEntry<T>,
     private val modalBottomSheetProperties: ModalBottomSheetProperties,
     private val contentWindowInsets: WindowInsets?,
-    private val artworkUri: State<Uri?>?,
+    private val artworkUri: State<String?>?,
     private val onBack: () -> Unit,
 ) : OverlayScene<T> {
 
@@ -91,7 +90,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
         fun bottomSheet(
             modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
             contentWindowInsets: WindowInsets? = null,
-            artworkUri: State<Uri?>? = null,
+            artworkUri: State<String?>? = null,
         ): Map<String, Any> {
             return metadata {
                 put(BottomSheetKey, modalBottomSheetProperties)
@@ -102,6 +101,6 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
         object BottomSheetKey : NavMetadataKey<ModalBottomSheetProperties>
         object BottomSheetInsetsKey : NavMetadataKey<WindowInsets>
-        object BottomSheetArtworkUriKey : NavMetadataKey<State<Uri?>>
+        object BottomSheetArtworkUriKey : NavMetadataKey<State<String?>>
     }
 }

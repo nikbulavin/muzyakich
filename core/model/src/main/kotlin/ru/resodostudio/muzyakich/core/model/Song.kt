@@ -1,13 +1,11 @@
 package ru.resodostudio.muzyakich.core.model
 
-import android.net.Uri
-
 data class Song(
     val mediaId: String,
     val artistId: Long,
     val albumId: Long,
-    val mediaUri: Uri,
-    val artworkUri: Uri,
+    val mediaUri: String,
+    val artworkUri: String,
     val title: String,
     val artist: String,
     val album: String,

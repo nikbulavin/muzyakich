@@ -39,6 +39,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
@@ -317,7 +318,7 @@ private fun ActionPanel(
                 runCatching {
                     val pendingIntent = MediaStore.createTrashRequest(
                         context.contentResolver,
-                        listOf(song.mediaUri),
+                        listOf(song.mediaUri.toUri()),
                         true,
                     )
                     launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())

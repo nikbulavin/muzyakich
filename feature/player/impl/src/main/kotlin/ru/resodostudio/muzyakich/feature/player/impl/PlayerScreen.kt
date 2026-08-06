@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.feature.player.impl
 
-import android.net.Uri
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -390,7 +389,7 @@ private fun Body(
 
 @Composable
 private fun SongArtwork(
-    artworkUri: Uri,
+    artworkUri: String,
     playWhenReady: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
@@ -419,15 +418,15 @@ private fun SongArtwork(
                 )
                 .sharedBounds(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    sharedContentState = rememberSharedContentState(artworkUri.toString()),
+                    sharedContentState = rememberSharedContentState(artworkUri),
                     animatedVisibilityScope = animatedVisibilityScope,
                     resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                 )
                 .clip(shape),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(artworkUri)
-                .placeholderMemoryCacheKey(artworkUri.toString())
-                .memoryCacheKey(artworkUri.toString())
+                .placeholderMemoryCacheKey(artworkUri)
+                .memoryCacheKey(artworkUri)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
