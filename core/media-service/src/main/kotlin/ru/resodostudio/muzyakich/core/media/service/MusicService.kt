@@ -34,13 +34,12 @@ internal class MusicService : MediaLibraryService() {
     lateinit var musicNotificationProvider: MusicNotificationProvider
 
     @Inject
-    lateinit var musicSessionCallback: MusicSessionCallback
-
-    @Inject
     lateinit var musicServiceConnection: MusicServiceConnection
 
     @Inject
     lateinit var playCountTracker: PlayCountTracker
+
+    private val musicSessionCallback = MusicSessionCallback()
 
     private var mediaLibrarySession: MediaLibrarySession? = null
 

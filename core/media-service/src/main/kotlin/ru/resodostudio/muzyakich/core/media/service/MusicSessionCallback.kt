@@ -5,10 +5,8 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import javax.inject.Inject
 
-internal class MusicSessionCallback @Inject constructor(
-) : MediaLibraryService.MediaLibrarySession.Callback {
+internal class MusicSessionCallback : MediaLibraryService.MediaLibrarySession.Callback {
 
     override fun onAddMediaItems(
         mediaSession: MediaSession,
