@@ -7,7 +7,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
@@ -15,8 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
-import ru.resodostudio.muzyakich.core.data.repository.util.ReviewManager
-import ru.resodostudio.muzyakich.core.domain.CheckIfReviewNeededUseCase
+import ru.resodostudio.muzyakich.core.domain.CheckAndShowReviewUseCase
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.Song
@@ -29,24 +27,19 @@ internal class SongViewModel @AssistedInject constructor(
     private val musicServiceConnection: MusicServiceConnection,
     private val songsRepository: SongsRepository,
     private val playlistsRepository: PlaylistsRepository,
-    private val checkIfReviewNeededUseCase: CheckIfReviewNeededUseCase,
-    private val reviewManager: ReviewManager,
+    private val checkAndShowReviewUseCase: CheckAndShowReviewUseCase,
 ) : ViewModel() {
-
-    private val shouldShowReviewDialogState = MutableStateFlow(false)
 
     val songUiState = combine(
         songsRepository.getSong(mediaId),
         playlistsRepository.getPlaylists(),
-        shouldShowReviewDialogState,
-    ) { song, playlists, shouldShowReviewDialog ->
+    ) { song, playlists ->
         if (song == null) {
             SongUiState.Error
         } else {
             SongUiState.Success(
                 song = song,
                 playlists = playlists,
-                shouldShowReviewDialog = shouldShowReviewDialog,
             )
         }
     }
@@ -63,7 +56,6 @@ internal class SongViewModel @AssistedInject constructor(
     fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
         viewModelScope.launch {
             songsRepository.toggleFavorite(mediaId, isFavorite)
-            if (checkIfReviewNeededUseCase()) shouldShowReviewDialogState.value = true
         }
     }
 
@@ -77,12 +69,12 @@ internal class SongViewModel @AssistedInject constructor(
         }
     }
 
-    fun requestReviewDialog(activity: Activity) {
+    fun requestReview(activity: Activity) {
         viewModelScope.launch {
-            reviewManager.requestReview(activity)
+            checkAndShowReviewUseCase(activity)
         }
-        shouldShowReviewDialogState.value = false
     }
+
 
     @AssistedFactory
     interface Factory {
@@ -101,6 +93,5 @@ sealed interface SongUiState {
     data class Success(
         val song: Song,
         val playlists: List<Playlist>,
-        val shouldShowReviewDialog: Boolean,
     ) : SongUiState
 }

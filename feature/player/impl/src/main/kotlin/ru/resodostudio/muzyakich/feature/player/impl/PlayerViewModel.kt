@@ -4,15 +4,13 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
-import ru.resodostudio.muzyakich.core.data.repository.util.ReviewManager
-import ru.resodostudio.muzyakich.core.domain.CheckIfReviewNeededUseCase
+import ru.resodostudio.muzyakich.core.domain.CheckAndShowReviewUseCase
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
@@ -25,11 +23,8 @@ import kotlin.time.Duration.Companion.seconds
 internal class PlayerViewModel @Inject constructor(
     private val songsRepository: SongsRepository,
     private val musicServiceConnection: MusicServiceConnection,
-    private val checkIfReviewNeededUseCase: CheckIfReviewNeededUseCase,
-    private val reviewManager: ReviewManager,
+    private val checkAndShowReviewUseCase: CheckAndShowReviewUseCase,
 ) : ViewModel() {
-
-    private val shouldShowReviewDialogState = MutableStateFlow(false)
 
     val player = musicServiceConnection.playerState
         .stateIn(
@@ -41,8 +36,7 @@ internal class PlayerViewModel @Inject constructor(
     val playerUiState = combine(
         musicServiceConnection.nowPlayingState,
         songsRepository.getSongs(sortBy = SortBy.TITLE, sortOrder = SortOrder.ASCENDING),
-        shouldShowReviewDialogState,
-    ) { nowPlayingState, songs, shouldShowReviewDialog ->
+    ) { nowPlayingState, songs ->
         val currentSong = songs.find { it.mediaId == nowPlayingState.mediaId }
 
         if (currentSong == null) {
@@ -53,7 +47,6 @@ internal class PlayerViewModel @Inject constructor(
                 currentSong = currentSong,
                 songs = songs,
                 playWhenReady = nowPlayingState.playWhenReady,
-                shouldShowReviewDialog = shouldShowReviewDialog,
             )
         }
     }
@@ -72,15 +65,13 @@ internal class PlayerViewModel @Inject constructor(
     fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
         viewModelScope.launch {
             songsRepository.toggleFavorite(mediaId, isFavorite)
-            if (checkIfReviewNeededUseCase()) shouldShowReviewDialogState.value = true
         }
     }
 
-    fun requestReviewDialog(activity: Activity) {
+    fun requestReview(activity: Activity) {
         viewModelScope.launch {
-            reviewManager.requestReview(activity)
+            checkAndShowReviewUseCase(activity)
         }
-        shouldShowReviewDialogState.value = false
     }
 }
 
@@ -95,6 +86,5 @@ sealed interface PlayerUiState {
         val currentSong: Song,
         val songs: List<Song>,
         val playWhenReady: Boolean,
-        val shouldShowReviewDialog: Boolean,
     ) : PlayerUiState
 }

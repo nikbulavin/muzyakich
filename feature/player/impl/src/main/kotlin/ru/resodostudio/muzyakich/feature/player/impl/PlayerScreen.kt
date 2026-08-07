@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.feature.player.impl
 
-import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -41,7 +40,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,6 +87,7 @@ internal fun PlayerScreen(
 ) {
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
     val player by viewModel.player.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current
 
     PlayerScreen(
         playerUiState = playerUiState,
@@ -96,10 +95,12 @@ internal fun PlayerScreen(
         onDismiss = onDismiss,
         onSongMenuClick = onSongMenuClick,
         onSkipToSongClick = viewModel::skipToSong,
-        onFavoriteChange = viewModel::setSongFavorite,
+        onFavoriteChange = { id, favorite ->
+            viewModel.setSongFavorite(id, favorite)
+            if (favorite && activity != null) viewModel.requestReview(activity)
+        },
         onRemoveFromQueue = viewModel::removeSong,
         onReorderSongs = viewModel::moveSong,
-        onReviewDialogRequest = viewModel::requestReviewDialog,
     )
 }
 
@@ -113,7 +114,6 @@ private fun PlayerScreen(
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onRemoveFromQueue: (String) -> Unit = {},
     onReorderSongs: (String, String) -> Unit = { _, _ -> },
-    onReviewDialogRequest: (Activity) -> Unit = {},
 ) {
     SharedTransitionLayout {
         var queueOpened by rememberSaveable { mutableStateOf(false) }
@@ -121,11 +121,6 @@ private fun PlayerScreen(
             PlayerUiState.Error -> onDismiss()
             PlayerUiState.Loading -> Unit
             is PlayerUiState.Success -> {
-                val activity = LocalActivity.current
-                LaunchedEffect(playerUiState.shouldShowReviewDialog) {
-                    if (playerUiState.shouldShowReviewDialog) activity?.let(onReviewDialogRequest)
-                }
-
                 val currentSong = playerUiState.currentSong
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

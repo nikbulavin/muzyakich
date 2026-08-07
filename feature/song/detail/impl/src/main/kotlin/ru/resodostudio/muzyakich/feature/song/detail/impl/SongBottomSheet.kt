@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.feature.song.detail.impl
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.provider.MediaStore
 import android.text.format.Formatter
@@ -27,7 +26,6 @@ import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -82,6 +80,7 @@ internal fun SongBottomSheet(
     viewModel: SongViewModel = hiltViewModel(),
 ) {
     val songUiState by viewModel.songUiState.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current
 
     SongBottomSheet(
         songUiState = songUiState,
@@ -89,9 +88,11 @@ internal fun SongBottomSheet(
         onSongRemove = viewModel::removeSong,
         modifier = modifier,
         onPlayNextClick = viewModel::playSongNext,
-        onFavoriteChange = viewModel::setSongFavorite,
+        onFavoriteChange = { id, favorite ->
+            viewModel.setSongFavorite(id, favorite)
+            if (favorite && activity != null) viewModel.requestReview(activity)
+        },
         onAddSongToPlaylist = viewModel::addToPlaylist,
-        onReviewDialogRequest = viewModel::requestReviewDialog,
     )
 }
 
@@ -105,17 +106,11 @@ private fun SongBottomSheet(
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onSongRemove: (String) -> Unit,
     onAddSongToPlaylist: (Uuid, String, Int) -> Unit = { _, _, _ -> },
-    onReviewDialogRequest: (Activity) -> Unit = {},
 ) {
     when (songUiState) {
         SongUiState.Error -> onDismiss()
         SongUiState.Loading -> LoadingIndicator(Modifier.fillMaxWidth())
         is SongUiState.Success -> {
-            val activity = LocalActivity.current
-            LaunchedEffect(songUiState.shouldShowReviewDialog) {
-                if (songUiState.shouldShowReviewDialog) activity?.let(onReviewDialogRequest)
-            }
-
             val song = songUiState.song
             Column(
                 modifier = modifier
