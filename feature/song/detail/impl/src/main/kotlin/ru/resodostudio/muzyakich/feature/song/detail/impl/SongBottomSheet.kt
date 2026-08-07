@@ -89,8 +89,7 @@ internal fun SongBottomSheet(
         modifier = modifier,
         onPlayNextClick = viewModel::playSongNext,
         onFavoriteChange = { id, favorite ->
-            viewModel.setSongFavorite(id, favorite)
-            if (favorite && activity != null) viewModel.requestReview(activity)
+            activity?.let { viewModel.setSongFavorite(id, favorite, it) }
         },
         onAddSongToPlaylist = viewModel::addToPlaylist,
     )

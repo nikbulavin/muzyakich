@@ -96,8 +96,7 @@ internal fun PlayerScreen(
         onSongMenuClick = onSongMenuClick,
         onSkipToSongClick = viewModel::skipToSong,
         onFavoriteChange = { id, favorite ->
-            viewModel.setSongFavorite(id, favorite)
-            if (favorite && activity != null) viewModel.requestReview(activity)
+            activity?.let { viewModel.setSongFavorite(id, favorite, it) }
         },
         onRemoveFromQueue = viewModel::removeSong,
         onReorderSongs = viewModel::moveSong,

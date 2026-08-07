@@ -62,14 +62,9 @@ internal class PlayerViewModel @Inject constructor(
     
     fun moveSong(fromUid: String, toUid: String) = musicServiceConnection.moveSong(fromUid, toUid)
 
-    fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
+    fun setSongFavorite(mediaId: String, isFavorite: Boolean, activity: Activity) {
         viewModelScope.launch {
             songsRepository.toggleFavorite(mediaId, isFavorite)
-        }
-    }
-
-    fun requestReview(activity: Activity) {
-        viewModelScope.launch {
             checkAndShowReviewUseCase(activity)
         }
     }
