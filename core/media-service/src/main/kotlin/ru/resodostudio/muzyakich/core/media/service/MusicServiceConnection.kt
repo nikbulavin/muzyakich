@@ -158,8 +158,11 @@ class MusicServiceConnection @Inject constructor(
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
                 val itemUuid = window.uid.toString()
+
                 if (itemUuid == fromUid) fromIndex = i
                 if (itemUuid == toUid) toIndex = i
+
+                if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) break
             }
 
             if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) {
@@ -219,7 +222,7 @@ class MusicServiceConnection @Inject constructor(
                 isPlaying = isPlaying,
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
-                playingQueue = getCurrentPlayingQueue(this)
+                playingQueue = getCurrentPlayingQueue(this),
             )
         }
     }
@@ -228,21 +231,21 @@ class MusicServiceConnection @Inject constructor(
         val timeline = player.currentTimeline
         if (timeline.isEmpty) return emptyList()
 
-        val result = mutableListOf<QueueSong>()
-        val window = Timeline.Window()
         val currentIndex = player.currentMediaItemIndex
         if (currentIndex == C.INDEX_UNSET) return emptyList()
 
-        var foundCurrent = false
-        var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
+        val result = mutableListOf<QueueSong>()
+        val window = Timeline.Window()
+
+        var windowIndex = timeline.getNextWindowIndex(
+            currentIndex,
+            Player.REPEAT_MODE_OFF,
+            player.shuffleModeEnabled,
+        )
 
         while (windowIndex != C.INDEX_UNSET) {
-            if (foundCurrent) {
-                timeline.getWindow(windowIndex, window)
-                result.add(window.mediaItem.asQueueSong(window.uid.toString()))
-            } else if (windowIndex == currentIndex) {
-                foundCurrent = true
-            }
+            timeline.getWindow(windowIndex, window)
+            result.add(window.mediaItem.asQueueSong(window.uid.toString()))
 
             windowIndex = timeline.getNextWindowIndex(
                 windowIndex,
@@ -250,6 +253,7 @@ class MusicServiceConnection @Inject constructor(
                 player.shuffleModeEnabled,
             )
         }
+
         return result
     }
 }
