@@ -15,7 +15,6 @@ internal class MusicSessionCallback : MediaLibraryService.MediaLibrarySession.Ca
     ): ListenableFuture<List<MediaItem>> = Futures.immediateFuture(
         mediaItems.map { mediaItem ->
             mediaItem.buildUpon()
-                .setMediaMetadata(mediaItem.mediaMetadata)
                 .setUri(mediaItem.requestMetadata.mediaUri)
                 .build()
         }
