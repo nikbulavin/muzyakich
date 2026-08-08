@@ -18,7 +18,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -39,6 +41,9 @@ import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
+
+private const val PLAYING_QUEUE_DEBOUNCE_MS = 300L
 
 @Singleton
 class MusicServiceConnection @Inject constructor(
@@ -46,6 +51,8 @@ class MusicServiceConnection @Inject constructor(
     @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
 ) {
     private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
+
+    private var playingQueueUpdateJob: Job? = null
 
     val nowPlayingState: StateFlow<NowPlayingState>
         field = MutableStateFlow(NowPlayingState())
@@ -146,6 +153,8 @@ class MusicServiceConnection @Inject constructor(
     }
 
     fun moveSong(fromUid: String, toUid: String) {
+        if (fromUid == toUid) return
+
         coroutineScope.launch {
             val controller = playerState.filterNotNull().first()
             val timeline = controller.currentTimeline
@@ -157,17 +166,19 @@ class MusicServiceConnection @Inject constructor(
 
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
-                val itemUuid = window.uid.toString()
-
-                if (itemUuid == fromUid) fromIndex = i
-                if (itemUuid == toUid) toIndex = i
+                when (window.uid.toString()) {
+                    fromUid -> fromIndex = i
+                    toUid -> toIndex = i
+                }
 
                 if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) break
             }
 
-            if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) {
-                controller.moveMediaItem(fromIndex, toIndex)
+            if (fromIndex == C.INDEX_UNSET || toIndex == C.INDEX_UNSET || fromIndex == toIndex) {
+                return@launch
             }
+
+            controller.moveMediaItem(fromIndex, toIndex)
         }
     }
 
@@ -204,26 +215,43 @@ class MusicServiceConnection @Inject constructor(
                     EVENT_PLAYBACK_STATE_CHANGED,
                     EVENT_MEDIA_METADATA_CHANGED,
                     EVENT_PLAY_WHEN_READY_CHANGED,
-                    EVENT_REPEAT_MODE_CHANGED,
-                    EVENT_SHUFFLE_MODE_ENABLED_CHANGED,
-                    EVENT_TIMELINE_CHANGED,
                     EVENT_MEDIA_ITEM_TRANSITION,
                 )
             ) {
-                updateNowPlayingState(player)
+                updatePlaybackInfo(player)
+            }
+
+            if (events.containsAny(
+                    EVENT_TIMELINE_CHANGED,
+                    EVENT_SHUFFLE_MODE_ENABLED_CHANGED,
+                    EVENT_REPEAT_MODE_CHANGED,
+                    EVENT_MEDIA_ITEM_TRANSITION,
+                )
+            ) {
+                playingQueueUpdateJob?.cancel()
+                playingQueueUpdateJob = coroutineScope.launch {
+                    delay(PLAYING_QUEUE_DEBOUNCE_MS.milliseconds)
+                    updatePlayingQueue(player)
+                }
             }
         }
     }
 
-    private fun updateNowPlayingState(player: Player) = with(player) {
+    private fun updatePlaybackInfo(player: Player) = with(player) {
         nowPlayingState.update {
             it.copy(
                 mediaId = currentMediaItem?.mediaId.orEmpty(),
                 isPlaying = isPlaying,
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
-                playingQueue = getCurrentPlayingQueue(this),
             )
+        }
+    }
+
+    private fun updatePlayingQueue(player: Player) {
+        val newQueue = getCurrentPlayingQueue(player)
+        nowPlayingState.update { current ->
+            if (current.playingQueue == newQueue) current else current.copy(playingQueue = newQueue)
         }
     }
 
@@ -234,24 +262,16 @@ class MusicServiceConnection @Inject constructor(
         val currentIndex = player.currentMediaItemIndex
         if (currentIndex == C.INDEX_UNSET) return emptyList()
 
-        val result = mutableListOf<QueueSong>()
+        val shuffled = player.shuffleModeEnabled
         val window = Timeline.Window()
+        val result = ArrayList<QueueSong>(timeline.windowCount)
 
-        var windowIndex = timeline.getNextWindowIndex(
-            currentIndex,
-            Player.REPEAT_MODE_OFF,
-            player.shuffleModeEnabled,
-        )
+        var windowIndex = timeline.getNextWindowIndex(currentIndex, Player.REPEAT_MODE_OFF, shuffled)
 
         while (windowIndex != C.INDEX_UNSET) {
             timeline.getWindow(windowIndex, window)
-            result.add(window.mediaItem.asQueueSong(window.uid.toString()))
-
-            windowIndex = timeline.getNextWindowIndex(
-                windowIndex,
-                Player.REPEAT_MODE_OFF,
-                player.shuffleModeEnabled,
-            )
+            result += window.mediaItem.asQueueSong(window.uid.toString())
+            windowIndex = timeline.getNextWindowIndex(windowIndex, Player.REPEAT_MODE_OFF, shuffled)
         }
 
         return result
