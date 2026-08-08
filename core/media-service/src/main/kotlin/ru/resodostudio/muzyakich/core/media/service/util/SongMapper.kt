@@ -1,5 +1,6 @@
 package ru.resodostudio.muzyakich.core.media.service.util
 
+import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
@@ -7,8 +8,8 @@ import ru.resodostudio.muzyakich.core.model.Song
 internal fun Song.asMediaItem(): MediaItem {
     return buildPlayableMediaItem(
         mediaId = mediaId,
-        mediaUri = mediaUri,
-        artworkUri = artworkUri,
+        mediaUri = mediaUri.toUri(),
+        artworkUri = artworkUri.toUri(),
         title = title,
         artist = artist,
     )
@@ -19,7 +20,7 @@ internal fun MediaItem.asQueueSong(uid: String): QueueSong {
         uid = uid,
         mediaId = mediaId,
         artist = mediaMetadata.artist?.toString() ?: "Unknown",
-        artworkUri = mediaMetadata.artworkUri!!,
+        artworkUri = mediaMetadata.artworkUri.toString(),
         title = mediaMetadata.title?.toString() ?: "Unknown",
     )
 }

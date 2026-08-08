@@ -137,7 +137,7 @@ fun NowPlayingBar(
         ) {
             val shadowColor = MaterialTheme.colorScheme.inverseSurface
             SongArtworkMini(
-                artworkUri = currentMediaItemState.mediaMetadata.artworkUri,
+                artworkUri = currentMediaItemState.mediaMetadata.artworkUri.toString(),
                 modifier = Modifier
                     .graphicsLayer {
                         clip = true

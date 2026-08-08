@@ -2,7 +2,10 @@ package ru.resodostudio.muzyakich.core.media.service
 
 import android.content.ComponentName
 import android.content.Context
+import android.os.Bundle
+import android.os.SystemClock
 import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Player.EVENT_MEDIA_ITEM_TRANSITION
 import androidx.media3.common.Player.EVENT_MEDIA_METADATA_CHANGED
@@ -18,7 +21,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -39,14 +44,17 @@ import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.uuid.Uuid
+
+private const val QUEUE_MUTATION_SUPPRESSION_MS = 300L
+private const val QUEUE_INSTANCE_ID_KEY = "ru.resodostudio.muzyakich.QUEUE_INSTANCE_ID"
 
 @Singleton
 class MusicServiceConnection @Inject constructor(
     @ApplicationContext context: Context,
     @Dispatcher(Main) mainDispatcher: CoroutineDispatcher,
 ) {
-    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
-
     val nowPlayingState: StateFlow<NowPlayingState>
         field = MutableStateFlow(NowPlayingState())
 
@@ -55,6 +63,15 @@ class MusicServiceConnection @Inject constructor(
 
     val audioSessionId: StateFlow<Int?>
         field = MutableStateFlow(null)
+
+    private val coroutineScope = CoroutineScope(mainDispatcher + SupervisorJob())
+
+    private var playingQueueUpdateJob: Job? = null
+    private var queueUpdatesSuppressedUntil: Long = 0L
+
+    private fun suppressQueueUpdatesForMutation() {
+        queueUpdatesSuppressedUntil = SystemClock.elapsedRealtime() + QUEUE_MUTATION_SUPPRESSION_MS
+    }
 
     init {
         coroutineScope.launch {
@@ -81,7 +98,7 @@ class MusicServiceConnection @Inject constructor(
 
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
-                if (window.uid.toString() == uid) {
+                if (window.queueInstanceId() == uid) {
                     controller.seekTo(i, position)
                     if (nowPlayingState.value.playWhenReady) controller.play()
                     break
@@ -104,7 +121,11 @@ class MusicServiceConnection @Inject constructor(
             } else {
                 startIndex
             }
-            controller.setMediaItems(songs.map(Song::asMediaItem), targetIndex, startPositionMs)
+            controller.setMediaItems(
+                songs.map { it.asMediaItem().withQueueInstanceId() },
+                targetIndex,
+                startPositionMs,
+            )
             controller.prepare()
             controller.play()
         }
@@ -113,10 +134,10 @@ class MusicServiceConnection @Inject constructor(
     fun playSongsNext(songs: List<Song>) {
         coroutineScope.launch {
             val controller = playerState.filterNotNull().first()
-            val mediaItems = songs.map(Song::asMediaItem)
+            val mediaItems = songs.map { it.asMediaItem().withQueueInstanceId() }
 
             if (controller.shuffleModeEnabled && !controller.currentTimeline.isEmpty) {
-                val (fullQueue, newIndex) = withContext(Dispatchers.Default) {
+                val (fullQueue, newIndex) = withContext(Dispatchers.Main) {
                     val timeline = controller.currentTimeline
                     val window = Timeline.Window()
                     var targetIndex = 0
@@ -146,6 +167,8 @@ class MusicServiceConnection @Inject constructor(
     }
 
     fun moveSong(fromUid: String, toUid: String) {
+        if (fromUid == toUid) return
+
         coroutineScope.launch {
             val controller = playerState.filterNotNull().first()
             val timeline = controller.currentTimeline
@@ -157,14 +180,18 @@ class MusicServiceConnection @Inject constructor(
 
             for (i in 0 until timeline.windowCount) {
                 timeline.getWindow(i, window)
-                val itemUuid = window.uid.toString()
-                if (itemUuid == fromUid) fromIndex = i
-                if (itemUuid == toUid) toIndex = i
+                when (window.queueInstanceId()) {
+                    fromUid -> fromIndex = i
+                    toUid -> toIndex = i
+                }
+
+                if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) break
             }
 
-            if (fromIndex != C.INDEX_UNSET && toIndex != C.INDEX_UNSET) {
-                controller.moveMediaItem(fromIndex, toIndex)
-            }
+            if (fromIndex == C.INDEX_UNSET || toIndex == C.INDEX_UNSET || fromIndex == toIndex) return@launch
+
+            suppressQueueUpdatesForMutation()
+            controller.moveMediaItem(fromIndex, toIndex)
         }
     }
 
@@ -176,7 +203,8 @@ class MusicServiceConnection @Inject constructor(
             val window = Timeline.Window()
             for (index in timeline.windowCount - 1 downTo 0) {
                 timeline.getWindow(index, window)
-                if (window.uid.toString() == uid) {
+                if (window.queueInstanceId() == uid) {
+                    suppressQueueUpdatesForMutation()
                     controller.removeMediaItem(index)
                     break
                 }
@@ -187,6 +215,7 @@ class MusicServiceConnection @Inject constructor(
     fun removeSongs(mediaIds: List<String>) {
         coroutineScope.launch {
             val controller = playerState.filterNotNull().first()
+            suppressQueueUpdatesForMutation()
             for (index in controller.mediaItemCount - 1 downTo 0) {
                 if (controller.getMediaItemAt(index).mediaId in mediaIds) {
                     controller.removeMediaItem(index)
@@ -201,26 +230,49 @@ class MusicServiceConnection @Inject constructor(
                     EVENT_PLAYBACK_STATE_CHANGED,
                     EVENT_MEDIA_METADATA_CHANGED,
                     EVENT_PLAY_WHEN_READY_CHANGED,
-                    EVENT_REPEAT_MODE_CHANGED,
-                    EVENT_SHUFFLE_MODE_ENABLED_CHANGED,
-                    EVENT_TIMELINE_CHANGED,
                     EVENT_MEDIA_ITEM_TRANSITION,
                 )
             ) {
-                updateNowPlayingState(player)
+                updatePlaybackInfo(player)
+            }
+
+            if (events.containsAny(
+                    EVENT_TIMELINE_CHANGED,
+                    EVENT_SHUFFLE_MODE_ENABLED_CHANGED,
+                    EVENT_REPEAT_MODE_CHANGED,
+                    EVENT_MEDIA_ITEM_TRANSITION,
+                )
+            ) {
+                playingQueueUpdateJob?.cancel()
+                val remainingSuppressionMs =
+                    queueUpdatesSuppressedUntil - SystemClock.elapsedRealtime()
+                if (remainingSuppressionMs > 0) {
+                    playingQueueUpdateJob = coroutineScope.launch {
+                        delay(remainingSuppressionMs.milliseconds)
+                        updatePlayingQueue(player)
+                    }
+                } else {
+                    updatePlayingQueue(player)
+                }
             }
         }
     }
 
-    private fun updateNowPlayingState(player: Player) = with(player) {
+    private fun updatePlaybackInfo(player: Player) = with(player) {
         nowPlayingState.update {
             it.copy(
                 mediaId = currentMediaItem?.mediaId.orEmpty(),
                 isPlaying = isPlaying,
                 playbackState = playbackState.asPlaybackState(),
                 playWhenReady = playWhenReady,
-                playingQueue = getCurrentPlayingQueue(this)
             )
+        }
+    }
+
+    private fun updatePlayingQueue(player: Player) {
+        val newQueue = getCurrentPlayingQueue(player)
+        nowPlayingState.update { current ->
+            if (current.playingQueue == newQueue) current else current.copy(playingQueue = newQueue)
         }
     }
 
@@ -228,28 +280,39 @@ class MusicServiceConnection @Inject constructor(
         val timeline = player.currentTimeline
         if (timeline.isEmpty) return emptyList()
 
-        val result = mutableListOf<QueueSong>()
-        val window = Timeline.Window()
         val currentIndex = player.currentMediaItemIndex
         if (currentIndex == C.INDEX_UNSET) return emptyList()
 
-        var foundCurrent = false
-        var windowIndex = timeline.getFirstWindowIndex(player.shuffleModeEnabled)
+        val shuffled = player.shuffleModeEnabled
+        val window = Timeline.Window()
+        val result = ArrayList<QueueSong>(timeline.windowCount)
+
+        var windowIndex =
+            timeline.getNextWindowIndex(currentIndex, Player.REPEAT_MODE_OFF, shuffled)
 
         while (windowIndex != C.INDEX_UNSET) {
-            if (foundCurrent) {
-                timeline.getWindow(windowIndex, window)
-                result.add(window.mediaItem.asQueueSong(window.uid.toString()))
-            } else if (windowIndex == currentIndex) {
-                foundCurrent = true
-            }
-
-            windowIndex = timeline.getNextWindowIndex(
-                windowIndex,
-                Player.REPEAT_MODE_OFF,
-                player.shuffleModeEnabled,
-            )
+            timeline.getWindow(windowIndex, window)
+            result += window.mediaItem.asQueueSong(window.queueInstanceId())
+            windowIndex = timeline.getNextWindowIndex(windowIndex, Player.REPEAT_MODE_OFF, shuffled)
         }
+
         return result
     }
+}
+
+private fun MediaItem.withQueueInstanceId(): MediaItem {
+    val existingRequestMetadata = requestMetadata
+    val extras = Bundle(existingRequestMetadata.extras ?: Bundle()).apply {
+        putString(QUEUE_INSTANCE_ID_KEY, Uuid.random().toString())
+    }
+    val newRequestMetadata = MediaItem.RequestMetadata.Builder()
+        .setMediaUri(existingRequestMetadata.mediaUri)
+        .setSearchQuery(existingRequestMetadata.searchQuery)
+        .setExtras(extras)
+        .build()
+    return buildUpon().setRequestMetadata(newRequestMetadata).build()
+}
+
+private fun Timeline.Window.queueInstanceId(): String {
+    return mediaItem.requestMetadata.extras?.getString(QUEUE_INSTANCE_ID_KEY) ?: uid.toString()
 }

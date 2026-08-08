@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.feature.playlist.detail.impl
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.snap
@@ -29,7 +28,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
@@ -113,7 +111,6 @@ internal fun PlaylistScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PlaylistScreen(
     playlistUiState: PlaylistUiState,
@@ -141,7 +138,7 @@ private fun PlaylistScreen(
                 }
 
                 DynamicMuzTheme(
-                    artworkUri = playlistUiState.playlist.coverFilePath?.let { Uri.parse(it) }
+                    artworkUri = playlistUiState.playlist.coverFilePath
                         ?: playlistUiState.playlist.songs.firstOrNull()?.artworkUri,
                 ) {
                     Scaffold(
@@ -317,7 +314,6 @@ private fun LazyGridScope.header(playlist: Playlist) {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.actionButtons(
     onPlaySongsClick: () -> Unit,
     onShuffleSongsClick: () -> Unit,
@@ -339,7 +335,7 @@ private fun LazyGridScope.actionButtons(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlaylistTopAppBar(
     title: String,
@@ -408,8 +404,8 @@ private fun PlaylistTopAppBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 private fun PlaylistDropdownMenu(
     isScrolled: Boolean,
     songs: List<Song>,

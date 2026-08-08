@@ -28,9 +28,3 @@ internal fun buildPlayableMediaItem(
             .build()
     )
     .build()
-
-internal const val UUID = "uuid"
-internal const val ARTIST_ID = "artist_id"
-internal const val ALBUM_ID = "album_id"
-internal const val FOLDER = "folder"
-internal const val DURATION = "duration"

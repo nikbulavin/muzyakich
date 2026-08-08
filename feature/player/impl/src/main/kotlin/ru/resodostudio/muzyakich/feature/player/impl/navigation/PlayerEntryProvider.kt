@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.feature.player.impl.navigation
 
-import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.State
@@ -16,7 +15,7 @@ import ru.resodostudio.muzyakich.feature.song.detail.api.navigateToSong
 fun EntryProviderScope<NavKey>.playerEntry(
     navigator: Navigator,
     contentWindowInsets: WindowInsets,
-    artworkUri: State<Uri?>?,
+    artworkUri: State<String?>?,
 ) {
     entry<PlayerNavKey>(
         metadata = BottomSheetSceneStrategy.bottomSheet(

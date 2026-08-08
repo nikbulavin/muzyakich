@@ -74,7 +74,7 @@ internal fun QueuePanel(
                     modifier = Modifier
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            sharedContentState = rememberSharedContentState(currentSong.artworkUri.toString()),
+                            sharedContentState = rememberSharedContentState(currentSong.artworkUri),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                         )

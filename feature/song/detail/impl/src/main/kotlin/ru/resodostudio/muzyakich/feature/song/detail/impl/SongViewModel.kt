@@ -53,9 +53,10 @@ internal class SongViewModel @AssistedInject constructor(
         musicServiceConnection.playSongsNext(listOf(song))
     }
 
-    fun setSongFavorite(mediaId: String, isFavorite: Boolean) {
+    fun setSongFavorite(mediaId: String, isFavorite: Boolean, activity: Activity) {
         viewModelScope.launch {
             songsRepository.toggleFavorite(mediaId, isFavorite)
+            checkAndShowReviewUseCase(activity)
         }
     }
 
@@ -68,13 +69,6 @@ internal class SongViewModel @AssistedInject constructor(
             playlistsRepository.addSongToPlaylist(playlistUuid, mediaId, position)
         }
     }
-
-    fun requestReview(activity: Activity) {
-        viewModelScope.launch {
-            checkAndShowReviewUseCase(activity)
-        }
-    }
-
 
     @AssistedFactory
     interface Factory {

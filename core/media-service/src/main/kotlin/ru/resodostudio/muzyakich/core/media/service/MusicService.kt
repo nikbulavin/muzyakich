@@ -34,13 +34,12 @@ internal class MusicService : MediaLibraryService() {
     lateinit var musicNotificationProvider: MusicNotificationProvider
 
     @Inject
-    lateinit var musicSessionCallback: MusicSessionCallback
-
-    @Inject
     lateinit var musicServiceConnection: MusicServiceConnection
 
     @Inject
     lateinit var playCountTracker: PlayCountTracker
+
+    private val musicSessionCallback = MusicSessionCallback()
 
     private var mediaLibrarySession: MediaLibrarySession? = null
 
@@ -77,6 +76,12 @@ internal class MusicService : MediaLibraryService() {
             musicServiceConnection.updateAudioSessionId(audioSessionId)
             sendAudioEffectIntent(audioSessionId, true)
         }
+
+        override fun onEvents(player: Player, events: Player.Events) {
+            if (Player.EVENT_TIMELINE_CHANGED in events) {
+                ensureCustomShuffleOrder(player)
+            }
+        }
     }
 
     override fun onCreate() {
@@ -92,7 +97,7 @@ internal class MusicService : MediaLibraryService() {
         mediaLibrarySession?.run {
             player.removeListener(castPlayerListener)
             exoPlayer?.removeListener(exoPlayerListener)
-            
+
             val audioSessionId = exoPlayer?.audioSessionId ?: player.audioSessionId
             player.release()
             exoPlayer?.release()
@@ -147,6 +152,16 @@ internal class MusicService : MediaLibraryService() {
         return CastPlayer.Builder(this)
             .setLocalPlayer(exoPlayerInstance)
             .build()
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun ensureCustomShuffleOrder(player: Player) {
+        val exoPlayerInstance = exoPlayer ?: return
+        val length = player.mediaItemCount
+        val currentShuffleOrder = exoPlayerInstance.shuffleOrder
+        if (currentShuffleOrder !is CustomShuffleOrder || currentShuffleOrder.length != length) {
+            exoPlayerInstance.shuffleOrder = CustomShuffleOrder(length)
+        }
     }
 
     private fun updateMediaButtonPreferences(session: MediaLibrarySession, player: Player) {

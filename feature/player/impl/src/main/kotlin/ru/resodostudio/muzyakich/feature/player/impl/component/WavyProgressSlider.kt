@@ -54,6 +54,7 @@ internal fun WavyProgressSlider(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     waveAmplitude: Dp = 3.dp,
     waveLength: Dp = 40.dp,
+    waveSpeed: Dp = waveLength,
     thumbRadius: Dp = 2.dp,
     thumbGap: Dp = 6.dp,
     scrubbingThrottleMs: Long = 150L,
@@ -71,13 +72,18 @@ internal fun WavyProgressSlider(
 
         val currentValue = if (isDragging) seekPosition else currentPositionProgress
 
-        val phase by rememberInfiniteTransition(label = "Wave").animateFloat(
+        val waveDurationMs = remember(waveLength, waveSpeed) {
+            ((waveLength.value / waveSpeed.value) * 1000f)
+                .toInt()
+                .coerceAtLeast(16)
+        }
+        val phaseAnim = rememberInfiniteTransition(label = "Wave").animateFloat(
             initialValue = 0f,
             targetValue = (2 * Math.PI).toFloat(),
-            animationSpec = infiniteRepeatable(tween(1500, easing = LinearEasing)),
+            animationSpec = infiniteRepeatable(tween(waveDurationMs, easing = LinearEasing)),
             label = "Phase",
         )
-        val amp by animateFloatAsState(
+        val ampAnim = animateFloatAsState(
             targetValue = if (playWhenReady) waveAmplitude.value else 0f,
             animationSpec = tween(500, easing = FastOutSlowInEasing),
             label = "Amplitude",
@@ -97,7 +103,10 @@ internal fun WavyProgressSlider(
 
                 val thumbX = thumbR + (trackEnd - thumbR) * currentValue
 
-                val inactiveStart = thumbX + gap + 4.dp.toPx()
+                val inactiveGapExtra = 4.dp.toPx()
+                val activeGapExtra = 2.dp.toPx()
+
+                val inactiveStart = thumbX + gap + inactiveGapExtra
                 if (inactiveStart < trackEnd) {
                     drawLine(
                         color = inactiveColor,
@@ -113,23 +122,46 @@ internal fun WavyProgressSlider(
                     )
                 }
 
-                val activeEnd = thumbX - gap - 2.dp.toPx()
+                val activeEnd = thumbX - gap - activeGapExtra
                 if (activeEnd > thumbR) {
+                    val phase = phaseAnim.value
+                    val amp = ampAnim.value
+
                     val activeWidth = activeEnd - thumbR
                     val dampenDist = 16.dp.toPx()
-                    val waveFreq = (2 * Math.PI / waveLength.toPx()).toFloat()
+                    val wavelengthPx = waveLength.toPx()
+                    val waveFreq = (2f * Math.PI / wavelengthPx).toFloat()
                     val amplitudePx = amp * density
 
-                    val path = Path().apply {
-                        moveTo(thumbR, centerY)
-                        var x = 0f
-                        while (x <= activeWidth) {
-                            val dampening = ((activeWidth - x) / dampenDist).coerceIn(0f, 1f)
-                            val y = centerY + (amplitudePx * dampening) * sin(x * waveFreq - phase)
-                            lineTo(thumbR + x, y)
-                            x += 3f
+                    fun yAt(localX: Float): Float {
+                        val t = ((activeWidth - localX) / dampenDist).coerceIn(0f, 1f)
+                        val dampFactor = t * t * (3f - 2f * t)
+                        return centerY + amplitudePx * dampFactor * sin(localX * waveFreq - phase)
+                    }
+
+                    val sampleStep = (wavelengthPx / 8f).coerceIn(6.dp.toPx(), 24.dp.toPx())
+                    val xs = buildList {
+                        add(0f)
+                        var x = sampleStep
+                        while (x < activeWidth) {
+                            add(x)
+                            x += sampleStep
                         }
-                        lineTo(activeEnd, centerY)
+                        add(activeWidth)
+                    }
+
+                    val path = Path().apply {
+                        moveTo(thumbR + xs[0], yAt(xs[0]))
+                        for (i in 1 until xs.size - 1) {
+                            val currX = xs[i]
+                            val nextX = xs[i + 1]
+                            val currY = yAt(currX)
+                            val midX = (currX + nextX) / 2f
+                            val midY = (currY + yAt(nextX)) / 2f
+                            quadraticTo(thumbR + currX, currY, thumbR + midX, midY)
+                        }
+                        val lastX = xs.last()
+                        lineTo(thumbR + lastX, yAt(lastX))
                     }
                     drawPath(
                         path = path,

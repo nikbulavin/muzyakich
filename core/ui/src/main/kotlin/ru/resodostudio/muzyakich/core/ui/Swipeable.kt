@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
@@ -128,7 +129,7 @@ fun rememberDeleteSwipeAction(
             runCatching {
                 val pendingIntent = MediaStore.createTrashRequest(
                     context.contentResolver,
-                    listOf(song.mediaUri),
+                    listOf(song.mediaUri.toUri()),
                     true,
                 )
                 launcher.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())

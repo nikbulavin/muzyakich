@@ -138,7 +138,7 @@ fun MuzApp(
             ?: LibraryTab.entries.first()
 
     val currentMediaItemState = rememberCurrentMediaItemState(player)
-    val artworkUri = currentMediaItemState.mediaMetadata.artworkUri
+    val artworkUri = currentMediaItemState.mediaMetadata.artworkUri.toString()
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),

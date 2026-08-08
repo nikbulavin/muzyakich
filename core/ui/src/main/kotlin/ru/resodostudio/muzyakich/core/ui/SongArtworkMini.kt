@@ -1,6 +1,5 @@
 package ru.resodostudio.muzyakich.core.ui
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 
 @Composable
 fun SongArtworkMini(
-    artworkUri: Uri?,
+    artworkUri: String?,
     modifier: Modifier = Modifier,
 ) {
     SubcomposeAsyncImage(
@@ -27,8 +26,8 @@ fun SongArtworkMini(
         model = ImageRequest.Builder(LocalContext.current)
             .data(artworkUri)
             .size(256)
-            .placeholderMemoryCacheKey(artworkUri.toString())
-            .memoryCacheKey(artworkUri.toString())
+            .placeholderMemoryCacheKey(artworkUri)
+            .memoryCacheKey(artworkUri)
             .build(),
         contentScale = ContentScale.Crop,
         contentDescription = null,
