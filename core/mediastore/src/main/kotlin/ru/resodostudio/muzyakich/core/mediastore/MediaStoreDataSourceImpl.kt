@@ -2,15 +2,10 @@ package ru.resodostudio.muzyakich.core.mediastore
 
 import android.content.ContentUris
 import android.content.Context
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -18,8 +13,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import ru.resodostudio.muzyakich.core.common.Dispatcher
 import ru.resodostudio.muzyakich.core.common.MuzDispatchers.IO
 import ru.resodostudio.muzyakich.core.common.di.ApplicationScope
@@ -54,12 +47,11 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
 ) : MediaStoreDataSource {
 
     private val isMusicSelectionArgs = arrayOf("1")
-    private val retrieverSemaphore = Semaphore(10)
 
     override val songs: Flow<List<MediaStoreSong>> = context.contentResolver
         .observe(uri = MediaStoreConfig.Song.Collection)
         .map {
-            val songs = buildList {
+            buildList {
                 context.contentResolver.query(
                     MediaStoreConfig.Song.Collection,
                     MediaStoreConfig.Song.Projection,
@@ -100,23 +92,6 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                     }
                 }
             }
-
-            coroutineScope {
-                val songsToUpdateDeferred = songs
-                    .filter { it.year == 0 }
-                    .map { song ->
-                        async {
-                            val extractedYear = extractYear(context, song.mediaUri)
-                            song.copy(year = extractedYear)
-                        }
-                    }
-
-                val updatedSongsMap = songsToUpdateDeferred.awaitAll().associateBy { it.mediaId }
-
-                songs.map { song ->
-                    updatedSongsMap[song.mediaId] ?: song
-                }
-            }
         }
         .catch { exception ->
             exception.printStackTrace()
@@ -128,18 +103,4 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
             started = SharingStarted.WhileSubscribed(5.seconds),
             replay = 1,
         )
-
-    private suspend fun extractYear(context: Context, uri: Uri): Int {
-        return retrieverSemaphore.withPermit {
-            MediaMetadataRetriever().use { retriever ->
-                runCatching {
-                    retriever.setDataSource(context, uri)
-                    retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
-                        ?.takeIf { it.length >= 4 }
-                        ?.take(4)
-                        ?.toIntOrNull()
-                }.getOrNull() ?: 0
-            }
-        }
-    }
 }

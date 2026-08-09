@@ -344,9 +344,9 @@ private fun TagPanel(
             text = (song.duration / 1000).asFormattedString(),
             icon = MuzIcons.Filled.Schedule,
         )
-        if (song.year != 0) {
+        song.year?.let { year ->
             MuzTag(
-                text = song.year.toString(),
+                text = year.toString(),
                 icon = MuzIcons.Filled.Event,
             )
         }
