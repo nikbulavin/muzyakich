@@ -366,21 +366,19 @@ private fun Body(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                player?.let { player ->
-                    SongProgressSection(
-                        player = player,
-                        playWhenReady = playWhenReady,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    PlayerControlButtonGroup(
-                        player = player,
-                    )
-                    PlaybackButtonGroup(
-                        player = player,
-                        queueOpened = queueOpened,
-                        onQueueClick = onQueueClick,
-                    )
-                }
+                SongProgressSection(
+                    player = player,
+                    playWhenReady = playWhenReady,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                PlayerControlButtonGroup(
+                    player = player,
+                )
+                PlaybackButtonGroup(
+                    player = player,
+                    queueOpened = queueOpened,
+                    onQueueClick = onQueueClick,
+                )
             }
         }
     }
@@ -452,7 +450,7 @@ private fun SongArtwork(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 private fun SongProgressSection(
-    player: Player,
+    player: Player?,
     playWhenReady: Boolean,
     modifier: Modifier = Modifier,
 ) {

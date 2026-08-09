@@ -174,29 +174,27 @@ fun MuzApp(
                                 ),
                         exit = fadeOut(fadeSpec) + slideOutVertically(motionScheme.fastSpatialSpec()) { it / 2 },
                     ) {
-                        player?.let { player ->
-                            DynamicMuzTheme(
-                                artworkUri = artworkUri,
-                            ) {
-                                val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                )
-                                val hazeBlurRadius = 32.dp
+                        DynamicMuzTheme(
+                            artworkUri = artworkUri,
+                        ) {
+                            val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            )
+                            val hazeBlurRadius = 32.dp
 
-                                NowPlayingBar(
-                                    player = player,
-                                    currentMediaItemState = currentMediaItemState,
-                                    modifier = Modifier
-                                        .shadow(elevation = 3.dp, shape = CircleShape, clip = true)
-                                        .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                            inputScale = HazeInputScale.Auto
-                                            blurEnabled = true
-                                            blurRadius = hazeBlurRadius
-                                            noiseFactor = 0f
-                                        },
-                                    onClick = dropUnlessResumed { navigator.navigateToPlayer() },
-                                )
-                            }
+                            NowPlayingBar(
+                                player = player,
+                                currentMediaItemState = currentMediaItemState,
+                                modifier = Modifier
+                                    .shadow(elevation = 3.dp, shape = CircleShape, clip = true)
+                                    .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
+                                        inputScale = HazeInputScale.Auto
+                                        blurEnabled = true
+                                        blurRadius = hazeBlurRadius
+                                        noiseFactor = 0f
+                                    },
+                                onClick = dropUnlessResumed { navigator.navigateToPlayer() },
+                            )
                         }
                     }
                     AnimatedVisibility(
