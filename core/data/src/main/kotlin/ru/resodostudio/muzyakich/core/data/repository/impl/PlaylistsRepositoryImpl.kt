@@ -145,7 +145,7 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeSongFromPlaylist(playlistSongUuid: Uuid) {
-        playlistDao.deletePlaylistSongCrossRef(playlistSongUuid)
+        playlistDao.deletePlaylistSongCrossRefAndShiftPositions(playlistSongUuid)
     }
 
     private suspend fun ensureSongEntityExists(songMediaId: String): Uuid {
