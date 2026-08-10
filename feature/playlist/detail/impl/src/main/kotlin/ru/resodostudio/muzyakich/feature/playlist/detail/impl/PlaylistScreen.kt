@@ -86,6 +86,7 @@ import ru.resodostudio.muzyakich.core.ui.SongItem
 import ru.resodostudio.muzyakich.core.ui.SwipeAction
 import ru.resodostudio.muzyakich.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.muzyakich.core.ui.rememberRemoveFromPlaylistSwipeAction
+import ru.resodostudio.muzyakich.core.ui.songsInfo
 import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -212,10 +213,10 @@ private fun PlaylistScreen(
                                     }
                                 },
                             )
-//                        songsInfo(
-//                            songs = playlistUiState.playlist.songs,
-//                            modifier = Modifier.padding(horizontal = 16.dp),
-//                        )
+                            songsInfo(
+                                songs = playlistUiState.playlist.songs.map { it.song },
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                            )
                         }
                     }
                 }

@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -196,29 +197,39 @@ fun LazyGridScope.songsInfo(
     songs: List<Song>,
     modifier: Modifier = Modifier,
 ) {
-    if (songs.isNotEmpty()) {
-        item(
-            span = { GridItemSpan(maxLineSpan) },
-        ) {
-            val count = pluralStringResource(localesR.plurals.core_locales_number_of_songs, songs.size, songs.size)
-            val overallDuration = songs
-                .sumOf { it.duration }
-                .asFormattedDuration()
-            val sizeOnDisk = Formatter.formatFileSize(
-                LocalContext.current,
-                songs.sumOf { it.size }.toLong(),
-            )
-            val songsInfo = listOf(count, overallDuration, sizeOnDisk)
-            Text(
-                text = songsInfo.joinToString(),
-                modifier = modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .animateItem(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+    if (songs.isEmpty()) return
+
+    item(
+        span = { GridItemSpan(maxLineSpan) },
+    ) {
+        val (totalDurationMs, totalSizeBytes) = remember(songs) {
+            var duration = 0L
+            var size = 0L
+            songs.forEach { song ->
+                duration += song.duration
+                size += song.size
+            }
+            duration to size
         }
+
+        val count = pluralStringResource(
+            localesR.plurals.core_locales_number_of_songs,
+            songs.size,
+            songs.size,
+        )
+        val overallDuration = totalDurationMs.asFormattedDuration()
+        val sizeOnDisk = Formatter.formatShortFileSize(LocalContext.current, totalSizeBytes)
+
+        val infoParts = listOf(count, overallDuration, sizeOnDisk)
+        Text(
+            text = infoParts.joinToString(),
+            modifier = modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .animateItem(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
