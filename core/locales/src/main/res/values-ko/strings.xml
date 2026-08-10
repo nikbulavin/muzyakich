@@ -7,6 +7,7 @@
     <string name="core_locales_add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="core_locales_add_to_playlist">재생 목록에 추가</string>
     <string name="core_locales_albums">앨범</string>
+    <string name="core_locales_already_added">이미 추가됨</string>
     <string name="core_locales_appearance">디스플레이</string>
     <string name="core_locales_artist">아티스트</string>
     <string name="core_locales_artists">아티스트</string>

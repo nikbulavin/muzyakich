@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -72,7 +71,7 @@ internal fun PlaylistPicker(
                         onConfirm(
                             selectedPlaylist.uuid,
                             songMediaId,
-                            selectedPlaylistState!!.songs.size + 1,
+                            selectedPlaylistState!!.songs.size,
                         )
                     }
                     onDismiss()
@@ -126,16 +125,16 @@ internal fun PlaylistPicker(
                                 },
                             )
                         },
-                        supportingContent = {
-                            Text(
-                                text = pluralStringResource(
-                                    localesR.plurals.core_locales_number_of_songs,
-                                    playlist.songs.size,
-                                    playlist.songs.size,
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                        supportingContent = if (playlist.songs.any { it.song.mediaId == songMediaId }) {
+                            {
+                                Text(
+                                    text = stringResource(localesR.string.core_locales_already_added),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        } else {
+                            null
                         },
                         content = {
                             Text(
