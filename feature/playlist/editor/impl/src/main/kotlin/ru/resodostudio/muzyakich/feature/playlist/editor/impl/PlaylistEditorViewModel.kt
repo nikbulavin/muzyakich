@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
 import ru.resodostudio.muzyakich.core.model.Playlist
+import ru.resodostudio.muzyakich.core.model.PlaylistSong
 import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
@@ -28,17 +29,17 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
     private val playlistsRepository: PlaylistsRepository,
 ) : ViewModel() {
 
-    private val _playlist = MutableStateFlow<Playlist?>(null)
-    private val _title = MutableStateFlow("")
-    private val _coverFilePath = MutableStateFlow<String?>(null)
-    private val _selectedCoverUri = MutableStateFlow<Uri?>(null)
-    private val _songs = MutableStateFlow<List<Song>>(emptyList())
+    private val playlistState = MutableStateFlow<Playlist?>(null)
+    private val titleState = MutableStateFlow("")
+    private val coverFilePathState = MutableStateFlow<String?>(null)
+    private val selectedCoverUriState = MutableStateFlow<Uri?>(null)
+    private val songsState = MutableStateFlow<List<PlaylistSong>>(emptyList())
 
     val playlistEditorUiState = combine(
-        _title,
-        _coverFilePath,
-        _songs,
-        _selectedCoverUri,
+        titleState,
+        coverFilePathState,
+        songsState,
+        selectedCoverUriState,
     ) { name, coverFilePath, songs, selectedCoverUri ->
         PlaylistEditorUiState.Success(
             title = name,
@@ -58,43 +59,43 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
             viewModelScope.launch {
                 val playlist = playlistsRepository.getPlaylist(playlistUuid).firstOrNull()
                 if (playlist != null) {
-                    _playlist.value = playlist
-                    _title.value = playlist.title
-                    _coverFilePath.value = playlist.coverFilePath
-                    _songs.value = playlist.songs
+                    playlistState.value = playlist
+                    titleState.value = playlist.title
+                    coverFilePathState.value = playlist.coverFilePath
+                    songsState.value = playlist.songs
                 }
             }
         }
     }
 
     fun onTitleChange(title: String) {
-        _title.value = title
+        titleState.value = title
     }
 
     fun updateCover(uri: Uri?) {
         if (uri == null) return
-        _selectedCoverUri.value = uri
+        selectedCoverUriState.value = uri
     }
 
     fun removeCover() {
-        _coverFilePath.value = null
-        _selectedCoverUri.value = null
+        coverFilePathState.value = null
+        selectedCoverUriState.value = null
     }
 
     fun addSongs(songs: List<Song>) {
-        _songs.update { currentSongs ->
-            (currentSongs + songs).distinctBy { it.mediaId }
+        songsState.update { currentSongs ->
+            currentSongs + songs.map { song -> PlaylistSong(uuid = Uuid.random(), song = song) }
         }
     }
 
-    fun removeSong(song: Song) {
-        _songs.update { currentSongs ->
-            currentSongs.filter { it.mediaId != song.mediaId }
+    fun removeSong(playlistSongUuid: Uuid) {
+        songsState.update { currentSongs ->
+            currentSongs.filter { it.uuid != playlistSongUuid }
         }
     }
 
     fun reorderSongs(fromIndex: Int, toIndex: Int) {
-        _songs.update { currentSongs ->
+        songsState.update { currentSongs ->
             currentSongs.toMutableList().apply {
                 add(toIndex, removeAt(fromIndex))
             }
@@ -102,17 +103,17 @@ internal class PlaylistEditorViewModel @AssistedInject constructor(
     }
 
     fun savePlaylist() {
-        val name = _title.value
+        val name = titleState.value
         if (name.isBlank()) return
 
         viewModelScope.launch {
-            val existing = _playlist.value
+            val existing = playlistState.value
             val playlist = Playlist(
                 uuid = playlistUuid ?: Uuid.random(),
                 title = name,
                 timestamp = existing?.timestamp ?: Clock.System.now(),
-                coverFilePath = _selectedCoverUri.value?.toString() ?: _coverFilePath.value,
-                songs = _songs.value,
+                coverFilePath = selectedCoverUriState.value?.toString() ?: coverFilePathState.value,
+                songs = songsState.value,
             )
             playlistsRepository.upsertPlaylist(playlist)
         }
@@ -133,7 +134,7 @@ sealed interface PlaylistEditorUiState {
     data class Success(
         val title: String,
         val coverFilePath: String?,
-        val songs: List<Song>,
+        val songs: List<PlaylistSong>,
         val selectedCoverUri: Uri? = null,
     ) : PlaylistEditorUiState
 }

@@ -16,5 +16,5 @@ interface PlaylistsRepository {
 
     suspend fun addSongToPlaylist(playlistUuid: Uuid, songMediaId: String, position: Int)
 
-    suspend fun removeSongFromPlaylist(playlistUuid: Uuid, songMediaId: String)
+    suspend fun removeSongFromPlaylist(playlistSongUuid: Uuid)
 }
