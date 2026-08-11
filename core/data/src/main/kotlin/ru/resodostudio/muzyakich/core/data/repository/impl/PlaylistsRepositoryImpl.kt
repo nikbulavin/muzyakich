@@ -20,6 +20,7 @@ import ru.resodostudio.muzyakich.core.database.model.SongEntity
 import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSource
 import ru.resodostudio.muzyakich.core.mediastore.model.asExternalModel
 import ru.resodostudio.muzyakich.core.model.Playlist
+import ru.resodostudio.muzyakich.core.model.PlaylistSong
 import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -39,18 +40,25 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
             mediaStoreDataSource.songs,
         ) { playlistWithSongs, crossRefs, mediaStoreSongs ->
             playlistWithSongs?.let {
-                val orderedSongs = crossRefs.mapNotNull { crossRef ->
+                val playlistSongs = crossRefs.mapNotNull { crossRef ->
                     val songEntity = it.songs
                         .find { entity -> entity.uuid == crossRef.songUuid }
                         ?: return@mapNotNull null
-                    mediaStoreSongs.find { mediaStoreSong -> mediaStoreSong.mediaId == songEntity.mediaId }
+                    val song = mediaStoreSongs
+                        .find { mediaStoreSong -> mediaStoreSong.mediaId == songEntity.mediaId }
                         ?.asExternalModel(
                             isFavorite = songEntity.isFavorite,
                             playCount = songEntity.playCount,
                         )
+                        ?: return@mapNotNull null
+
+                    PlaylistSong(
+                        uuid = crossRef.uuid,
+                        song = song,
+                    )
                 }
 
-                it.playlist.asExternalModel(songs = orderedSongs)
+                it.playlist.asExternalModel(songs = playlistSongs)
             }
         }
     }
@@ -64,18 +72,25 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
             playlistsWithSongs.map { playlistWithSongs ->
                 val playlistCrossRefs = allCrossRefs
                     .filter { it.playlistUuid == playlistWithSongs.playlist.uuid }
-                val orderedSongs = playlistCrossRefs.mapNotNull { crossRef ->
+                val playlistSongs = playlistCrossRefs.mapNotNull { crossRef ->
                     val songEntity = playlistWithSongs.songs
                         .find { entity -> entity.uuid == crossRef.songUuid }
                         ?: return@mapNotNull null
-                    mediaStoreSongs.find { mediaStoreSong -> mediaStoreSong.mediaId == songEntity.mediaId }
+                    val song = mediaStoreSongs
+                        .find { mediaStoreSong -> mediaStoreSong.mediaId == songEntity.mediaId }
                         ?.asExternalModel(
                             isFavorite = songEntity.isFavorite,
                             playCount = songEntity.playCount,
                         )
+                        ?: return@mapNotNull null
+
+                    PlaylistSong(
+                        uuid = crossRef.uuid,
+                        song = song,
+                    )
                 }
 
-                playlistWithSongs.playlist.asExternalModel(songs = orderedSongs)
+                playlistWithSongs.playlist.asExternalModel(songs = playlistSongs)
             }
         }
     }
@@ -98,10 +113,11 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
 
         val finalPlaylist = playlist.copy(coverFilePath = finalCoverPath)
 
-        val crossRefs = finalPlaylist.songs.mapIndexed { index, song ->
+        val crossRefs = finalPlaylist.songs.mapIndexed { index, playlistSong ->
             PlaylistSongCrossRef(
+                uuid = playlistSong.uuid,
                 playlistUuid = finalPlaylist.uuid,
-                songUuid = ensureSongEntityExists(song.mediaId),
+                songUuid = ensureSongEntityExists(playlistSong.song.mediaId),
                 position = index,
             )
         }
@@ -119,6 +135,7 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
         playlistDao.upsertPlaylistSongCrossRefs(
             listOf(
                 PlaylistSongCrossRef(
+                    uuid = Uuid.random(),
                     playlistUuid = playlistUuid,
                     songUuid = ensureSongEntityExists(songMediaId),
                     position = position,
@@ -127,11 +144,8 @@ internal class PlaylistsRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun removeSongFromPlaylist(playlistUuid: Uuid, songMediaId: String) {
-        val songUuid = songDao.getSong(songMediaId).first()?.uuid
-        if (songUuid != null) {
-            playlistDao.deletePlaylistSongCrossRef(playlistUuid, songUuid)
-        }
+    override suspend fun removeSongFromPlaylist(playlistSongUuid: Uuid) {
+        playlistDao.deletePlaylistSongCrossRefAndShiftPositions(playlistSongUuid)
     }
 
     private suspend fun ensureSongEntityExists(songMediaId: String): Uuid {

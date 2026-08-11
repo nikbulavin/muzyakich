@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.UiModeManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -36,6 +37,7 @@ import coil3.toBitmap
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.ktx.rememberThemeColor
 import com.materialkolor.rememberDynamicColorScheme
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -336,6 +338,8 @@ fun DynamicMuzTheme(
     )
 }
 
+private const val ARTWORK_BITMAP_TAG = "DynamicMuzTheme"
+
 @Composable
 private fun rememberArtworkImageBitmap(artworkUri: String?): ImageBitmap? {
     val context = LocalContext.current
@@ -346,18 +350,24 @@ private fun rememberArtworkImageBitmap(artworkUri: String?): ImageBitmap? {
             imageBitmap = null
             return@LaunchedEffect
         }
-        withContext(Dispatchers.IO) {
-            val request = ImageRequest.Builder(context)
-                .data(artworkUri)
-                .size(64)
-                .allowHardware(false)
-                .build()
 
-            val result = context.imageLoader.execute(request)
-            if (result is SuccessResult) {
-                imageBitmap = result.image.toBitmap().asImageBitmap()
+        imageBitmap = runCatching {
+            withContext(Dispatchers.IO) {
+                val request = ImageRequest.Builder(context)
+                    .data(artworkUri)
+                    .size(64)
+                    .allowHardware(false)
+                    .build()
+
+                when (val result = context.imageLoader.execute(request)) {
+                    is SuccessResult -> result.image.toBitmap().asImageBitmap()
+                    else -> null
+                }
             }
-        }
+        }.onFailure { e ->
+            if (e is CancellationException) throw e
+            Log.w(ARTWORK_BITMAP_TAG, "Failed to load artwork for theme color extraction: $artworkUri", e)
+        }.getOrNull()
     }
     return imageBitmap
 }

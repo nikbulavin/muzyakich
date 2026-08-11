@@ -7,6 +7,7 @@
     <string name="core_locales_add_to_favorites">お気に入りに追加</string>
     <string name="core_locales_add_to_playlist">プレイリストに追加</string>
     <string name="core_locales_albums">アルバム</string>
+    <string name="core_locales_already_added">追加済み</string>
     <string name="core_locales_appearance">表示</string>
     <string name="core_locales_artist">アーティスト</string>
     <string name="core_locales_artists">アーティスト</string>
@@ -57,6 +58,8 @@
     <string name="core_locales_queue">キュー</string>
     <string name="core_locales_remove_cover">カバーを削除</string>
     <string name="core_locales_remove_from_favorites">お気に入りから削除</string>
+    <string name="core_locales_remove_from_playlist">プレイリストから削除しますか?</string>
+    <string name="core_locales_remove_song_from_playlist_description">この曲はプレイリストから削除されます。ライブラリには残ります。</string>
     <string name="core_locales_search">検索</string>
     <string name="core_locales_set_cover">カバーを設定</string>
     <string name="core_locales_settings">設定</string>

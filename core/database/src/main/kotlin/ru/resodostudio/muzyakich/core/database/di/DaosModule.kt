@@ -13,12 +13,8 @@ import ru.resodostudio.muzyakich.core.database.dao.SongDao
 internal object DaosModule {
 
     @Provides
-    fun providesFavoriteSongDao(
-        database: MuzDatabase,
-    ): SongDao = database.songDao()
+    fun providesFavoriteSongDao(database: MuzDatabase): SongDao = database.songDao()
 
     @Provides
-    fun providesPlaylistDao(
-        database: MuzDatabase,
-    ): PlaylistDao = database.playlistDao()
+    fun providesPlaylistDao(database: MuzDatabase): PlaylistDao = database.playlistDao()
 }

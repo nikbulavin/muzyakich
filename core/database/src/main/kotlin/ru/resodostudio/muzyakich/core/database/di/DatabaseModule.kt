@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import ru.resodostudio.muzyakich.core.database.DatabaseMigrations
 import ru.resodostudio.muzyakich.core.database.MuzDatabase
 import javax.inject.Singleton
 
@@ -24,6 +25,7 @@ internal object DatabaseModule {
             klass = MuzDatabase::class.java,
             name = "muz-database",
         )
+            .addMigrations(DatabaseMigrations.Schema4to5)
             .build()
     }
 }

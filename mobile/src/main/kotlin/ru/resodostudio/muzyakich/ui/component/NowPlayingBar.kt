@@ -71,7 +71,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NowPlayingBar(
-    player: Player,
+    player: Player?,
     currentMediaItemState: CurrentMediaItemState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -211,7 +211,7 @@ private fun SongInfo(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 private fun SongProgressIndicator(
-    player: Player,
+    player: Player?,
     modifier: Modifier = Modifier,
 ) {
     val progressState = rememberProgressStateWithTickCount(player = player, totalTickCount = 2000)
@@ -231,7 +231,7 @@ private fun SongProgressIndicator(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ActionButtons(
-    player: Player,
+    player: Player?,
     modifier: Modifier = Modifier,
 ) {
     Row(

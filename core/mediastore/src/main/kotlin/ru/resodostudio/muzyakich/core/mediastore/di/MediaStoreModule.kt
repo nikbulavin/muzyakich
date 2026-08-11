@@ -9,10 +9,8 @@ import ru.resodostudio.muzyakich.core.mediastore.MediaStoreDataSourceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class MediaStoreModule {
+internal interface MediaStoreModule {
 
     @Binds
-    internal abstract fun bindsMediaStoreDataSource(
-        impl: MediaStoreDataSourceImpl,
-    ): MediaStoreDataSource
+    fun bindsMediaStoreDataSource(impl: MediaStoreDataSourceImpl): MediaStoreDataSource
 }

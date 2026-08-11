@@ -25,7 +25,10 @@ internal fun Cursor.getBitrate() = getInt(getColumnIndexOrThrow(MediaStore.Audio
 
 internal fun Cursor.getSize() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE))
 
-internal fun Cursor.getYear() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR))
+internal fun Cursor.getYear(): Int? {
+    val index = getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR)
+    return getInt(index).takeIf { it != 0 }
+}
 
 internal fun Cursor.getBitsPerSample(): Int? {
     return if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 15) {

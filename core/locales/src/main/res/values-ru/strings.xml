@@ -7,6 +7,7 @@
     <string name="core_locales_add_to_favorites">Добавить в избранное</string>
     <string name="core_locales_add_to_playlist">Добавить в плейлист</string>
     <string name="core_locales_albums">Альбомы</string>
+    <string name="core_locales_already_added">Уже добавлено</string>
     <string name="core_locales_appearance">Оформление</string>
     <string name="core_locales_artist">Исполнитель</string>
     <string name="core_locales_artists">Исполнители</string>
@@ -57,6 +58,8 @@
     <string name="core_locales_queue">Очередь</string>
     <string name="core_locales_remove_cover">Удалить обложку</string>
     <string name="core_locales_remove_from_favorites">Удалить из избранного</string>
+    <string name="core_locales_remove_from_playlist">Удалить из плейлиста?</string>
+    <string name="core_locales_remove_song_from_playlist_description">Трек будет удалён из этого плейлиста, но останется в вашей библиотеке.</string>
     <string name="core_locales_search">Поиск</string>
     <string name="core_locales_set_cover">Установить обложку</string>
     <string name="core_locales_settings">Настройки</string>

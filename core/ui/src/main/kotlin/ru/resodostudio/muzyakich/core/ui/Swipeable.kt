@@ -142,14 +142,13 @@ fun rememberDeleteSwipeAction(
 
 @Composable
 fun rememberRemoveFromPlaylistSwipeAction(
-    song: Song,
-    onRemove: (Song) -> Unit,
+    onRemove: () -> Unit,
 ): SwipeAction {
     return SwipeAction(
         icon = MuzIcons.Rounded.PlaylistRemove,
         backgroundColor = MaterialTheme.colorScheme.errorContainer,
         iconColor = MaterialTheme.colorScheme.onErrorContainer,
-        action = { onRemove(song) },
+        action = onRemove,
     )
 }
 

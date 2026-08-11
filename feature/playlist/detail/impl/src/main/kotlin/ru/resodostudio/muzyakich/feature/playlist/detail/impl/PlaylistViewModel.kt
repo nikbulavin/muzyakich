@@ -17,6 +17,7 @@ import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
 import ru.resodostudio.muzyakich.core.media.service.MusicServiceConnection
 import ru.resodostudio.muzyakich.core.model.NowPlayingState
 import ru.resodostudio.muzyakich.core.model.Playlist
+import ru.resodostudio.muzyakich.core.model.PlaylistSong
 import ru.resodostudio.muzyakich.core.model.Song
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
@@ -47,25 +48,29 @@ internal class PlaylistViewModel @AssistedInject constructor(
             initialValue = PlaylistUiState.Loading,
         )
 
-    fun playSongs(songs: List<Song>, startIndex: Int = DEFAULT_INDEX, shuffle: Boolean = false) {
-        musicServiceConnection.playSongs(songs = songs, startIndex = startIndex, shuffle = shuffle)
+    fun playSongs(
+        songs: List<PlaylistSong>,
+        startIndex: Int = DEFAULT_INDEX,
+        shuffle: Boolean = false,
+    ) {
+        musicServiceConnection.playSongs(
+            songs = songs.map { it.song },
+            startIndex = startIndex,
+            shuffle = shuffle,
+        )
     }
 
-    fun playSongsNext(songs: List<Song>) {
-        musicServiceConnection.playSongsNext(songs)
+    fun playSongsNext(songs: List<PlaylistSong>) {
+        musicServiceConnection.playSongsNext(songs.map { it.song })
     }
 
     fun playSongNext(song: Song) {
         musicServiceConnection.playSongsNext(listOf(song))
     }
 
-    fun removeSongs(mediaIds: List<String>) {
-        musicServiceConnection.removeSongs(mediaIds)
-    }
-
-    fun removeSongFromPlaylist(song: Song) {
+    fun removeSongFromPlaylist(playlistSongUuid: Uuid) {
         viewModelScope.launch {
-            playlistsRepository.removeSongFromPlaylist(playlistUuid, song.mediaId)
+            playlistsRepository.removeSongFromPlaylist(playlistSongUuid)
         }
     }
 

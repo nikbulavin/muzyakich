@@ -28,7 +28,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun PlayerControlButtonGroup(
-    player: Player,
+    player: Player?,
     modifier: Modifier = Modifier,
 ) {
     val previousButtonState = rememberPreviousButtonState(player)

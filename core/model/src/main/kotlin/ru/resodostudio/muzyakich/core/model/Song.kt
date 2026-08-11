@@ -18,6 +18,6 @@ data class Song(
     val bitsPerSample: Int?,
     val sampleRate: Int?,
     val trackNumber: Int,
-    val year: Int,
+    val year: Int?,
     val genre: String?,
 )

@@ -157,6 +157,7 @@ private fun PlayerScreen(
                             player = player,
                             queueOpened = queueOpened,
                             isQueueScrolled = isQueueScrolled,
+                            isQueueEmpty = playerUiState.playingQueue.isEmpty(),
                             playWhenReady = playerUiState.playWhenReady,
                             height = bottomHeight,
                             onQueueClick = { queueOpened = it },
@@ -323,6 +324,7 @@ private fun Body(
     player: Player?,
     queueOpened: Boolean,
     isQueueScrolled: Boolean,
+    isQueueEmpty: Boolean,
     playWhenReady: Boolean,
     height: Dp,
     onQueueClick: (Boolean) -> Unit,
@@ -332,7 +334,7 @@ private fun Body(
     val spatialSpec = motionScheme.defaultSpatialSpec<IntSize>()
     val effectsSpec = motionScheme.defaultEffectsSpec<Float>()
     AnimatedVisibility(
-        visible = !isQueueScrolled || !queueOpened,
+        visible = !isQueueScrolled || !queueOpened || isQueueEmpty,
         modifier = modifier,
         enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
         exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
@@ -366,21 +368,19 @@ private fun Body(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                player?.let { player ->
-                    SongProgressSection(
-                        player = player,
-                        playWhenReady = playWhenReady,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    PlayerControlButtonGroup(
-                        player = player,
-                    )
-                    PlaybackButtonGroup(
-                        player = player,
-                        queueOpened = queueOpened,
-                        onQueueClick = onQueueClick,
-                    )
-                }
+                SongProgressSection(
+                    player = player,
+                    playWhenReady = playWhenReady,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                PlayerControlButtonGroup(
+                    player = player,
+                )
+                PlaybackButtonGroup(
+                    player = player,
+                    queueOpened = queueOpened,
+                    onQueueClick = onQueueClick,
+                )
             }
         }
     }
@@ -452,7 +452,7 @@ private fun SongArtwork(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 private fun SongProgressSection(
-    player: Player,
+    player: Player?,
     playWhenReady: Boolean,
     modifier: Modifier = Modifier,
 ) {

@@ -8,5 +8,5 @@ data class Playlist(
     val title: String,
     val timestamp: Instant,
     val coverFilePath: String?,
-    val songs: List<Song>,
+    val songs: List<PlaylistSong>,
 )

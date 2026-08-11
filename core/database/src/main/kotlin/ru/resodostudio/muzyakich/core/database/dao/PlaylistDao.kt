@@ -7,6 +7,7 @@ import androidx.room3.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudio.muzyakich.core.database.model.PlaylistEntity
 import ru.resodostudio.muzyakich.core.database.model.PlaylistSongCrossRef
+import ru.resodostudio.muzyakich.core.database.model.PlaylistSongLocation
 import ru.resodostudio.muzyakich.core.database.model.PlaylistWithSongs
 import kotlin.uuid.Uuid
 
@@ -36,8 +37,35 @@ interface PlaylistDao {
     @Query("DELETE FROM playlist_songs WHERE playlist_uuid = :playlistUuid")
     suspend fun clearPlaylistSongs(playlistUuid: Uuid)
 
-    @Query("DELETE FROM playlist_songs WHERE playlist_uuid = :playlistUuid AND song_uuid = :songUuid")
-    suspend fun deletePlaylistSongCrossRef(playlistUuid: Uuid, songUuid: Uuid)
+    @Query("SELECT playlist_uuid, position FROM playlist_songs WHERE uuid = :uuid")
+    suspend fun getPlaylistSongLocation(uuid: Uuid): PlaylistSongLocation?
+
+    @Query("DELETE FROM playlist_songs WHERE uuid = :uuid")
+    suspend fun deletePlaylistSongCrossRef(uuid: Uuid)
+
+    @Query(
+        """
+        UPDATE playlist_songs SET position = -position
+        WHERE playlist_uuid = :playlistUuid AND position > :removedPosition
+        """
+    )
+    suspend fun negatePositionsAfter(playlistUuid: Uuid, removedPosition: Int)
+
+    @Query(
+        """
+        UPDATE playlist_songs SET position = -position - 1
+        WHERE playlist_uuid = :playlistUuid AND position < 0
+        """
+    )
+    suspend fun resolveNegatedPositions(playlistUuid: Uuid)
+
+    @Transaction
+    suspend fun deletePlaylistSongCrossRefAndShiftPositions(uuid: Uuid) {
+        val location = getPlaylistSongLocation(uuid) ?: return
+        deletePlaylistSongCrossRef(uuid)
+        negatePositionsAfter(location.playlistUuid, location.position)
+        resolveNegatedPositions(location.playlistUuid)
+    }
 
     @Upsert
     suspend fun upsertPlaylistSongCrossRefs(crossRefs: List<PlaylistSongCrossRef>)

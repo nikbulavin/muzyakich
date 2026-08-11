@@ -7,6 +7,7 @@
     <string name="core_locales_add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="core_locales_add_to_playlist">재생 목록에 추가</string>
     <string name="core_locales_albums">앨범</string>
+    <string name="core_locales_already_added">이미 추가됨</string>
     <string name="core_locales_appearance">디스플레이</string>
     <string name="core_locales_artist">아티스트</string>
     <string name="core_locales_artists">아티스트</string>
@@ -57,6 +58,8 @@
     <string name="core_locales_queue">대기열</string>
     <string name="core_locales_remove_cover">표지 제거</string>
     <string name="core_locales_remove_from_favorites">즐겨찾기에서 제거</string>
+    <string name="core_locales_remove_from_playlist">재생목록에서 삭제하시겠습니까?</string>
+    <string name="core_locales_remove_song_from_playlist_description">이 곡이 재생목록에서 삭제됩니다. 라이브러리에는 그대로 남아 있습니다.</string>
     <string name="core_locales_search">검색</string>
     <string name="core_locales_set_cover">표지 설정</string>
     <string name="core_locales_settings">설정</string>

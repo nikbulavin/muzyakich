@@ -65,7 +65,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzSegmentedListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Image
@@ -74,6 +74,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.DragHandle
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.LibraryMusic
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.model.PlaylistSong
 import ru.resodostudio.muzyakich.core.model.Song
 import ru.resodostudio.muzyakich.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.ui.SwipeableItem
@@ -82,6 +83,7 @@ import ru.resodostudio.muzyakich.feature.song.picker.SongPickerBottomSheet
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.ReorderableLazyListState
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import kotlin.uuid.Uuid
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -118,7 +120,7 @@ private fun PlaylistEditorScreen(
     onCoverSelected: (Uri?) -> Unit,
     onRemoveCover: () -> Unit,
     onAddSongs: (List<Song>) -> Unit,
-    onRemoveSong: (Song) -> Unit,
+    onRemoveSong: (Uuid) -> Unit,
     onReorderSongs: (Int, Int) -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
@@ -169,13 +171,13 @@ private fun PlaylistEditorScreen(
                     val lazyListState = rememberLazyListState()
                     val reorderableLazyListState =
                         rememberReorderableLazyListState(lazyListState) { from, to ->
-                            val fromKey = from.key as? String
-                            val toKey = to.key as? String
+                            val fromKey = from.key as? Uuid
+                            val toKey = to.key as? Uuid
                             if (fromKey != null && toKey != null) {
                                 val fromIndex = playlistEditorUiState.songs
-                                    .indexOfFirst { it.mediaId == fromKey }
+                                    .indexOfFirst { it.uuid == fromKey }
                                 val toIndex = playlistEditorUiState.songs
-                                    .indexOfFirst { it.mediaId == toKey }
+                                    .indexOfFirst { it.uuid == toKey }
                                 if (fromIndex != -1 && toIndex != -1) {
                                     onReorderSongs(fromIndex, toIndex)
                                 }
@@ -229,39 +231,37 @@ private fun PlaylistEditorScreen(
 }
 
 private fun LazyListScope.playlistSongs(
-    songs: List<Song>,
+    songs: List<PlaylistSong>,
     reorderableLazyListState: ReorderableLazyListState,
     modifier: Modifier,
-    onRemoveSong: (Song) -> Unit,
+    onRemoveSong: (Uuid) -> Unit,
 ) {
     itemsIndexed(
         items = songs,
-        key = { _, song -> song.mediaId },
+        key = { _, entry -> entry.uuid },
         contentType = { _, _ -> "Song" },
-    ) { index, song ->
+    ) { index, entry ->
         ReorderableItem(
             state = reorderableLazyListState,
-            key = song.mediaId,
+            key = entry.uuid,
         ) { _ ->
             SwipeableItem(
                 modifier = modifier,
-                startToEndSwipeAction = rememberRemoveFromPlaylistSwipeAction(song, onRemoveSong),
-                endToStartSwipeAction = rememberRemoveFromPlaylistSwipeAction(song, onRemoveSong),
+                startToEndSwipeAction = rememberRemoveFromPlaylistSwipeAction { onRemoveSong(entry.uuid) },
+                endToStartSwipeAction = rememberRemoveFromPlaylistSwipeAction { onRemoveSong(entry.uuid) },
             ) {
-                MuzSelectableListItem(
+                MuzSegmentedListItem(
                     shapes = ListItemDefaults.segmentedShapes(index, songs.size),
-                    onClick = {},
-                    selected = false,
                     content = {
                         Text(
-                            text = song.title,
+                            text = entry.song.title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
                     supportingContent = {
                         Text(
-                            text = song.artist,
+                            text = entry.song.artist,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -272,7 +272,7 @@ private fun LazyListScope.playlistSongs(
                                 .size(56.dp)
                                 .clip(MaterialTheme.shapes.medium),
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(song.artworkUri)
+                                .data(entry.song.artworkUri)
                                 .size(128)
                                 .build(),
                             contentDescription = null,

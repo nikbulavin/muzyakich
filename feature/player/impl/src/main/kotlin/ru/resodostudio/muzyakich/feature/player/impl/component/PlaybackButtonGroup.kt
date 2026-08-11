@@ -40,7 +40,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlaybackButtonGroup(
-    player: Player,
+    player: Player?,
     modifier: Modifier = Modifier,
     queueOpened: Boolean = false,
     onQueueClick: (Boolean) -> Unit = {},
