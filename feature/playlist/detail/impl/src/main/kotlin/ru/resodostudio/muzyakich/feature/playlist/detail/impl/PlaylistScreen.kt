@@ -22,8 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
@@ -36,7 +34,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -80,6 +77,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransition
 import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.PlaylistSong
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.ui.DeleteConfirmationDialog
 import ru.resodostudio.muzyakich.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.ui.PlayShuffleButtonGroup
 import ru.resodostudio.muzyakich.core.ui.SongItem
@@ -138,6 +136,18 @@ private fun PlaylistScreen(
                     derivedStateOf {
                         listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 250
                     }
+                }
+
+                var songToRemove by remember { mutableStateOf<Uuid?>(null) }
+
+                songToRemove?.let { playlistSongUuid ->
+                    DeleteConfirmationDialog(
+                        title = stringResource(localesR.string.core_locales_remove_from_playlist),
+                        text = stringResource(localesR.string.core_locales_remove_song_from_playlist_description),
+                        confirmButtonText = stringResource(localesR.string.core_locales_delete),
+                        onConfirm = { onRemoveFromPlaylist(playlistSongUuid) },
+                        onDismissRequest = { songToRemove = null },
+                    )
                 }
 
                 DynamicMuzTheme(
@@ -209,7 +219,7 @@ private fun PlaylistScreen(
                                 },
                                 endToStartSwipeAction = { playlistSongUuid ->
                                     rememberRemoveFromPlaylistSwipeAction {
-                                        onRemoveFromPlaylist(playlistSongUuid)
+                                        songToRemove = playlistSongUuid
                                     }
                                 },
                             )
@@ -442,42 +452,11 @@ private fun PlaylistDropdownMenu(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     if (showDeleteDialog) {
-        AlertDialog(
+        DeleteConfirmationDialog(
+            title = stringResource(localesR.string.core_locales_permanently_delete),
+            text = stringResource(localesR.string.core_locales_permanently_delete_playlist_description),
+            onConfirm = onPlaylistDelete,
             onDismissRequest = { showDeleteDialog = false },
-            icon = {
-                Icon(
-                    imageVector = MuzIcons.Filled.Delete,
-                    contentDescription = null,
-                )
-            },
-            title = {
-                Text(
-                    text = stringResource(localesR.string.core_locales_permanently_delete),
-                    textAlign = TextAlign.Center,
-                )
-            },
-            text = {
-                Text(stringResource(localesR.string.core_locales_permanently_delete_playlist_description))
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showDeleteDialog = false
-                        onPlaylistDelete()
-                    },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(stringResource(localesR.string.core_locales_delete))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDeleteDialog = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(stringResource(localesR.string.core_locales_cancel))
-                }
-            },
         )
     }
 

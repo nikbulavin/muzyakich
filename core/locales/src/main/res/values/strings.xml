@@ -58,6 +58,8 @@
     <string name="core_locales_queue">Queue</string>
     <string name="core_locales_remove_cover">Remove cover</string>
     <string name="core_locales_remove_from_favorites">Remove from favorites</string>
+    <string name="core_locales_remove_from_playlist">Remove from playlist?</string>
+    <string name="core_locales_remove_song_from_playlist_description">This song will be removed from the playlist. It will stay in your library.</string>
     <string name="core_locales_search">Search</string>
     <string name="core_locales_set_cover">Set cover</string>
     <string name="core_locales_settings">Settings</string>
