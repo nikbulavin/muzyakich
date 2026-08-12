@@ -3,7 +3,10 @@
 package ru.resodostudio.muzyakich.core.designsystem.component
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -127,6 +130,8 @@ fun MuzFilledTonalIconButton(
     containerSize: DpSize = smallContainerSize(),
     iconSize: Dp = IconButtonDefaults.smallIconSize,
     enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+    isInsideButtonGroup: Boolean = false,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -140,8 +145,20 @@ fun MuzFilledTonalIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
-            modifier = Modifier.size(containerSize),
+            modifier = Modifier
+                .sizeIn(
+                    minWidth = containerSize.width,
+                    minHeight = containerSize.height,
+                )
+                .then(
+                    if (isInsideButtonGroup) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier
+                    }
+                ),
             enabled = enabled,
+            interactionSource = interactionSource,
         ) {
             Icon(
                 imageVector = icon,
@@ -166,6 +183,8 @@ fun MuzFilledIconToggleButton(
     shapes: IconToggleButtonShapes = IconButtonDefaults.toggleableShapes(),
     shouldAnimateIcon: Boolean = true,
     shouldVibrateOnToggle: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+    isInsideButtonGroup: Boolean = false,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -188,7 +207,19 @@ fun MuzFilledIconToggleButton(
             },
             shapes = shapes,
             colors = colors,
-            modifier = Modifier.size(containerSize),
+            modifier = Modifier
+                .sizeIn(
+                    minWidth = containerSize.width,
+                    minHeight = containerSize.height,
+                )
+                .then(
+                    if (isInsideButtonGroup) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier
+                    }
+                ),
+            interactionSource = interactionSource,
         ) {
             if (shouldAnimateIcon) {
                 AnimatedIcon(
