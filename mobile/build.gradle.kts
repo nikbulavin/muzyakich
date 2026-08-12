@@ -102,7 +102,8 @@ dependencies {
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
     implementation(libs.haze)
-    implementation(libs.haze.materials)
+    implementation(libs.haze.blur)
+    implementation(libs.haze.blur.materials)
     implementation(libs.lottie.compose)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)

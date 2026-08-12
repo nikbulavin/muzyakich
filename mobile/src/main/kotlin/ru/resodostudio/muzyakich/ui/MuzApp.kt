@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,11 +58,11 @@ import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import dev.chrisbanes.haze.ExperimentalHazeApi
-import dev.chrisbanes.haze.HazeInputScale
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeSampling
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.materials.HazeMaterials
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.PermMedia
@@ -96,9 +95,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(
     ExperimentalPermissionsApi::class,
-    ExperimentalHazeMaterialsApi::class,
     ExperimentalHazeApi::class,
-    ExperimentalMaterial3Api::class,
 )
 @Composable
 fun MuzApp(
@@ -177,22 +174,22 @@ fun MuzApp(
                         DynamicMuzTheme(
                             artworkUri = artworkUri,
                         ) {
-                            val nowPlayingBarHazeStyle = HazeMaterials.ultraThin(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            )
-                            val hazeBlurRadius = 32.dp
-
                             NowPlayingBar(
                                 player = player,
                                 currentMediaItemState = currentMediaItemState,
                                 modifier = Modifier
                                     .shadow(elevation = 3.dp, shape = CircleShape, clip = true)
-                                    .hazeEffect(hazeState, nowPlayingBarHazeStyle) {
-                                        inputScale = HazeInputScale.Auto
-                                        blurEnabled = true
-                                        blurRadius = hazeBlurRadius
-                                        noiseFactor = 0f
-                                    },
+                                    .hazeBlur(
+                                        input = HazeInput.Sources(hazeState),
+                                        style = HazeMaterials
+                                            .thin(MaterialTheme.colorScheme.primaryContainer)
+                                            .then {
+                                                blurEnabled(true)
+                                                blurRadius(32.dp)
+                                                noiseFactor(0f)
+                                            },
+                                        sampling = HazeSampling.Adaptive,
+                                    ),
                                 onClick = dropUnlessResumed { navigator.navigateToPlayer() },
                             )
                         }
