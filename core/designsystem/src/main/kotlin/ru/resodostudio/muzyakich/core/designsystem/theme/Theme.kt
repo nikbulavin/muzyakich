@@ -36,7 +36,6 @@ import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
 import com.materialkolor.PaletteStyle
-import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.ktx.rememberThemeColor
 import com.materialkolor.rememberDynamicColorScheme
@@ -341,7 +340,6 @@ fun DynamicMuzTheme(
         rememberDynamicColorScheme(
             seedColor = seedColor,
             isDark = isDarkTheme,
-            specVersion = ColorSpec.SpecVersion.SPEC_2025,
             style = paletteStyle,
         )
     } else {
