@@ -115,24 +115,26 @@ fun MuzApp(
     val hazeState = rememberHazeState()
 
     val permissionState = rememberMuzyakichPermissionState { mutableStateOf(false) }
+    val permissionStatus = permissionState.status
+    val isPermissionGranted = permissionStatus == PermissionStatus.Granted
 
-    val shouldShowNowPlayingBar = appState.navigationState.backStack.none {
-        it is PlaylistEditorNavKey
-    } && nowPlayingState.mediaId.isNotEmpty()
     val backStack = appState.navigationState.backStack
-    val shouldShowNavigationToolbar = (
-            appState.navigationState.currentKey is LibraryNavKey ||
-                    (
-                            (appState.navigationState.currentKey is PlayerNavKey || appState.navigationState.currentKey is SongNavKey) &&
-                                    backStack.getOrNull(backStack.size - 2) is LibraryNavKey
-                            )
-            ) && permissionState.status == PermissionStatus.Granted
+    val currentNavKey = appState.navigationState.currentKey
+
+    val shouldShowNowPlayingBar = backStack.none { it is PlaylistEditorNavKey } &&
+            nowPlayingState.mediaId.isNotEmpty()
+
+    val cameToPlayerOrSongFromLibrary =
+        (currentNavKey is PlayerNavKey || currentNavKey is SongNavKey) &&
+                backStack.getOrNull(backStack.size - 2) is LibraryNavKey
+    val shouldShowNavigationToolbar =
+        isPermissionGranted && (currentNavKey is LibraryNavKey || cameToPlayerOrSongFromLibrary)
 
     val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
-    val currentLibraryTab =
-        LibraryTab.entries.find { it.navKey == libraryNavigator.state.backStack.last() }
-            ?: LibraryTab.entries.first()
+    val currentLibraryTab = LibraryTab.entries.find {
+        it.navKey == libraryNavigator.state.backStack.lastOrNull()
+    } ?: LibraryTab.entries.first()
 
     val currentMediaItemState = rememberCurrentMediaItemState(player)
     val artworkUri = currentMediaItemState.mediaMetadata.artworkUri.toString()
@@ -223,7 +225,7 @@ fun MuzApp(
                     ),
                 ),
         ) {
-            when (permissionState.status) {
+            when (permissionStatus) {
                 is PermissionStatus.Denied -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
