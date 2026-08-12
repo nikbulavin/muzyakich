@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.IconToggleButtonColors
 import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.OutlinedIconToggleButton
@@ -228,6 +229,48 @@ fun MuzFilledTonalIconToggleButton(
     ) {
         val hapticFeedback = LocalHapticFeedback.current
         FilledTonalIconToggleButton(
+            checked = checked,
+            onCheckedChange = {
+                hapticFeedback.performHapticFeedback(
+                    if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                )
+                onCheckedChange(!checked)
+            },
+            shapes = IconButtonDefaults.toggleableShapes(),
+            colors = colors,
+            modifier = Modifier.size(containerSize),
+        ) {
+            AnimatedIcon(
+                icon = icon,
+                contentDescription = contentDescription,
+                iconSize = iconSize,
+            )
+        }
+    }
+}
+
+@Composable
+fun MuzIconToggleButton(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconToggleButtonColors = IconButtonDefaults.iconToggleButtonVibrantColors(),
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        val hapticFeedback = LocalHapticFeedback.current
+        IconToggleButton(
             checked = checked,
             onCheckedChange = {
                 hapticFeedback.performHapticFeedback(
