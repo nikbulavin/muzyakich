@@ -7,11 +7,15 @@ personal music library, built with a focus on a reactive and seamless user exper
 
 ## Features
 
-- **Music Library:** Browse your collection by songs, albums, and artists in a unified library.
-- **Advanced Player:** Manage your playback with a feature-rich player, including queue reordering and quick access to favorites.
-- **Playlists:** Create and personalize your own music collections with custom titles and cover images.
-- **Favorites:** Easily mark and access your most-loved tracks.
-- **Local & Private:** Your music stays on your device—uses MediaStore for a seamless local library experience.
+- 🎵 **Music Library** — browse your collection by songs, albums, and artists in a unified
+  library
+- ▶️ **Advanced Player** — manage your playback with a feature-rich player, including queue
+  reordering and quick access to favorites
+- 📃 **Playlists** — create and personalize your own music collections with custom titles and
+  cover images
+- ❤️ **Favorites** — easily mark and access your most-loved tracks
+- 🔒 **Local & Private** — your music stays on your device, using MediaStore for a seamless local
+  library experience
 
 ## UI
 
@@ -19,6 +23,17 @@ personal music library, built with a focus on a reactive and seamless user exper
 
 The application strictly adheres to the [Material 3 Expressive][m3] design principles, offering
 a refined, modern, and accessible interface built entirely with [Jetpack Compose][compose].
+
+## Build
+
+The `mobile` module ships with two product flavors and two build types, so you can develop and
+test safely without touching production configuration:
+
+- **`demo` / `prod` flavors** — separate configuration (API keys, analytics, crash reporting,
+  etc.), letting you build and run the app locally without using or exposing production
+  credentials
+- **`debug` / `release` build types** — `debug` is unoptimized and easy to iterate on, `release`
+  is the optimized, minified build shipped to users
 
 ## Localization
 
