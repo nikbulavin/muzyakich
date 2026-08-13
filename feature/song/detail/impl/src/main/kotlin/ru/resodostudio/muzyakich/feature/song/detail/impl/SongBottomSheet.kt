@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -44,11 +45,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import ru.resodostudio.muzyakich.core.designsystem.component.AnimatedIcon
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSegmentedListItem
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzSwitch
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzTag
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzToggableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.AutoDelete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
@@ -95,7 +94,7 @@ internal fun SongBottomSheet(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun SongBottomSheet(
     songUiState: SongUiState,
@@ -146,6 +145,7 @@ private fun SongBottomSheet(
                     )
                     Column(
                         verticalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier.weight(1f),
                     ) {
                         Text(
                             text = song.title,
@@ -166,6 +166,17 @@ private fun SongBottomSheet(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+                    val (icon, contentDescription) = if (song.isFavorite) {
+                        MuzIcons.Filled.Star to stringResource(localesR.string.core_locales_remove_from_favorites)
+                    } else {
+                        MuzIcons.Rounded.Star to stringResource(localesR.string.core_locales_add_to_favorites)
+                    }
+                    MuzIconToggleButton(
+                        checked = song.isFavorite,
+                        onCheckedChange = { onFavoriteChange(song.mediaId, it) },
+                        icon = icon,
+                        contentDescription = contentDescription,
+                    )
                 }
                 TagPanel(
                     song = song,
@@ -178,7 +189,6 @@ private fun SongBottomSheet(
                         onPlayNextClick(song)
                         onDismiss()
                     },
-                    onFavoriteChange = onFavoriteChange,
                     onDismiss = onDismiss,
                     onSongRemove = onSongRemove,
                     onAddSongToPlaylist = onAddSongToPlaylist,
@@ -194,7 +204,6 @@ private fun ActionPanel(
     availablePlaylists: List<Playlist>,
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
-    onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
     onDismiss: () -> Unit,
     onSongRemove: (String) -> Unit = {},
     onAddSongToPlaylist: (Uuid, String, Int) -> Unit = { _, _, _ -> },
@@ -212,33 +221,6 @@ private fun ActionPanel(
                 onDismiss()
             }
         }
-        MuzToggableListItem(
-            checked = song.isFavorite,
-            onCheckedChange = { checked -> onFavoriteChange(song.mediaId, checked) },
-            content = {
-                Text(
-                    text = stringResource(localesR.string.core_locales_favorites),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            leadingContent = {
-                AnimatedIcon(
-                    icon = if (song.isFavorite) MuzIcons.Filled.Star else MuzIcons.Rounded.Star,
-                    contentDescription = null,
-                )
-            },
-            trailingContent = {
-                MuzSwitch(
-                    checked = song.isFavorite,
-                    onCheckedChange = null,
-                )
-            },
-            colors = ListItemDefaults.segmentedColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            ),
-            shapes = ListItemDefaults.segmentedShapes(0, 4),
-        )
         var shouldShowPlaylistPicker by rememberSaveable { mutableStateOf(false) }
         MuzSegmentedListItem(
             enabled = availablePlaylists.isNotEmpty(),
@@ -259,7 +241,7 @@ private fun ActionPanel(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = { shouldShowPlaylistPicker = true },
-            shapes = ListItemDefaults.segmentedShapes(1, 4),
+            shapes = ListItemDefaults.segmentedShapes(0, 3),
         )
         if (shouldShowPlaylistPicker) {
             PlaylistPicker(
@@ -287,7 +269,7 @@ private fun ActionPanel(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = { onPlayNextClick(song) },
-            shapes = ListItemDefaults.segmentedShapes(2, 4),
+            shapes = ListItemDefaults.segmentedShapes(1, 3),
         )
         MuzSegmentedListItem(
             content = {
@@ -325,7 +307,7 @@ private fun ActionPanel(
                     exception.printStackTrace()
                 }
             },
-            shapes = ListItemDefaults.segmentedShapes(3, 4),
+            shapes = ListItemDefaults.segmentedShapes(2, 3),
         )
     }
 }
