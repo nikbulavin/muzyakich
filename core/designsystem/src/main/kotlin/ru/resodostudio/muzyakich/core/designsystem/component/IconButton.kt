@@ -3,7 +3,10 @@
 package ru.resodostudio.muzyakich.core.designsystem.component
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -13,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.IconToggleButtonColors
 import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.OutlinedIconToggleButton
@@ -126,6 +130,8 @@ fun MuzFilledTonalIconButton(
     containerSize: DpSize = smallContainerSize(),
     iconSize: Dp = IconButtonDefaults.smallIconSize,
     enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+    isInsideButtonGroup: Boolean = false,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -139,8 +145,20 @@ fun MuzFilledTonalIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
-            modifier = Modifier.size(containerSize),
+            modifier = Modifier
+                .sizeIn(
+                    minWidth = containerSize.width,
+                    minHeight = containerSize.height,
+                )
+                .then(
+                    if (isInsideButtonGroup) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier
+                    }
+                ),
             enabled = enabled,
+            interactionSource = interactionSource,
         ) {
             Icon(
                 imageVector = icon,
@@ -165,6 +183,8 @@ fun MuzFilledIconToggleButton(
     shapes: IconToggleButtonShapes = IconButtonDefaults.toggleableShapes(),
     shouldAnimateIcon: Boolean = true,
     shouldVibrateOnToggle: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+    isInsideButtonGroup: Boolean = false,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -187,7 +207,19 @@ fun MuzFilledIconToggleButton(
             },
             shapes = shapes,
             colors = colors,
-            modifier = Modifier.size(containerSize),
+            modifier = Modifier
+                .sizeIn(
+                    minWidth = containerSize.width,
+                    minHeight = containerSize.height,
+                )
+                .then(
+                    if (isInsideButtonGroup) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier
+                    }
+                ),
+            interactionSource = interactionSource,
         ) {
             if (shouldAnimateIcon) {
                 AnimatedIcon(
@@ -228,6 +260,48 @@ fun MuzFilledTonalIconToggleButton(
     ) {
         val hapticFeedback = LocalHapticFeedback.current
         FilledTonalIconToggleButton(
+            checked = checked,
+            onCheckedChange = {
+                hapticFeedback.performHapticFeedback(
+                    if (!checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                )
+                onCheckedChange(!checked)
+            },
+            shapes = IconButtonDefaults.toggleableShapes(),
+            colors = colors,
+            modifier = Modifier.size(containerSize),
+        ) {
+            AnimatedIcon(
+                icon = icon,
+                contentDescription = contentDescription,
+                iconSize = iconSize,
+            )
+        }
+    }
+}
+
+@Composable
+fun MuzIconToggleButton(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconToggleButtonColors = IconButtonDefaults.iconToggleButtonVibrantColors(),
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        val hapticFeedback = LocalHapticFeedback.current
+        IconToggleButton(
             checked = checked,
             onCheckedChange = {
                 hapticFeedback.performHapticFeedback(

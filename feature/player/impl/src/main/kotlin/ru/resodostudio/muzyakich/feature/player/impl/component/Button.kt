@@ -6,8 +6,8 @@ import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
-import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconToggleButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconToggleButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Star
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MoreVert
@@ -21,7 +21,7 @@ internal fun MoreIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    MuzFilledTonalIconButton(
+    MuzIconButton(
         modifier = modifier,
         onClick = onClick,
         containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
@@ -42,7 +42,7 @@ internal fun FavoriteToggleButton(
     } else {
         MuzIcons.Rounded.Star to stringResource(localesR.string.core_locales_add_to_favorites)
     }
-    MuzFilledTonalIconToggleButton(
+    MuzIconToggleButton(
         checked = song.isFavorite,
         onCheckedChange = { onFavoriteChange(song.mediaId, it) },
         modifier = modifier,

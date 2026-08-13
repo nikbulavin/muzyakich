@@ -35,10 +35,11 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -207,7 +208,7 @@ private fun PlaylistEditorScreen(
                             modifier = Modifier.padding(bottom = arrangementPadding),
                         )
                         item {
-                            OutlinedTextField(
+                            TextField(
                                 value = playlistEditorUiState.title,
                                 onValueChange = onTitleChange,
                                 label = { Text(stringResource(localesR.string.core_locales_title)) },
@@ -215,6 +216,8 @@ private fun PlaylistEditorScreen(
                                     .fillMaxWidth()
                                     .padding(bottom = arrangementPadding),
                                 singleLine = true,
+                                shape = TextFieldDefaults.roundedShape,
+                                colors = TextFieldDefaults.tonalColors(),
                             )
                         }
                         playlistSongs(

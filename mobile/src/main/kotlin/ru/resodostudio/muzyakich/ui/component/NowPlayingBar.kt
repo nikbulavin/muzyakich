@@ -153,20 +153,10 @@ fun NowPlayingBar(
                     .size(40.dp),
             )
             Spacer(Modifier.size(4.dp))
-            AnimatedContent(
-                targetState = currentMediaItemState.mediaItem,
-                transitionSpec = {
-                    fadeIn(motionScheme.fastEffectsSpec()) +
-                            slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 12 } togetherWith
-                            fadeOut(snap())
-                },
-                contentKey = { it?.mediaId },
+            SongInfo(
+                mediaItem = currentMediaItemState.mediaItem,
                 modifier = Modifier.weight(1f),
-            ) { mediaItemState ->
-                SongInfo(
-                    mediaItem = mediaItemState,
-                )
-            }
+            )
             ActionButtons(
                 player = player,
             )
@@ -187,24 +177,49 @@ private fun SongInfo(
     mediaItem: MediaItem?,
     modifier: Modifier = Modifier,
 ) {
+    val motionScheme = MaterialTheme.motionScheme
+
     Column(
         verticalArrangement = Arrangement.spacedBy(2.dp),
         modifier = modifier.padding(bottom = 2.dp, end = 12.dp),
     ) {
-        Text(
-            text = mediaItem?.mediaMetadata?.title.toString(),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.basicMarquee(),
-        )
-        Text(
-            text = mediaItem?.mediaMetadata?.artist.toString(),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.basicMarquee(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        AnimatedContent(
+            targetState = mediaItem?.mediaMetadata?.title.toString(),
+            transitionSpec = {
+                fadeIn(motionScheme.defaultEffectsSpec()) +
+                        slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 8 } togetherWith
+                        fadeOut(snap())
+            },
+            label = "TitleAnimation",
+            modifier = Modifier.fillMaxWidth(),
+        ) { title ->
+            Text(
+                text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(),
+            )
+        }
+        AnimatedContent(
+            targetState = mediaItem?.mediaMetadata?.artist.toString(),
+            transitionSpec = {
+                val delay = 50
+                fadeIn(tween(300, delay)) +
+                        slideInHorizontally(tween(300, delay)) { it / 8 } togetherWith
+                        fadeOut(snap(delay))
+            },
+            label = "ArtistAnimation",
+            modifier = Modifier.fillMaxWidth(),
+        ) { artist ->
+            Text(
+                text = artist,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

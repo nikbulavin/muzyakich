@@ -1,12 +1,14 @@
 package ru.resodostudio.muzyakich.feature.player.impl.component
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.largeContainerSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,37 +37,79 @@ internal fun PlayerControlButtonGroup(
     val playPauseButtonState = rememberPlayPauseButtonState(player)
     val nextButtonState = rememberNextButtonState(player)
 
-    Row(
+    ButtonGroup(
+        overflowIndicator = {},
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        MuzFilledTonalIconButton(
-            onClick = previousButtonState::onClick,
-            containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
-            iconSize = IconButtonDefaults.largeIconSize,
-            icon = MuzIcons.Rounded.SkipPrevious,
-            contentDescription = stringResource(localesR.string.core_locales_skip_previous),
-        )
-        MuzFilledIconToggleButton(
-            checked = !playPauseButtonState.showPlay,
-            onCheckedChange = { playPauseButtonState.onClick() },
-            icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
-            contentDescription = if (playPauseButtonState.showPlay) {
-                stringResource(localesR.string.core_locales_play_audio)
-            } else {
-                stringResource(localesR.string.core_locales_pause_audio)
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier
+                        .weight(0.65f)
+                        .animateWidth(interactionSource),
+                ) {
+                    MuzFilledTonalIconButton(
+                        onClick = previousButtonState::onClick,
+                        containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                        iconSize = IconButtonDefaults.largeIconSize,
+                        icon = MuzIcons.Rounded.SkipPrevious,
+                        contentDescription = stringResource(localesR.string.core_locales_skip_previous),
+                        interactionSource = interactionSource,
+                        isInsideButtonGroup = true,
+                    )
+                }
             },
-            containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
-            iconSize = IconButtonDefaults.largeIconSize,
+            menuContent = {},
         )
-        MuzFilledTonalIconButton(
-            onClick = nextButtonState::onClick,
-            enabled = nextButtonState.isEnabled,
-            containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
-            icon = MuzIcons.Rounded.SkipNext,
-            iconSize = IconButtonDefaults.largeIconSize,
-            contentDescription = stringResource(localesR.string.core_locales_skip_next),
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier
+                        .weight(1.35f)
+                        .animateWidth(interactionSource),
+                ) {
+                    MuzFilledIconToggleButton(
+                        checked = !playPauseButtonState.showPlay,
+                        onCheckedChange = { playPauseButtonState.onClick() },
+                        icon = if (playPauseButtonState.showPlay) MuzIcons.Rounded.PlayArrow else MuzIcons.Rounded.Pause,
+                        contentDescription = if (playPauseButtonState.showPlay) {
+                            stringResource(localesR.string.core_locales_play_audio)
+                        } else {
+                            stringResource(localesR.string.core_locales_pause_audio)
+                        },
+                        containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+                        iconSize = IconButtonDefaults.largeIconSize,
+                        interactionSource = interactionSource,
+                        isInsideButtonGroup = true,
+                    )
+                }
+            },
+            menuContent = {},
+        )
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier
+                        .weight(0.65f)
+                        .animateWidth(interactionSource),
+                ) {
+                    MuzFilledTonalIconButton(
+                        onClick = nextButtonState::onClick,
+                        enabled = nextButtonState.isEnabled,
+                        containerSize = largeContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                        icon = MuzIcons.Rounded.SkipNext,
+                        iconSize = IconButtonDefaults.largeIconSize,
+                        contentDescription = stringResource(localesR.string.core_locales_skip_next),
+                        interactionSource = interactionSource,
+                        isInsideButtonGroup = true,
+                    )
+                }
+            },
+            menuContent = {},
         )
     }
 }

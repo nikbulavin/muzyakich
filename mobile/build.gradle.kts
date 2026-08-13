@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudio.muzyakich"
-        versionCode = 10
-        versionName = "1.1.0"
+        versionCode = 11
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -102,7 +102,8 @@ dependencies {
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
     implementation(libs.haze)
-    implementation(libs.haze.materials)
+    implementation(libs.haze.blur)
+    implementation(libs.haze.blur.materials)
     implementation(libs.lottie.compose)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)

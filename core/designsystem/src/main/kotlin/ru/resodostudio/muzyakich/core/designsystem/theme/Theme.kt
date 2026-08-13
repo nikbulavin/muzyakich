@@ -29,17 +29,20 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import coil3.Bitmap
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
+import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.ktx.rememberThemeColor
 import com.materialkolor.rememberDynamicColorScheme
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import android.graphics.Color as AndroidColor
 
 val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -311,6 +314,11 @@ fun MuzTheme(
     )
 }
 
+private data class ArtworkPalette(
+    val imageBitmap: ImageBitmap,
+    val isGrayscale: Boolean,
+)
+
 @Composable
 fun DynamicMuzTheme(
     artworkUri: String?,
@@ -318,12 +326,21 @@ fun DynamicMuzTheme(
     content: @Composable () -> Unit,
 ) {
     val fallbackScheme = MaterialTheme.colorScheme
-    val imageBitmap = rememberArtworkImageBitmap(artworkUri)
-    val targetScheme = if (artworkUri != null && imageBitmap != null) {
-        val seedColor = rememberThemeColor(image = imageBitmap, fallback = fallbackScheme.primary)
+    val artworkPalette = rememberArtworkPalette(artworkUri)
+    val targetScheme = if (artworkUri != null && artworkPalette != null) {
+        val seedColor = rememberThemeColor(
+            image = artworkPalette.imageBitmap,
+            fallback = fallbackScheme.primary,
+        )
+        val paletteStyle = if (artworkPalette.isGrayscale) {
+            PaletteStyle.Neutral
+        } else {
+            PaletteStyle.TonalSpot
+        }
         rememberDynamicColorScheme(
             seedColor = seedColor,
             isDark = isDarkTheme,
+            style = paletteStyle,
         )
     } else {
         fallbackScheme
@@ -341,17 +358,17 @@ fun DynamicMuzTheme(
 private const val ARTWORK_BITMAP_TAG = "DynamicMuzTheme"
 
 @Composable
-private fun rememberArtworkImageBitmap(artworkUri: String?): ImageBitmap? {
+private fun rememberArtworkPalette(artworkUri: String?): ArtworkPalette? {
     val context = LocalContext.current
-    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+    var artworkPalette by remember { mutableStateOf<ArtworkPalette?>(null) }
 
     LaunchedEffect(artworkUri) {
         if (artworkUri == null) {
-            imageBitmap = null
+            artworkPalette = null
             return@LaunchedEffect
         }
 
-        imageBitmap = runCatching {
+        artworkPalette = runCatching {
             withContext(Dispatchers.IO) {
                 val request = ImageRequest.Builder(context)
                     .data(artworkUri)
@@ -360,7 +377,13 @@ private fun rememberArtworkImageBitmap(artworkUri: String?): ImageBitmap? {
                     .build()
 
                 when (val result = context.imageLoader.execute(request)) {
-                    is SuccessResult -> result.image.toBitmap().asImageBitmap()
+                    is SuccessResult -> {
+                        val bitmap = result.image.toBitmap()
+                        ArtworkPalette(
+                            imageBitmap = bitmap.asImageBitmap(),
+                            isGrayscale = bitmap.isGrayscale(),
+                        )
+                    }
                     else -> null
                 }
             }
@@ -369,7 +392,25 @@ private fun rememberArtworkImageBitmap(artworkUri: String?): ImageBitmap? {
             Log.w(ARTWORK_BITMAP_TAG, "Failed to load artwork for theme color extraction: $artworkUri", e)
         }.getOrNull()
     }
-    return imageBitmap
+    return artworkPalette
+}
+
+private fun Bitmap.isGrayscale(saturationThreshold: Float = 0.08f): Boolean {
+    val pixels = IntArray(width * height)
+    getPixels(pixels, 0, width, 0, 0, width, height)
+
+    val hsv = FloatArray(3)
+    var sum = 0f
+    var count = 0
+    for (pixel in pixels) {
+        if (AndroidColor.alpha(pixel) < 32) continue
+        AndroidColor.colorToHSV(pixel, hsv)
+        val value = hsv[2]
+        if (value !in 0.1f..0.95f) continue
+        sum += hsv[1]
+        count++
+    }
+    return count == 0 || (sum / count) < saturationThreshold
 }
 
 @Composable

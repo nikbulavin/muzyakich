@@ -375,6 +375,7 @@ private fun Body(
                 )
                 PlayerControlButtonGroup(
                     player = player,
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 PlaybackButtonGroup(
                     player = player,
