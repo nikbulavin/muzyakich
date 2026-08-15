@@ -48,6 +48,8 @@ fun MuzOutlinedIconToggleButton(
     onCheckedChange: (Boolean) -> Unit = {},
     onCustomCheckedChange: ((Boolean) -> Unit)? = null,
     size: DpSize = smallContainerSize(),
+    interactionSource: MutableInteractionSource? = null,
+    isInsideButtonGroup: Boolean = false,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -73,7 +75,20 @@ fun MuzOutlinedIconToggleButton(
             shapes = IconButtonDefaults.toggleableShapes(shape),
             colors = IconButtonDefaults.outlinedIconToggleButtonVibrantColors(),
             border = IconButtonDefaults.outlinedIconToggleButtonVibrantBorder(enabled, checked),
-            modifier = Modifier.size(size),
+            modifier = Modifier
+                .sizeIn(
+                    minWidth = size.width,
+                    minHeight = size.height,
+                )
+                .then(
+                    if (isInsideButtonGroup) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier
+                    }
+                ),
+            enabled = enabled,
+            interactionSource = interactionSource,
         ) {
             Icon(
                 imageVector = icon,

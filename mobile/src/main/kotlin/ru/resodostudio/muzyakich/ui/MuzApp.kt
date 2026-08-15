@@ -59,7 +59,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
-import dev.chrisbanes.haze.HazeSampling
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.blur.materials.HazeMaterials
 import dev.chrisbanes.haze.hazeSource
@@ -190,7 +190,7 @@ fun MuzApp(
                                                 blurRadius(32.dp)
                                                 noiseFactor(0f)
                                             },
-                                        sampling = HazeSampling.Adaptive,
+                                        performanceMode = HazePerformanceMode.Default,
                                     ),
                                 onClick = dropUnlessResumed { navigator.navigateToPlayer() },
                             )

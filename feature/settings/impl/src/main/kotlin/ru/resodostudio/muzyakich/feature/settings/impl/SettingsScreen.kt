@@ -55,6 +55,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.DarkMode
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Feedback
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.FormatPaint
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Gavel
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Github
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Info
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Japan
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.LightMode
@@ -383,6 +384,23 @@ private fun About(
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
         MuzSegmentedListItem(
+            content = { Text(stringResource(localesR.string.core_locales_source_code)) },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.Github,
+                    contentDescription = null,
+                )
+            },
+            shapes = ListItemDefaults.segmentedShapes(0, 5),
+            onClick = {
+                launchBrowserTab(
+                    context = context,
+                    uri = SOURCE_CODE_URL.toUri(),
+                    toolbarColor = backgroundColor,
+                )
+            },
+        )
+        MuzSegmentedListItem(
             content = { Text(stringResource(localesR.string.core_locales_feedback)) },
             leadingContent = {
                 Icon(
@@ -390,7 +408,7 @@ private fun About(
                     contentDescription = null,
                 )
             },
-            shapes = ListItemDefaults.segmentedShapes(0, 4),
+            shapes = ListItemDefaults.segmentedShapes(1, 5),
             onClick = {
                 launchBrowserTab(
                     context = context,
@@ -407,7 +425,7 @@ private fun About(
                     contentDescription = null,
                 )
             },
-            shapes = ListItemDefaults.segmentedShapes(1, 4),
+            shapes = ListItemDefaults.segmentedShapes(2, 5),
             onClick = {
                 launchBrowserTab(
                     context = context,
@@ -424,7 +442,7 @@ private fun About(
                     contentDescription = null,
                 )
             },
-            shapes = ListItemDefaults.segmentedShapes(2, 4),
+            shapes = ListItemDefaults.segmentedShapes(3, 5),
             onClick = onLicensesClick,
         )
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -439,7 +457,7 @@ private fun About(
                 )
             },
             supportingContent = { Text("$versionName $versionCode") },
-            shapes = ListItemDefaults.segmentedShapes(3, 4),
+            shapes = ListItemDefaults.segmentedShapes(4, 5),
         )
     }
 }
@@ -473,6 +491,7 @@ private fun launchBrowserTab(
     customTabsIntent.launchUrl(context, uri)
 }
 
+private const val SOURCE_CODE_URL = "https://github.com/nikbulavin/muzyakich"
 private const val FEEDBACK_URL =
     "https://trusted-cowl-779.notion.site/31c66ebc684d812c9161eef501af353a?pvs=105"
 private const val PRIVACY_POLICY_URL =

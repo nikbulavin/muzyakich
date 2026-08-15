@@ -3,9 +3,11 @@ package ru.resodostudio.muzyakich.feature.player.impl.component
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
@@ -13,6 +15,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,57 +54,114 @@ internal fun PlaybackButtonGroup(
         toggleModeSequence = listOf(REPEAT_MODE_OFF, REPEAT_MODE_ALL, REPEAT_MODE_ONE),
     )
 
-    Row(
+    val buttonContainerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)
+    val buttonShape = IconButtonDefaults.smallRoundShape
+    ButtonGroup(
+        overflowIndicator = {},
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
-            MediaRouteButton(
-                modifier = Modifier
-                    .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-                    .border(
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        shape = IconButtonDefaults.smallSquareShape,
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
+                    MediaRouteButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .animateWidth(interactionSource)
+                            .clip(buttonShape)
+                            .border(
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                shape = buttonShape,
+                            )
+                            .sizeIn(
+                                minWidth = buttonContainerSize.width,
+                                maxHeight = buttonContainerSize.height,
+                            )
+                            .align(Alignment.CenterVertically),
                     )
-                    .clip(IconButtonDefaults.smallSquareShape),
-            )
-        }
-        MuzOutlinedIconToggleButton(
-            enabled = shuffleButtonState.isEnabled,
-            size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
-            checked = shuffleButtonState.shuffleOn,
-            onCheckedChange = { shuffleButtonState.onClick() },
-            shape = IconButtonDefaults.smallSquareShape,
-            icon = MuzIcons.Rounded.Shuffle,
-            contentDescriptionRes = localesR.string.core_locales_shuffle,
-        )
-        val icon = repeatModeIcon(repeatButtonState.repeatModeState)
-        val contentDescriptionRes = repeatModeContentDescription(repeatButtonState.repeatModeState)
-        val hapticFeedback = LocalHapticFeedback.current
-        MuzOutlinedIconToggleButton(
-            enabled = repeatButtonState.isEnabled,
-            size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
-            checked = repeatButtonState.repeatModeState != REPEAT_MODE_OFF,
-            icon = icon,
-            contentDescriptionRes = contentDescriptionRes,
-            onCustomCheckedChange = {
-                when (repeatButtonState.repeatModeState) {
-                    REPEAT_MODE_OFF -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                    REPEAT_MODE_ALL -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                    REPEAT_MODE_ONE -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                 }
-                repeatButtonState.onClick()
             },
-            shape = IconButtonDefaults.smallSquareShape,
+            menuContent = {},
         )
-        MuzOutlinedIconToggleButton(
-            size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
-            checked = queueOpened,
-            icon = MuzIcons.Rounded.QueueMusic,
-            contentDescriptionRes = localesR.string.core_locales_queue,
-            onCheckedChange = onQueueClick,
-            shape = IconButtonDefaults.smallSquareShape,
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateWidth(interactionSource),
+                ) {
+                    MuzOutlinedIconToggleButton(
+                        enabled = shuffleButtonState.isEnabled,
+                        size = buttonContainerSize,
+                        checked = shuffleButtonState.shuffleOn,
+                        onCheckedChange = { shuffleButtonState.onClick() },
+                        shape = buttonShape,
+                        icon = MuzIcons.Rounded.Shuffle,
+                        contentDescriptionRes = localesR.string.core_locales_shuffle,
+                        interactionSource = interactionSource,
+                        isInsideButtonGroup = true,
+                    )
+                }
+            },
+            menuContent = {},
+        )
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                val icon = repeatModeIcon(repeatButtonState.repeatModeState)
+                val contentDescriptionRes = repeatModeContentDescription(repeatButtonState.repeatModeState)
+                val hapticFeedback = LocalHapticFeedback.current
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateWidth(interactionSource),
+                ) {
+                    MuzOutlinedIconToggleButton(
+                        enabled = repeatButtonState.isEnabled,
+                        size = buttonContainerSize,
+                        checked = repeatButtonState.repeatModeState != REPEAT_MODE_OFF,
+                        icon = icon,
+                        contentDescriptionRes = contentDescriptionRes,
+                        onCustomCheckedChange = {
+                            when (repeatButtonState.repeatModeState) {
+                                REPEAT_MODE_OFF -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                REPEAT_MODE_ALL -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                REPEAT_MODE_ONE -> hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                            }
+                            repeatButtonState.onClick()
+                        },
+                        shape = buttonShape,
+                        interactionSource = interactionSource,
+                        isInsideButtonGroup = true,
+                    )
+                }
+            },
+            menuContent = {},
+        )
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateWidth(interactionSource),
+                ) {
+                    MuzOutlinedIconToggleButton(
+                        size = buttonContainerSize,
+                        checked = queueOpened,
+                        icon = MuzIcons.Rounded.QueueMusic,
+                        contentDescriptionRes = localesR.string.core_locales_queue,
+                        onCheckedChange = onQueueClick,
+                        shape = buttonShape,
+                        interactionSource = interactionSource,
+                        isInsideButtonGroup = true,
+                    )
+                }
+            },
+            menuContent = {},
         )
     }
 }
