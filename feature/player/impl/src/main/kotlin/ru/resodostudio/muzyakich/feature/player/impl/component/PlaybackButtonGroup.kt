@@ -62,9 +62,9 @@ internal fun PlaybackButtonGroup(
                     .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
                     .border(
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        shape = IconButtonDefaults.smallSquareShape,
+                        shape = IconButtonDefaults.smallRoundShape,
                     )
-                    .clip(IconButtonDefaults.smallSquareShape),
+                    .clip(IconButtonDefaults.smallRoundShape),
             )
         }
         MuzOutlinedIconToggleButton(
@@ -72,7 +72,7 @@ internal fun PlaybackButtonGroup(
             size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
             checked = shuffleButtonState.shuffleOn,
             onCheckedChange = { shuffleButtonState.onClick() },
-            shape = IconButtonDefaults.smallSquareShape,
+            shape = IconButtonDefaults.smallRoundShape,
             icon = MuzIcons.Rounded.Shuffle,
             contentDescriptionRes = localesR.string.core_locales_shuffle,
         )
@@ -93,7 +93,7 @@ internal fun PlaybackButtonGroup(
                 }
                 repeatButtonState.onClick()
             },
-            shape = IconButtonDefaults.smallSquareShape,
+            shape = IconButtonDefaults.smallRoundShape,
         )
         MuzOutlinedIconToggleButton(
             size = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
@@ -101,7 +101,7 @@ internal fun PlaybackButtonGroup(
             icon = MuzIcons.Rounded.QueueMusic,
             contentDescriptionRes = localesR.string.core_locales_queue,
             onCheckedChange = onQueueClick,
-            shape = IconButtonDefaults.smallSquareShape,
+            shape = IconButtonDefaults.smallRoundShape,
         )
     }
 }
