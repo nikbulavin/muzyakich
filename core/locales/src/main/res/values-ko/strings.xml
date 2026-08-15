@@ -71,6 +71,7 @@
     <string name="core_locales_sort_order">정렬 순서</string>
     <string name="core_locales_sort_order_ascending">오름차순</string>
     <string name="core_locales_sort_order_descending">내림차순</string>
+    <string name="core_locales_source_code">소스 코드</string>
     <string name="core_locales_system_default">시스템 기본값</string>
     <string name="core_locales_theme">테마</string>
     <string name="core_locales_theme_dark">어두운 테마</string>
