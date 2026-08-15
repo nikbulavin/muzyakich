@@ -7,13 +7,14 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 
+@Suppress("UnusedReceiverParameter")
 val MuzIcons.Filled.Github: ImageVector
     get() {
         if (_Github != null) {
             return _Github!!
         }
         _Github = ImageVector.Builder(
-            name = "Rounded.Github",
+            name = "Filled.Github",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 24f,
