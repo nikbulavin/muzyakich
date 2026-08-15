@@ -16,7 +16,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -72,6 +71,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.QueueSong
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.ui.util.fadedMarquee
 import ru.resodostudio.muzyakich.feature.player.impl.component.FavoriteToggleButton
 import ru.resodostudio.muzyakich.feature.player.impl.component.MoreIconButton
 import ru.resodostudio.muzyakich.feature.player.impl.component.PlaybackButtonGroup
@@ -258,7 +258,7 @@ private fun Header(
                                             sharedContentState = rememberSharedContentState(title),
                                             animatedVisibilityScope = animatedVisibilityScope,
                                         )
-                                        .basicMarquee(),
+                                        .fadedMarquee(),
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -282,7 +282,7 @@ private fun Header(
                                             sharedContentState = rememberSharedContentState(artist),
                                             animatedVisibilityScope = animatedVisibilityScope,
                                         )
-                                        .basicMarquee(),
+                                        .fadedMarquee(),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
