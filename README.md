@@ -7,14 +7,14 @@ personal music library, built with a focus on a reactive and seamless user exper
 
 ## Features
 
-- 🎵 **Music Library** — browse your collection by songs, albums, and artists in a unified
+- **Music Library** — browse your collection by songs, albums, and artists in a unified
   library
-- ▶️ **Advanced Player** — manage your playback with a feature-rich player, including queue
+- **Advanced Player** — manage your playback with a feature-rich player, including queue
   reordering and quick access to favorites
-- 📃 **Playlists** — create and personalize your own music collections with custom titles and
+- **Playlists** — create and personalize your own music collections with custom titles and
   cover images
-- ❤️ **Favorites** — easily mark and access your most-loved tracks
-- 🔒 **Local & Private** — your music stays on your device, using MediaStore for a seamless local
+- **Favorites** — easily mark and access your most-loved tracks
+- **Local & Private** — your music stays on your device, using MediaStore for a seamless local
   library experience
 
 ## UI
