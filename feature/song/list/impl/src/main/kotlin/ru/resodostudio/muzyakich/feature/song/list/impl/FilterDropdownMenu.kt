@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
@@ -13,7 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.MenuItemShapes
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -71,7 +73,7 @@ internal fun FilterDropdownMenu(
                 shapes = MenuDefaults.groupShape(0, 2),
                 containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
-                DropdownMenuItem(
+                CheckableDropdownMenuItem(
                     checked = filterConfig.shouldFilterFavorites,
                     onCheckedChange = { checked ->
                         hapticFeedback.performHapticFeedback(
@@ -125,7 +127,7 @@ internal fun FilterDropdownMenu(
                     ),
                     selectedValue = filterConfig.sortBy,
                     onOptionSelected = onSortByUpdate,
-                    shapes = MenuDefaults.itemShape(1, 3),
+                    shape = MenuDefaults.middleItemShape,
                 )
                 FilterSubMenu(
                     label = stringResource(localesR.string.core_locales_sort_order),
@@ -149,7 +151,7 @@ internal fun FilterDropdownMenu(
                     ),
                     selectedValue = filterConfig.sortOrder,
                     onOptionSelected = onSortOrderUpdate,
-                    shapes = MenuDefaults.itemShape(2, 3),
+                    shape = MenuDefaults.trailingItemShape,
                 )
             }
         }
@@ -170,20 +172,20 @@ private fun <T> FilterSubMenu(
     options: List<SubMenuOption<T>>,
     selectedValue: T,
     onOptionSelected: (T) -> Unit,
-    shapes: MenuItemShapes,
+    shape: Shape,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     val itemInteractionSource = remember { MutableInteractionSource() }
     val itemHovered by itemInteractionSource.collectIsHoveredAsState()
     var itemChecked by remember { mutableStateOf(false) }
-    val colors = MenuDefaults.selectableItemVibrantColors()
+    val colors = MenuDefaults.itemVibrantColors()
+    val selectableItemVibrantColors = MenuDefaults.selectableItemVibrantColors()
 
     Box {
         DropdownMenuItem(
-            selected = false,
             interactionSource = itemInteractionSource,
             text = { Text(label) },
-            shapes = shapes,
+            shape = shape,
             leadingIcon = {
                 Icon(
                     imageVector = leadingIcon,
@@ -217,7 +219,7 @@ private fun <T> FilterSubMenu(
                 containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
                 options.forEachIndexed { index, option ->
-                    DropdownMenuItem(
+                    SelectableDropdownMenuItem(
                         selected = selectedValue == option.value,
                         onClick = {
                             if (selectedValue != option.value) {
@@ -241,7 +243,7 @@ private fun <T> FilterSubMenu(
                                 contentDescription = null,
                             )
                         },
-                        colors = colors,
+                        colors = selectableItemVibrantColors,
                     )
                 }
             }

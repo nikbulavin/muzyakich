@@ -524,9 +524,8 @@ private fun AlbumDropdownMenu(
             containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             DropdownMenuItem(
-                selected = false,
                 text = { Text(stringResource(localesR.string.core_locales_play_next)) },
-                shapes = MenuDefaults.itemShape(0, 2),
+                shape = MenuDefaults.leadingItemShape,
                 leadingIcon = {
                     Icon(
                         imageVector = MuzIcons.Filled.PlaylistPlay,
@@ -538,7 +537,7 @@ private fun AlbumDropdownMenu(
                     onPlaySongsNextClick(songs)
                     expanded = false
                 },
-                colors = MenuDefaults.selectableItemVibrantColors(),
+                colors = MenuDefaults.itemVibrantColors(),
             )
             val context = LocalContext.current
             val launcher = rememberLauncherForActivityResult(
@@ -547,9 +546,8 @@ private fun AlbumDropdownMenu(
                 if (result.resultCode == RESULT_OK) onRemoveSongsClick(songs.map { it.mediaId })
             }
             DropdownMenuItem(
-                selected = false,
                 text = { Text(stringResource(localesR.string.core_locales_move_to_trash)) },
-                shapes = MenuDefaults.itemShape(1, 2),
+                shape = MenuDefaults.trailingItemShape,
                 leadingIcon = {
                     Icon(
                         imageVector = MuzIcons.Filled.AutoDelete,
@@ -569,7 +567,7 @@ private fun AlbumDropdownMenu(
                         )
                     }
                 },
-                colors = MenuDefaults.selectableItemVibrantColors(),
+                colors = MenuDefaults.itemVibrantColors(),
             )
         }
     }
