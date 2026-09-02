@@ -23,6 +23,7 @@
         android:label="@string/core_locales_app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Muz.Splash"
+        tools:replace="android:theme"
         tools:targetApi="35">
         <activity
             android:name=".MainActivity"
