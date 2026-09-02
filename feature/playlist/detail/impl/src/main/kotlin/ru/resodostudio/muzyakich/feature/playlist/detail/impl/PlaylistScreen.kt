@@ -484,9 +484,8 @@ private fun PlaylistDropdownMenu(
             containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             DropdownMenuItem(
-                selected = false,
                 text = { Text(stringResource(localesR.string.core_locales_play_next)) },
-                shapes = MenuDefaults.itemShape(0, 3),
+                shape = MenuDefaults.leadingItemShape,
                 leadingIcon = {
                     Icon(
                         imageVector = MuzIcons.Filled.PlaylistPlay,
@@ -498,12 +497,11 @@ private fun PlaylistDropdownMenu(
                     onPlaySongsNextClick()
                     expanded = false
                 },
-                colors = MenuDefaults.selectableItemVibrantColors(),
+                colors = MenuDefaults.itemVibrantColors(),
             )
             DropdownMenuItem(
-                selected = false,
                 text = { Text(stringResource(localesR.string.core_locales_edit)) },
-                shapes = MenuDefaults.itemShape(1, 3),
+                shape = MenuDefaults.middleItemShape,
                 leadingIcon = {
                     Icon(
                         imageVector = MuzIcons.Filled.Edit,
@@ -515,12 +513,11 @@ private fun PlaylistDropdownMenu(
                     onPlaylistEdit()
                     expanded = false
                 },
-                colors = MenuDefaults.selectableItemVibrantColors(),
+                colors = MenuDefaults.itemVibrantColors(),
             )
             DropdownMenuItem(
-                selected = false,
                 text = { Text(stringResource(localesR.string.core_locales_delete)) },
-                shapes = MenuDefaults.itemShape(2, 3),
+                shape = MenuDefaults.trailingItemShape,
                 leadingIcon = {
                     Icon(
                         imageVector = MuzIcons.Filled.Delete,
@@ -532,7 +529,7 @@ private fun PlaylistDropdownMenu(
                     showDeleteDialog = true
                     expanded = false
                 },
-                colors = MenuDefaults.selectableItemVibrantColors(),
+                colors = MenuDefaults.itemVibrantColors(),
             )
         }
     }

@@ -59,7 +59,7 @@ internal fun PlaybackButtonGroup(
     ButtonGroup(
         overflowIndicator = {},
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         customItem(
             buttonGroupContent = {
