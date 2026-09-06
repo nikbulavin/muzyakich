@@ -52,6 +52,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.AutoDelete
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.BarChart
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Cadence
+import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Edit
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Event
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HardDrive
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.HighQuality
@@ -75,6 +76,7 @@ import ru.resodostudio.muzyakich.core.locales.R as localesR
 @Composable
 internal fun SongBottomSheet(
     onDismiss: () -> Unit,
+    onEditTagsClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SongViewModel = hiltViewModel(),
 ) {
@@ -84,6 +86,7 @@ internal fun SongBottomSheet(
     SongBottomSheet(
         songUiState = songUiState,
         onDismiss = onDismiss,
+        onEditTagsClick = onEditTagsClick,
         onSongRemove = viewModel::removeSong,
         modifier = modifier,
         onPlayNextClick = viewModel::playSongNext,
@@ -99,6 +102,7 @@ internal fun SongBottomSheet(
 private fun SongBottomSheet(
     songUiState: SongUiState,
     onDismiss: () -> Unit,
+    onEditTagsClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
     onFavoriteChange: (String, Boolean) -> Unit = { _, _ -> },
@@ -189,6 +193,9 @@ private fun SongBottomSheet(
                         onPlayNextClick(song)
                         onDismiss()
                     },
+                    onEditTagsClick = { mediaId ->
+                        onEditTagsClick(mediaId)
+                    },
                     onDismiss = onDismiss,
                     onSongRemove = onSongRemove,
                     onAddSongToPlaylist = onAddSongToPlaylist,
@@ -204,6 +211,7 @@ private fun ActionPanel(
     availablePlaylists: List<Playlist>,
     modifier: Modifier = Modifier,
     onPlayNextClick: (Song) -> Unit = {},
+    onEditTagsClick: (String) -> Unit = {},
     onDismiss: () -> Unit,
     onSongRemove: (String) -> Unit = {},
     onAddSongToPlaylist: (Uuid, String, Int) -> Unit = { _, _, _ -> },
@@ -241,7 +249,7 @@ private fun ActionPanel(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = { shouldShowPlaylistPicker = true },
-            shapes = ListItemDefaults.segmentedShapes(0, 3),
+            shapes = ListItemDefaults.segmentedShapes(0, 4),
         )
         if (shouldShowPlaylistPicker) {
             PlaylistPicker(
@@ -269,7 +277,27 @@ private fun ActionPanel(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
             onClick = { onPlayNextClick(song) },
-            shapes = ListItemDefaults.segmentedShapes(1, 3),
+            shapes = ListItemDefaults.segmentedShapes(1, 4),
+        )
+        MuzSegmentedListItem(
+            content = {
+                Text(
+                    text = stringResource(localesR.string.core_locales_edit_tags),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = MuzIcons.Filled.Edit,
+                    contentDescription = null,
+                )
+            },
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ),
+            onClick = { onEditTagsClick(song.mediaId) },
+            shapes = ListItemDefaults.segmentedShapes(2, 4),
         )
         MuzSegmentedListItem(
             content = {
@@ -307,7 +335,7 @@ private fun ActionPanel(
                     exception.printStackTrace()
                 }
             },
-            shapes = ListItemDefaults.segmentedShapes(2, 3),
+            shapes = ListItemDefaults.segmentedShapes(3, 4),
         )
     }
 }

@@ -7,6 +7,7 @@
     <string name="core_locales_add_to_favorites">즐겨찾기에 추가하기</string>
     <string name="core_locales_add_to_playlist">재생 목록에 추가</string>
     <string name="core_locales_albums">앨범</string>
+    <string name="core_locales_album_artist">앨범 아티스트</string>
     <string name="core_locales_already_added">이미 추가됨</string>
     <string name="core_locales_appearance">디스플레이</string>
     <string name="core_locales_artist">아티스트</string>
@@ -16,15 +17,18 @@
     <string name="core_locales_bitrate_format">%1$dkbps</string>
     <string name="core_locales_cancel">취소</string>
     <string name="core_locales_clear">지우기</string>
+    <string name="core_locales_comment">주석</string>
     <string name="core_locales_confirm">확인</string>
     <string name="core_locales_delete">삭제</string>
     <string name="core_locales_disable_repeat_mode">반복 안함</string>
     <string name="core_locales_disable_shuffle_mode">셔플 모드 비활성화</string>
     <string name="core_locales_disc_number">디스크 %1$d</string>
+    <string name="core_locales_disc_number_label">디스크 번호</string>
     <string name="core_locales_download_update">업데이트 다운로드</string>
     <string name="core_locales_downloading_update">업데이트 다운로드 중</string>
     <string name="core_locales_dynamic_color">다이내믹 색상</string>
     <string name="core_locales_edit">편집</string>
+    <string name="core_locales_edit_tags">태그 편집</string>
     <string name="core_locales_enable_repeat_mode_all">전체 반복</string>
     <string name="core_locales_enable_repeat_mode_one">한 곡 반복</string>
     <string name="core_locales_enable_shuffle_mode">셔플 모드 활성화</string>
@@ -33,6 +37,7 @@
     <string name="core_locales_favorites">즐겨찾기</string>
     <string name="core_locales_feedback">피드백</string>
     <string name="core_locales_general">일반</string>
+    <string name="core_locales_genre">장르</string>
     <string name="core_locales_grant_permission">권한 허용</string>
     <string name="core_locales_high_quality">고음질</string>
     <string name="core_locales_install_update">업데이트 설치</string>
@@ -60,6 +65,7 @@
     <string name="core_locales_remove_from_favorites">즐겨찾기에서 제거</string>
     <string name="core_locales_remove_from_playlist">재생목록에서 삭제하시겠습니까?</string>
     <string name="core_locales_remove_song_from_playlist_description">이 곡이 재생목록에서 삭제됩니다. 라이브러리에는 그대로 남아 있습니다.</string>
+    <string name="core_locales_save">저장</string>
     <string name="core_locales_search">검색</string>
     <string name="core_locales_set_cover">표지 설정</string>
     <string name="core_locales_settings">설정</string>
@@ -73,11 +79,14 @@
     <string name="core_locales_sort_order_descending">내림차순</string>
     <string name="core_locales_source_code">소스 코드</string>
     <string name="core_locales_system_default">시스템 기본값</string>
+    <string name="core_locales_tags_saved">태그가 저장되었습니다</string>
     <string name="core_locales_theme">테마</string>
     <string name="core_locales_theme_dark">어두운 테마</string>
     <string name="core_locales_theme_light">밝은 테마</string>
     <string name="core_locales_title">제목</string>
+    <string name="core_locales_track_number">트랙 번호</string>
     <string name="core_locales_version">버전</string>
+    <string name="core_locales_year">연도</string>
 
     <plurals name="core_locales_number_of_songs">
         <item quantity="other">%d곡</item>

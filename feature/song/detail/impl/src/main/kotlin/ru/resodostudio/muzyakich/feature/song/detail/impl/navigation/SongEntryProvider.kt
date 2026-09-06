@@ -9,6 +9,7 @@ import ru.resodostudio.muzyakich.core.navigation.Navigator
 import ru.resodostudio.muzyakich.feature.song.detail.api.SongNavKey
 import ru.resodostudio.muzyakich.feature.song.detail.impl.SongBottomSheet
 import ru.resodostudio.muzyakich.feature.song.detail.impl.SongViewModel
+import ru.resodostudio.muzyakich.feature.song.editor.api.navigateToSongEditor
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.songEntry(navigator: Navigator) {
@@ -17,6 +18,10 @@ fun EntryProviderScope<NavKey>.songEntry(navigator: Navigator) {
     ) { key ->
         SongBottomSheet(
             onDismiss = navigator::goBack,
+            onEditTagsClick = { mediaId ->
+                navigator.goBack()
+                navigator.navigateToSongEditor(mediaId)
+            },
             viewModel = hiltViewModel<SongViewModel, SongViewModel.Factory> {
                 it.create(key.mediaId)
             },

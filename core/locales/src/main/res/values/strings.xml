@@ -7,6 +7,7 @@
     <string name="core_locales_add_to_favorites">Add to favorites</string>
     <string name="core_locales_add_to_playlist">Add to playlist</string>
     <string name="core_locales_albums">Albums</string>
+    <string name="core_locales_album_artist">Album artist</string>
     <string name="core_locales_already_added">Already added</string>
     <string name="core_locales_appearance">Appearance</string>
     <string name="core_locales_artist">Artist</string>
@@ -16,15 +17,18 @@
     <string name="core_locales_bitrate_format">%1$d kbps</string>
     <string name="core_locales_cancel">Cancel</string>
     <string name="core_locales_clear">Clear</string>
+    <string name="core_locales_comment">Comment</string>
     <string name="core_locales_confirm">OK</string>
     <string name="core_locales_delete">Delete</string>
     <string name="core_locales_disable_repeat_mode">Disable repeat mode</string>
     <string name="core_locales_disable_shuffle_mode">Disable shuffle mode</string>
     <string name="core_locales_disc_number">Disc %1$d</string>
+    <string name="core_locales_disc_number_label">Disc number</string>
     <string name="core_locales_download_update">Download update</string>
     <string name="core_locales_downloading_update">Downloading update</string>
     <string name="core_locales_dynamic_color">Dynamic color</string>
     <string name="core_locales_edit">Edit</string>
+    <string name="core_locales_edit_tags">Edit tags</string>
     <string name="core_locales_enable_repeat_mode_all">Enable repeat mode for all songs</string>
     <string name="core_locales_enable_repeat_mode_one">Enable single song repeat mode</string>
     <string name="core_locales_enable_shuffle_mode">Enable shuffle mode</string>
@@ -33,6 +37,7 @@
     <string name="core_locales_favorites">Favorites</string>
     <string name="core_locales_feedback">Feedback</string>
     <string name="core_locales_general">General</string>
+    <string name="core_locales_genre">Genre</string>
     <string name="core_locales_grant_permission">Grant permission</string>
     <string name="core_locales_high_quality">High quality</string>
     <string name="core_locales_install_update">Install update</string>
@@ -60,6 +65,7 @@
     <string name="core_locales_remove_from_favorites">Remove from favorites</string>
     <string name="core_locales_remove_from_playlist">Remove from playlist?</string>
     <string name="core_locales_remove_song_from_playlist_description">This song will be removed from the playlist. It will stay in your library.</string>
+    <string name="core_locales_save">Save</string>
     <string name="core_locales_search">Search</string>
     <string name="core_locales_set_cover">Set cover</string>
     <string name="core_locales_settings">Settings</string>
@@ -73,11 +79,14 @@
     <string name="core_locales_sort_order_descending">Descending</string>
     <string name="core_locales_source_code">Source code</string>
     <string name="core_locales_system_default">System default</string>
+    <string name="core_locales_tags_saved">Tags saved</string>
     <string name="core_locales_theme">Theme</string>
     <string name="core_locales_theme_dark">Dark</string>
     <string name="core_locales_theme_light">Light</string>
     <string name="core_locales_title">Title</string>
+    <string name="core_locales_track_number">Track number</string>
     <string name="core_locales_version">Version</string>
+    <string name="core_locales_year">Year</string>
 
     <plurals name="core_locales_number_of_songs">
         <item quantity="one">%d song</item>

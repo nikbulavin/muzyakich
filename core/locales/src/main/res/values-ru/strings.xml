@@ -7,6 +7,7 @@
     <string name="core_locales_add_to_favorites">Добавить в избранное</string>
     <string name="core_locales_add_to_playlist">Добавить в плейлист</string>
     <string name="core_locales_albums">Альбомы</string>
+    <string name="core_locales_album_artist">Исполнитель альбома</string>
     <string name="core_locales_already_added">Уже добавлено</string>
     <string name="core_locales_appearance">Оформление</string>
     <string name="core_locales_artist">Исполнитель</string>
@@ -16,15 +17,18 @@
     <string name="core_locales_bitrate_format">%1$d кбит/с</string>
     <string name="core_locales_cancel">Отмена</string>
     <string name="core_locales_clear">Очистить</string>
+    <string name="core_locales_comment">Комментарий</string>
     <string name="core_locales_confirm">ОК</string>
     <string name="core_locales_delete">Удалить</string>
     <string name="core_locales_disable_repeat_mode">Выключить режим повтора</string>
     <string name="core_locales_disable_shuffle_mode">Выключить режим перетасовки</string>
     <string name="core_locales_disc_number">Диск %1$d</string>
+    <string name="core_locales_disc_number_label">Номер диска</string>
     <string name="core_locales_download_update">Скачать обновление</string>
     <string name="core_locales_downloading_update">Загрузка обновления</string>
     <string name="core_locales_dynamic_color">Динамический цвет</string>
     <string name="core_locales_edit">Изменить</string>
+    <string name="core_locales_edit_tags">Редактировать теги</string>
     <string name="core_locales_enable_repeat_mode_all">Включить режим повтора для всех треков</string>
     <string name="core_locales_enable_repeat_mode_one">Включить одиночный режим повтора</string>
     <string name="core_locales_enable_shuffle_mode">Включить режим перетасовки</string>
@@ -33,6 +37,7 @@
     <string name="core_locales_favorites">Избранное</string>
     <string name="core_locales_feedback">Обратная связь</string>
     <string name="core_locales_general">Общие</string>
+    <string name="core_locales_genre">Жанр</string>
     <string name="core_locales_grant_permission">Предоставить разрешение</string>
     <string name="core_locales_high_quality">Высокое качество</string>
     <string name="core_locales_install_update">Установить обновление</string>
@@ -60,6 +65,7 @@
     <string name="core_locales_remove_from_favorites">Удалить из избранного</string>
     <string name="core_locales_remove_from_playlist">Удалить из плейлиста?</string>
     <string name="core_locales_remove_song_from_playlist_description">Трек будет удалён из этого плейлиста, но останется в вашей библиотеке.</string>
+    <string name="core_locales_save">Сохранить</string>
     <string name="core_locales_search">Поиск</string>
     <string name="core_locales_set_cover">Установить обложку</string>
     <string name="core_locales_settings">Настройки</string>
@@ -73,11 +79,14 @@
     <string name="core_locales_sort_order_descending">По убыванию</string>
     <string name="core_locales_source_code">Исходный код</string>
     <string name="core_locales_system_default">Как в системе</string>
+    <string name="core_locales_tags_saved">Теги сохранены</string>
     <string name="core_locales_theme">Тема</string>
     <string name="core_locales_theme_dark">Тёмная</string>
     <string name="core_locales_theme_light">Светлая</string>
     <string name="core_locales_title">Название</string>
+    <string name="core_locales_track_number">Номер трека</string>
     <string name="core_locales_version">Версия</string>
+    <string name="core_locales_year">Год</string>
 
     <plurals name="core_locales_number_of_songs">
         <item quantity="one">%d трек</item>

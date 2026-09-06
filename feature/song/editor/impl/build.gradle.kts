@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudio.muzyakich.feature.song.detail.impl"
+    namespace = "ru.resodostudio.muzyakich.feature.song.editor.impl"
 }
 
 dependencies {
+    implementation(projects.core.data)
     implementation(projects.core.domain)
     implementation(projects.core.locales)
-    implementation(projects.core.mediaService)
+    implementation(projects.core.model)
 
-    implementation(projects.feature.song.detail.api)
     implementation(projects.feature.song.editor.api)
 
     implementation(platform(libs.coil.bom))

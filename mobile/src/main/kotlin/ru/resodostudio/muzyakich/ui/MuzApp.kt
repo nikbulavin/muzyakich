@@ -88,6 +88,7 @@ import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.feature.song.detail.api.SongNavKey
 import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
+import ru.resodostudio.muzyakich.feature.song.editor.impl.navigation.songEditorEntry
 import ru.resodostudio.muzyakich.ui.component.NavigationToolbar
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
@@ -275,6 +276,7 @@ fun MuzApp(
                         albumEntry(navigator, fadeSpec)
                         artistEntry(navigator)
                         songEntry(navigator)
+                        songEditorEntry(navigator)
                         settingsEntry(navigator)
                         licensesEntry(navigator)
                         playlistEditorEntry(navigator)
