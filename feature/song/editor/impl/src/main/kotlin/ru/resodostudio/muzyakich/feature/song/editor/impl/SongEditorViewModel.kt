@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 import ru.resodostudio.muzyakich.core.data.repository.SongMetadataRepository
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.model.SongMetadata
-import java.io.ByteArrayOutputStream
+import java.io.File
 
 @HiltViewModel(assistedFactory = SongEditorViewModel.Factory::class)
 internal class SongEditorViewModel @AssistedInject constructor(
@@ -35,7 +35,7 @@ internal class SongEditorViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val songEditorUiState: StateFlow<SongEditorUiState>
-        field = MutableStateFlow<SongEditorUiState>(SongEditorUiState.Loading)
+        field = MutableStateFlow(SongEditorUiState())
 
     init {
         loadSongTags()
@@ -45,214 +45,136 @@ internal class SongEditorViewModel @AssistedInject constructor(
         viewModelScope.launch {
             val song = songsRepository.getSong(mediaId).firstOrNull()
             if (song == null) {
-                songEditorUiState.value = SongEditorUiState.Error
+                songEditorUiState.update { it.copy(isLoading = false, isError = true) }
                 return@launch
             }
 
-            val audioTag = songMetadataRepository.getSongMetadata(song.path)
-            songEditorUiState.value = SongEditorUiState.Success(
-                mediaId = mediaId,
-                filePath = song.path,
-                mediaUri = song.mediaUri,
-                title = audioTag?.title.takeUnless { it.isNullOrBlank() } ?: song.title,
-                artist = audioTag?.artist.takeUnless { it.isNullOrBlank() } ?: song.artist,
-                album = audioTag?.album.takeUnless { it.isNullOrBlank() } ?: song.album,
-                albumArtist = audioTag?.albumArtist.orEmpty(),
-                year = audioTag?.year.takeUnless { it.isNullOrBlank() } ?: song.year?.toString()
-                    .orEmpty(),
-                genre = audioTag?.genre.takeUnless { it.isNullOrBlank() } ?: song.genre.orEmpty(),
-                trackNumber = audioTag?.trackNumber.takeUnless { it.isNullOrBlank() }
+            val tag = songMetadataRepository.getSongMetadata(song.path)
+            val metadata = SongMetadata(
+                title = tag?.title?.ifBlank { null } ?: song.title,
+                artist = tag?.artist?.ifBlank { null } ?: song.artist,
+                album = tag?.album?.ifBlank { null } ?: song.album,
+                albumArtist = tag?.albumArtist.orEmpty(),
+                year = tag?.year?.ifBlank { null } ?: song.year?.toString().orEmpty(),
+                genre = tag?.genre?.ifBlank { null } ?: song.genre.orEmpty(),
+                trackNumber = tag?.trackNumber?.ifBlank { null }
                     ?: song.trackNumber.takeIf { it > 0 }?.toString().orEmpty(),
-                discNumber = audioTag?.discNumber.orEmpty(),
-                comment = audioTag?.comment.orEmpty(),
-                coverModel = audioTag?.artworkBytes ?: song.artworkUri,
-                artworkBytes = audioTag?.artworkBytes,
+                discNumber = tag?.discNumber.orEmpty(),
+                comment = tag?.comment.orEmpty(),
+                artworkUri = tag?.artworkUri ?: song.artworkUri,
             )
+
+            songEditorUiState.update {
+                it.copy(
+                    isLoading = false,
+                    filePath = song.path,
+                    mediaUri = song.mediaUri,
+                    metadata = metadata,
+                )
+            }
         }
     }
 
-    fun onTitleChange(title: String) {
-        updateState { copy(title = title) }
-    }
-
-    fun onArtistChange(artist: String) {
-        updateState { copy(artist = artist) }
-    }
-
-    fun onAlbumChange(album: String) {
-        updateState { copy(album = album) }
-    }
-
-    fun onAlbumArtistChange(albumArtist: String) {
-        updateState { copy(albumArtist = albumArtist) }
-    }
-
-    fun onYearChange(year: String) {
-        updateState { copy(year = year) }
-    }
-
-    fun onGenreChange(genre: String) {
-        updateState { copy(genre = genre) }
-    }
-
-    fun onTrackNumberChange(trackNumber: String) {
-        updateState { copy(trackNumber = trackNumber) }
-    }
-
-    fun onDiscNumberChange(discNumber: String) {
-        updateState { copy(discNumber = discNumber) }
-    }
-
-    fun onCommentChange(comment: String) {
-        updateState { copy(comment = comment) }
+    fun updateMetadata(metadata: SongMetadata) {
+        songEditorUiState.update { it.copy(metadata = metadata) }
     }
 
     fun updateCover(uri: Uri?) {
         if (uri == null) return
         viewModelScope.launch {
-            val compressedBytes = withContext(Dispatchers.IO) {
+            val compressedUri = withContext(Dispatchers.IO) {
                 runCatching {
                     context.contentResolver.openInputStream(uri)?.use { inputStream ->
                         val bitmap = BitmapFactory.decodeStream(inputStream)
-                        ByteArrayOutputStream().use { outputStream ->
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
-                            outputStream.toByteArray()
+                        val cacheFile = File(context.cacheDir, "edit_artwork_${System.currentTimeMillis()}.jpg")
+                        cacheFile.outputStream().use { output ->
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, output)
                         }
+                        cacheFile.toUri().toString()
                     }
                 }.getOrNull()
-            }
+            } ?: uri.toString()
 
-            if (compressedBytes != null) {
-                updateState {
-                    copy(
-                        coverModel = uri,
-                        artworkBytes = compressedBytes,
-                        isArtworkChanged = true,
-                    )
-                }
+            songEditorUiState.update { state ->
+                state.metadata?.let { meta ->
+                    state.copy(metadata = meta.copy(artworkUri = compressedUri))
+                } ?: state
             }
         }
     }
 
     fun removeCover() {
-        updateState {
-            copy(
-                coverModel = null,
-                artworkBytes = null,
-                isArtworkChanged = true,
-            )
+        songEditorUiState.update { state ->
+            state.metadata?.let { meta ->
+                state.copy(metadata = meta.copy(artworkUri = null))
+            } ?: state
         }
     }
 
     fun saveTags(onSuccess: () -> Unit) {
-        val currentState = songEditorUiState.value as? SongEditorUiState.Success ?: return
-        if (currentState.isSaving) return
+        val state = songEditorUiState.value
+        val metadata = state.metadata ?: return
+        if (state.isSaving || state.isLoading) return
 
-        updateState { copy(isSaving = true) }
+        songEditorUiState.update { it.copy(isSaving = true) }
 
         viewModelScope.launch {
-            val tag = SongMetadata(
-                title = currentState.title,
-                artist = currentState.artist,
-                album = currentState.album,
-                albumArtist = currentState.albumArtist,
-                year = currentState.year,
-                genre = currentState.genre,
-                trackNumber = currentState.trackNumber,
-                discNumber = currentState.discNumber,
-                comment = currentState.comment,
-                artworkBytes = currentState.artworkBytes,
-                isArtworkChanged = currentState.isArtworkChanged,
-            )
-
             val result = songMetadataRepository.updateSongMetadata(
-                filePath = currentState.filePath,
-                mediaUri = currentState.mediaUri,
-                songMetadata = tag,
+                filePath = state.filePath,
+                mediaUri = state.mediaUri,
+                songMetadata = metadata,
             )
 
             result.onSuccess {
-                updateState { copy(isSaving = false) }
+                songEditorUiState.update { it.copy(isSaving = false) }
                 onSuccess()
             }.onFailure { exception ->
                 val isSecurityException = exception is SecurityException ||
                         exception.javaClass.name.contains("RecoverableSecurityException") ||
-                        (exception.localizedMessage?.contains(
-                            "Permission denied",
-                            ignoreCase = true
-                        ) == true)
+                        (exception.localizedMessage?.contains("Permission denied", ignoreCase = true) == true)
 
                 val pendingIntent = if (isSecurityException) {
                     runCatching {
                         MediaStore.createWriteRequest(
                             context.contentResolver,
-                            listOf(currentState.mediaUri.toUri()),
+                            listOf(state.mediaUri.toUri()),
                         )
                     }.getOrNull()
                 } else {
                     null
                 }
 
-                if (pendingIntent != null) {
-                    updateState { copy(isSaving = false, pendingWriteIntent = pendingIntent) }
-                } else {
-                    updateState {
-                        copy(
-                            isSaving = false,
-                            errorMsg = exception.localizedMessage ?: "Error saving tags",
-                        )
-                    }
+                songEditorUiState.update {
+                    it.copy(
+                        isSaving = false,
+                        pendingWriteIntent = pendingIntent,
+                        errorMsg = if (pendingIntent == null) exception.localizedMessage ?: "Error saving tags" else null,
+                    )
                 }
             }
         }
     }
 
     fun onWritePermissionHandled() {
-        updateState { copy(pendingWriteIntent = null) }
-    }
-
-    private inline fun updateState(transform: SongEditorUiState.Success.() -> SongEditorUiState.Success) {
-        songEditorUiState.update { currentState ->
-            if (currentState is SongEditorUiState.Success) {
-                currentState.transform()
-            } else {
-                currentState
-            }
-        }
+        songEditorUiState.update { it.copy(pendingWriteIntent = null) }
     }
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            mediaId: String,
-        ): SongEditorViewModel
+        fun create(mediaId: String): SongEditorViewModel
     }
 }
 
-sealed interface SongEditorUiState {
-
-    data object Loading : SongEditorUiState
-
-    data object Error : SongEditorUiState
-
-    data class Success(
-        val mediaId: String,
-        val filePath: String,
-        val mediaUri: String,
-        val title: String,
-        val artist: String,
-        val album: String,
-        val albumArtist: String,
-        val year: String,
-        val genre: String,
-        val trackNumber: String,
-        val discNumber: String,
-        val comment: String,
-        val coverModel: Any?,
-        val isArtworkChanged: Boolean = false,
-        val artworkBytes: ByteArray? = null,
-        val isSaving: Boolean = false,
-        val errorMsg: String? = null,
-        val pendingWriteIntent: PendingIntent? = null,
-    ) : SongEditorUiState
+data class SongEditorUiState(
+    val isLoading: Boolean = true,
+    val isError: Boolean = false,
+    val isSaving: Boolean = false,
+    val metadata: SongMetadata? = null,
+    val filePath: String = "",
+    val mediaUri: String = "",
+    val errorMsg: String? = null,
+    val pendingWriteIntent: PendingIntent? = null,
+) {
+    val isSaveEnabled: Boolean
+        get() = !isLoading && !isSaving && !metadata?.title.isNullOrBlank()
 }

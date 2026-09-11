@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -56,6 +57,7 @@ import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Image
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.ArrowBack
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.Check
 import ru.resodostudio.muzyakich.core.designsystem.icon.rounded.MusicNote
+import ru.resodostudio.muzyakich.core.model.SongMetadata
 import ru.resodostudio.muzyakich.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
@@ -70,41 +72,21 @@ internal fun SongEditorScreen(
     SongEditorScreen(
         songEditorUiState = songEditorUiState,
         onBackClick = onBackClick,
-        onTitleChange = viewModel::onTitleChange,
-        onArtistChange = viewModel::onArtistChange,
-        onAlbumChange = viewModel::onAlbumChange,
-        onAlbumArtistChange = viewModel::onAlbumArtistChange,
-        onYearChange = viewModel::onYearChange,
-        onGenreChange = viewModel::onGenreChange,
-        onTrackNumberChange = viewModel::onTrackNumberChange,
-        onDiscNumberChange = viewModel::onDiscNumberChange,
-        onCommentChange = viewModel::onCommentChange,
+        onMetadataChange = viewModel::updateMetadata,
         onCoverSelected = viewModel::updateCover,
         onRemoveCover = viewModel::removeCover,
-        onSave = {
-            viewModel.saveTags(onSuccess = onBackClick)
-        },
+        onSave = { viewModel.saveTags(onSuccess = onBackClick) },
         onWritePermissionHandled = viewModel::onWritePermissionHandled,
         modifier = modifier,
     )
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SongEditorScreen(
     songEditorUiState: SongEditorUiState,
     onBackClick: () -> Unit,
-    onTitleChange: (String) -> Unit,
-    onArtistChange: (String) -> Unit,
-    onAlbumChange: (String) -> Unit,
-    onAlbumArtistChange: (String) -> Unit,
-    onYearChange: (String) -> Unit,
-    onGenreChange: (String) -> Unit,
-    onTrackNumberChange: (String) -> Unit,
-    onDiscNumberChange: (String) -> Unit,
-    onCommentChange: (String) -> Unit,
+    onMetadataChange: (SongMetadata) -> Unit,
     onCoverSelected: (Uri?) -> Unit,
     onRemoveCover: () -> Unit,
     onSave: () -> Unit,
@@ -122,27 +104,15 @@ private fun SongEditorScreen(
         onWritePermissionHandled()
     }
 
-    if (songEditorUiState is SongEditorUiState.Success) {
-        val pendingIntent = songEditorUiState.pendingWriteIntent
-        LaunchedEffect(pendingIntent) {
-            if (pendingIntent != null) {
-                intentSenderLauncher.launch(
-                    IntentSenderRequest.Builder(pendingIntent.intentSender).build(),
-                )
-            }
-        }
-
-        val errorMsg = songEditorUiState.errorMsg
-        LaunchedEffect(errorMsg) {
-            if (errorMsg != null) {
-                snackbarHostState.showSnackbar(errorMsg)
-            }
+    LaunchedEffect(songEditorUiState.pendingWriteIntent) {
+        songEditorUiState.pendingWriteIntent?.let {
+            intentSenderLauncher.launch(IntentSenderRequest.Builder(it.intentSender).build())
         }
     }
 
-    val isSaveEnabled = songEditorUiState is SongEditorUiState.Success &&
-            !songEditorUiState.isSaving &&
-            songEditorUiState.title.isNotBlank()
+    LaunchedEffect(songEditorUiState.errorMsg) {
+        songEditorUiState.errorMsg?.let { snackbarHostState.showSnackbar(it) }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -161,7 +131,7 @@ private fun SongEditorScreen(
                     MuzIconButton(
                         icon = MuzIcons.Rounded.Check,
                         onClick = onSave,
-                        enabled = isSaveEnabled,
+                        enabled = songEditorUiState.isSaveEnabled,
                         contentDescription = stringResource(localesR.string.core_locales_save),
                     )
                 },
@@ -169,8 +139,8 @@ private fun SongEditorScreen(
         },
         modifier = modifier,
     ) { innerPadding ->
-        when (songEditorUiState) {
-            SongEditorUiState.Loading -> {
+        when {
+            songEditorUiState.isLoading -> {
                 LoadingState(
                     modifier = Modifier
                         .fillMaxSize()
@@ -178,7 +148,7 @@ private fun SongEditorScreen(
                 )
             }
 
-            SongEditorUiState.Error -> {
+            songEditorUiState.isError || songEditorUiState.metadata == null -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -189,8 +159,9 @@ private fun SongEditorScreen(
                 }
             }
 
-            is SongEditorUiState.Success -> {
+            else -> {
                 val scrollState = rememberScrollState()
+                val metadata = songEditorUiState.metadata
 
                 Column(
                     modifier = Modifier
@@ -201,102 +172,68 @@ private fun SongEditorScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     SongArtwork(
-                        coverModel = songEditorUiState.coverModel,
+                        coverModel = metadata.artworkUri,
                         onCoverSelected = onCoverSelected,
                         onRemoveCover = onRemoveCover,
                     )
 
-                    TextField(
-                        value = songEditorUiState.title,
-                        onValueChange = onTitleChange,
-                        label = { Text(stringResource(localesR.string.core_locales_title)) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.title,
+                        onValueChange = { onMetadataChange(metadata.copy(title = it)) },
+                        labelRes = localesR.string.core_locales_title,
                     )
 
-                    TextField(
-                        value = songEditorUiState.artist,
-                        onValueChange = onArtistChange,
-                        label = { Text(stringResource(localesR.string.core_locales_artist)) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.artist,
+                        onValueChange = { onMetadataChange(metadata.copy(artist = it)) },
+                        labelRes = localesR.string.core_locales_artist,
                     )
 
-                    TextField(
-                        value = songEditorUiState.album,
-                        onValueChange = onAlbumChange,
-                        label = { Text(stringResource(localesR.string.core_locales_albums)) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.album,
+                        onValueChange = { onMetadataChange(metadata.copy(album = it)) },
+                        labelRes = localesR.string.core_locales_albums,
                     )
 
-                    TextField(
-                        value = songEditorUiState.albumArtist,
-                        onValueChange = onAlbumArtistChange,
-                        label = { Text(stringResource(localesR.string.core_locales_album_artist)) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.albumArtist,
+                        onValueChange = { onMetadataChange(metadata.copy(albumArtist = it)) },
+                        labelRes = localesR.string.core_locales_album_artist,
                     )
 
-                    TextField(
-                        value = songEditorUiState.year,
-                        onValueChange = onYearChange,
-                        label = { Text(stringResource(localesR.string.core_locales_year)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.year,
+                        onValueChange = { onMetadataChange(metadata.copy(year = it)) },
+                        labelRes = localesR.string.core_locales_year,
+                        keyboardType = KeyboardType.Number,
                     )
 
-                    TextField(
-                        value = songEditorUiState.genre,
-                        onValueChange = onGenreChange,
-                        label = { Text(stringResource(localesR.string.core_locales_genre)) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.genre,
+                        onValueChange = { onMetadataChange(metadata.copy(genre = it)) },
+                        labelRes = localesR.string.core_locales_genre,
                     )
 
-                    TextField(
-                        value = songEditorUiState.trackNumber,
-                        onValueChange = onTrackNumberChange,
-                        label = { Text(stringResource(localesR.string.core_locales_track_number)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.trackNumber,
+                        onValueChange = { onMetadataChange(metadata.copy(trackNumber = it)) },
+                        labelRes = localesR.string.core_locales_track_number,
+                        keyboardType = KeyboardType.Number,
                     )
 
-                    TextField(
-                        value = songEditorUiState.discNumber,
-                        onValueChange = onDiscNumberChange,
-                        label = { Text(stringResource(localesR.string.core_locales_disc_number_label)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
+                    EditorTextField(
+                        value = metadata.discNumber,
+                        onValueChange = { onMetadataChange(metadata.copy(discNumber = it)) },
+                        labelRes = localesR.string.core_locales_disc_number_label,
+                        keyboardType = KeyboardType.Number,
                     )
 
-                    TextField(
-                        value = songEditorUiState.comment,
-                        onValueChange = onCommentChange,
-                        label = { Text(stringResource(localesR.string.core_locales_comment)) },
+                    EditorTextField(
+                        value = metadata.comment,
+                        onValueChange = { onMetadataChange(metadata.copy(comment = it)) },
+                        labelRes = localesR.string.core_locales_comment,
+                        singleLine = false,
                         minLines = 2,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = TextFieldDefaults.roundedShape,
-                        colors = TextFieldDefaults.tonalColors(),
                     )
                 }
             }
@@ -304,9 +241,30 @@ private fun SongEditorScreen(
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-)
+@Composable
+private fun EditorTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    @StringRes labelRes: Int,
+    modifier: Modifier = Modifier,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    singleLine: Boolean = true,
+    minLines: Int = 1,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(stringResource(labelRes)) },
+        singleLine = singleLine,
+        minLines = minLines,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        modifier = modifier.fillMaxWidth(),
+        shape = TextFieldDefaults.roundedShape,
+        colors = TextFieldDefaults.tonalColors(),
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SongArtwork(
     coverModel: Any?,

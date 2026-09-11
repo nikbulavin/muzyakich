@@ -33,6 +33,15 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
             val audioFile = AudioFileIO.read(file)
             val tag = audioFile.tag
 
+            val artworkUri = tag?.firstArtwork?.binaryData?.let { bytes ->
+                context.cacheDir.listFiles { _, name -> name.startsWith("edit_artwork_") }?.forEach {
+                    it.delete()
+                }
+                val cacheFile = File(context.cacheDir, "edit_artwork_${System.currentTimeMillis()}.jpg")
+                cacheFile.writeBytes(bytes)
+                cacheFile.toUri().toString()
+            }
+
             SongMetadata(
                 title = tag?.getFirst(FieldKey.TITLE).orEmpty(),
                 artist = tag?.getFirst(FieldKey.ARTIST).orEmpty(),
@@ -43,7 +52,7 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                 trackNumber = tag?.getFirst(FieldKey.TRACK).orEmpty(),
                 discNumber = tag?.getFirst(FieldKey.DISC_NO).orEmpty(),
                 comment = tag?.getFirst(FieldKey.COMMENT).orEmpty(),
-                artworkBytes = tag?.firstArtwork?.binaryData,
+                artworkUri = artworkUri,
             )
         }.getOrNull()
     }
@@ -87,10 +96,13 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                 audioTag.setField(FieldKey.DISC_NO, songMetadata.discNumber)
                 audioTag.setField(FieldKey.COMMENT, songMetadata.comment)
 
-                if (songMetadata.isArtworkChanged) {
+                val uriString = songMetadata.artworkUri
+                if (uriString.isNullOrBlank()) {
                     audioTag.deleteArtworkField()
-                    val bytes = songMetadata.artworkBytes
-                    if (bytes != null) {
+                } else {
+                    val bytes = readArtworkBytes(uriString)
+                    if (bytes != null && bytes.isNotEmpty()) {
+                        audioTag.deleteArtworkField()
                         val artwork = ArtworkFactory.getNew()
                         artwork.binaryData = bytes
                         audioTag.setField(artwork)
@@ -144,7 +156,20 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                 )
             } finally {
                 tempFile.delete()
+                context.cacheDir.listFiles { _, name -> name.startsWith("edit_artwork_") }?.forEach {
+                    it.delete()
+                }
             }
         }
     }
+
+    private fun readArtworkBytes(uriString: String): ByteArray? = runCatching {
+        val uri = uriString.toUri()
+        if (uri.scheme == null || uri.scheme == "file") {
+            val path = uri.path ?: uriString
+            File(path).readBytes()
+        } else {
+            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        }
+    }.getOrNull()
 }
