@@ -10,5 +10,6 @@ interface SongMetadataRepository {
         filePath: String,
         mediaUri: String,
         songMetadata: SongMetadata,
+        isArtworkChanged: Boolean,
     ): Result<Unit>
 }

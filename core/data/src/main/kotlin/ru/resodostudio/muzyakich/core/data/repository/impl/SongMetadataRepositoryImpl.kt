@@ -34,9 +34,7 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
             val tag = audioFile.tag
 
             val artworkUri = tag?.firstArtwork?.binaryData?.let { bytes ->
-                context.cacheDir.listFiles { _, name -> name.startsWith("edit_artwork_") }?.forEach {
-                    it.delete()
-                }
+                clearArtworkCache()
                 val cacheFile = File(context.cacheDir, "edit_artwork_${System.currentTimeMillis()}.jpg")
                 cacheFile.writeBytes(bytes)
                 cacheFile.toUri().toString()
@@ -61,6 +59,7 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
         filePath: String,
         mediaUri: String,
         songMetadata: SongMetadata,
+        isArtworkChanged: Boolean,
     ): Result<Unit> = withContext(ioDispatcher) {
         runCatching {
             val uri = mediaUri.toUri()
@@ -96,16 +95,19 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                 audioTag.setField(FieldKey.DISC_NO, songMetadata.discNumber)
                 audioTag.setField(FieldKey.COMMENT, songMetadata.comment)
 
-                val uriString = songMetadata.artworkUri
-                if (uriString.isNullOrBlank()) {
+                if (isArtworkChanged) {
                     audioTag.deleteArtworkField()
-                } else {
-                    val bytes = readArtworkBytes(uriString)
-                    if (bytes != null && bytes.isNotEmpty()) {
-                        audioTag.deleteArtworkField()
-                        val artwork = ArtworkFactory.getNew()
-                        artwork.binaryData = bytes
-                        audioTag.setField(artwork)
+                    val uriString = songMetadata.artworkUri
+                    if (!uriString.isNullOrBlank()) {
+                        val bytes = readArtworkBytes(uriString)
+                        if (bytes != null && bytes.isNotEmpty()) {
+                            val artwork = ArtworkFactory.getNew().apply {
+                                binaryData = bytes
+                                mimeType = "image/jpeg"
+                                pictureType = 3 // Cover (front)
+                            }
+                            audioTag.setField(artwork)
+                        }
                     }
                 }
 
@@ -154,12 +156,19 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                     null,
                     null,
                 )
+
+                if (isArtworkChanged) {
+                    clearArtworkCache()
+                }
             } finally {
                 tempFile.delete()
-                context.cacheDir.listFiles { _, name -> name.startsWith("edit_artwork_") }?.forEach {
-                    it.delete()
-                }
             }
+        }
+    }
+
+    private fun clearArtworkCache() {
+        context.cacheDir.listFiles { _, name -> name.startsWith("edit_artwork_") }?.forEach {
+            it.delete()
         }
     }
 

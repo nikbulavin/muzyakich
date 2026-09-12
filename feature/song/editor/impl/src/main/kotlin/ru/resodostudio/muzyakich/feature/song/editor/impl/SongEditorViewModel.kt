@@ -70,6 +70,7 @@ internal class SongEditorViewModel @AssistedInject constructor(
                     filePath = song.path,
                     mediaUri = song.mediaUri,
                     metadata = metadata,
+                    isArtworkChanged = false,
                 )
             }
         }
@@ -97,7 +98,10 @@ internal class SongEditorViewModel @AssistedInject constructor(
 
             songEditorUiState.update { state ->
                 state.metadata?.let { meta ->
-                    state.copy(metadata = meta.copy(artworkUri = compressedUri))
+                    state.copy(
+                        metadata = meta.copy(artworkUri = compressedUri),
+                        isArtworkChanged = true,
+                    )
                 } ?: state
             }
         }
@@ -106,7 +110,10 @@ internal class SongEditorViewModel @AssistedInject constructor(
     fun removeCover() {
         songEditorUiState.update { state ->
             state.metadata?.let { meta ->
-                state.copy(metadata = meta.copy(artworkUri = null))
+                state.copy(
+                    metadata = meta.copy(artworkUri = null),
+                    isArtworkChanged = true,
+                )
             } ?: state
         }
     }
@@ -123,6 +130,7 @@ internal class SongEditorViewModel @AssistedInject constructor(
                 filePath = state.filePath,
                 mediaUri = state.mediaUri,
                 songMetadata = metadata,
+                isArtworkChanged = state.isArtworkChanged,
             )
 
             result.onSuccess {
@@ -170,6 +178,7 @@ data class SongEditorUiState(
     val isError: Boolean = false,
     val isSaving: Boolean = false,
     val metadata: SongMetadata? = null,
+    val isArtworkChanged: Boolean = false,
     val filePath: String = "",
     val mediaUri: String = "",
     val errorMsg: String? = null,
