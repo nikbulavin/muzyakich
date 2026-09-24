@@ -51,13 +51,13 @@ internal class SongEditorViewModel @AssistedInject constructor(
 
             val tag = songMetadataRepository.getSongMetadata(song.path)
             val metadata = SongMetadata(
-                title = tag?.title?.ifBlank { null } ?: song.title,
-                artist = tag?.artist?.ifBlank { null } ?: song.artist,
-                album = tag?.album?.ifBlank { null } ?: song.album,
+                title = tag?.title?.ifBlank { song.title } ?: song.title,
+                artist = tag?.artist ?: song.artist,
+                album = tag?.album ?: song.album,
                 albumArtist = tag?.albumArtist.orEmpty(),
-                year = tag?.year?.ifBlank { null } ?: song.year?.toString().orEmpty(),
-                genre = tag?.genre?.ifBlank { null } ?: song.genre.orEmpty(),
-                trackNumber = tag?.trackNumber?.ifBlank { null }
+                year = tag?.year ?: song.year?.toString().orEmpty(),
+                genre = tag?.genre ?: song.genre.orEmpty(),
+                trackNumber = tag?.trackNumber
                     ?: song.trackNumber.takeIf { it > 0 }?.toString().orEmpty(),
                 discNumber = tag?.discNumber.orEmpty(),
                 comment = tag?.comment.orEmpty(),

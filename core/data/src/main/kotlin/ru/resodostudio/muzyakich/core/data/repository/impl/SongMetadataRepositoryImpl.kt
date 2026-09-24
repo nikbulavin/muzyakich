@@ -127,21 +127,11 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
 
                 runCatching {
                     val values = ContentValues().apply {
-                        if (songMetadata.title.isNotBlank()) {
-                            put(MediaStore.Audio.Media.TITLE, songMetadata.title)
-                        }
-                        if (songMetadata.artist.isNotBlank()) {
-                            put(MediaStore.Audio.Media.ARTIST, songMetadata.artist)
-                        }
-                        if (songMetadata.album.isNotBlank()) {
-                            put(MediaStore.Audio.Media.ALBUM, songMetadata.album)
-                        }
-                        songMetadata.year.toIntOrNull()?.let {
-                            put(MediaStore.Audio.Media.YEAR, it)
-                        }
-                        songMetadata.trackNumber.toIntOrNull()?.let {
-                            put(MediaStore.Audio.Media.TRACK, it)
-                        }
+                        put(MediaStore.Audio.Media.TITLE, songMetadata.title)
+                        put(MediaStore.Audio.Media.ARTIST, songMetadata.artist)
+                        put(MediaStore.Audio.Media.ALBUM, songMetadata.album)
+                        put(MediaStore.Audio.Media.YEAR, songMetadata.year)
+                        put(MediaStore.Audio.Media.TRACK, songMetadata.trackNumber)
                         put(
                             MediaStore.Audio.Media.DATE_MODIFIED,
                             System.currentTimeMillis() / 1000,
