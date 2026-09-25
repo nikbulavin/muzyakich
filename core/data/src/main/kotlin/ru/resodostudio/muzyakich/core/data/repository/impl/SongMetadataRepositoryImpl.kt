@@ -30,8 +30,11 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
 ) : SongMetadataRepository {
 
     init {
-        TagOptionSingleton.getInstance().iD3V2Version = ID3V2Version.ID3_V23
-        TagOptionSingleton.getInstance().isId3v1Save = false
+        TagOptionSingleton.getInstance().apply {
+            iD3V2Version = ID3V2Version.ID3_V23
+            isId3v1Save = false
+            isResetTextEncodingForExistingFrames = true
+        }
     }
 
     override suspend fun getSongMetadata(filePath: String): SongMetadata? =
@@ -95,13 +98,15 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
 
                 if (audioFile is MP3File) {
                     audioFile.iD3v1Tag = null
-                    if (audioFile.iD3v2Tag == null) {
-                        audioFile.iD3v2Tag = ID3v23Tag()
+                    val existingV2 = audioFile.iD3v2Tag
+                    audioFile.iD3v2Tag = when (existingV2) {
+                        null -> ID3v23Tag()
+                        !is ID3v23Tag -> ID3v23Tag(existingV2)
+                        else -> existingV2
                     }
                 }
 
-                val audioTag = audioFile.tag ?: audioFile.createDefaultTag()
-                audioFile.tag = audioTag
+                val audioTag = audioFile.tag ?: audioFile.createDefaultTag().also { audioFile.tag = it }
 
                 audioTag.setField(FieldKey.TITLE, songMetadata.title)
                 audioTag.setField(FieldKey.ARTIST, songMetadata.artist)
