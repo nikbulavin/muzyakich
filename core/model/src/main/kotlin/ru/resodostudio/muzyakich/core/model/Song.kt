@@ -11,6 +11,7 @@ data class Song(
     val album: String,
     val path: String,
     val duration: Long,
+    val dateModified: Long,
     val bitrate: Int,
     val isFavorite: Boolean,
     val playCount: Int,

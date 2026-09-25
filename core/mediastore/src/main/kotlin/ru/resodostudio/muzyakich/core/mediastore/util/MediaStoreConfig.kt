@@ -19,6 +19,7 @@ internal object MediaStoreConfig {
             add(MediaStore.Audio.Media.ARTIST)
             add(MediaStore.Audio.Media.ALBUM)
             add(MediaStore.Audio.Media.DURATION)
+            add(MediaStore.Audio.Media.DATE_MODIFIED)
             add(MediaStore.Audio.Media.DATA)
             add(MediaStore.Audio.Media.BITRATE)
             add(MediaStore.Audio.Media.SIZE)

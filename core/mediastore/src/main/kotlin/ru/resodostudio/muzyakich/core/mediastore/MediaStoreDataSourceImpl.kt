@@ -25,6 +25,7 @@ import ru.resodostudio.muzyakich.core.mediastore.util.getArtist
 import ru.resodostudio.muzyakich.core.mediastore.util.getArtistId
 import ru.resodostudio.muzyakich.core.mediastore.util.getBitrate
 import ru.resodostudio.muzyakich.core.mediastore.util.getBitsPerSample
+import ru.resodostudio.muzyakich.core.mediastore.util.getDateModified
 import ru.resodostudio.muzyakich.core.mediastore.util.getDuration
 import ru.resodostudio.muzyakich.core.mediastore.util.getGenre
 import ru.resodostudio.muzyakich.core.mediastore.util.getMediaId
@@ -80,6 +81,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                 album = cursor.getAlbum(),
                                 path = cursor.getPath(),
                                 duration = cursor.getDuration(),
+                                dateModified = cursor.getDateModified(),
                                 bitrate = cursor.getBitrate() / 1000,
                                 size = cursor.getSize(),
                                 bitsPerSample = cursor.getBitsPerSample(),
@@ -87,7 +89,7 @@ internal class MediaStoreDataSourceImpl @Inject constructor(
                                 trackNumber = cursor.getTrackNumber(),
                                 year = cursor.getYear(),
                                 genre = cursor.getGenre(),
-                            )
+                            ),
                         )
                     }
                 }

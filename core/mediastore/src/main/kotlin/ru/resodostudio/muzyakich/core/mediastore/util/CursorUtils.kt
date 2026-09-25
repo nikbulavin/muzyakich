@@ -21,6 +21,8 @@ internal fun Cursor.getAlbum() = getString(getColumnIndexOrThrow(MediaStore.Audi
 
 internal fun Cursor.getDuration() = getLong(getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))
 
+internal fun Cursor.getDateModified() = getLong(getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED))
+
 internal fun Cursor.getBitrate() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.BITRATE))
 
 internal fun Cursor.getSize() = getInt(getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE))
