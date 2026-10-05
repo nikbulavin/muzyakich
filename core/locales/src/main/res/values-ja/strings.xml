@@ -29,7 +29,7 @@
     <string name="core_locales_downloading_update">アップデートをダウンロード中</string>
     <string name="core_locales_dynamic_color">ダイナミックカラー</string>
     <string name="core_locales_edit">編集</string>
-    <string name="core_locales_edit_tags">タグを編集</string>
+    <string name="core_locales_edit_metadata">メタデータを編集</string>
     <string name="core_locales_enable_repeat_mode_all">すべてリピート</string>
     <string name="core_locales_enable_repeat_mode_one">1曲リピート</string>
     <string name="core_locales_enable_shuffle_mode">シャッフルをオン</string>

@@ -121,7 +121,7 @@ private fun SongEditorScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(localesR.string.core_locales_edit_tags)) },
+                title = { Text(stringResource(localesR.string.core_locales_edit_metadata)) },
                 navigationIcon = {
                     MuzIconButton(
                         icon = MuzIcons.Rounded.ArrowBack,

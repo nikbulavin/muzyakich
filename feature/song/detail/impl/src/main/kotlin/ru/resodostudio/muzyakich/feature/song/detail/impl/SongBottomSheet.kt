@@ -282,7 +282,7 @@ private fun ActionPanel(
         MuzSegmentedListItem(
             content = {
                 Text(
-                    text = stringResource(localesR.string.core_locales_edit_tags),
+                    text = stringResource(localesR.string.core_locales_edit_metadata),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
