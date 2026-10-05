@@ -192,7 +192,7 @@ private fun SongEditorScreen(
                     EditorTextField(
                         value = metadata.album,
                         onValueChange = { onMetadataChange(metadata.copy(album = it)) },
-                        labelRes = localesR.string.core_locales_albums,
+                        labelRes = localesR.string.core_locales_album,
                     )
 
                     EditorTextField(
@@ -232,8 +232,6 @@ private fun SongEditorScreen(
                         value = metadata.comment,
                         onValueChange = { onMetadataChange(metadata.copy(comment = it)) },
                         labelRes = localesR.string.core_locales_comment,
-                        singleLine = false,
-                        minLines = 2,
                     )
                 }
             }

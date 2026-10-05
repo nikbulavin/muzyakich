@@ -57,7 +57,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
-import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.blur.hazeBlur
@@ -88,16 +87,14 @@ import ru.resodostudio.muzyakich.feature.settings.impl.navigation.licensesEntry
 import ru.resodostudio.muzyakich.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudio.muzyakich.feature.song.detail.api.SongNavKey
 import ru.resodostudio.muzyakich.feature.song.detail.impl.navigation.songEntry
+import ru.resodostudio.muzyakich.feature.song.editor.api.SongEditorNavKey
 import ru.resodostudio.muzyakich.feature.song.editor.impl.navigation.songEditorEntry
 import ru.resodostudio.muzyakich.ui.component.NavigationToolbar
 import ru.resodostudio.muzyakich.ui.component.NowPlayingBar
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @androidx.annotation.OptIn(UnstableApi::class)
-@OptIn(
-    ExperimentalPermissionsApi::class,
-    ExperimentalHazeApi::class,
-)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MuzApp(
     appState: MuzAppState,
@@ -122,8 +119,9 @@ fun MuzApp(
     val backStack = appState.navigationState.backStack
     val currentNavKey = appState.navigationState.currentKey
 
-    val shouldShowNowPlayingBar = backStack.none { it is PlaylistEditorNavKey } &&
-            nowPlayingState.mediaId.isNotEmpty()
+    val shouldShowNowPlayingBar =
+        backStack.none { it is PlaylistEditorNavKey || it is SongEditorNavKey } &&
+                nowPlayingState.mediaId.isNotEmpty()
 
     val cameToPlayerOrSongFromLibrary =
         (currentNavKey is PlayerNavKey || currentNavKey is SongNavKey) &&

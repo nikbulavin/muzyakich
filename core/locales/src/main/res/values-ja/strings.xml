@@ -6,6 +6,7 @@
     <string name="core_locales_add_songs">曲を追加</string>
     <string name="core_locales_add_to_favorites">お気に入りに追加</string>
     <string name="core_locales_add_to_playlist">プレイリストに追加</string>
+    <string name="core_locales_album">アルバム</string>
     <string name="core_locales_albums">アルバム</string>
     <string name="core_locales_album_artist">アルバムアーティスト</string>
     <string name="core_locales_already_added">追加済み</string>
