@@ -13,5 +13,6 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
-    implementation(libs.materialKolor)
+    implementation(libs.materialkolor.material3)
+    implementation(libs.materialkolor.palette)
 }

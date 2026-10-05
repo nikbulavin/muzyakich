@@ -25,24 +25,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import coil3.Bitmap
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
+import com.kmpalette.from
+import com.kmpalette.palette.graphics.Palette
 import com.materialkolor.PaletteStyle
-import com.materialkolor.ktx.animateColorScheme
-import com.materialkolor.ktx.rememberThemeColor
-import com.materialkolor.rememberDynamicColorScheme
+import com.materialkolor.material3.ktx.animateColorScheme
+import com.materialkolor.material3.rememberDynamicColorScheme
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import android.graphics.Color as AndroidColor
 
 val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -314,9 +313,9 @@ fun MuzTheme(
     )
 }
 
-private data class ArtworkPalette(
-    val imageBitmap: ImageBitmap,
-    val isGrayscale: Boolean,
+private data class ArtworkThemeData(
+    val seedColor: Color,
+    val isAchromatic: Boolean,
 )
 
 @Composable
@@ -326,24 +325,25 @@ fun DynamicMuzTheme(
     content: @Composable () -> Unit,
 ) {
     val fallbackScheme = MaterialTheme.colorScheme
-    val artworkPalette = rememberArtworkPalette(artworkUri)
-    val targetScheme = if (artworkUri != null && artworkPalette != null) {
-        val seedColor = rememberThemeColor(
-            image = artworkPalette.imageBitmap,
-            fallback = fallbackScheme.primary,
-        )
-        val paletteStyle = if (artworkPalette.isGrayscale) {
-            PaletteStyle.Neutral
-        } else {
-            PaletteStyle.TonalSpot
-        }
-        rememberDynamicColorScheme(
-            seedColor = seedColor,
+    val themeData = rememberArtworkThemeData(artworkUri)
+    val contrastLevel = rememberContrastLevel()
+
+    val targetScheme = when {
+        themeData == null -> fallbackScheme
+
+        themeData.isAchromatic -> rememberDynamicColorScheme(
+            seedColor = themeData.seedColor,
             isDark = isDarkTheme,
-            style = paletteStyle,
+            style = PaletteStyle.Neutral,
+            contrastLevel = contrastLevel,
         )
-    } else {
-        fallbackScheme
+
+        else -> rememberDynamicColorScheme(
+            seedColor = themeData.seedColor,
+            isDark = isDarkTheme,
+            style = PaletteStyle.TonalSpot,
+            contrastLevel = contrastLevel,
+        )
     }
 
     MaterialExpressiveTheme(
@@ -355,62 +355,64 @@ fun DynamicMuzTheme(
     )
 }
 
+@Composable
+fun rememberContrastLevel(): Double {
+    if (!supportsContrastTheming()) return 0.0
+    val context = LocalContext.current
+    val uiModeManager = remember(context) {
+        context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+    }
+    return uiModeManager.contrast.toDouble()
+}
+
 private const val ARTWORK_BITMAP_TAG = "DynamicMuzTheme"
 
 @Composable
-private fun rememberArtworkPalette(artworkUri: String?): ArtworkPalette? {
+private fun rememberArtworkThemeData(artworkUri: String?): ArtworkThemeData? {
     val context = LocalContext.current
-    var artworkPalette by remember { mutableStateOf<ArtworkPalette?>(null) }
+    var themeData by remember(artworkUri) { mutableStateOf<ArtworkThemeData?>(null) }
 
     LaunchedEffect(artworkUri) {
         if (artworkUri == null) {
-            artworkPalette = null
+            themeData = null
             return@LaunchedEffect
         }
 
-        artworkPalette = runCatching {
-            withContext(Dispatchers.IO) {
+        themeData = withContext(Dispatchers.IO) {
+            runCatching {
                 val request = ImageRequest.Builder(context)
                     .data(artworkUri)
-                    .size(64)
+                    .size(128, 128)
                     .allowHardware(false)
                     .build()
 
-                when (val result = context.imageLoader.execute(request)) {
-                    is SuccessResult -> {
-                        val bitmap = result.image.toBitmap()
-                        ArtworkPalette(
-                            imageBitmap = bitmap.asImageBitmap(),
-                            isGrayscale = bitmap.isGrayscale(),
-                        )
-                    }
-                    else -> null
-                }
-            }
-        }.onFailure { e ->
-            if (e is CancellationException) throw e
-            Log.w(ARTWORK_BITMAP_TAG, "Failed to load artwork for theme color extraction: $artworkUri", e)
-        }.getOrNull()
-    }
-    return artworkPalette
-}
+                val result = context.imageLoader.execute(request)
+                if (result !is SuccessResult) return@runCatching null
 
-private fun Bitmap.isGrayscale(saturationThreshold: Float = 0.08f): Boolean {
-    val pixels = IntArray(width * height)
-    getPixels(pixels, 0, width, 0, 0, width, height)
+                val bitmap = result.image.toBitmap().asImageBitmap()
+                val palette = Palette.from(bitmap = bitmap).generate()
 
-    val hsv = FloatArray(3)
-    var sum = 0f
-    var count = 0
-    for (pixel in pixels) {
-        if (AndroidColor.alpha(pixel) < 32) continue
-        AndroidColor.colorToHSV(pixel, hsv)
-        val value = hsv[2]
-        if (value !in 0.1f..0.95f) continue
-        sum += hsv[1]
-        count++
+                val swatch = palette.vibrantSwatch
+                    ?: palette.dominantSwatch
+                    ?: palette.lightVibrantSwatch
+                    ?: palette.darkVibrantSwatch
+                    ?: palette.mutedSwatch
+                    ?: return@runCatching null
+
+                val isAchromatic = swatch.hsl[1] < 0.10f
+
+                ArtworkThemeData(
+                    seedColor = Color(swatch.rgb),
+                    isAchromatic = isAchromatic,
+                )
+            }.onFailure { e ->
+                if (e is CancellationException) throw e
+                Log.w(ARTWORK_BITMAP_TAG, "Failed to load artwork theme color: $artworkUri", e)
+            }.getOrNull()
+        }
     }
-    return count == 0 || (sum / count) < saturationThreshold
+
+    return themeData
 }
 
 @Composable
