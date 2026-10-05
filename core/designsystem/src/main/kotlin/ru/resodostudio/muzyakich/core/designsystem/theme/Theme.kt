@@ -37,6 +37,7 @@ import coil3.toBitmap
 import com.kmpalette.from
 import com.kmpalette.palette.graphics.Palette
 import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.material3.ktx.animateColorScheme
 import com.materialkolor.material3.rememberDynamicColorScheme
 import kotlinx.coroutines.CancellationException
@@ -343,6 +344,7 @@ fun DynamicMuzTheme(
             isDark = isDarkTheme,
             style = PaletteStyle.TonalSpot,
             contrastLevel = contrastLevel,
+            specVersion = ColorSpec.SpecVersion.SPEC_2021,
         )
     }
 
