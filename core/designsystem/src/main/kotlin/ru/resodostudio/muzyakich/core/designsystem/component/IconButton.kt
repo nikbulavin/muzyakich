@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
@@ -124,6 +125,56 @@ fun MuzIconButton(
             colors = colors,
             enabled = enabled,
             modifier = Modifier.size(containerSize),
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(iconSize),
+            )
+        }
+    }
+}
+
+@Composable
+fun MuzFilledIconButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors(),
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+    isInsideButtonGroup: Boolean = false,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        FilledIconButton(
+            onClick = onClick,
+            shapes = IconButtonDefaults.shapes(),
+            colors = colors,
+            modifier = Modifier
+                .sizeIn(
+                    minWidth = containerSize.width,
+                    minHeight = containerSize.height,
+                )
+                .then(
+                    if (isInsideButtonGroup) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier
+                    }
+                ),
+            enabled = enabled,
+            interactionSource = interactionSource,
         ) {
             Icon(
                 imageVector = icon,

@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.mediastore)
 
     implementation(libs.androidx.appcompat)
+    implementation(libs.jaudiotagger)
     implementation(libs.kotlinx.coroutines.playServices)
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)

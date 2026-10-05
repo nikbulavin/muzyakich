@@ -130,6 +130,8 @@ fun SongItem(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(song.artworkUri)
                             .size(128)
+                            .memoryCacheKey("${song.mediaUri}_${song.dateModified}")
+                            .diskCacheKey("${song.mediaUri}_${song.dateModified}")
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,

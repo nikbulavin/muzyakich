@@ -85,6 +85,8 @@ dependencies {
     implementation(projects.feature.settings.impl)
     implementation(projects.feature.song.detail.api)
     implementation(projects.feature.song.detail.impl)
+    implementation(projects.feature.song.editor.api)
+    implementation(projects.feature.song.editor.impl)
     implementation(projects.feature.song.list.api)
     implementation(projects.feature.song.list.impl)
 

@@ -20,6 +20,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
 
@@ -68,6 +69,8 @@ include(":feature:settings:api")
 include(":feature:settings:impl")
 include(":feature:song:detail:api")
 include(":feature:song:detail:impl")
+include(":feature:song:editor:api")
+include(":feature:song:editor:impl")
 include(":feature:song:list:api")
 include(":feature:song:list:impl")
 include(":feature:song:picker")

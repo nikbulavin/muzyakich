@@ -5,9 +5,11 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudio.muzyakich.core.data.repository.PlaylistsRepository
+import ru.resodostudio.muzyakich.core.data.repository.SongMetadataRepository
 import ru.resodostudio.muzyakich.core.data.repository.SongsRepository
 import ru.resodostudio.muzyakich.core.data.repository.UserDataRepository
 import ru.resodostudio.muzyakich.core.data.repository.impl.PlaylistsRepositoryImpl
+import ru.resodostudio.muzyakich.core.data.repository.impl.SongMetadataRepositoryImpl
 import ru.resodostudio.muzyakich.core.data.repository.impl.SongsRepositoryImpl
 import ru.resodostudio.muzyakich.core.data.repository.impl.UserDataRepositoryImpl
 import ru.resodostudio.muzyakich.core.data.repository.util.AppLocaleManager
@@ -26,6 +28,9 @@ internal interface DataModule {
 
     @Binds
     fun bindsSongsRepository(impl: SongsRepositoryImpl): SongsRepository
+
+    @Binds
+    fun bindsSongTagRepository(impl: SongMetadataRepositoryImpl): SongMetadataRepository
 
     @Binds
     fun bindsPlaylistsRepository(impl: PlaylistsRepositoryImpl): PlaylistsRepository
