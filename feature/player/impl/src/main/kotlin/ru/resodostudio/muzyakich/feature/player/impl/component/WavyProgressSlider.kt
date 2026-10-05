@@ -17,9 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -67,10 +68,15 @@ internal fun WavyProgressSlider(
 
     ProgressIndicator(player, totalTickCount = sliderWidthPx, scope) {
         var isDragging by remember { mutableStateOf(false) }
-        var seekPosition by remember { mutableFloatStateOf(0f) }
         var lastScrubTime by remember { mutableLongStateOf(0L) }
 
-        val currentValue = if (isDragging) seekPosition else currentPositionProgress
+        val sliderState = remember { SliderState(value = currentPositionProgress) }
+
+        LaunchedEffect(currentPositionProgress, isDragging) {
+            if (!isDragging) sliderState.value = currentPositionProgress
+        }
+
+        val currentValue = if (isDragging) sliderState.value else currentPositionProgress
 
         val waveDurationMs = remember(waveLength, waveSpeed) {
             ((waveLength.value / waveSpeed.value) * 1000f)
@@ -172,10 +178,10 @@ internal fun WavyProgressSlider(
             }
 
             Slider(
-                value = currentValue,
+                state = sliderState,
                 onValueChange = {
                     isDragging = true
-                    seekPosition = it
+                    sliderState.value = it
                     onValueChange?.invoke(it)
 
                     val now = System.currentTimeMillis()
@@ -185,7 +191,7 @@ internal fun WavyProgressSlider(
                     }
                 },
                 onValueChangeFinished = {
-                    updateCurrentPositionProgress(seekPosition)
+                    updateCurrentPositionProgress(sliderState.value)
                     isDragging = false
                     onValueChangeFinished?.invoke()
                 },
