@@ -26,6 +26,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -49,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
+import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -128,11 +131,12 @@ private fun SongEditorScreen(
                     )
                 },
                 actions = {
-                    MuzIconButton(
+                    MuzFilledIconButton(
                         icon = MuzIcons.Rounded.Check,
                         onClick = onSave,
                         enabled = songEditorUiState.isSaveEnabled,
                         contentDescription = stringResource(localesR.string.core_locales_save),
+                        containerSize = smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
                     )
                 },
             )
@@ -214,19 +218,25 @@ private fun SongEditorScreen(
                         labelRes = localesR.string.core_locales_genre,
                     )
 
-                    EditorTextField(
-                        value = metadata.trackNumber,
-                        onValueChange = { onMetadataChange(metadata.copy(trackNumber = it)) },
-                        labelRes = localesR.string.core_locales_track_number,
-                        keyboardType = KeyboardType.Number,
-                    )
-
-                    EditorTextField(
-                        value = metadata.discNumber,
-                        onValueChange = { onMetadataChange(metadata.copy(discNumber = it)) },
-                        labelRes = localesR.string.core_locales_disc_number_label,
-                        keyboardType = KeyboardType.Number,
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        EditorTextField(
+                            value = metadata.trackNumber,
+                            onValueChange = { onMetadataChange(metadata.copy(trackNumber = it)) },
+                            labelRes = localesR.string.core_locales_track_number,
+                            keyboardType = KeyboardType.Number,
+                            modifier = Modifier.weight(1f),
+                        )
+                        EditorTextField(
+                            value = metadata.discNumber,
+                            onValueChange = { onMetadataChange(metadata.copy(discNumber = it)) },
+                            labelRes = localesR.string.core_locales_disc_number_label,
+                            keyboardType = KeyboardType.Number,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
 
                     EditorTextField(
                         value = metadata.comment,
