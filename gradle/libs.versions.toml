@@ -5,7 +5,6 @@ androidGradlePlugin = "9.4.1"
 androidxActivityCompose = "1.13.0"
 androidxAppCompat = "1.8.0"
 androidxBrowser = "1.10.0"
-androidxComposeMaterial3 = "1.5.0-alpha29"
 androidxCoreSplashscreen = "1.2.0"
 androidxDataStore = "1.2.1"
 androidxLifecycle = "2.11.0"
@@ -21,9 +20,9 @@ androidxTestRunner = "1.7.0"
 androidxTestUiAutomator = "2.4.0"
 androidxTracing = "2.0.3"
 coilBom = "3.6.3"
-composeBom = "2026.09.00"
+composeBom = "2026.10.00"
 dependencyGuard = "0.5.0"
-firebaseBom = "34.19.0"
+firebaseBom = "35.0.0"
 firebaseCrashlyticsPlugin = "3.0.8"
 firebasePerfPlugin = "2.0.2"
 gmsPlugin = "4.5.0"
@@ -53,7 +52,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom-beta", version.ref = "composeBom" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
