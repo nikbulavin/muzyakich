@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,8 +17,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -25,6 +28,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -59,6 +63,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazePerformanceMode
+import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.blur.materials.HazeMaterials
 import dev.chrisbanes.haze.hazeSource
@@ -284,27 +289,56 @@ fun MuzApp(
                     CompositionLocalProvider(
                         LocalSnackbarHostState provides snackbarHostState,
                     ) {
-                        NavDisplay(
-                            modifier = Modifier.hazeSource(hazeState),
-                            entries = appState.navigationState.toEntries(entryProvider),
-                            onBack = navigator::goBack,
-                            transitionSpec = {
-                                slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } togetherWith
-                                        slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it }
-                            },
-                            popTransitionSpec = {
-                                slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
-                                        slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
-                            },
-                            predictivePopTransitionSpec = {
-                                slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
-                                        slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
-                            },
-                            sharedTransitionScope = LocalSharedTransitionScope.current,
-                            sceneStrategies = listOf(
-                                remember { BottomSheetSceneStrategy() },
-                            ),
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            NavDisplay(
+                                modifier = Modifier.hazeSource(hazeState),
+                                entries = appState.navigationState.toEntries(entryProvider),
+                                onBack = navigator::goBack,
+                                transitionSpec = {
+                                    slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } togetherWith
+                                            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it }
+                                },
+                                popTransitionSpec = {
+                                    slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
+                                            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
+                                },
+                                predictivePopTransitionSpec = {
+                                    slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } togetherWith
+                                            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it }
+                                },
+                                sharedTransitionScope = LocalSharedTransitionScope.current,
+                                sceneStrategies = listOf(
+                                    remember { BottomSheetSceneStrategy() },
+                                ),
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 8.dp)
+                                    .align(Alignment.TopCenter)
+                                    .hazeBlur(
+                                        input = HazeInput.Sources(hazeState),
+                                        style = HazeMaterials
+                                            .regular(MaterialTheme.colorScheme.surface)
+                                            .then {
+                                                blurEnabled(true)
+                                                blurRadius(24.dp)
+                                                noiseFactor(0f)
+                                                progressive(
+                                                    HazeProgressive.verticalGradient(
+                                                        easing = EaseOut,
+                                                        startIntensity = 1f,
+                                                        endIntensity = 0f,
+                                                    ),
+                                                )
+                                            },
+                                        performanceMode = HazePerformanceMode.Default,
+                                    ),
+                            )
+                        }
                     }
                 }
             }

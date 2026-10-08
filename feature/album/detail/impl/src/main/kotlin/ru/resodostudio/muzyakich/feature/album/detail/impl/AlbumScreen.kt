@@ -50,8 +50,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -130,7 +128,7 @@ private fun AlbumScreen(
             val listState = rememberLazyGridState()
             val isScrolled by remember {
                 derivedStateOf {
-                    listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 250
+                    listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 850
                 }
             }
             DynamicMuzTheme(
@@ -138,82 +136,82 @@ private fun AlbumScreen(
             ) {
                 with(LocalSharedTransitionScope.current) {
                     Scaffold(
-                    topBar = {
-                        AlbumTopAppBar(
-                            title = albumUiState.album.title,
-                            isScrolled = isScrolled,
-                            songs = albumUiState.album.songs,
-                            onBackClick = onBackClick,
-                            onPlaySongsNextClick = onPlaySongsNextClick,
-                            onRemoveSongsClick = onRemoveSongsClick,
-                            scrollBehavior = scrollBehavior,
-                        )
-                    },
-                    modifier = modifier
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .sharedBounds(
-                            sharedContentState = rememberSharedContentState(
-                                key = SharedElementKey(
-                                    id = albumUiState.album.id.toString(),
-                                    origin = albumUiState.album.id.toString(),
-                                    type = SharedElementType.Bounds,
+                        topBar = {
+                            AlbumTopAppBar(
+                                title = albumUiState.album.title,
+                                isScrolled = isScrolled,
+                                songs = albumUiState.album.songs,
+                                onBackClick = onBackClick,
+                                onPlaySongsNextClick = onPlaySongsNextClick,
+                                onRemoveSongsClick = onRemoveSongsClick,
+                                scrollBehavior = scrollBehavior,
+                            )
+                        },
+                        modifier = modifier
+                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                            .sharedBounds(
+                                sharedContentState = rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = albumUiState.album.id.toString(),
+                                        origin = albumUiState.album.id.toString(),
+                                        type = SharedElementType.Bounds,
+                                    ),
                                 ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                             ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                        ),
-                ) { paddingValues ->
-                    LazyVerticalGrid(
-                        state = listState,
-                        columns = GridCells.Adaptive(300.dp),
-                        contentPadding = PaddingValues(
-                            bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                        ),
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        header(
-                            album = albumUiState.album,
-                        )
-                        actionButtons(
-                            onPlaySongsClick = {
-                                onPlaySongsClick(
-                                    albumUiState.album.songs,
-                                    0,
-                                    false,
-                                )
-                            },
-                            onShuffleSongsClick = {
-                                onPlaySongsClick(
-                                    albumUiState.album.songs,
-                                    0,
-                                    true,
-                                )
-                            },
-                        )
-                        groupedSongs(
-                            songs = albumUiState.album.songs,
-                            currentMediaId = albumUiState.nowPlayingState.mediaId,
-                            isPlaying = albumUiState.nowPlayingState.isPlaying,
-                            onPlaySongsClick = { songs, index ->
-                                onPlaySongsClick(songs, index, false)
-                            },
-                            onSongMenuClick = onSongMenuClick,
-                            onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-                            onSongRemove = onSongRemove,
-                        )
-                        songsInfo(
-                            songs = albumUiState.album.songs,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
+                    ) { paddingValues ->
+                        LazyVerticalGrid(
+                            state = listState,
+                            columns = GridCells.Adaptive(300.dp),
+                            contentPadding = PaddingValues(
+                                bottom = 104.dp + paddingValues.calculateBottomPadding(),
+                            ),
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            header(
+                                album = albumUiState.album,
+                            )
+                            actionButtons(
+                                onPlaySongsClick = {
+                                    onPlaySongsClick(
+                                        albumUiState.album.songs,
+                                        0,
+                                        false,
+                                    )
+                                },
+                                onShuffleSongsClick = {
+                                    onPlaySongsClick(
+                                        albumUiState.album.songs,
+                                        0,
+                                        true,
+                                    )
+                                },
+                            )
+                            groupedSongs(
+                                songs = albumUiState.album.songs,
+                                currentMediaId = albumUiState.nowPlayingState.mediaId,
+                                isPlaying = albumUiState.nowPlayingState.isPlaying,
+                                onPlaySongsClick = { songs, index ->
+                                    onPlaySongsClick(songs, index, false)
+                                },
+                                onSongMenuClick = onSongMenuClick,
+                                onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+                                onSongRemove = onSongRemove,
+                            )
+                            songsInfo(
+                                songs = albumUiState.album.songs,
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}
 }
 
 private fun LazyGridScope.groupedSongs(
@@ -286,7 +284,6 @@ private fun LazyGridScope.header(album: Album) {
     item(span = { GridItemSpan(maxLineSpan) }) {
         with(LocalSharedTransitionScope.current) {
             Column {
-                val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
                 val artworkUri = album.songs.firstOrNull()?.artworkUri
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -311,16 +308,6 @@ private fun LazyGridScope.header(album: Album) {
                         .padding(bottom = 16.dp)
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .drawWithCache {
-                            val brush = Brush.verticalGradient(
-                                colors = listOf(brushColor, Color.Transparent),
-                                endY = 150.dp.toPx(),
-                            )
-                            onDrawWithContent {
-                                drawContent()
-                                drawRect(brush)
-                            }
-                        }
                         .clip(MaterialTheme.shapes.large),
                     error = {
                         Box(
@@ -438,7 +425,8 @@ private fun AlbumTopAppBar(
 ) {
     with(LocalNavAnimatedContentScope.current) {
         with(LocalSharedTransitionScope.current) {
-            val containerColor = if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
+            val containerColor =
+                if (isScrolled) MaterialTheme.colorScheme.surface else Color.Transparent
             CenterAlignedTopAppBar(
                 title = {
                     AnimatedVisibility(
