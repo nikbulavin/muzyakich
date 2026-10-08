@@ -15,9 +15,10 @@ dependencies {
     implementation(projects.feature.song.detail.api)
 
     implementation(libs.androidx.media3.exoPlayer)
-
+    implementation(libs.androidx.navigation3.ui)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
-
-    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.haze)
+    implementation(libs.haze.blur)
+    implementation(libs.haze.blur.materials)
 }

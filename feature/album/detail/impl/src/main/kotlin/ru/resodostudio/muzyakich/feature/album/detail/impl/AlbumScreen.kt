@@ -49,7 +49,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -64,6 +63,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
+import dev.chrisbanes.haze.HazeProgressive
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.materials.HazeMaterials
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.AutoDelete
@@ -308,7 +312,22 @@ private fun LazyGridScope.header(album: Album) {
                         .padding(bottom = 16.dp)
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .clip(MaterialTheme.shapes.large),
+                        .hazeBlur(
+                            input = HazeInput.Content,
+                            style = HazeMaterials
+                                .ultraThick(MaterialTheme.colorScheme.surface)
+                                .then {
+                                    blurEnabled(true)
+                                    blurRadius(32.dp)
+                                    noiseFactor(0f)
+                                    progressive(
+                                        HazeProgressive.verticalGradient(
+                                            startY = 700f,
+                                        )
+                                    )
+                                },
+                            performanceMode = HazePerformanceMode.Default,
+                        ),
                     error = {
                         Box(
                             contentAlignment = Alignment.Center,
