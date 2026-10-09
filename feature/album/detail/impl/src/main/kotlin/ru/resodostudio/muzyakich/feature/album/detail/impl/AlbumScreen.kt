@@ -251,13 +251,12 @@ private fun LazyGridScope.header(album: Album) {
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .padding(bottom = 16.dp),
+                        .aspectRatio(1f),
                 )
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 32.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -590,15 +589,15 @@ private fun AlbumArtworkBackground(
         modifier.hazeBlur(
             input = HazeInput.Content,
             style = HazeMaterials
-                .ultraThick(surfaceColor)
+                .ultraThin(surfaceColor)
                 .then {
                     blurEnabled(true)
-                    blurRadius(36.dp)
+                    blurRadius(50.dp)
                     noiseFactor(0f)
                     progressive(
                         HazeProgressive.verticalGradient(
                             startY = screenWidthPx * 0.65f,
-                            endY = screenWidthPx * 1.0f,
+                            endY = screenWidthPx * 1f,
                         ),
                     )
                 },
@@ -665,6 +664,7 @@ private fun AlbumArtworkBackground(
                             .data(artworkUri)
                             .placeholderMemoryCacheKey(artworkUri.toString())
                             .memoryCacheKey(artworkUri.toString())
+                            .size(128)
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
