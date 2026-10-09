@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -49,10 +51,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -135,8 +141,10 @@ private fun AlbumScreen(
                     listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 850
                 }
             }
+            val artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri
+
             DynamicMuzTheme(
-                artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri,
+                artworkUri = artworkUri,
             ) {
                 with(LocalSharedTransitionScope.current) {
                     Scaffold(
@@ -166,51 +174,252 @@ private fun AlbumScreen(
                                 placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                             ),
                     ) { paddingValues ->
-                        LazyVerticalGrid(
-                            state = listState,
-                            columns = GridCells.Adaptive(300.dp),
-                            contentPadding = PaddingValues(
-                                bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                            ),
+                        Box(
                             modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            header(
-                                album = albumUiState.album,
+                            AlbumArtworkBackground(
+                                artworkUri = artworkUri,
+                                albumId = albumUiState.album.id.toString(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .graphicsLayer {
+                                        val firstVisible = listState.layoutInfo.visibleItemsInfo
+                                            .firstOrNull { it.index == 0 }
+                                        translationY = firstVisible?.offset?.y?.toFloat() ?: -10000f
+                                    },
                             )
-                            actionButtons(
-                                onPlaySongsClick = {
-                                    onPlaySongsClick(
-                                        albumUiState.album.songs,
-                                        0,
-                                        false,
-                                    )
-                                },
-                                onShuffleSongsClick = {
-                                    onPlaySongsClick(
-                                        albumUiState.album.songs,
-                                        0,
-                                        true,
-                                    )
-                                },
-                            )
-                            groupedSongs(
-                                songs = albumUiState.album.songs,
-                                currentMediaId = albumUiState.nowPlayingState.mediaId,
-                                isPlaying = albumUiState.nowPlayingState.isPlaying,
-                                onPlaySongsClick = { songs, index ->
-                                    onPlaySongsClick(songs, index, false)
-                                },
-                                onSongMenuClick = onSongMenuClick,
-                                onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-                                onSongRemove = onSongRemove,
-                            )
-                            songsInfo(
-                                songs = albumUiState.album.songs,
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                            )
+                            LazyVerticalGrid(
+                                state = listState,
+                                columns = GridCells.Adaptive(300.dp),
+                                contentPadding = PaddingValues(
+                                    bottom = 104.dp + paddingValues.calculateBottomPadding(),
+                                ),
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                header(
+                                    album = albumUiState.album,
+                                )
+                                actionButtons(
+                                    onPlaySongsClick = {
+                                        onPlaySongsClick(
+                                            albumUiState.album.songs,
+                                            0,
+                                            false,
+                                        )
+                                    },
+                                    onShuffleSongsClick = {
+                                        onPlaySongsClick(
+                                            albumUiState.album.songs,
+                                            0,
+                                            true,
+                                        )
+                                    },
+                                )
+                                groupedSongs(
+                                    songs = albumUiState.album.songs,
+                                    currentMediaId = albumUiState.nowPlayingState.mediaId,
+                                    isPlaying = albumUiState.nowPlayingState.isPlaying,
+                                    onPlaySongsClick = { songs, index ->
+                                        onPlaySongsClick(songs, index, false)
+                                    },
+                                    onSongMenuClick = onSongMenuClick,
+                                    onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+                                    onSongRemove = onSongRemove,
+                                )
+                                songsInfo(
+                                    songs = albumUiState.album.songs,
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                )
+                            }
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AlbumArtworkBackground(
+    artworkUri: Any?,
+    albumId: String,
+    modifier: Modifier = Modifier,
+) {
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenWidthPx = with(density) { windowInfo.containerDpSize.width.toPx() }
+    val surfaceColor = MaterialTheme.colorScheme.surface
+
+    with(LocalSharedTransitionScope.current) {
+        Column(
+            modifier = modifier.hazeBlur(
+                input = HazeInput.Content,
+                style = HazeMaterials
+                    .ultraThick(surfaceColor)
+                    .then {
+                        blurEnabled(true)
+                        blurRadius(40.dp)
+                        noiseFactor(0f)
+                        progressive(
+                            HazeProgressive.verticalGradient(
+                                startY = screenWidthPx * 0.65f,
+                                endY = screenWidthPx * 1f,
+                            ),
+                        )
+                    },
+                performanceMode = HazePerformanceMode.Default,
+            ),
+        ) {
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(artworkUri)
+                    .placeholderMemoryCacheKey(artworkUri.toString())
+                    .memoryCacheKey(artworkUri.toString())
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey(
+                                id = albumId,
+                                origin = artworkUri.toString(),
+                                type = SharedElementType.Artwork,
+                            ),
+                        ),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        renderInOverlayDuringTransition = false,
+                    ),
+                error = { AlbumPlaceholder() },
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .offset(y = (-1).dp),
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(artworkUri)
+                        .placeholderMemoryCacheKey(artworkUri.toString())
+                        .memoryCacheKey(artworkUri.toString())
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            scaleY = -1f
+                        },
+                    error = { AlbumPlaceholder() },
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                0.0f to Color.Transparent,
+                                0.45f to surfaceColor.copy(alpha = 0.5f),
+                                0.95f to surfaceColor,
+                            ),
+                        ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AlbumPlaceholder(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Icon(
+            imageVector = MuzIcons.Rounded.Album,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(0.35f),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+private fun LazyGridScope.header(album: Album) {
+    item(span = { GridItemSpan(maxLineSpan) }) {
+        with(LocalSharedTransitionScope.current) {
+            Column {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .padding(bottom = 16.dp),
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = album.title,
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .sharedBounds(
+                                rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = album.id.toString(),
+                                        origin = album.title,
+                                        type = SharedElementType.Title,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            ),
+                    )
+                    Text(
+                        text = album.artist,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .sharedBounds(
+                                rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = album.id.toString(),
+                                        origin = album.artist,
+                                        type = SharedElementType.Artist,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            ),
+                    )
+                    val labels = listOfNotNull(album.genre, album.year)
+                    if (labels.isNotEmpty()) {
+                        Text(
+                            text = labels.joinToString(" • "),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 4.dp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }
@@ -281,133 +490,6 @@ private fun LazyGridScope.groupedSongs(
             },
             endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
         )
-    }
-}
-
-private fun LazyGridScope.header(album: Album) {
-    item(span = { GridItemSpan(maxLineSpan) }) {
-        with(LocalSharedTransitionScope.current) {
-            Column {
-                val artworkUri = album.songs.firstOrNull()?.artworkUri
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(artworkUri)
-                        .placeholderMemoryCacheKey(artworkUri.toString())
-                        .memoryCacheKey(artworkUri.toString())
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState = rememberSharedContentState(
-                                key = SharedElementKey(
-                                    id = album.id.toString(),
-                                    origin = artworkUri.toString(),
-                                    type = SharedElementType.Artwork,
-                                ),
-                            ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        )
-                        .padding(bottom = 16.dp)
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .hazeBlur(
-                            input = HazeInput.Content,
-                            style = HazeMaterials
-                                .ultraThick(MaterialTheme.colorScheme.surface)
-                                .then {
-                                    blurEnabled(true)
-                                    blurRadius(32.dp)
-                                    noiseFactor(0f)
-                                    progressive(
-                                        HazeProgressive.verticalGradient(
-                                            startY = 700f,
-                                        )
-                                    )
-                                },
-                            performanceMode = HazePerformanceMode.Default,
-                        ),
-                    error = {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.Album,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(0.35f),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        text = album.title,
-                        style = MaterialTheme.typography.headlineMedium,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .sharedBounds(
-                                rememberSharedContentState(
-                                    key = SharedElementKey(
-                                        id = album.id.toString(),
-                                        origin = album.title,
-                                        type = SharedElementType.Title,
-                                    ),
-                                ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            ),
-                    )
-                    Text(
-                        text = album.artist,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.secondary,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .sharedBounds(
-                                rememberSharedContentState(
-                                    key = SharedElementKey(
-                                        id = album.id.toString(),
-                                        origin = album.artist,
-                                        type = SharedElementType.Artist,
-                                    ),
-                                ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            ),
-                    )
-                    val labels = listOfNotNull(album.genre, album.year)
-                    if (labels.isNotEmpty()) {
-                        Text(
-                            text = labels.joinToString(" • "),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 4.dp),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-            }
-        }
     }
 }
 
