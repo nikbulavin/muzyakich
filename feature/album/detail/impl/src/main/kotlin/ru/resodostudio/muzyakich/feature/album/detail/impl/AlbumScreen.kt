@@ -1,6 +1,7 @@
 package ru.resodostudio.muzyakich.feature.album.detail.impl
 
 import android.app.Activity.RESULT_OK
+import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -19,7 +20,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -51,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -183,9 +184,11 @@ private fun AlbumScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .graphicsLayer {
-                                        val firstVisible = listState.layoutInfo.visibleItemsInfo
-                                            .firstOrNull { it.index == 0 }
-                                        translationY = firstVisible?.offset?.y?.toFloat() ?: -10000f
+                                        translationY = if (listState.firstVisibleItemIndex == 0) {
+                                            -listState.firstVisibleItemScrollOffset.toFloat()
+                                        } else {
+                                            -10000f
+                                        }
                                     },
                             )
                             LazyVerticalGrid(
@@ -238,116 +241,6 @@ private fun AlbumScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun AlbumArtworkBackground(
-    artworkUri: Any?,
-    albumId: String,
-    modifier: Modifier = Modifier,
-) {
-    val density = LocalDensity.current
-    val windowInfo = LocalWindowInfo.current
-    val screenWidthPx = with(density) { windowInfo.containerDpSize.width.toPx() }
-    val surfaceColor = MaterialTheme.colorScheme.surface
-
-    with(LocalSharedTransitionScope.current) {
-        Column(
-            modifier = modifier.hazeBlur(
-                input = HazeInput.Content,
-                style = HazeMaterials
-                    .ultraThick(surfaceColor)
-                    .then {
-                        blurEnabled(true)
-                        blurRadius(40.dp)
-                        noiseFactor(0f)
-                        progressive(
-                            HazeProgressive.verticalGradient(
-                                startY = screenWidthPx * 0.65f,
-                                endY = screenWidthPx * 1f,
-                            ),
-                        )
-                    },
-                performanceMode = HazePerformanceMode.Default,
-            ),
-        ) {
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(artworkUri)
-                    .placeholderMemoryCacheKey(artworkUri.toString())
-                    .memoryCacheKey(artworkUri.toString())
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .sharedBounds(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = albumId,
-                                origin = artworkUri.toString(),
-                                type = SharedElementType.Artwork,
-                            ),
-                        ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        renderInOverlayDuringTransition = false,
-                    ),
-                error = { AlbumPlaceholder() },
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .offset(y = (-1).dp),
-            ) {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(artworkUri)
-                        .placeholderMemoryCacheKey(artworkUri.toString())
-                        .memoryCacheKey(artworkUri.toString())
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            scaleY = -1f
-                        },
-                    error = { AlbumPlaceholder() },
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                0.0f to Color.Transparent,
-                                0.45f to surfaceColor.copy(alpha = 0.5f),
-                                0.95f to surfaceColor,
-                            ),
-                        ),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AlbumPlaceholder(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant),
-    ) {
-        Icon(
-            imageVector = MuzIcons.Rounded.Album,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(0.35f),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 
@@ -512,6 +405,23 @@ private fun LazyGridScope.actionButtons(
     }
 }
 
+@Composable
+private fun AlbumPlaceholder(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Icon(
+            imageVector = MuzIcons.Rounded.Album,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(0.35f),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AlbumTopAppBar(
@@ -658,6 +568,138 @@ private fun AlbumDropdownMenu(
                 },
                 colors = MenuDefaults.itemVibrantColors(),
             )
+        }
+    }
+}
+
+@Composable
+private fun AlbumArtworkBackground(
+    artworkUri: Any?,
+    albumId: String,
+    modifier: Modifier = Modifier,
+) {
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenWidthPx = with(density) { windowInfo.containerDpSize.width.toPx() }
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
+
+    val isBlurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+    val containerModifier = if (isBlurSupported) {
+        modifier.hazeBlur(
+            input = HazeInput.Content,
+            style = HazeMaterials
+                .ultraThick(surfaceColor)
+                .then {
+                    blurEnabled(true)
+                    blurRadius(36.dp)
+                    noiseFactor(0f)
+                    progressive(
+                        HazeProgressive.verticalGradient(
+                            startY = screenWidthPx * 0.65f,
+                            endY = screenWidthPx * 1.0f,
+                        ),
+                    )
+                },
+            performanceMode = HazePerformanceMode.Default,
+        )
+    } else {
+        modifier
+    }
+
+    with(LocalSharedTransitionScope.current) {
+        Column(
+            modifier = containerModifier,
+        ) {
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(artworkUri)
+                    .placeholderMemoryCacheKey(artworkUri.toString())
+                    .memoryCacheKey(artworkUri.toString())
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey(
+                                id = albumId,
+                                origin = artworkUri.toString(),
+                                type = SharedElementType.Artwork,
+                            ),
+                        ),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        renderInOverlayDuringTransition = false,
+                    )
+                    .then(
+                        if (!isBlurSupported) {
+                            Modifier.drawWithContent {
+                                drawContent()
+                                drawRect(
+                                    brush = Brush.verticalGradient(
+                                        startY = size.height * 0.65f,
+                                        endY = size.height,
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            surfaceContainerColor,
+                                        ),
+                                    ),
+                                )
+                            }
+                        } else Modifier
+                    ),
+                error = { AlbumPlaceholder() },
+            )
+            if (isBlurSupported) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                ) {
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(artworkUri)
+                            .placeholderMemoryCacheKey(artworkUri.toString())
+                            .memoryCacheKey(artworkUri.toString())
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                scaleY = -1f
+                            },
+                        error = { AlbumPlaceholder() },
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    0.0f to Color.Transparent,
+                                    0.45f to surfaceColor.copy(alpha = 0.5f),
+                                    0.95f to surfaceColor,
+                                ),
+                            ),
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .background(
+                            Brush.verticalGradient(
+                                0.0f to surfaceContainerColor,
+                                0.75f to surfaceColor,
+                            ),
+                        ),
+                )
+            }
         }
     }
 }
