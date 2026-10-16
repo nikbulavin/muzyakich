@@ -18,7 +18,4 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
-    implementation(libs.haze)
-    implementation(libs.haze.blur)
-    implementation(libs.haze.blur.materials)
 }
