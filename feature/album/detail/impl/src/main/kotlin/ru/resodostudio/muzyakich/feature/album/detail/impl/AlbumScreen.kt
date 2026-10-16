@@ -44,17 +44,22 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -75,6 +80,7 @@ import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.blur.materials.HazeMaterials
+import kotlinx.coroutines.delay
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.AutoDelete
@@ -95,6 +101,7 @@ import ru.resodostudio.muzyakich.core.ui.rememberDeleteSwipeAction
 import ru.resodostudio.muzyakich.core.ui.rememberPlaylistPlaySwipeAction
 import ru.resodostudio.muzyakich.core.ui.songs
 import ru.resodostudio.muzyakich.core.ui.songsInfo
+import kotlin.time.Duration.Companion.milliseconds
 import ru.resodostudio.muzyakich.core.locales.R as localesR
 
 @Composable
@@ -142,7 +149,17 @@ private fun AlbumScreen(
                     listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 850
                 }
             }
-            val artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri
+            val songs = albumUiState.album.songs
+            val artworkUri = songs.firstOrNull()?.artworkUri
+
+            val groupedSongs = remember(songs) {
+                songs.groupBy { it.trackNumber / 1000 }
+            }
+            val hasMultipleDiscs = remember(songs, groupedSongs) {
+                songs.isNotEmpty() &&
+                        songs.all { it.trackNumber >= 1000 } &&
+                        groupedSongs.size > 1
+            }
 
             DynamicMuzTheme(
                 artworkUri = artworkUri,
@@ -153,7 +170,7 @@ private fun AlbumScreen(
                             AlbumTopAppBar(
                                 title = albumUiState.album.title,
                                 isScrolled = isScrolled,
-                                songs = albumUiState.album.songs,
+                                songs = songs,
                                 onBackClick = onBackClick,
                                 onPlaySongsNextClick = onPlaySongsNextClick,
                                 onRemoveSongsClick = onRemoveSongsClick,
@@ -184,11 +201,13 @@ private fun AlbumScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .graphicsLayer {
-                                        translationY = if (listState.firstVisibleItemIndex == 0) {
+                                        val isHeaderVisible = listState.firstVisibleItemIndex == 0
+                                        translationY = if (isHeaderVisible) {
                                             -listState.firstVisibleItemScrollOffset.toFloat()
                                         } else {
                                             -10000f
                                         }
+                                        alpha = if (isHeaderVisible) 1f else 0f
                                     },
                             )
                             LazyVerticalGrid(
@@ -207,32 +226,34 @@ private fun AlbumScreen(
                                 actionButtons(
                                     onPlaySongsClick = {
                                         onPlaySongsClick(
-                                            albumUiState.album.songs,
+                                            songs,
                                             0,
                                             false,
                                         )
                                     },
                                     onShuffleSongsClick = {
                                         onPlaySongsClick(
-                                            albumUiState.album.songs,
+                                            songs,
                                             0,
                                             true,
                                         )
                                     },
                                 )
                                 groupedSongs(
-                                    songs = albumUiState.album.songs,
+                                    songs = songs,
+                                    groupedSongs = groupedSongs,
+                                    hasMultipleDiscs = hasMultipleDiscs,
                                     currentMediaId = albumUiState.nowPlayingState.mediaId,
                                     isPlaying = albumUiState.nowPlayingState.isPlaying,
-                                    onPlaySongsClick = { songs, index ->
-                                        onPlaySongsClick(songs, index, false)
+                                    onPlaySongsClick = { songsToPlay, index ->
+                                        onPlaySongsClick(songsToPlay, index, false)
                                     },
                                     onSongMenuClick = onSongMenuClick,
                                     onSongLeftToRightSwipe = onSongLeftToRightSwipe,
                                     onSongRemove = onSongRemove,
                                 )
                                 songsInfo(
-                                    songs = albumUiState.album.songs,
+                                    songs = songs,
                                     modifier = Modifier.padding(horizontal = 16.dp),
                                 )
                             }
@@ -321,6 +342,8 @@ private fun LazyGridScope.header(album: Album) {
 
 private fun LazyGridScope.groupedSongs(
     songs: List<Song>,
+    groupedSongs: Map<Int, List<Song>>,
+    hasMultipleDiscs: Boolean,
     currentMediaId: String?,
     isPlaying: Boolean,
     onPlaySongsClick: (List<Song>, Int) -> Unit,
@@ -328,11 +351,6 @@ private fun LazyGridScope.groupedSongs(
     onSongLeftToRightSwipe: (Song) -> Unit = {},
     onSongRemove: (String) -> Unit = {},
 ) {
-    val groupedSongs = songs.groupBy { it.trackNumber / 1000 }
-    val hasMultipleDiscs = songs.isNotEmpty() &&
-            songs.all { it.trackNumber >= 1000 } &&
-            groupedSongs.size > 1
-
     if (hasMultipleDiscs) {
         groupedSongs.forEach { (discNumber, groupSongs) ->
             item(span = { GridItemSpan(maxLineSpan) }) {
@@ -577,6 +595,7 @@ private fun AlbumArtworkBackground(
     albumId: String,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val density = LocalDensity.current
     val windowInfo = LocalWindowInfo.current
     val screenWidthPx = with(density) { windowInfo.containerDpSize.width.toPx() }
@@ -584,41 +603,90 @@ private fun AlbumArtworkBackground(
     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
 
     val isBlurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val artworkKey = artworkUri.toString()
 
-    val containerModifier = if (isBlurSupported) {
-        modifier.hazeBlur(
-            input = HazeInput.Content,
-            style = HazeMaterials
-                .ultraThin(surfaceColor)
-                .then {
-                    blurEnabled(true)
-                    blurRadius(50.dp)
-                    noiseFactor(0f)
-                    progressive(
-                        HazeProgressive.verticalGradient(
-                            startY = screenWidthPx * 0.65f,
-                            endY = screenWidthPx * 1f,
-                        ),
-                    )
-                },
-            performanceMode = HazePerformanceMode.Default,
-        )
-    } else {
-        modifier
+    val mainImageRequest = remember(context, artworkUri) {
+        ImageRequest.Builder(context)
+            .data(artworkUri)
+            .placeholderMemoryCacheKey(artworkKey)
+            .memoryCacheKey(artworkKey)
+            .build()
+    }
+
+    val ultraThinStyle = HazeMaterials.ultraThin(surfaceColor)
+    val blurStyle = remember(ultraThinStyle, screenWidthPx) {
+        ultraThinStyle.then {
+            blurEnabled(true)
+            blurRadius(50.dp)
+            noiseFactor(0f)
+            progressive(
+                HazeProgressive.verticalGradient(
+                    startY = screenWidthPx * 0.65f,
+                    endY = screenWidthPx * 1f,
+                ),
+            )
+        }
     }
 
     with(LocalSharedTransitionScope.current) {
+        val captureLayer = rememberGraphicsLayer()
+        var isMainSettled by remember(artworkUri) { mutableStateOf(false) }
+        var isMirrorSettled by remember(artworkUri) { mutableStateOf(false) }
+        var cachedBitmap by remember(artworkUri) { mutableStateOf<ImageBitmap?>(null) }
+
+        val isTransitioning = isTransitionActive
+
+        LaunchedEffect(
+            isBlurSupported,
+            artworkUri,
+            surfaceColor,
+            isMainSettled,
+            isMirrorSettled,
+            isTransitioning,
+        ) {
+            cachedBitmap = null
+            if (isBlurSupported && isMainSettled && isMirrorSettled && !isTransitioning) {
+                delay(100.milliseconds)
+                withFrameNanos { }
+                if (captureLayer.size.width > 0 && captureLayer.size.height > 0) {
+                    runCatching {
+                        cachedBitmap = captureLayer.toImageBitmap()
+                    }
+                }
+            }
+        }
+
+        val containerModifier = if (isBlurSupported) {
+            modifier
+                .drawWithContent {
+                    val bitmap = cachedBitmap
+                    if (bitmap != null && !isTransitioning) {
+                        drawImage(bitmap)
+                    } else {
+                        captureLayer.record {
+                            this@drawWithContent.drawContent()
+                        }
+                        drawLayer(captureLayer)
+                    }
+                }
+                .hazeBlur(
+                    input = HazeInput.Content,
+                    style = blurStyle,
+                    performanceMode = HazePerformanceMode.Default,
+                )
+        } else {
+            modifier
+        }
+
         Column(
             modifier = containerModifier,
         ) {
             SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(artworkUri)
-                    .placeholderMemoryCacheKey(artworkUri.toString())
-                    .memoryCacheKey(artworkUri.toString())
-                    .build(),
+                model = mainImageRequest,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
+                onSuccess = { isMainSettled = true },
+                onError = { isMainSettled = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
@@ -626,7 +694,7 @@ private fun AlbumArtworkBackground(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = albumId,
-                                origin = artworkUri.toString(),
+                                origin = artworkKey,
                                 type = SharedElementType.Artwork,
                             ),
                         ),
@@ -649,25 +717,40 @@ private fun AlbumArtworkBackground(
                                     ),
                                 )
                             }
-                        } else Modifier
+                        } else {
+                            Modifier
+                        }
                     ),
                 error = { AlbumPlaceholder() },
             )
             if (isBlurSupported) {
+                val mirroredImageRequest = remember(context, artworkUri) {
+                    ImageRequest.Builder(context)
+                        .data(artworkUri)
+                        .placeholderMemoryCacheKey(artworkKey)
+                        .memoryCacheKey("${artworkKey}_128")
+                        .size(128)
+                        .build()
+                }
+                val bottomOverlayBrush = remember(surfaceColor) {
+                    Brush.verticalGradient(
+                        0.0f to Color.Transparent,
+                        0.45f to surfaceColor.copy(alpha = 0.5f),
+                        0.95f to surfaceColor,
+                    )
+                }
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f),
                 ) {
                     SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(artworkUri)
-                            .placeholderMemoryCacheKey(artworkUri.toString())
-                            .memoryCacheKey(artworkUri.toString())
-                            .size(128)
-                            .build(),
+                        model = mirroredImageRequest,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
+                        onSuccess = { isMirrorSettled = true },
+                        onError = { isMirrorSettled = true },
                         modifier = Modifier
                             .fillMaxSize()
                             .graphicsLayer {
@@ -678,26 +761,21 @@ private fun AlbumArtworkBackground(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    0.0f to Color.Transparent,
-                                    0.45f to surfaceColor.copy(alpha = 0.5f),
-                                    0.95f to surfaceColor,
-                                ),
-                            ),
+                            .background(bottomOverlayBrush),
                     )
                 }
             } else {
+                val fallbackBrush = remember(surfaceContainerColor, surfaceColor) {
+                    Brush.verticalGradient(
+                        0.0f to surfaceContainerColor,
+                        0.75f to surfaceColor,
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .background(
-                            Brush.verticalGradient(
-                                0.0f to surfaceContainerColor,
-                                0.75f to surfaceColor,
-                            ),
-                        ),
+                        .background(fallbackBrush),
                 )
             }
         }
