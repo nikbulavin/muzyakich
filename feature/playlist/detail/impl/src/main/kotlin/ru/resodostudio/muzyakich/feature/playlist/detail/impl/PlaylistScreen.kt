@@ -5,11 +5,11 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,13 +45,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,8 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import coil3.compose.SubcomposeAsyncImage
-import coil3.request.ImageRequest
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.Delete
@@ -77,6 +71,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransition
 import ru.resodostudio.muzyakich.core.model.Playlist
 import ru.resodostudio.muzyakich.core.model.PlaylistSong
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.ui.ArtworkBackground
 import ru.resodostudio.muzyakich.core.ui.DeleteConfirmationDialog
 import ru.resodostudio.muzyakich.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.ui.PlayShuffleButtonGroup
@@ -112,6 +107,7 @@ internal fun PlaylistScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlaylistScreen(
     playlistUiState: PlaylistUiState,
@@ -134,7 +130,7 @@ private fun PlaylistScreen(
                 val listState = rememberLazyGridState()
                 val isScrolled by remember {
                     derivedStateOf {
-                        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 250
+                        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 850
                     }
                 }
 
@@ -150,17 +146,24 @@ private fun PlaylistScreen(
                     )
                 }
 
+                val playlist = playlistUiState.playlist
+                val playlistSongs = playlist.songs
+                val mappedSongs = remember(playlistSongs) {
+                    playlistSongs.map { it.song }
+                }
+                val artworkUri = playlist.coverFilePath
+
                 DynamicMuzTheme(
-                    artworkUri = playlistUiState.playlist.coverFilePath,
+                    artworkUri = artworkUri,
                 ) {
                     Scaffold(
                         topBar = {
                             PlaylistTopAppBar(
-                                title = playlistUiState.playlist.title,
+                                title = playlist.title,
                                 isScrolled = isScrolled,
                                 onBackClick = onBackClick,
-                                onPlaylistEdit = { onPlaylistEdit(playlistUiState.playlist.uuid) },
-                                onPlaySongsNextClick = { onPlaySongsNextClick(playlistUiState.playlist.songs) },
+                                onPlaylistEdit = { onPlaylistEdit(playlist.uuid) },
+                                onPlaySongsNextClick = { onPlaySongsNextClick(playlistSongs) },
                                 onPlaylistDelete = onPlaylistDelete,
                                 scrollBehavior = scrollBehavior,
                             )
@@ -169,8 +172,8 @@ private fun PlaylistScreen(
                             .sharedBounds(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
-                                        id = playlistUiState.playlist.uuid.toString(),
-                                        origin = playlistUiState.playlist.uuid.toString(),
+                                        id = playlist.uuid.toString(),
+                                        origin = playlist.uuid.toString(),
                                         type = SharedElementType.Bounds,
                                     ),
                                 ),
@@ -180,53 +183,73 @@ private fun PlaylistScreen(
                             )
                             .nestedScroll(scrollBehavior.nestedScrollConnection),
                     ) { paddingValues ->
-                        LazyVerticalGrid(
-                            state = listState,
-                            columns = GridCells.Adaptive(300.dp),
-                            contentPadding = PaddingValues(
-                                bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                            ),
+                        Box(
                             modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            header(
-                                playlist = playlistUiState.playlist,
+                            ArtworkBackground(
+                                artworkUri = artworkUri,
+                                sharedElementId = playlist.uuid.toString(),
+                                placeholderIcon = MuzIcons.Rounded.LibraryMusic,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .graphicsLayer {
+                                        val isHeaderVisible = listState.firstVisibleItemIndex == 0
+                                        translationY = if (isHeaderVisible) {
+                                            -listState.firstVisibleItemScrollOffset.toFloat()
+                                        } else {
+                                            -10000f
+                                        }
+                                        alpha = if (isHeaderVisible) 1f else 0f
+                                    },
                             )
-                            actionButtons(
-                                onPlaySongsClick = {
-                                    onPlaySongsClick(playlistUiState.playlist.songs, 0, false)
-                                },
-                                onShuffleSongsClick = {
-                                    onPlaySongsClick(playlistUiState.playlist.songs, 0, true)
-                                },
-                                enabled = playlistUiState.playlist.songs.isNotEmpty(),
-                            )
-                            songs(
-                                playlistSongs = playlistUiState.playlist.songs,
-                                currentMediaId = playlistUiState.nowPlayingState.mediaId,
-                                onPlaySongsClick = { songs, index ->
-                                    onPlaySongsClick(songs, index, false)
-                                },
-                                isPlaying = playlistUiState.nowPlayingState.isPlaying,
-                                onSongMenuClick = onSongMenuClick,
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                startToEndSwipeAction = { song ->
-                                    rememberPlaylistPlaySwipeAction(
-                                        song = song,
-                                        onSwipe = onSongLeftToRightSwipe,
-                                    )
-                                },
-                                endToStartSwipeAction = { playlistSongUuid ->
-                                    rememberRemoveFromPlaylistSwipeAction {
-                                        songToRemove = playlistSongUuid
-                                    }
-                                },
-                            )
-                            songsInfo(
-                                songs = playlistUiState.playlist.songs.map { it.song },
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                            )
+                            LazyVerticalGrid(
+                                state = listState,
+                                columns = GridCells.Adaptive(300.dp),
+                                contentPadding = PaddingValues(
+                                    bottom = 104.dp + paddingValues.calculateBottomPadding(),
+                                ),
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                header(
+                                    playlist = playlist,
+                                )
+                                actionButtons(
+                                    onPlaySongsClick = {
+                                        onPlaySongsClick(playlistSongs, 0, false)
+                                    },
+                                    onShuffleSongsClick = {
+                                        onPlaySongsClick(playlistSongs, 0, true)
+                                    },
+                                    enabled = playlistSongs.isNotEmpty(),
+                                )
+                                songs(
+                                    playlistSongs = playlistSongs,
+                                    currentMediaId = playlistUiState.nowPlayingState.mediaId,
+                                    onPlaySongsClick = { songs, index ->
+                                        onPlaySongsClick(songs, index, false)
+                                    },
+                                    isPlaying = playlistUiState.nowPlayingState.isPlaying,
+                                    onSongMenuClick = onSongMenuClick,
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    startToEndSwipeAction = { song ->
+                                        rememberPlaylistPlaySwipeAction(
+                                            song = song,
+                                            onSwipe = onSongLeftToRightSwipe,
+                                        )
+                                    },
+                                    endToStartSwipeAction = { playlistSongUuid ->
+                                        rememberRemoveFromPlaylistSwipeAction {
+                                            songToRemove = playlistSongUuid
+                                        }
+                                    },
+                                )
+                                songsInfo(
+                                    songs = mappedSongs,
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                )
+                            }
                         }
                     }
                 }
@@ -239,63 +262,15 @@ private fun LazyGridScope.header(playlist: Playlist) {
     item(span = { GridItemSpan(maxLineSpan) }) {
         with(LocalSharedTransitionScope.current) {
             Column {
-                val brushColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
-                val artworkUri = playlist.coverFilePath
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(artworkUri)
-                        .placeholderMemoryCacheKey(artworkUri.toString())
-                        .memoryCacheKey(artworkUri.toString())
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                Spacer(
                     modifier = Modifier
-                        .padding(bottom = 16.dp)
                         .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .sharedBounds(
-                            sharedContentState = rememberSharedContentState(
-                                key = SharedElementKey(
-                                    id = playlist.uuid.toString(),
-                                    origin = artworkUri.toString(),
-                                    type = SharedElementType.Artwork,
-                                ),
-                            ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        )
-                        .drawWithCache {
-                            val brush = Brush.verticalGradient(
-                                colors = listOf(brushColor, Color.Transparent),
-                                endY = 150.dp.toPx(),
-                            )
-                            onDrawWithContent {
-                                drawContent()
-                                drawRect(brush)
-                            }
-                        }
-                        .clip(MaterialTheme.shapes.large),
-                    error = {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.LibraryMusic,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(0.35f),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
+                        .aspectRatio(1f),
                 )
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 32.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -315,6 +290,7 @@ private fun LazyGridScope.header(playlist: Playlist) {
                                     ),
                                 ),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                                 boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                             ),
                     )
@@ -364,7 +340,7 @@ fun LazyGridScope.songs(
             song = playlistSong.song,
             isPlaying = currentMediaId == playlistSong.song.mediaId && isPlaying,
             modifier = modifier.animateItem(),
-            onClick = { onPlaySongsClick(playlistSongs, playlistSongs.indexOf(playlistSong)) },
+            onClick = { onPlaySongsClick(playlistSongs, index) },
             onMenuClick = { onSongMenuClick(playlistSong.song.mediaId) },
             shapes = ListItemDefaults.segmentedShapes(index, playlistSongs.size),
             startToEndSwipeAction = startToEndSwipeAction?.invoke(playlistSong.song),
