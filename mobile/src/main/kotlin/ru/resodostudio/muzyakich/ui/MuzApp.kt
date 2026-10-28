@@ -317,15 +317,15 @@ fun MuzApp(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 8.dp)
+                                    .height(WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 16.dp)
                                     .align(Alignment.TopCenter)
                                     .hazeBlur(
                                         input = HazeInput.Sources(hazeState),
                                         style = HazeMaterials
-                                            .regular(MaterialTheme.colorScheme.surface)
+                                            .ultraThin(MaterialTheme.colorScheme.surface)
                                             .then {
                                                 blurEnabled(true)
-                                                blurRadius(24.dp)
+                                                blurRadius(50.dp)
                                                 noiseFactor(0f)
                                                 progressive(
                                                     HazeProgressive.verticalGradient(

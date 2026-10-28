@@ -18,4 +18,7 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
+    implementation(libs.haze)
+    implementation(libs.haze.blur)
+    implementation(libs.haze.blur.materials)
 }

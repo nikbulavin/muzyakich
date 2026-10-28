@@ -10,11 +10,11 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,10 +49,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -62,8 +61,6 @@ import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import coil3.compose.SubcomposeAsyncImage
-import coil3.request.ImageRequest
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzFilledTonalIconButton
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
 import ru.resodostudio.muzyakich.core.designsystem.icon.filled.AutoDelete
@@ -78,6 +75,7 @@ import ru.resodostudio.muzyakich.core.designsystem.theme.SharedElementType
 import ru.resodostudio.muzyakich.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudio.muzyakich.core.model.Album
 import ru.resodostudio.muzyakich.core.model.Song
+import ru.resodostudio.muzyakich.core.ui.ArtworkBackground
 import ru.resodostudio.muzyakich.core.ui.LoadingState
 import ru.resodostudio.muzyakich.core.ui.PlayShuffleButtonGroup
 import ru.resodostudio.muzyakich.core.ui.rememberDeleteSwipeAction
@@ -131,8 +129,20 @@ private fun AlbumScreen(
                     listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 850
                 }
             }
+            val songs = albumUiState.album.songs
+            val artworkUri = songs.firstOrNull()?.artworkUri
+
+            val groupedSongs = remember(songs) {
+                songs.groupBy { it.trackNumber / 1000 }
+            }
+            val hasMultipleDiscs = remember(songs, groupedSongs) {
+                songs.isNotEmpty() &&
+                        songs.all { it.trackNumber >= 1000 } &&
+                        groupedSongs.size > 1
+            }
+
             DynamicMuzTheme(
-                artworkUri = albumUiState.album.songs.firstOrNull()?.artworkUri,
+                artworkUri = artworkUri,
             ) {
                 with(LocalSharedTransitionScope.current) {
                     Scaffold(
@@ -140,7 +150,7 @@ private fun AlbumScreen(
                             AlbumTopAppBar(
                                 title = albumUiState.album.title,
                                 isScrolled = isScrolled,
-                                songs = albumUiState.album.songs,
+                                songs = songs,
                                 onBackClick = onBackClick,
                                 onPlaySongsNextClick = onPlaySongsNextClick,
                                 onRemoveSongsClick = onRemoveSongsClick,
@@ -162,50 +172,72 @@ private fun AlbumScreen(
                                 placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                             ),
                     ) { paddingValues ->
-                        LazyVerticalGrid(
-                            state = listState,
-                            columns = GridCells.Adaptive(300.dp),
-                            contentPadding = PaddingValues(
-                                bottom = 104.dp + paddingValues.calculateBottomPadding(),
-                            ),
+                        Box(
                             modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            header(
-                                album = albumUiState.album,
+                            ArtworkBackground(
+                                artworkUri = artworkUri,
+                                sharedElementId = albumUiState.album.id.toString(),
+                                placeholderIcon = MuzIcons.Rounded.Album,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .graphicsLayer {
+                                        val isHeaderVisible = listState.firstVisibleItemIndex == 0
+                                        translationY = if (isHeaderVisible) {
+                                            -listState.firstVisibleItemScrollOffset.toFloat()
+                                        } else {
+                                            -10000f
+                                        }
+                                        alpha = if (isHeaderVisible) 1f else 0f
+                                    },
                             )
-                            actionButtons(
-                                onPlaySongsClick = {
-                                    onPlaySongsClick(
-                                        albumUiState.album.songs,
-                                        0,
-                                        false,
-                                    )
-                                },
-                                onShuffleSongsClick = {
-                                    onPlaySongsClick(
-                                        albumUiState.album.songs,
-                                        0,
-                                        true,
-                                    )
-                                },
-                            )
-                            groupedSongs(
-                                songs = albumUiState.album.songs,
-                                currentMediaId = albumUiState.nowPlayingState.mediaId,
-                                isPlaying = albumUiState.nowPlayingState.isPlaying,
-                                onPlaySongsClick = { songs, index ->
-                                    onPlaySongsClick(songs, index, false)
-                                },
-                                onSongMenuClick = onSongMenuClick,
-                                onSongLeftToRightSwipe = onSongLeftToRightSwipe,
-                                onSongRemove = onSongRemove,
-                            )
-                            songsInfo(
-                                songs = albumUiState.album.songs,
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                            )
+                            LazyVerticalGrid(
+                                state = listState,
+                                columns = GridCells.Adaptive(300.dp),
+                                contentPadding = PaddingValues(
+                                    bottom = 104.dp + paddingValues.calculateBottomPadding(),
+                                ),
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                header(
+                                    album = albumUiState.album,
+                                )
+                                actionButtons(
+                                    onPlaySongsClick = {
+                                        onPlaySongsClick(
+                                            songs,
+                                            0,
+                                            false,
+                                        )
+                                    },
+                                    onShuffleSongsClick = {
+                                        onPlaySongsClick(
+                                            songs,
+                                            0,
+                                            true,
+                                        )
+                                    },
+                                )
+                                groupedSongs(
+                                    songs = songs,
+                                    groupedSongs = groupedSongs,
+                                    hasMultipleDiscs = hasMultipleDiscs,
+                                    currentMediaId = albumUiState.nowPlayingState.mediaId,
+                                    isPlaying = albumUiState.nowPlayingState.isPlaying,
+                                    onPlaySongsClick = { songsToPlay, index ->
+                                        onPlaySongsClick(songsToPlay, index, false)
+                                    },
+                                    onSongMenuClick = onSongMenuClick,
+                                    onSongLeftToRightSwipe = onSongLeftToRightSwipe,
+                                    onSongRemove = onSongRemove,
+                                )
+                                songsInfo(
+                                    songs = songs,
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                )
+                            }
                         }
                     }
                 }
@@ -214,122 +246,19 @@ private fun AlbumScreen(
     }
 }
 
-private fun LazyGridScope.groupedSongs(
-    songs: List<Song>,
-    currentMediaId: String?,
-    isPlaying: Boolean,
-    onPlaySongsClick: (List<Song>, Int) -> Unit,
-    onSongMenuClick: (String) -> Unit,
-    onSongLeftToRightSwipe: (Song) -> Unit = {},
-    onSongRemove: (String) -> Unit = {},
-) {
-    val groupedSongs = songs.groupBy { it.trackNumber / 1000 }
-    val hasMultipleDiscs = songs.isNotEmpty() &&
-            songs.all { it.trackNumber >= 1000 } &&
-            groupedSongs.size > 1
-
-    if (hasMultipleDiscs) {
-        groupedSongs.forEach { (discNumber, groupSongs) ->
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Text(
-                    text = stringResource(localesR.string.core_locales_disc_number, discNumber),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(
-                        start = 32.dp,
-                        end = 16.dp,
-                        top = 16.dp,
-                        bottom = 8.dp,
-                    ),
-                )
-            }
-            songs(
-                songs = groupSongs,
-                currentMediaId = currentMediaId,
-                onPlaySongsClick = { _, index ->
-                    val songToPlay = groupSongs[index]
-                    onPlaySongsClick(songs, songs.indexOf(songToPlay))
-                },
-                isPlaying = isPlaying,
-                onSongMenuClick = onSongMenuClick,
-                modifier = Modifier.padding(horizontal = 16.dp),
-                startToEndSwipeAction = { song ->
-                    rememberPlaylistPlaySwipeAction(
-                        song,
-                        onSongLeftToRightSwipe,
-                    )
-                },
-                endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
-            )
-        }
-    } else {
-        songs(
-            songs = songs,
-            currentMediaId = currentMediaId,
-            onPlaySongsClick = onPlaySongsClick,
-            isPlaying = isPlaying,
-            onSongMenuClick = onSongMenuClick,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            startToEndSwipeAction = { song ->
-                rememberPlaylistPlaySwipeAction(
-                    song,
-                    onSongLeftToRightSwipe,
-                )
-            },
-            endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
-        )
-    }
-}
-
 private fun LazyGridScope.header(album: Album) {
     item(span = { GridItemSpan(maxLineSpan) }) {
         with(LocalSharedTransitionScope.current) {
             Column {
-                val artworkUri = album.songs.firstOrNull()?.artworkUri
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(artworkUri)
-                        .placeholderMemoryCacheKey(artworkUri.toString())
-                        .memoryCacheKey(artworkUri.toString())
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                Spacer(
                     modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState = rememberSharedContentState(
-                                key = SharedElementKey(
-                                    id = album.id.toString(),
-                                    origin = artworkUri.toString(),
-                                    type = SharedElementType.Artwork,
-                                ),
-                            ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        )
-                        .padding(bottom = 16.dp)
                         .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .clip(MaterialTheme.shapes.large),
-                    error = {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                        ) {
-                            Icon(
-                                imageVector = MuzIcons.Rounded.Album,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(0.35f),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
+                        .aspectRatio(1f),
                 )
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 32.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -389,6 +318,71 @@ private fun LazyGridScope.header(album: Album) {
                 }
             }
         }
+    }
+}
+
+private fun LazyGridScope.groupedSongs(
+    songs: List<Song>,
+    groupedSongs: Map<Int, List<Song>>,
+    hasMultipleDiscs: Boolean,
+    currentMediaId: String?,
+    isPlaying: Boolean,
+    onPlaySongsClick: (List<Song>, Int) -> Unit,
+    onSongMenuClick: (String) -> Unit,
+    onSongLeftToRightSwipe: (Song) -> Unit = {},
+    onSongRemove: (String) -> Unit = {},
+) {
+    if (hasMultipleDiscs) {
+        groupedSongs.forEach { (discNumber, groupSongs) ->
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(
+                    text = stringResource(localesR.string.core_locales_disc_number, discNumber),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(
+                        start = 32.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 8.dp,
+                    ),
+                )
+            }
+            songs(
+                songs = groupSongs,
+                currentMediaId = currentMediaId,
+                onPlaySongsClick = { _, index ->
+                    val songToPlay = groupSongs[index]
+                    onPlaySongsClick(songs, songs.indexOf(songToPlay))
+                },
+                isPlaying = isPlaying,
+                onSongMenuClick = onSongMenuClick,
+                modifier = Modifier.padding(horizontal = 16.dp),
+                startToEndSwipeAction = { song ->
+                    rememberPlaylistPlaySwipeAction(
+                        song,
+                        onSongLeftToRightSwipe,
+                    )
+                },
+                endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
+                shouldShowArtworks = false,
+            )
+        }
+    } else {
+        songs(
+            songs = songs,
+            currentMediaId = currentMediaId,
+            onPlaySongsClick = onPlaySongsClick,
+            isPlaying = isPlaying,
+            onSongMenuClick = onSongMenuClick,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            startToEndSwipeAction = { song ->
+                rememberPlaylistPlaySwipeAction(
+                    song,
+                    onSongLeftToRightSwipe,
+                )
+            },
+            endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
+            shouldShowArtworks = false,
+        )
     }
 }
 
