@@ -28,7 +28,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -56,6 +55,7 @@ fun SongItem(
     shapes: ListItemShapes,
     modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
+    shouldShowArtwork: Boolean = true,
     onClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     startToEndSwipeAction: SwipeAction? = null,
@@ -87,15 +87,58 @@ fun SongItem(
                 )
             },
             leadingContent = {
-                Box {
-                    val shape = MaterialTheme.shapes.medium
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(MaterialTheme.shapes.medium),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (shouldShowArtwork) {
+                        SubcomposeAsyncImage(
+                            modifier = Modifier.matchParentSize(),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(song.artworkUri)
+                                .size(128)
+                                .memoryCacheKey("${song.mediaUri}_${song.dateModified}")
+                                .diskCacheKey("${song.mediaUri}_${song.dateModified}")
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            error = {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                                ) {
+                                    Icon(
+                                        imageVector = MuzIcons.Rounded.MusicNote,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(32.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            },
+                        )
+                    } else if (!isPlaying) {
+                        Text(
+                            text = (song.trackNumber % 1000).toString(),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                        )
+                    }
+
                     if (isPlaying) {
                         Box(
                             modifier = Modifier
-                                .zIndex(1f)
-                                .size(56.dp)
-                                .clip(shape)
-                                .background(MaterialTheme.colorScheme.surface.copy(0.6f)),
+                                .matchParentSize()
+                                .then(
+                                    if (shouldShowArtwork) {
+                                        Modifier.background(MaterialTheme.colorScheme.surface.copy(0.6f))
+                                    } else {
+                                        Modifier
+                                    },
+                                ),
+                            contentAlignment = Alignment.Center,
                         ) {
                             val dynamicProperties = rememberLottieDynamicProperties(
                                 rememberLottieDynamicProperty(
@@ -113,42 +156,13 @@ fun SongItem(
                                 speed = 0.4f,
                             )
                             LottieAnimation(
-                                modifier = Modifier
-                                    .zIndex(2f)
-                                    .align(Alignment.Center)
-                                    .size(40.dp),
+                                modifier = Modifier.size(40.dp),
                                 composition = lottieComposition,
                                 progress = { progress },
                                 dynamicProperties = dynamicProperties,
                             )
                         }
                     }
-                    SubcomposeAsyncImage(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(shape),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(song.artworkUri)
-                            .size(128)
-                            .memoryCacheKey("${song.mediaUri}_${song.dateModified}")
-                            .diskCacheKey("${song.mediaUri}_${song.dateModified}")
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        error = {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                            ) {
-                                Icon(
-                                    imageVector = MuzIcons.Rounded.MusicNote,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(32.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        },
-                    )
                 }
             },
             trailingContent = {
@@ -173,10 +187,13 @@ fun LazyGridScope.songs(
     onPlaySongsClick: (List<Song>, Int) -> Unit,
     onSongMenuClick: (String) -> Unit,
     isPlaying: Boolean = false,
+    shouldShowArtworks: Boolean = true,
     modifier: Modifier = Modifier,
     startToEndSwipeAction: @Composable ((Song) -> SwipeAction?)? = null,
     endToStartSwipeAction: @Composable ((Song) -> SwipeAction?)? = null,
 ) {
+    val showArtwork = shouldShowArtworks || !songs.all { it.trackNumber > 0 }
+
     itemsIndexed(
         items = songs,
         key = { _, song -> song.mediaId },
@@ -185,8 +202,9 @@ fun LazyGridScope.songs(
         SongItem(
             song = song,
             isPlaying = currentMediaId == song.mediaId && isPlaying,
+            shouldShowArtwork = showArtwork,
             modifier = modifier.animateItem(),
-            onClick = { onPlaySongsClick(songs, songs.indexOf(song)) },
+            onClick = { onPlaySongsClick(songs, index) },
             onMenuClick = { onSongMenuClick(song.mediaId) },
             shapes = ListItemDefaults.segmentedShapes(index, songs.size),
             startToEndSwipeAction = startToEndSwipeAction?.invoke(song),

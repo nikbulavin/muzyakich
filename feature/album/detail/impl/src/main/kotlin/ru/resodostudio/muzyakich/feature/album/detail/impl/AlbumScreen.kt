@@ -363,6 +363,7 @@ private fun LazyGridScope.groupedSongs(
                     )
                 },
                 endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
+                shouldShowArtworks = false,
             )
         }
     } else {
@@ -380,6 +381,7 @@ private fun LazyGridScope.groupedSongs(
                 )
             },
             endToStartSwipeAction = { song -> rememberDeleteSwipeAction(song, onSongRemove) },
+            shouldShowArtworks = false,
         )
     }
 }
