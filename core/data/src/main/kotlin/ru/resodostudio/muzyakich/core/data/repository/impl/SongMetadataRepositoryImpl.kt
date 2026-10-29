@@ -7,6 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3File
 import org.jaudiotagger.tag.FieldKey
@@ -25,6 +26,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.seconds
 
 internal class SongMetadataRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -155,21 +157,15 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                     }
                 }
 
-                suspendCancellableCoroutine { continuation ->
-                    MediaScannerConnection.scanFile(
-                        context,
-                        arrayOf(filePath),
-                        null,
-                    ) { _, _ ->
-                        if (continuation.isActive) {
-                            continuation.resume(Unit)
+                withTimeoutOrNull(3.seconds) {
+                    suspendCancellableCoroutine { continuation ->
+                        MediaScannerConnection.scanFile(context, arrayOf(filePath), null) { _, _ ->
+                            if (continuation.isActive) continuation.resume(Unit)
                         }
                     }
                 }
 
-                if (isArtworkChanged) {
-                    clearArtworkCache()
-                }
+                if (isArtworkChanged) clearArtworkCache()
             } finally {
                 tempFile.delete()
             }
