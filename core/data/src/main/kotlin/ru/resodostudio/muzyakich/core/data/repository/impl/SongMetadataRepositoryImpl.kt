@@ -7,11 +7,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3File
 import org.jaudiotagger.tag.FieldKey
+import org.jaudiotagger.tag.Tag
 import org.jaudiotagger.tag.TagOptionSingleton
 import org.jaudiotagger.tag.id3.ID3v23Tag
+import org.jaudiotagger.tag.id3.valuepair.ImageFormats
 import org.jaudiotagger.tag.images.ArtworkFactory
 import org.jaudiotagger.tag.reference.ID3V2Version
 import ru.resodostudio.muzyakich.core.common.Dispatcher
@@ -23,6 +26,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.seconds
 
 internal class SongMetadataRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -48,7 +52,8 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
 
                 val artworkUri = tag?.firstArtwork?.binaryData?.let { bytes ->
                     clearArtworkCache()
-                    val cacheFile = File(context.cacheDir, "edit_artwork_${System.currentTimeMillis()}.jpg")
+                    val cacheFile =
+                        File(context.cacheDir, "edit_artwork_${System.currentTimeMillis()}.jpg")
                     cacheFile.writeBytes(bytes)
                     cacheFile.toUri().toString()
                 }
@@ -106,17 +111,18 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                     }
                 }
 
-                val audioTag = audioFile.tag ?: audioFile.createDefaultTag().also { audioFile.tag = it }
+                val audioTag = audioFile.tag ?: audioFile.createDefaultTag()
+                    .also { audioFile.tag = it }
 
-                audioTag.setField(FieldKey.TITLE, songMetadata.title)
-                audioTag.setField(FieldKey.ARTIST, songMetadata.artist)
-                audioTag.setField(FieldKey.ALBUM, songMetadata.album)
-                audioTag.setField(FieldKey.ALBUM_ARTIST, songMetadata.albumArtist)
-                audioTag.setField(FieldKey.YEAR, songMetadata.year)
-                audioTag.setField(FieldKey.GENRE, songMetadata.genre)
-                audioTag.setField(FieldKey.TRACK, songMetadata.trackNumber)
-                audioTag.setField(FieldKey.DISC_NO, songMetadata.discNumber)
-                audioTag.setField(FieldKey.COMMENT, songMetadata.comment)
+                audioTag.setOrDeleteField(FieldKey.TITLE, songMetadata.title)
+                audioTag.setOrDeleteField(FieldKey.ARTIST, songMetadata.artist)
+                audioTag.setOrDeleteField(FieldKey.ALBUM, songMetadata.album)
+                audioTag.setOrDeleteField(FieldKey.ALBUM_ARTIST, songMetadata.albumArtist)
+                audioTag.setOrDeleteField(FieldKey.YEAR, songMetadata.year)
+                audioTag.setOrDeleteField(FieldKey.GENRE, songMetadata.genre)
+                audioTag.setOrDeleteField(FieldKey.TRACK, songMetadata.trackNumber)
+                audioTag.setOrDeleteField(FieldKey.DISC_NO, songMetadata.discNumber)
+                audioTag.setOrDeleteField(FieldKey.COMMENT, songMetadata.comment)
 
                 if (isArtworkChanged) {
                     audioTag.deleteArtworkField()
@@ -126,7 +132,8 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                         if (bytes != null && bytes.isNotEmpty()) {
                             val artwork = ArtworkFactory.getNew().apply {
                                 binaryData = bytes
-                                mimeType = "image/jpeg"
+                                mimeType = ImageFormats.getMimeTypeForBinarySignature(bytes)
+                                    ?: "image/jpeg"
                                 pictureType = 3
                             }
                             audioTag.setField(artwork)
@@ -150,21 +157,15 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
                     }
                 }
 
-                suspendCancellableCoroutine { continuation ->
-                    MediaScannerConnection.scanFile(
-                        context,
-                        arrayOf(filePath),
-                        null,
-                    ) { _, _ ->
-                        if (continuation.isActive) {
-                            continuation.resume(Unit)
+                withTimeoutOrNull(3.seconds) {
+                    suspendCancellableCoroutine { continuation ->
+                        MediaScannerConnection.scanFile(context, arrayOf(filePath), null) { _, _ ->
+                            if (continuation.isActive) continuation.resume(Unit)
                         }
                     }
                 }
 
-                if (isArtworkChanged) {
-                    clearArtworkCache()
-                }
+                if (isArtworkChanged) clearArtworkCache()
             } finally {
                 tempFile.delete()
             }
@@ -186,4 +187,12 @@ internal class SongMetadataRepositoryImpl @Inject constructor(
             context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
         }
     }.getOrNull()
+}
+
+private fun Tag.setOrDeleteField(key: FieldKey, value: String) {
+    if (value.isBlank()) {
+        deleteField(key)
+    } else {
+        setField(key, value)
+    }
 }
