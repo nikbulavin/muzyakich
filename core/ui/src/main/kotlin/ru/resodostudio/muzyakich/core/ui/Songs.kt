@@ -39,6 +39,10 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.materials.HazeMaterials
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzIconButton
 import ru.resodostudio.muzyakich.core.designsystem.component.MuzSelectableListItem
 import ru.resodostudio.muzyakich.core.designsystem.icon.MuzIcons
@@ -95,7 +99,25 @@ fun SongItem(
                 ) {
                     if (shouldShowArtwork) {
                         SubcomposeAsyncImage(
-                            modifier = Modifier.matchParentSize(),
+                            modifier = Modifier
+                                .matchParentSize()
+                                .then(
+                                    if (isPlaying) {
+                                        Modifier.hazeBlur(
+                                            input = HazeInput.Content,
+                                            style = HazeMaterials
+                                                .ultraThin(MaterialTheme.colorScheme.surface)
+                                                .then {
+                                                    blurEnabled(true)
+                                                    blurRadius(4.dp)
+                                                    noiseFactor(0f)
+                                                },
+                                            performanceMode = HazePerformanceMode.Default,
+                                        )
+                                    } else {
+                                        Modifier
+                                    }
+                                ),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(song.artworkUri)
                                 .size(128)
@@ -128,40 +150,29 @@ fun SongItem(
                     }
 
                     if (isPlaying) {
-                        Box(
+                        val dynamicProperties = rememberLottieDynamicProperties(
+                            rememberLottieDynamicProperty(
+                                property = LottieProperty.COLOR,
+                                value = MaterialTheme.colorScheme.secondary.toArgb(),
+                                keyPath = arrayOf("**"),
+                            ),
+                        )
+                        val lottieComposition by rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(R.raw.core_ui_equalizer_anim),
+                        )
+                        val progress by animateLottieCompositionAsState(
+                            composition = lottieComposition,
+                            iterations = LottieConstants.IterateForever,
+                            speed = 0.4f,
+                        )
+                        LottieAnimation(
                             modifier = Modifier
-                                .matchParentSize()
-                                .then(
-                                    if (shouldShowArtwork) {
-                                        Modifier.background(MaterialTheme.colorScheme.surface.copy(0.6f))
-                                    } else {
-                                        Modifier
-                                    },
-                                ),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            val dynamicProperties = rememberLottieDynamicProperties(
-                                rememberLottieDynamicProperty(
-                                    property = LottieProperty.COLOR,
-                                    value = MaterialTheme.colorScheme.secondary.toArgb(),
-                                    keyPath = arrayOf("**"),
-                                ),
-                            )
-                            val lottieComposition by rememberLottieComposition(
-                                LottieCompositionSpec.RawRes(R.raw.core_ui_equalizer_anim),
-                            )
-                            val progress by animateLottieCompositionAsState(
-                                composition = lottieComposition,
-                                iterations = LottieConstants.IterateForever,
-                                speed = 0.4f,
-                            )
-                            LottieAnimation(
-                                modifier = Modifier.size(40.dp),
-                                composition = lottieComposition,
-                                progress = { progress },
-                                dynamicProperties = dynamicProperties,
-                            )
-                        }
+                                .size(40.dp)
+                                .align(Alignment.Center),
+                            composition = lottieComposition,
+                            progress = { progress },
+                            dynamicProperties = dynamicProperties,
+                        )
                     }
                 }
             },
